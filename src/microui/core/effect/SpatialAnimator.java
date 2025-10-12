@@ -1,18 +1,22 @@
 package microui.core.effect;
 
+import static microui.util.MathUtils.convert;
+import static microui.util.Timer.END;
+import static microui.util.Timer.START;
+
 import java.util.function.BooleanSupplier;
 
 import microui.core.base.SpatialView;
-import microui.util.MathUtils;
 import microui.util.SpatialState;
 import microui.util.Timer;
 
 public final class SpatialAnimator {
-	private boolean isEnabled;
 	private final SpatialState startSpatialState, endSpatialState;
-	private BooleanSupplier condition;
 	private final Timer timer;
+	private final BooleanSupplier condition;
 	private SpatialView targetSpatialView;
+	private ReactionMode reactionMode;
+	private boolean isEnabled;
 	private boolean isPositionEnabled,isDimensionsEnabled;
 	
 	public SpatialAnimator(SpatialState startSpatialState, SpatialState endSpatialState, BooleanSupplier condition) {
@@ -36,9 +40,22 @@ public final class SpatialAnimator {
 		
 		timer = new Timer();
 		
+//		setReactionMode(ReactionMode.TRIGGER);
+		setReactionMode(ReactionMode.REACTIVE);
 		setEnabled(true);
 		setPositionEnabled(true);
 		setDimensionsEnabled(true);
+	}
+
+	public ReactionMode getReactionMode() {
+		return reactionMode;
+	}
+	
+	public void setReactionMode(ReactionMode reactionMode) {
+		if(reactionMode == null) {
+			throw new NullPointerException("the reactionMode object cannot be null");
+		}
+		this.reactionMode = reactionMode;
 	}
 
 	public boolean isPositionEnabled() {
@@ -60,7 +77,7 @@ public final class SpatialAnimator {
 	public SpatialView getTargetSpatialView() {
 		return targetSpatialView;
 	}
-
+	
 	public void setTargetSpatialView(SpatialView targetSpatialView) {
 		if(targetSpatialView == null) {
 			throw new NullPointerException("the targetSpatialView object cannot be null");
@@ -80,12 +97,20 @@ public final class SpatialAnimator {
 	public void update() {
 		if(!isEnabled() || targetSpatialView == null) { return; }
 
-		if(timer.isComplete()) {
-			timer.setIncrementing(condition.getAsBoolean());
+		switch(getReactionMode()) {
+			case REACTIVE:
+				timer.setIncrementing(condition.getAsBoolean());
+				break;
+				
+			case TRIGGER:
+				if(timer.isComplete()) {
+					timer.setIncrementing(condition.getAsBoolean());
+				}
+				break;
 		}
 		
 		timer.update();
-		
+
 		if(isPositionEnabled()) {
 			targetSpatialView.setX(lerp(startSpatialState.x(),endSpatialState.x()));
 			targetSpatialView.setY(lerp(startSpatialState.y(),endSpatialState.y()));
@@ -98,7 +123,12 @@ public final class SpatialAnimator {
 		
 	}
 	
+	public static enum ReactionMode {
+		REACTIVE,
+		TRIGGER;
+	}
+	
 	private float lerp(float start, float end) {
-		return MathUtils.convert(timer.getCurrent(), Timer.START, Timer.END, start, end);
+		return convert(timer.getCurrent(), START, END, start, end);
 	}
 }

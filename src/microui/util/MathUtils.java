@@ -15,10 +15,6 @@ public final class MathUtils {
 		return newMin + (newMax - newMin) * ((value - min) / (max - min));
 	}
 
-	public static final float constrainConvert(float value, float min, float max, float newMin, float newMax) {
-		return constrain(convert(value, min, max, newMin, newMax), newMin, newMax);
-	}
-
 	public static final float abs(float value) {
 		return value < 0 ? -value : value;
 	}
@@ -43,9 +39,9 @@ public final class MathUtils {
 		SpatialView f = spatialViewFirst;
 		SpatialView s = spatialViewSecond;
 		
-		return f.getX()-f.getWidth() > s.getX()
+		return f.getX()+f.getWidth() > s.getX()
 			&& f.getX() < s.getX()+s.getWidth()
-			&& f.getY() - f.getHeight() > s.getY()
+			&& f.getY() + f.getHeight() > s.getY()
 			&& f.getY() < s.getY()+s.getHeight(); 
 	}
 	
