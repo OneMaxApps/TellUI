@@ -1,10 +1,9 @@
 package microui.core.effect;
 
-import static processing.core.PApplet.map;
-
 import java.util.function.BooleanSupplier;
 
 import microui.core.base.SpatialView;
+import microui.util.MathUtils;
 import microui.util.SpatialState;
 import microui.util.Timer;
 
@@ -100,6 +99,6 @@ public final class SpatialAnimator {
 	}
 	
 	private float lerp(float start, float end) {
-		return map(timer.getCurrent(), Timer.START, Timer.END, start, end);
+		return MathUtils.convert(timer.getCurrent(), Timer.START, Timer.END, start, end);
 	}
 }

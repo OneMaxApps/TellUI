@@ -2,12 +2,12 @@ package microui.core.effect;
 
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static processing.core.PApplet.map;
 
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.util.MathUtils;
 
 //Status: STABLE - Do not modify
 //Last Reviewed: 16.09.2025
@@ -93,7 +93,7 @@ public final class Hover extends View {
 	}
 
 	private float getAlpha() {
-		return map(timer, 0, timerMax, 0, color.getAlpha());
+		return MathUtils.convert(timer, 0, timerMax, 0, color.getAlpha());
 	}
 
 }

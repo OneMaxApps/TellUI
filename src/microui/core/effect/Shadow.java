@@ -1,8 +1,6 @@
 package microui.core.effect;
 
 import static java.util.Objects.requireNonNull;
-import static processing.core.PApplet.constrain;
-import static processing.core.PApplet.map;
 import static processing.core.PConstants.CORNERS;
 import static processing.core.PConstants.SQUARE;
 
@@ -10,6 +8,7 @@ import microui.core.base.SpatialView;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.util.MathUtils;
 
 @Deprecated
 public final class Shadow extends View {
@@ -42,10 +41,10 @@ public final class Shadow extends View {
 	    	  ctx.noFill();
 	    	  ctx.rectMode(CORNERS);
 	    	  if(bounds instanceof SpatialView) {
-	    		 ctx.rect(bounds.getX()-map(i,0f,absoluteSize,0f,leftSize),
-	             bounds.getY()-map(i,0f,absoluteSize,0f,upSize),
-	             bounds.getX()+bounds.getWidth()+map(i,0f,absoluteSize,0f,rightSize),
-	             bounds.getY()+bounds.getHeight()+map(i,0f,absoluteSize,0f,downSize),leftSize,upSize,rightSize,downSize);
+	    		 ctx.rect(bounds.getX()-MathUtils.convert(i,0f,absoluteSize,0f,leftSize),
+	             bounds.getY()-MathUtils.convert(i,0f,absoluteSize,0f,upSize),
+	             bounds.getX()+bounds.getWidth()+MathUtils.convert(i,0f,absoluteSize,0f,rightSize),
+	             bounds.getY()+bounds.getHeight()+MathUtils.convert(i,0f,absoluteSize,0f,downSize),leftSize,upSize,rightSize,downSize);
 	    	  } 
 
 	      }
@@ -58,15 +57,15 @@ public final class Shadow extends View {
 	  }
 	  
 	  public void set(float left, float up, float right, float down) {
-	    leftSize = (int) constrain(left,0,20);
-	    upSize = (int) constrain(up,0,20);
-	    rightSize = (int) constrain(right,0,20);
-	    downSize = (int) constrain(down,0,20);
+	    leftSize = (int) MathUtils.constrain(left,0,20);
+	    upSize = (int) MathUtils.constrain(up,0,20);
+	    rightSize = (int) MathUtils.constrain(right,0,20);
+	    downSize = (int) MathUtils.constrain(down,0,20);
 	  }
 	  
 	  public void set(float angles) {
 		if(angles < 0) { throw new IllegalArgumentException("angles cannot be less than zero"); }
-	    leftSize = upSize = rightSize = downSize = (int) constrain(angles,0,20);
+	    leftSize = upSize = rightSize = downSize = (int) MathUtils.constrain(angles,0,20);
 	  }
 	  
 	  public int[] get() { return new int[]{leftSize,upSize,rightSize,downSize}; }

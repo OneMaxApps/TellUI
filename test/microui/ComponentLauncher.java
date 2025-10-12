@@ -46,7 +46,7 @@ public class ComponentLauncher extends PApplet {
 	public void draw() {
 		background(164);
 		
-		System.out.println(MathUtils.map(mouseX, width, 0, 100, 10));
+		System.out.println(MathUtils.convert(mouseX, width, 0, 100, 10));
 	}
 	
 }

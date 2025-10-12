@@ -2,11 +2,11 @@ package microui.component;
 
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static microui.util.Value.constrain;
-import static processing.core.PApplet.map;
 
 import microui.constants.Orientation;
 import microui.core.LinearRangeControl;
 import microui.core.style.AbstractColor;
+import microui.util.MathUtils;
 
 public class Scroll extends LinearRangeControl {
 	private final Button thumb;
@@ -28,12 +28,12 @@ public class Scroll extends LinearRangeControl {
 			switch(getOrientation()) {
 				case HORIZONTAL :
 					thumb.setX(constrain(ctx.mouseX+distToThumb,getX(),getX()+getWidth()-thumb.getWidth()));
-					setValueWithoutActions(map(thumb.getX(),getX(),getX()+getWidth()-thumb.getWidth(),getMinValue(),getMaxValue()));
+					setValueWithoutActions(MathUtils.convert(thumb.getX(),getX(),getX()+getWidth()-thumb.getWidth(),getMinValue(),getMaxValue()));
 				break;
 				
 				case VERTICAL :
 					thumb.setY(constrain(ctx.mouseY+distToThumb,getY(),getY()+getHeight()-thumb.getHeight()));
-					setValueWithoutActions(map(thumb.getY(),getY()+getHeight()-thumb.getHeight(),getY(),getMinValue(),getMaxValue()));
+					setValueWithoutActions(MathUtils.convert(thumb.getY(),getY()+getHeight()-thumb.getHeight(),getY(),getMinValue(),getMaxValue()));
 				break;
 			}
 			
@@ -178,13 +178,13 @@ public class Scroll extends LinearRangeControl {
 		case HORIZONTAL :
 			thumb.setWidth(ratio);
 			if(hasEqualMinMax()) { return; }
-			final float newX = map(getValue(),getMinValue(),getMaxValue(),getX(),getX()+getWidth()-ratio);
+			final float newX = MathUtils.convert(getValue(),getMinValue(),getMaxValue(),getX(),getX()+getWidth()-ratio);
 			thumb.setX(constrain(newX,getX(),getX()+getWidth()-ratio));
 			break;
 		case VERTICAL :
 			thumb.setHeight(ratio);
 			if(hasEqualMinMax()) { return; }
-			final float newY = map(getValue(),getMaxValue(),getMinValue(),getY(),getY()+getHeight()-ratio);
+			final float newY = MathUtils.convert(getValue(),getMaxValue(),getMinValue(),getY(),getY()+getHeight()-ratio);
 			thumb.setY(constrain(newY,getY(),getY()+getHeight()-ratio));
 			break;
 		}

@@ -4,8 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +15,7 @@ import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.event.KeyboardManager;
 import microui.service.TooltipManager;
+import microui.util.MathUtils;
 import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
@@ -370,7 +369,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private final class Animation extends View {
-		private static final float MAX_DIST = dist(0, 0, ctx.width, ctx.height);
+		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private AnimationType animationType;
 		private final ImageBuffer prevContainerImage,currentContainerImage;
 		private float speed;
@@ -501,7 +500,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			int additionalMinSpeed = 1;
 			if (isEasing) {
 				float dist = max(abs(currentContainerImage.getX()), abs(currentContainerImage.getY()));
-				return (int) (additionalMinSpeed + map(abs(dist), 0, MAX_DIST, .1f, speed));
+				return (int) (additionalMinSpeed + MathUtils.convert(abs(dist), 0, MAX_DIST, .1f, speed));
 			}
 			return (int) (additionalMinSpeed + speed);
 		}

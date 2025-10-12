@@ -7,10 +7,6 @@ import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static processing.core.PApplet.constrain;
-import static processing.core.PApplet.map;
-import static processing.core.PApplet.max;
-import static processing.core.PApplet.min;
 import static processing.core.PConstants.BACKSPACE;
 import static processing.core.PConstants.CENTER;
 import static processing.core.PConstants.CONTROL;
@@ -26,6 +22,7 @@ import microui.core.style.Color;
 import microui.core.style.Stroke;
 import microui.event.KeyboardManager;
 import microui.util.Clipboard;
+import microui.util.MathUtils;
 import microui.util.Metrics;
 import microui.util.Value;
 import processing.core.PFont;
@@ -141,7 +138,7 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			cursor.column
-					.set((int) map(ctx.mouseX - getX(), text.getX(), text.getX() + text.getWidth(), 0, text.length()));
+					.set((int) MathUtils.convert(ctx.mouseX - getX(), text.getX(), text.getX() + text.getWidth(), 0, text.length()));
 
 			if (ctx.frameCount % 3 == 0) {
 				if (cursor.isCloseToLeftSide()) {
@@ -198,7 +195,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private final void createPGraphics() {
-		pg = ctx.createGraphics((int) max(1, getWidth()), (int) max(1, getHeight()), ctx.sketchRenderer());
+		pg = ctx.createGraphics((int) MathUtils.max(1, getWidth()), (int) MathUtils.max(1, getHeight()), ctx.sketchRenderer());
 		componentSizeChanged = false;
 		Metrics.register(pg);
 	}
@@ -649,21 +646,21 @@ public final class TextField extends Component implements KeyPressable {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt(min(column, text.length() - 1)));
+				return pg.textWidth(text.getAsString().charAt((int) MathUtils.min(column, text.length() - 1)));
 			}
 
 			private final float getNextCharWidth() {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt(min(column + 1, text.length() - 1)));
+				return pg.textWidth(text.getAsString().charAt((int) MathUtils.min(column + 1, text.length() - 1)));
 			}
 
 			private final float getBackCharWidth() {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt(max(0, min(column - 1, text.length() - 1))));
+				return pg.textWidth(text.getAsString().charAt((int) MathUtils.max(0, MathUtils.min(column - 1, text.length() - 1))));
 			}
 		}
 
@@ -736,11 +733,11 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private final int getStartColumn() {
-			return min(startColumn, endColumn);
+			return (int) MathUtils.min(startColumn, endColumn);
 		}
 
 		private final void setStartColumn(int startColumn) {
-			startColumn = constrain(startColumn, 0, text.length());
+			startColumn = (int) MathUtils.constrain(startColumn, 0, text.length());
 			if (pg == null) {
 				return;
 			}
@@ -751,11 +748,11 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private final int getEndColumn() {
-			return max(startColumn, endColumn);
+			return (int) MathUtils.max(startColumn, endColumn);
 		}
 
 		private final void setEndColumn(int endColumn) {
-			endColumn = constrain(endColumn, 0, text.length());
+			endColumn = (int) MathUtils.constrain(endColumn, 0, text.length());
 			if (pg == null) {
 				return;
 			}

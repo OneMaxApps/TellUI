@@ -1,12 +1,12 @@
 package microui.component;
 
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static processing.core.PApplet.map;
 
 import microui.core.LinearRangeControl;
 import microui.core.base.SpatialView;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
+import microui.util.MathUtils;
 
 public class Slider extends LinearRangeControl {
 
@@ -79,10 +79,10 @@ public class Slider extends LinearRangeControl {
 	private void recalculateProgressBounds() {
 		switch (getOrientation()) {
 		case HORIZONTAL:
-			setValue(map(ctx.mouseX, getX(), getX() + getWidth(), getMinValue(), getMaxValue()));
+			setValue(MathUtils.convert(ctx.mouseX, getX(), getX() + getWidth(), getMinValue(), getMaxValue()));
 			break;
 		case VERTICAL:
-			setValue(map(ctx.mouseY, getY(), getY() + getHeight(), getMaxValue(), getMinValue()));
+			setValue(MathUtils.convert(ctx.mouseY, getY(), getY() + getHeight(), getMaxValue(), getMinValue()));
 			break;
 		}
 		updateProgressBounds();
@@ -127,14 +127,14 @@ public class Slider extends LinearRangeControl {
 		switch (getOrientation()) {
 
 		case HORIZONTAL:
-			progress.setWidth(map(getValue(), getMinValue(), getMaxValue(), 0, getWidth()));
+			progress.setWidth(MathUtils.convert(getValue(), getMinValue(), getMaxValue(), 0, getWidth()));
 
 			break;
 
 		case VERTICAL:
 			progress.setY(getY() + getHeight());
 			progress.setWidth(getWidth());
-			progress.setHeight(map(getValue(), getMinValue(), getMaxValue(), 0, -getHeight()));
+			progress.setHeight(MathUtils.convert(getValue(), getMinValue(), getMaxValue(), 0, -getHeight()));
 			break;
 
 		}

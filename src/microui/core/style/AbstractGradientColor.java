@@ -1,6 +1,6 @@
 package microui.core.style;
 
-import static processing.core.PApplet.map;
+import microui.util.MathUtils;
 
 //Status: STABLE - Do not modify
 //Last Reviewed: 11.10.2025
@@ -73,7 +73,7 @@ public abstract class AbstractGradientColor extends AbstractColor {
 	}
 	
 	protected final int lerp(int start, int end) {
-		return (int) map(animator.getProgress(),Animator.START_PROGRESS,Animator.END_PROGRESS,start,end);
+		return (int) MathUtils.convert(animator.getProgress(),Animator.START_PROGRESS,Animator.END_PROGRESS,start,end);
 	}
 
 	protected final class Animator {

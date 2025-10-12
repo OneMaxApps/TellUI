@@ -5,10 +5,10 @@ import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
 
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
+import microui.util.MathUtils;
 import processing.event.MouseEvent;
 
 public final class Knob extends RangeControl {
@@ -107,7 +107,7 @@ public final class Knob extends RangeControl {
 		ctx.arc(0,0,diameter*.8f, diameter*.8f,START,END);
 		
 		indicatorColor.applyStroke();
-		ctx.arc(0,0,diameter*.8f, diameter*.8f,START,map(getMutableValue().get(),getMutableValue().getMin(),getMutableValue().getMax(),START,END));
+		ctx.arc(0,0,diameter*.8f, diameter*.8f,START,MathUtils.convert(getMutableValue().get(),getMutableValue().getMin(),getMutableValue().getMax(),START,END));
 		
 		if(getMutableValue().get() == getMutableValue().getMax()) {
 			ctx.ellipse(0, 0, diameter/4, diameter/4);

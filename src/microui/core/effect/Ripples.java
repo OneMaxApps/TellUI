@@ -2,14 +2,13 @@ package microui.core.effect;
 
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
 
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.theme.ThemeManager;
+import microui.util.MathUtils;
 import microui.util.Metrics;
 import processing.core.PGraphics;
 
@@ -126,7 +125,7 @@ public final class Ripples extends View {
 			
 			pg.noStroke();
 			color.apply(pg);
-			pg.fill(color.getRed(), color.getGreen(), color.getBlue(), max(0, 190 - map(radius, 0, maxRadius, 0, 190)));
+			pg.fill(color.getRed(), color.getGreen(), color.getBlue(), max(0, 190 - MathUtils.convert(radius, 0, maxRadius, 0, 190)));
 			pg.circle(startX, startY, radius);
 
 			radius += getSpeed();
@@ -163,7 +162,7 @@ public final class Ripples extends View {
 		}
 
 		void recalculateMaxRadius() {
-			maxRadius = dist(0, 0, component.getPadWidth(), component.getPadHeight())*2;
+			maxRadius = MathUtils.dist(0, 0, component.getPadWidth(), component.getPadHeight())*2;
 		}
 
 		void complete() {
