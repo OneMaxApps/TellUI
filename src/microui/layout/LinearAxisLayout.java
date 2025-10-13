@@ -23,7 +23,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 
 			float usedSpace = isVerticalMode ? containerH * usedWeight : containerW * usedWeight;
 
-			switch (getContainer().getContainerMode()) {
+			switch (getContainer().getMode()) {
 
 			case IGNORE_CONSTRAINTS:
 				contentView.setConstrainDimensionsEnabled(false);

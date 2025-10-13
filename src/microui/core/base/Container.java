@@ -1,16 +1,15 @@
 package microui.core.base;
 
-import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.isDebugModeEnabled;
-import static microui.constants.ContainerMode.RESPECT_CONSTRAINTS;
+import static microui.core.base.Container.Mode.RESPECT_CONSTRAINTS;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import microui.constants.ContainerMode;
 import microui.core.ImageBuffer;
+import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.Color;
@@ -23,9 +22,9 @@ import processing.event.MouseEvent;
 public final class Container extends Component implements KeyPressable, Scrollable {
 	private final List<ContentViewEntry> contentViewEntryList;
 	private final LayoutManager layoutManager;
+	private final PriorityManager priorityManager;
 	private ImageBuffer backgroundImage;
-	private ContainerMode containerMode;
-	private int maxPriority;
+	private Mode mode;
 
 	public Container(LayoutManager layoutManager, float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -39,8 +38,9 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		this.layoutManager = requireNonNull(layoutManager, "layout manager cannot be null");
 		layoutManager.setContainer(this);
 
-		setContainerMode(RESPECT_CONSTRAINTS);
+		priorityManager = new PriorityManager(contentViewEntryList);
 
+		setMode(RESPECT_CONSTRAINTS);
 	}
 
 	public Container(LayoutManager layoutManager) {
@@ -77,7 +77,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	}
 
-	public ContentView getById(final int id) {
+	public ContentView getContentViewById(final int id) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getId() == id) {
@@ -85,14 +85,14 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			}
 		}
 
-		throw new IllegalArgumentException("contentView with id: " + id + " is not found in to this Container");
+		throw new IllegalArgumentException("contentView with id: " + id + " is not found in this Container");
 	}
 
 	public Container getContainerById(final int id) {
-		return (Container) getById(id);
+		return (Container) getContentViewById(id);
 	}
 
-	public ContentView getByTextId(final String textId) {
+	public ContentView getContentViewByTextId(final String textId) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getTextId().equals(textId)) {
@@ -104,7 +104,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	public Container getContainerByTextId(final String textId) {
-		return (Container) getByTextId(textId);
+		return (Container) getContentViewByTextId(textId);
 	}
 
 	public Container add(ContentView contentView, LayoutParams layoutParams, int id) {
@@ -131,7 +131,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	public Container remove(ContentView contentView) {
-		removeContentViewSafe(contentView);
+		removeInternal(contentView);
 		return this;
 	}
 
@@ -139,7 +139,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getId() == id) {
-				removeContentViewSafe(contentView);
+				removeInternal(contentView);
 				return this;
 			}
 		}
@@ -155,7 +155,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getTextId().equals(textId)) {
-				removeContentViewSafe(contentView);
+				removeInternal(contentView);
 				return this;
 			}
 		}
@@ -171,20 +171,20 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		return Collections.unmodifiableList(contentViewEntryList);
 	}
 
-	public ContainerMode getContainerMode() {
-		return containerMode;
+	public Mode getMode() {
+		return mode;
 	}
 
-	public Container setContainerMode(ContainerMode containerMode) {
-		if (containerMode == null) {
-			throw new NullPointerException("containerMode cannot be null");
+	public Container setMode(Mode mode) {
+		if (mode == null) {
+			throw new NullPointerException("mode for container cannot be null");
 		}
 
-		if (this.containerMode == containerMode) {
+		if (this.mode == mode) {
 			return this;
 		}
 
-		this.containerMode = containerMode;
+		this.mode = mode;
 
 		requestUpdate();
 
@@ -206,7 +206,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		ensureBackgroundImage();
 		backgroundImage.setColor(color);
 	}
-	
+
 	@Override
 	protected void render() {
 		backgroundOnDraw();
@@ -229,13 +229,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	private void recalculateMaxPriority() {
-		maxPriority = 0;
-		for (int i = 0; i < contentViewEntryList.size(); i++) {
-			int priority = contentViewEntryList.get(i).contentView().getPriority();
-			maxPriority = max(maxPriority, priority);
-		}
-	}
 
 	private void addInternal(ContentView contentView, LayoutParams layoutParams) {
 		checkContentViewNotNull(contentView);
@@ -246,7 +239,23 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		contentViewEntryList.add(contentViewEntry);
 		layoutManager.onAddContentView(contentViewEntry);
 
-		recalculateMaxPriority();
+		priorityManager.recalculateMax();
+	}
+
+	private void removeInternal(ContentView contentView) {
+		checkContentViewNotNull(contentView);
+		checkContentViewExistInList(contentView);
+
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView c = contentViewEntryList.get(i).contentView();
+			if (c == contentView) {
+				contentViewEntryList.remove(i);
+			}
+		}
+
+		layoutManager.onRemoveContentView();
+
+		priorityManager.recalculateMax();
 	}
 
 	private void contentViewsOnDraw() {
@@ -254,7 +263,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			return;
 		}
 
-		for (int priority = 0; priority <= maxPriority; priority++) {
+		for (int priority = 0; priority <= priorityManager.getMax(); priority++) {
 			for (int i = 0; i < contentViewEntryList.size(); i++) {
 				ContentView contentView = contentViewEntryList.get(i).contentView();
 				if (contentView.getPriority() == priority) {
@@ -316,23 +325,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		backgroundImage = new ImageBuffer();
 	}
 
-	private void removeContentViewSafe(ContentView contentView) {
-		checkContentViewNotNull(contentView);
-		checkContentViewExistInList(contentView);
-
-		for (int i = 0; i < contentViewEntryList.size(); i++) {
-			ContentView c = contentViewEntryList.get(i).contentView();
-			if (c == contentView) {
-				contentViewEntryList.remove(i);
-			}
-		}
-
-		layoutManager.onRemoveContentView();
-
-		recalculateMaxPriority();
-
-	}
-
 	private void checkContentViewExistInList(ContentView contentView) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView content = contentViewEntryList.get(i).contentView();
@@ -343,6 +335,43 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 		throw new IllegalArgumentException("contentView not found in to Container");
 	}
+
+	private static final class PriorityManager {
+		private final List<ContentViewEntry> entryList;
+		
+		private int max;
+		
+		private PriorityManager(List<ContentViewEntry> entryList) {
+			super();
+			
+			this.entryList = entryList;
+		}
+
+		public int getMax() {
+			return max;
+		}
+
+		public void recalculateMax() {
+			setMax(0);
+			for (int i = 0; i < entryList.size(); i++) {
+				int priority = entryList.get(i).contentView().getPriority();
+				setMax(Math.max(max, priority));
+			}
+		}
+		
+		private void setMax(int max) {
+			if(max < 0) {
+				throw new RenderException("max priority cannot be less than 0");
+			}
+			
+			this.max = max;
+		}
+	}
 	
-	public static final record ContentViewEntry(ContentView contentView, LayoutParams layoutParams) {}
+	public static enum Mode {
+		IGNORE_CONSTRAINTS, RESPECT_CONSTRAINTS;
+	}
+
+	public static final record ContentViewEntry(ContentView contentView, LayoutParams layoutParams) {
+	}
 }

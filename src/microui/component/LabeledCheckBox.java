@@ -1,9 +1,9 @@
 package microui.component;
 
 import static microui.component.CheckBox.DEFAULT_SIZE;
+import static microui.core.base.Container.Mode.RESPECT_CONSTRAINTS;
 import static processing.core.PConstants.LEFT;
 
-import microui.constants.ContainerMode;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.effect.Hover;
@@ -48,7 +48,7 @@ public final class LabeledCheckBox extends Component {
 		textView.setMaxSize(ctx.width, DEFAULT_SIZE);
 
 		container = new Container(new RowLayout(), x, y, width, height);
-		container.setContainerMode(ContainerMode.RESPECT_CONSTRAINTS);
+		container.setMode(RESPECT_CONSTRAINTS);
 		container.add(checkBox, new RowLayoutParams(.1f));
 		container.add(textView, new RowLayoutParams(.9f));
 

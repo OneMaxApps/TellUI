@@ -56,7 +56,7 @@ public final class GridLayout extends LayoutManager {
 			float requiredCellWidth = colWidth * params.getColumnSpan();
 			float requiredCellHeight = rowHeight * params.getRowSpan();
 
-			switch (getContainer().getContainerMode()) {
+			switch (getContainer().getMode()) {
 			case IGNORE_CONSTRAINTS:
 				contentView.setConstrainDimensionsEnabled(false);
 				contentView.setAbsoluteSize(requiredCellWidth, requiredCellHeight);

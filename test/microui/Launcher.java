@@ -1,5 +1,7 @@
 package microui;
 
+import static microui.core.base.Container.Mode.IGNORE_CONSTRAINTS;
+
 import microui.component.Button;
 import microui.component.CheckBox;
 import microui.component.EditText;
@@ -10,10 +12,11 @@ import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
 import microui.component.TextView;
-import microui.constants.ContainerMode;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
+import microui.core.style.theme.ThemeBlack;
+import microui.core.style.theme.ThemeManager;
 import microui.layout.ColumnLayout;
 import microui.layout.ColumnLayoutParams;
 import microui.layout.GridLayout;
@@ -44,7 +47,7 @@ public final class Launcher extends PApplet {
 	public void setup() {
 		MicroUI.setContext(this);
 //		MicroUI.setDebugModeEnabled(true);
-		// ThemeManager.setTheme(new ThemeGlass());
+		ThemeManager.setTheme(new ThemeBlack());
 
 		cm = ContainerManager.getInstance();
 
@@ -91,7 +94,7 @@ public final class Launcher extends PApplet {
 		Container container = new Container(new GridLayout(3, 3));
 
 		Container ContainerMenuItem = new Container(new ColumnLayout());
-		ContainerMenuItem.setContainerMode(ContainerMode.IGNORE_CONSTRAINTS);
+		ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
 
 		ContainerMenuItem.add(new Button("show all components"), new ColumnLayoutParams(.2f), () -> cm.switchOn("all_components"));
 
@@ -136,7 +139,7 @@ public final class Launcher extends PApplet {
 
 	private Container getContainerWith(Component component) {
 		Container container = new Container(new GridLayout(11, 11));
-		container.setContainerMode(ContainerMode.IGNORE_CONSTRAINTS);
+		container.setMode(IGNORE_CONSTRAINTS);
 
 		if (component instanceof EditText) {
 			container.add(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");
