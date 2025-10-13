@@ -32,7 +32,7 @@ public class ComponentLauncher extends PApplet {
 //		MicroUI.setDebugModeEnabled(true);
 		ThemeManager.setTheme(new ThemeBlack());
 		ContainerManager cm = ContainerManager.getInstance();
-		cm.add(new Container(new GridLayout(5, 5)).addContentView(component = new EditText(),
+		cm.add(new Container(new GridLayout(5, 5)).add(component = new EditText(),
 				new GridLayoutParams(2, 2, 1, 1)));
 
 		component.setTooltip("if you can see this, it's means that it's working");

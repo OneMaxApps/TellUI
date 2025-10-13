@@ -14,6 +14,7 @@ import microui.core.ImageBuffer;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.Color;
+import microui.event.Listener;
 import microui.layout.LayoutManager;
 import microui.layout.LayoutParams;
 import processing.core.PImage;
@@ -47,15 +48,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	@Override
-	protected void render() {
-		backgroundOnDraw();
-
-		debugOnDraw();
-
-		contentViewsOnDraw();
-	}
-
-	@Override
 	public void mouseWheel(MouseEvent event) {
 		if (contentViewEntryList.isEmpty()) {
 			return;
@@ -85,7 +77,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	}
 
-	public ContentView getContentViewById(final int id) {
+	public ContentView getById(final int id) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getId() == id) {
@@ -97,10 +89,10 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	public Container getContainerById(final int id) {
-		return (Container) getContentViewById(id);
+		return (Container) getById(id);
 	}
 
-	public ContentView getContentViewByTextId(final String textId) {
+	public ContentView getByTextId(final String textId) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getTextId().equals(textId)) {
@@ -111,33 +103,39 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		throw new IllegalArgumentException("contentView with text id: " + textId + " is not found in to this Container");
 	}
 
-	public ContentView getContainerByTextId(final String textId) {
-		return (Container) getContentViewByTextId(textId);
+	public Container getContainerByTextId(final String textId) {
+		return (Container) getByTextId(textId);
 	}
 
-	public Container addContentView(ContentView contentView, LayoutParams layoutParams, int id) {
-		addContentViewSafe(contentView, layoutParams);
+	public Container add(ContentView contentView, LayoutParams layoutParams, int id) {
+		addInternal(contentView, layoutParams);
 		contentView.setId(id);
 		return this;
 	}
 
-	public Container addContentView(ContentView contentView, LayoutParams layoutParams, String textId) {
-		addContentViewSafe(contentView, layoutParams);
+	public Container add(ContentView contentView, LayoutParams layoutParams, String textId) {
+		addInternal(contentView, layoutParams);
 		contentView.setTextId(textId);
 		return this;
 	}
 
-	public Container addContentView(ContentView contentView, LayoutParams layoutParams) {
-		addContentViewSafe(contentView, layoutParams);
+	public Container add(ContentView contentView, LayoutParams layoutParams) {
+		addInternal(contentView, layoutParams);
 		return this;
 	}
 
-	public Container removeContentView(ContentView contentView) {
+	public Container add(Component component, LayoutParams layoutParams, Listener onClickListener) {
+		addInternal(component, layoutParams);
+		component.onClick(onClickListener);
+		return this;
+	}
+
+	public Container remove(ContentView contentView) {
 		removeContentViewSafe(contentView);
 		return this;
 	}
 
-	public Container removeContentViewById(int id) {
+	public Container removeById(int id) {
 		for (int i = 0; i < contentViewEntryList.size(); i++) {
 			ContentView contentView = contentViewEntryList.get(i).contentView();
 			if (contentView.getId() == id) {
@@ -149,7 +147,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		throw new IllegalArgumentException("contentView with id: \" " + id + "\" is not found in to Container");
 	}
 
-	public Container removeContentViewByTextId(String textId) {
+	public Container removeByTextId(String textId) {
 		if (textId == null) {
 			throw new NullPointerException("textId cannot be null");
 		}
@@ -165,7 +163,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		throw new IllegalArgumentException("contentView with text id: \"" + textId + "\" is not found in to Container");
 	}
 
-	public void removeAllContentViews() {
+	public void removeAll() {
 		contentViewEntryList.clear();
 	}
 
@@ -208,6 +206,15 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		ensureBackgroundImage();
 		backgroundImage.setColor(color);
 	}
+	
+	@Override
+	protected void render() {
+		backgroundOnDraw();
+
+		debugOnDraw();
+
+		contentViewsOnDraw();
+	}
 
 	@Override
 	protected void onChangeBounds() {
@@ -230,7 +237,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	private void addContentViewSafe(ContentView contentView, LayoutParams layoutParams) {
+	private void addInternal(ContentView contentView, LayoutParams layoutParams) {
 		checkContentViewNotNull(contentView);
 		checkLayoutParamsNotNull(layoutParams);
 		checkContentViewAlreadyAddedInList(contentView);

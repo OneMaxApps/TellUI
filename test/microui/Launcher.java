@@ -93,10 +93,10 @@ public final class Launcher extends PApplet {
 		Container ContainerMenuItem = new Container(new ColumnLayout());
 		ContainerMenuItem.setContainerMode(ContainerMode.IGNORE_CONSTRAINTS);
 
-		ContainerMenuItem.addContentView(new Button("show all components"), new ColumnLayoutParams(.2f));
+		ContainerMenuItem.add(new Button("show all components"), new ColumnLayoutParams(.2f), () -> cm.switchOn("all_components"));
 
 		MenuButton menuButtonOfComponents;
-		ContainerMenuItem.addContentView(
+		ContainerMenuItem.add(
 				menuButtonOfComponents = new MenuButton("show component", "Button", "CheckBox", "EditText", "Knob",
 						"LabeledCheckBox", "MenuButton", "Scroll", "Slider", "TextField", "TextView"),
 				new ColumnLayoutParams(.2f));
@@ -112,7 +112,7 @@ public final class Launcher extends PApplet {
 		menuButtonOfComponents.getItem("TextField").onClick(() -> cm.switchOn("TextField"));
 		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
 
-		container.addContentView(ContainerMenuItem, new GridLayoutParams(0, 0));
+		container.add(ContainerMenuItem, new GridLayoutParams(0, 0));
 
 		return container;
 	}
@@ -120,16 +120,16 @@ public final class Launcher extends PApplet {
 	private Container getContainerAllComponents() {
 		Container container = new Container(new GridLayout(5, 5));
 
-		container.addContentView(new Button(), new GridLayoutParams(0, 0));
-		container.addContentView(new CheckBox(), new GridLayoutParams(1, 0));
-		container.addContentView(new EditText(), new GridLayoutParams(2, 0));
-		container.addContentView(new LabeledCheckBox("confirm"), new GridLayoutParams(3, 0));
-		container.addContentView(new MenuButton().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
-		container.addContentView(new Scroll(), new GridLayoutParams(0, 1), "scroll");
-		container.addContentView(new Slider(), new GridLayoutParams(1, 1));
-		container.addContentView(new TextField(), new GridLayoutParams(2, 1));
-		container.addContentView(new TextView("TextView"), new GridLayoutParams(3, 1));
-		container.addContentView(new Knob(), new GridLayoutParams(4, 1));
+		container.add(new Button(), new GridLayoutParams(0, 0));
+		container.add(new CheckBox(), new GridLayoutParams(1, 0));
+		container.add(new EditText(), new GridLayoutParams(2, 0));
+		container.add(new LabeledCheckBox("confirm"), new GridLayoutParams(3, 0));
+		container.add(new MenuButton().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
+		container.add(new Scroll(), new GridLayoutParams(0, 1), "scroll");
+		container.add(new Slider(), new GridLayoutParams(1, 1));
+		container.add(new TextField(), new GridLayoutParams(2, 1));
+		container.add(new TextView("TextView"), new GridLayoutParams(3, 1));
+		container.add(new Knob(), new GridLayoutParams(4, 1));
 
 		return container;
 	}
@@ -139,9 +139,9 @@ public final class Launcher extends PApplet {
 		container.setContainerMode(ContainerMode.IGNORE_CONSTRAINTS);
 
 		if (component instanceof EditText) {
-			container.addContentView(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");
+			container.add(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");
 		} else {
-			container.addContentView(component, new GridLayoutParams(5, 5), "edit_text");
+			container.add(component, new GridLayoutParams(5, 5), "edit_text");
 		}
 
 		return container;

@@ -46,7 +46,7 @@ public final class GridLayout extends LayoutManager {
 		float rowHeight = containerH / getRows();
 
 		for (int i = 0; i < getContentViewEntryList().size(); i++) {
-			ContentView component = getContentViewEntryList().get(i).contentView();
+			ContentView contentView = getContentViewEntryList().get(i).contentView();
 			GridLayoutParams params = (GridLayoutParams) getContentViewEntryList().get(i).layoutParams();
 
 			checkOutOfGrid(params);
@@ -58,37 +58,37 @@ public final class GridLayout extends LayoutManager {
 
 			switch (getContainer().getContainerMode()) {
 			case IGNORE_CONSTRAINTS:
-				component.setConstrainDimensionsEnabled(false);
-				component.setAbsoluteSize(requiredCellWidth, requiredCellHeight);
-				component.setAbsolutePosition(requiredCellX, requiredCellY);
+				contentView.setConstrainDimensionsEnabled(false);
+				contentView.setAbsoluteSize(requiredCellWidth, requiredCellHeight);
+				contentView.setAbsolutePosition(requiredCellX, requiredCellY);
 				break;
 
 			case RESPECT_CONSTRAINTS:
-				// in this mode container not ignore constrains of component(s), so any changes
+				// in this mode container not ignore constrains of contentView(s), so any changes
 				// may be not round into the cell
-				// setting absolute size can change real size of component but only if component
+				// setting absolute size can change real size of contentView but only if contentView
 				// allowed it
 				// also this mode don't control constrain mode for them, that need to be
 				// controlled with user settings like setConstrainDimensionsEnabled(boolean) etc
 
-				// if constrain in the component is enabled, them it's not guaranteed about
+				// if constrain in the contentView is enabled, them it's not guaranteed about
 				// correct resize
-				component.setAbsoluteSize(requiredCellWidth, requiredCellHeight);
+				contentView.setAbsoluteSize(requiredCellWidth, requiredCellHeight);
 
 				float alignXLeft = requiredCellX;
-				float alignXCenter = requiredCellX + requiredCellWidth / 2 - component.getAbsoluteWidth() / 2;
-				float alignXRight = requiredCellX + requiredCellWidth - component.getAbsoluteWidth();
+				float alignXCenter = requiredCellX + requiredCellWidth / 2 - contentView.getAbsoluteWidth() / 2;
+				float alignXRight = requiredCellX + requiredCellWidth - contentView.getAbsoluteWidth();
 
 				float alignYTop = requiredCellY;
-				float alignYCenter = requiredCellY + requiredCellHeight / 2 - component.getAbsoluteHeight() / 2;
-				float alignYBottom = requiredCellY + requiredCellHeight - component.getAbsoluteHeight();
+				float alignYCenter = requiredCellY + requiredCellHeight / 2 - contentView.getAbsoluteHeight() / 2;
+				float alignYBottom = requiredCellY + requiredCellHeight - contentView.getAbsoluteHeight();
 
 				float correctPosX = params.getAlignX() == -1 ? alignXLeft
 						: params.getAlignX() == 1 ? alignXRight : alignXCenter;
 				float correctPosY = params.getAlignY() == -1 ? alignYTop
 						: params.getAlignY() == 1 ? alignYBottom : alignYCenter;
 
-				component.setAbsolutePosition(correctPosX, correctPosY);
+				contentView.setAbsolutePosition(correctPosX, correctPosY);
 
 				break;
 			}
@@ -97,9 +97,9 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	@Override
-	public void onAddContentView(ContentViewEntry componentEntry) {
-		super.onAddContentView(componentEntry);
-		checkComponentsForOverlap();
+	public void onAddContentView(ContentViewEntry contentViewEntry) {
+		super.onAddContentView(contentViewEntry);
+		checkContentViewsForOverlap();
 	}
 
 	public final int getColumns() {
@@ -127,11 +127,11 @@ public final class GridLayout extends LayoutManager {
 	private void checkOutOfGrid(GridLayoutParams params) {
 		if (params.getColumn() + (params.getColumnSpan() - 1) >= getColumns()
 				|| (params.getRow() + params.getRowSpan() - 1) >= getRows()) {
-			throw new IndexOutOfBoundsException("component is out of grid layout");
+			throw new IndexOutOfBoundsException("contentView is out of grid layout");
 		}
 	}
 
-	private void checkComponentsForOverlap() {
+	private void checkContentViewsForOverlap() {
 		for (ContentViewEntry entry : getContentViewEntryList()) {
 
 			GridLayoutParams params = (GridLayoutParams) entry.layoutParams();
@@ -148,7 +148,7 @@ public final class GridLayout extends LayoutManager {
 
 				if (params != paramsOther) {
 					if (pc > opc - pcs && pc < opc + opcs && pr > opr - prs && pr < opr + oprs) {
-						throw new IllegalArgumentException("several components cannot be in one cell of grid");
+						throw new IllegalArgumentException("several contentViews cannot be in one cell of grid");
 					}
 				}
 

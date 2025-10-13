@@ -49,8 +49,8 @@ public final class LabeledCheckBox extends Component {
 
 		container = new Container(new RowLayout(), x, y, width, height);
 		container.setContainerMode(ContainerMode.RESPECT_CONSTRAINTS);
-		container.addContentView(checkBox, new RowLayoutParams(.1f));
-		container.addContentView(textView, new RowLayoutParams(.9f));
+		container.add(checkBox, new RowLayoutParams(.1f));
+		container.add(textView, new RowLayoutParams(.9f));
 
 	}
 

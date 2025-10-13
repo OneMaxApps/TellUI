@@ -18,7 +18,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		float containerH = getContainer().getHeight();
 
 		for (ContentViewEntry entry : getContentViewEntryList()) {
-			ContentView component = entry.contentView();
+			ContentView contentView = entry.contentView();
 			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 
 			float usedSpace = isVerticalMode ? containerH * usedWeight : containerW * usedWeight;
@@ -26,30 +26,30 @@ public abstract class LinearAxisLayout extends LayoutManager {
 			switch (getContainer().getContainerMode()) {
 
 			case IGNORE_CONSTRAINTS:
-				component.setConstrainDimensionsEnabled(false);
-				component.setAbsolutePosition(isVerticalMode ? containerX : containerX + usedSpace,
+				contentView.setConstrainDimensionsEnabled(false);
+				contentView.setAbsolutePosition(isVerticalMode ? containerX : containerX + usedSpace,
 						isVerticalMode ? containerY + usedSpace : containerY);
-				component.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
-				component.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
+				contentView.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
+				contentView.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
 
 				break;
 
 			case RESPECT_CONSTRAINTS:
 				float alignXLeft = containerX;
-				float alignXCenter = containerX + containerW / 2 - component.getAbsoluteWidth() / 2;
-				float alignXRight = containerX + containerW - component.getAbsoluteWidth();
+				float alignXCenter = containerX + containerW / 2 - contentView.getAbsoluteWidth() / 2;
+				float alignXRight = containerX + containerW - contentView.getAbsoluteWidth();
 
 				float alignYTop = containerY;
-				float alignYCenter = containerY + containerH / 2 - component.getAbsoluteHeight() / 2;
-				float alignYBottom = containerY + containerH - component.getAbsoluteHeight();
+				float alignYCenter = containerY + containerH / 2 - contentView.getAbsoluteHeight() / 2;
+				float alignYBottom = containerY + containerH - contentView.getAbsoluteHeight();
 
-				component.setAbsoluteX(isVerticalMode
+				contentView.setAbsoluteX(isVerticalMode
 						? params.getAlignX() == -1 ? alignXLeft : params.getAlignX() == 1 ? alignXRight : alignXCenter
 						: containerX + usedSpace);
-				component.setAbsoluteY(isVerticalMode ? containerY + usedSpace
+				contentView.setAbsoluteY(isVerticalMode ? containerY + usedSpace
 						: params.getAlignY() == -1 ? alignYTop : params.getAlignY() == 1 ? alignYBottom : alignYCenter);
-				component.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
-				component.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
+				contentView.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
+				contentView.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
 
 				break;
 
@@ -66,13 +66,13 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		ctx.fill(200, 0, 0, 32);
 
 		getContentViewEntryList().forEach(entry -> {
-			ContentView component = entry.contentView();
+			ContentView contentView = entry.contentView();
 			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 			if (isVerticalMode) {
-				ctx.rect(getContainer().getX(), component.getAbsoluteY(), getContainer().getWidth(),
+				ctx.rect(getContainer().getX(), contentView.getAbsoluteY(), getContainer().getWidth(),
 						getContainer().getHeight() * params.getWeight());
 			} else {
-				ctx.rect(component.getAbsoluteX(), getContainer().getY(),
+				ctx.rect(contentView.getAbsoluteX(), getContainer().getY(),
 						getContainer().getWidth() * params.getWeight(), getContainer().getHeight());
 			}
 		});
