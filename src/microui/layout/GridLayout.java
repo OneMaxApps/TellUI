@@ -1,6 +1,6 @@
 package microui.layout;
 
-import microui.core.base.Container.ContentViewEntry;
+import microui.core.base.Container.Entry;
 import microui.core.base.ContentView;
 
 public final class GridLayout extends LayoutManager {
@@ -45,9 +45,9 @@ public final class GridLayout extends LayoutManager {
 		float colWidth = containerW / getColumns();
 		float rowHeight = containerH / getRows();
 
-		for (int i = 0; i < getContentViewEntryList().size(); i++) {
-			ContentView contentView = getContentViewEntryList().get(i).contentView();
-			GridLayoutParams params = (GridLayoutParams) getContentViewEntryList().get(i).layoutParams();
+		for (int i = 0; i < getEntryList().size(); i++) {
+			ContentView contentView = getEntryList().get(i).contentView();
+			GridLayoutParams params = (GridLayoutParams) getEntryList().get(i).layoutParams();
 
 			checkOutOfGrid(params);
 
@@ -97,8 +97,8 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	@Override
-	public void onAddContentView(ContentViewEntry contentViewEntry) {
-		super.onAddContentView(contentViewEntry);
+	public void onAdd(Entry contentViewEntry) {
+		super.onAdd(contentViewEntry);
 		checkContentViewsForOverlap();
 	}
 
@@ -132,11 +132,11 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	private void checkContentViewsForOverlap() {
-		for (ContentViewEntry entry : getContentViewEntryList()) {
+		for (Entry entry : getEntryList()) {
 
 			GridLayoutParams params = (GridLayoutParams) entry.layoutParams();
 
-			for (ContentViewEntry otherEntry : getContentViewEntryList()) {
+			for (Entry otherEntry : getEntryList()) {
 
 				GridLayoutParams paramsOther = (GridLayoutParams) otherEntry.layoutParams();
 

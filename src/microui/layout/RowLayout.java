@@ -1,12 +1,12 @@
 package microui.layout;
 
-import microui.core.base.Container.ContentViewEntry;
+import microui.core.base.Container.Entry;
 
 public final class RowLayout extends LinearAxisLayout {
 
 	@Override
-	public void onAddContentView(ContentViewEntry contentViewEntry) {
-		super.onAddContentView(contentViewEntry);
+	public void onAdd(Entry contentViewEntry) {
+		super.onAdd(contentViewEntry);
 		if (isOutOfSpace()) {
 			throw new IllegalStateException("weight limit out of bounds in RowLayout");
 		}

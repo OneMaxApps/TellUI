@@ -46,7 +46,7 @@ public final class Launcher extends PApplet {
 	@Override
 	public void setup() {
 		MicroUI.setContext(this);
-//		MicroUI.setDebugModeEnabled(true);
+		MicroUI.setDebugModeEnabled(true);
 		ThemeManager.setTheme(new ThemeBlack());
 
 		cm = ContainerManager.getInstance();
@@ -91,12 +91,12 @@ public final class Launcher extends PApplet {
 	}
 
 	private Container getContainerMain() {
-		Container container = new Container(new GridLayout(3, 3));
+		Container container = new Container(new GridLayout(3, 4));
 
 		Container ContainerMenuItem = new Container(new ColumnLayout());
 		ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
 
-		ContainerMenuItem.add(new Button("show all components"), new ColumnLayoutParams(.2f), () -> cm.switchOn("all_components"));
+		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")), new ColumnLayoutParams(.2f));
 
 		MenuButton menuButtonOfComponents;
 		ContainerMenuItem.add(
@@ -115,7 +115,7 @@ public final class Launcher extends PApplet {
 		menuButtonOfComponents.getItem("TextField").onClick(() -> cm.switchOn("TextField"));
 		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
 
-		container.add(ContainerMenuItem, new GridLayoutParams(0, 0));
+		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
 
 		return container;
 	}

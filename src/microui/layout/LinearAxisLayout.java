@@ -1,6 +1,6 @@
 package microui.layout;
 
-import microui.core.base.Container.ContentViewEntry;
+import microui.core.base.Container.Entry;
 import microui.core.base.ContentView;
 
 public abstract class LinearAxisLayout extends LayoutManager {
@@ -17,7 +17,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		float containerW = getContainer().getWidth();
 		float containerH = getContainer().getHeight();
 
-		for (ContentViewEntry entry : getContentViewEntryList()) {
+		for (Entry entry : getEntryList()) {
 			ContentView contentView = entry.contentView();
 			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 
@@ -65,7 +65,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		ctx.stroke(0);
 		ctx.fill(200, 0, 0, 32);
 
-		getContentViewEntryList().forEach(entry -> {
+		getEntryList().forEach(entry -> {
 			ContentView contentView = entry.contentView();
 			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 			if (isVerticalMode) {
@@ -103,7 +103,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 
 	protected boolean isOutOfSpace() {
 		float usedWeight = 0;
-		for (ContentViewEntry entry : getContentViewEntryList()) {
+		for (Entry entry : getEntryList()) {
 			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 			usedWeight += params.getWeight();
 		}

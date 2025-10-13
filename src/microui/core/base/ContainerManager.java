@@ -23,22 +23,26 @@ import processing.event.MouseEvent;
 //Status: STABLE - Do not modify
 //Last Reviewed: 26.09.2025
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
-	private static ContainerManager instance;
+	private static final ContainerManager INSTANCE;
+	private static boolean isInitialized, isCanDraw, isAnimationEnabled;
 	private final List<Container> containerList;
 	private final Animation animation;
-	private static boolean isInitialized, isCanDraw;
-	private boolean isAnimationEnabled;
 	private Container prevContainer, currentContainer;
 	private final TooltipManager tooltipManager;
+	
+	static {
+		INSTANCE = new ContainerManager();
+	}
 
 	private ContainerManager() {
 		setVisible(true);
 		containerList = new ArrayList<Container>();
 		animation = new Animation();
 		setAnimationEnabled(true);
-
+		
 		tooltipManager = TooltipManager.getInstance();
-
+		
+		
 		getContext().registerMethod("keyPressed", this);
 		getContext().registerMethod("keyEvent", this);
 		getContext().registerMethod("mouseEvent", this);
@@ -247,12 +251,12 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				.orElseThrow(() -> new RuntimeException("container is not found"));
 	}
 
-	public boolean isAnimationEnabled() {
+	public static boolean isAnimationEnabled() {
 		return isAnimationEnabled;
 	}
 
-	public void setAnimationEnabled(boolean isAnimationEnabled) {
-		this.isAnimationEnabled = isAnimationEnabled;
+	public static void setAnimationEnabled(boolean isAnimationEnabled) {
+		ContainerManager.isAnimationEnabled = isAnimationEnabled;
 	}
 
 	public static final boolean isInitialized() {
@@ -268,12 +272,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public static ContainerManager getInstance() {
-		if (instance == null) {
-			instance = new ContainerManager();
-			isInitialized = true;
-		}
-
-		return instance;
+		isInitialized = true;
+		return INSTANCE;
 	}
 
 	public final class Render {

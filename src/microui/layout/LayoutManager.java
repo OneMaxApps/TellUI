@@ -4,24 +4,24 @@ import java.util.List;
 
 import microui.MicroUI;
 import microui.core.base.Container;
-import microui.core.base.Container.ContentViewEntry;
+import microui.core.base.Container.Entry;
 import processing.core.PApplet;
 
 public abstract class LayoutManager {
 	protected PApplet ctx = MicroUI.getContext();
 	private Container container;
-	private List<Container.ContentViewEntry> contentViewEntryList;
+	private List<Container.Entry> entryList;
 
 	public abstract void recalculate();
 
 	public abstract void debugOnDraw();
 
-	public void onAddContentView(ContentViewEntry contentViewEntry) {
-		checkCorrectParams(contentViewEntry.layoutParams());
+	public void onAdd(Entry entry) {
+		checkCorrectParams(entry.layoutParams());
 		recalculate();
 	}
 
-	public void onRemoveContentView() {
+	public void onRemove() {
 		recalculate();
 	}
 
@@ -34,11 +34,11 @@ public abstract class LayoutManager {
 			throw new NullPointerException("container cannot be null");
 		}
 		this.container = container;
-		contentViewEntryList = container.getContentViewEntryList();
+		entryList = container.getEntryList();
 	}
 
-	protected final List<ContentViewEntry> getContentViewEntryList() {
-		return contentViewEntryList;
+	protected final List<Entry> getEntryList() {
+		return entryList;
 	}
 
 	protected abstract void checkCorrectParams(LayoutParams layoutParams);
