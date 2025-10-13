@@ -2,12 +2,11 @@ package microui.core.effect;
 
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
+import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
-import microui.core.style.Color;
-import microui.core.style.theme.ThemeManager;
 import microui.util.MathUtils;
 import microui.util.Metrics;
 import processing.core.PGraphics;
@@ -23,12 +22,12 @@ public final class Ripples extends View {
 	public Ripples(Component component) {
 		super();
 		setVisible(true);
-		
+
 		animation = new Animation();
-		
+
 		this.component = requireNonNull(component, "component cannot be null");
 		initCallbackForComponent();
-		
+
 		setEnabled(true);
 	}
 
@@ -53,7 +52,8 @@ public final class Ripples extends View {
 		pg.popStyle();
 		pg.endDraw();
 
-		ctx.image(pg, (int) component.getPadX(), (int) component.getPadY(), (int) component.getPadWidth(), (int) component.getPadHeight());
+		ctx.image(pg, (int) component.getPadX(), (int) component.getPadY(), (int) component.getPadWidth(),
+				(int) component.getPadHeight());
 	}
 
 	public boolean isEnabled() {
@@ -91,7 +91,7 @@ public final class Ripples extends View {
 	private boolean isComponentResized() {
 		return pg.width != (int) component.getPadWidth() || pg.height != (int) component.getPadHeight();
 	}
-	
+
 	private void initCallbackForComponent() {
 		component.onClick(() -> {
 			if (pg == null) {
@@ -115,17 +115,18 @@ public final class Ripples extends View {
 		private boolean isPositionPrepared;
 
 		Animation() {
-			color = new Color(ThemeManager.getTheme().getRipplesColor());
+			color = getTheme().getRipplesColor();
 		}
 
 		void render(PGraphics pg) {
 			if (!isLaunched) {
 				return;
 			}
-			
+
 			pg.noStroke();
 			color.apply(pg);
-			pg.fill(color.getRed(), color.getGreen(), color.getBlue(), max(0, 190 - MathUtils.convert(radius, 0, maxRadius, 0, 190)));
+			pg.fill(color.getRed(), color.getGreen(), color.getBlue(),
+					max(0, 190 - MathUtils.convert(radius, 0, maxRadius, 0, 190)));
 			pg.circle(startX, startY, radius);
 
 			radius += getSpeed();
@@ -162,14 +163,14 @@ public final class Ripples extends View {
 		}
 
 		void recalculateMaxRadius() {
-			maxRadius = MathUtils.dist(0, 0, component.getPadWidth(), component.getPadHeight())*2;
+			maxRadius = MathUtils.dist(0, 0, component.getPadWidth(), component.getPadHeight()) * 2;
 		}
 
 		void complete() {
 			resetState();
 			isLaunched = false;
 		}
-		
+
 		float getSpeed() {
 			return ((maxRadius + (radius * .2f)) * .04f);
 		}

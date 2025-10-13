@@ -9,35 +9,34 @@ import microui.MicroUI;
 public abstract class ContentView extends SpatialView {
 	private final Padding padding;
 	private final Margin margin;
-	
+
 	public ContentView(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setVisible(true);
 		setConstrainDimensionsEnabled(true);
 		setNegativeDimensionsEnabled(false);
-		
+
 		padding = new Padding();
 		margin = new Margin();
-		
+
 		setPaddingEnabled(true);
 		setMarginEnabled(true);
 	}
 
 	public ContentView() {
-		this(0,0,0,0);
+		this(0, 0, 0, 0);
 	}
-	
+
 	@Override
 	public void draw() {
 		if (!isVisible()) {
 			return;
 		}
-		
+
 		super.draw();
-		
+
 		debugOnDraw();
 	}
-	
 
 	public final ContentView setPaddingLeft(float left) {
 		padding.setLeft(left);
@@ -83,7 +82,8 @@ public abstract class ContentView extends SpatialView {
 
 	public final ContentView copyPaddingFrom(ContentView otherContentView) {
 		setPadding(requireNonNull(otherContentView, "other ContentView cannot be null").getPaddingLeft(),
-				otherContentView.getPaddingRight(), otherContentView.getPaddingTop(), otherContentView.getPaddingBottom());
+				otherContentView.getPaddingRight(), otherContentView.getPaddingTop(),
+				otherContentView.getPaddingBottom());
 		return this;
 	}
 
@@ -283,67 +283,67 @@ public abstract class ContentView extends SpatialView {
 		setAbsoluteSize(width, height);
 		setAbsolutePosition(x, y);
 	}
-	
+
 	public final void setMarginFrom(ContentView other) {
-		if(other == null) {
+		if (other == null) {
 			throw new NullPointerException("the other ContentView object cannot be null");
 		}
-		
-		setMargin(other.getMarginLeft(),other.getMarginRight(),other.getMarginTop(),other.getMarginBottom());
+
+		setMargin(other.getMarginLeft(), other.getMarginRight(), other.getMarginTop(), other.getMarginBottom());
 	}
-	
+
 	public final void setPaddingFrom(ContentView other) {
-		if(other == null) {
+		if (other == null) {
 			throw new NullPointerException("the other ContentView object cannot be null");
 		}
-		
-		setPadding(other.getPaddingLeft(),other.getPaddingRight(),other.getPaddingTop(),other.getPaddingBottom());
+
+		setPadding(other.getPaddingLeft(), other.getPaddingRight(), other.getPaddingTop(), other.getPaddingBottom());
 	}
-	
+
 	public final void setAbsolutePositionFrom(ContentView other) {
-		if(other == null) {
+		if (other == null) {
 			throw new NullPointerException("the other ContentView object cannot be null");
 		}
-		
-		setAbsolutePosition(other.getAbsoluteX(),other.getAbsoluteY());
+
+		setAbsolutePosition(other.getAbsoluteX(), other.getAbsoluteY());
 	}
-	
+
 	public final void setAbsoluteDimensionsFrom(ContentView other) {
-		if(other == null) {
+		if (other == null) {
 			throw new NullPointerException("the other ContentView object cannot be null");
 		}
-		
-		setAbsoluteSize(other.getAbsoluteWidth(),other.getAbsoluteHeight());
-		
+
+		setAbsoluteSize(other.getAbsoluteWidth(), other.getAbsoluteHeight());
+
 	}
-	
+
 	public final void setAbsoluteBoundsFrom(ContentView other) {
-		if(other == null) {
+		if (other == null) {
 			throw new NullPointerException("the other ContentView object cannot be null");
 		}
-		
+
 		setAbsolutePositionFrom(other);
 		setAbsoluteDimensionsFrom(other);
 	}
-	
+
 	private void debugOnDraw() {
 		if (MicroUI.isDebugModeEnabled()) {
 			ctx.pushStyle();
 			ctx.noFill();
 			ctx.strokeWeight(4);
 
-			if(hasMargin()) {
+			if (hasMargin()) {
 				// for showing margin area (Red rectangle)
 				ctx.stroke(200, 0, 0, 100);
 				ctx.rect(getAbsoluteX(), getAbsoluteY(), getAbsoluteWidth(), getAbsoluteHeight());
 			}
-			
-			if(hasPadding()) {
+
+			if (hasPadding()) {
 				// for showing pad area (Green rectangle)
 				ctx.stroke(0, 200, 0, 100);
 				ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 			}
-			
+
 			// for showing content area (Blue rectangle)
 			ctx.stroke(0, 0, 200, 100);
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
@@ -352,7 +352,7 @@ public abstract class ContentView extends SpatialView {
 			ctx.popStyle();
 		}
 	}
-	
+
 	private final class Padding {
 		float left, right, top, bottom;
 		boolean isEnabled;
@@ -431,7 +431,7 @@ public abstract class ContentView extends SpatialView {
 		}
 
 	}
-	
+
 	private final class Margin {
 		private float left, right, top, bottom;
 		private boolean isEnabled;

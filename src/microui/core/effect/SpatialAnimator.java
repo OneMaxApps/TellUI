@@ -17,29 +17,29 @@ public final class SpatialAnimator {
 	private SpatialView targetSpatialView;
 	private ReactionMode reactionMode;
 	private boolean isEnabled;
-	private boolean isPositionEnabled,isDimensionsEnabled;
-	
+	private boolean isPositionEnabled, isDimensionsEnabled;
+
 	public SpatialAnimator(SpatialState startSpatialState, SpatialState endSpatialState, BooleanSupplier condition) {
 		super();
-		
-		if(startSpatialState == null) {
+
+		if (startSpatialState == null) {
 			throw new NullPointerException("the startSpatialState object cannot be null");
 		}
-		
-		if(endSpatialState == null) {
+
+		if (endSpatialState == null) {
 			throw new NullPointerException("the endSpatialState object cannot be null");
 		}
-		
-		if(condition == null) {
+
+		if (condition == null) {
 			throw new NullPointerException("the condition object cannot be null");
 		}
-		
+
 		this.startSpatialState = startSpatialState;
 		this.endSpatialState = endSpatialState;
 		this.condition = condition;
-		
+
 		timer = new Timer();
-		
+
 //		setReactionMode(ReactionMode.TRIGGER);
 		setReactionMode(ReactionMode.REACTIVE);
 		setEnabled(true);
@@ -50,9 +50,9 @@ public final class SpatialAnimator {
 	public ReactionMode getReactionMode() {
 		return reactionMode;
 	}
-	
+
 	public void setReactionMode(ReactionMode reactionMode) {
-		if(reactionMode == null) {
+		if (reactionMode == null) {
 			throw new NullPointerException("the reactionMode object cannot be null");
 		}
 		this.reactionMode = reactionMode;
@@ -77,12 +77,12 @@ public final class SpatialAnimator {
 	public SpatialView getTargetSpatialView() {
 		return targetSpatialView;
 	}
-	
+
 	public void setTargetSpatialView(SpatialView targetSpatialView) {
-		if(targetSpatialView == null) {
+		if (targetSpatialView == null) {
 			throw new NullPointerException("the targetSpatialView object cannot be null");
 		}
-		
+
 		this.targetSpatialView = targetSpatialView;
 	}
 
@@ -95,39 +95,40 @@ public final class SpatialAnimator {
 	}
 
 	public void update() {
-		if(!isEnabled() || targetSpatialView == null) { return; }
-
-		switch(getReactionMode()) {
-			case REACTIVE:
-				timer.setIncrementing(condition.getAsBoolean());
-				break;
-				
-			case TRIGGER:
-				if(timer.isComplete()) {
-					timer.setIncrementing(condition.getAsBoolean());
-				}
-				break;
+		if (!isEnabled() || targetSpatialView == null) {
+			return;
 		}
-		
+
+		switch (getReactionMode()) {
+		case REACTIVE:
+			timer.setIncrementing(condition.getAsBoolean());
+			break;
+
+		case TRIGGER:
+			if (timer.isComplete()) {
+				timer.setIncrementing(condition.getAsBoolean());
+			}
+			break;
+		}
+
 		timer.update();
 
-		if(isPositionEnabled()) {
-			targetSpatialView.setX(lerp(startSpatialState.x(),endSpatialState.x()));
-			targetSpatialView.setY(lerp(startSpatialState.y(),endSpatialState.y()));
+		if (isPositionEnabled()) {
+			targetSpatialView.setX(lerp(startSpatialState.x(), endSpatialState.x()));
+			targetSpatialView.setY(lerp(startSpatialState.y(), endSpatialState.y()));
 		}
-		
-		if(isDimensionsEnabled()) {
-			targetSpatialView.setWidth(lerp(startSpatialState.width(),endSpatialState.width()));
-			targetSpatialView.setHeight(lerp(startSpatialState.height(),endSpatialState.height()));
+
+		if (isDimensionsEnabled()) {
+			targetSpatialView.setWidth(lerp(startSpatialState.width(), endSpatialState.width()));
+			targetSpatialView.setHeight(lerp(startSpatialState.height(), endSpatialState.height()));
 		}
-		
+
 	}
-	
+
 	public static enum ReactionMode {
-		REACTIVE,
-		TRIGGER;
+		REACTIVE, TRIGGER;
 	}
-	
+
 	private float lerp(float start, float end) {
 		return convert(timer.getCurrent(), START, END, start, end);
 	}

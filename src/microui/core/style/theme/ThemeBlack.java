@@ -29,17 +29,17 @@ public class ThemeBlack extends AbstractTheme {
 
 	@Override
 	public AbstractColor getHoverColor() {
-		return new Color(200,24);
+		return new Color(200, 24);
 	}
 
 	@Override
 	public AbstractColor getRipplesColor() {
-		return new Color(100,10);
+		return new Color(100, 10);
 	}
 
 	@Override
 	public AbstractColor getPrimaryColor() {
-		return new Color(232,128);
+		return new Color(232, 128);
 	}
 
 	@Override
@@ -51,12 +51,12 @@ public class ThemeBlack extends AbstractTheme {
 	public AbstractColor getSelectColor() {
 		return new Color(0, 0, 154, 32);
 	}
-	
+
 	@Override
 	public AbstractColor getCursorColor() {
-		return new Color(255,232);
+		return new Color(255, 232);
 	}
-	
+
 	@Override
 	public AbstractColor getEditableBackgroundColor() {
 		return Color.GRAY_128L;
@@ -64,13 +64,13 @@ public class ThemeBlack extends AbstractTheme {
 
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new GradientColor(Color.TRANSPARENT, new Color(0,200), () -> true);
+		return new GradientColor(Color.TRANSPARENT, new Color(0, 200), () -> true);
 	}
 
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.WHITE, new Color(255,154)), () -> true);
+		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.WHITE, new Color(255, 154)),
+				() -> true);
 	}
-	
-	
+
 }

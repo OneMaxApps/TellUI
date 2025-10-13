@@ -6,7 +6,7 @@ public final class Event extends AbstractEventSystem {
 
 	public Event(SpatialView spatialView) {
 		super(spatialView);
-		
+
 	}
 
 	public boolean isPress() {

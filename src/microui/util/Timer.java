@@ -6,7 +6,7 @@ public final class Timer {
 	public static final int END = 1;
 	private float currentTime, speed;
 	private boolean isIncrementing;
-	
+
 	public Timer() {
 		super();
 		setSpeed(DEFAULT_SPEED);
@@ -19,7 +19,7 @@ public final class Timer {
 	public float getCurrent() {
 		return currentTime;
 	}
-	
+
 	public void reset() {
 		setCurrentTime(START);
 	}
@@ -39,7 +39,7 @@ public final class Timer {
 		}
 		this.speed = speed;
 	}
-	
+
 	public boolean isIncrementing() {
 		return isIncrementing;
 	}

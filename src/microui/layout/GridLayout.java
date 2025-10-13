@@ -1,7 +1,7 @@
 package microui.layout;
 
-import microui.core.base.Component;
-import microui.core.base.Container.ComponentEntry;
+import microui.core.base.Container.ContentViewEntry;
+import microui.core.base.ContentView;
 
 public final class GridLayout extends LayoutManager {
 	private int columns, rows;
@@ -17,7 +17,7 @@ public final class GridLayout extends LayoutManager {
 	public void debugOnDraw() {
 		ctx.pushStyle();
 		ctx.stroke(0, 128);
-		ctx.fill(200,0,0,32);
+		ctx.fill(200, 0, 0, 32);
 		for (int col = 0; col < columns; col++) {
 			for (int row = 0; row < rows; row++) {
 				ctx.rect(getContainer().getX() + (getContainer().getWidth() / columns) * col,
@@ -45,9 +45,9 @@ public final class GridLayout extends LayoutManager {
 		float colWidth = containerW / getColumns();
 		float rowHeight = containerH / getRows();
 
-		for (int i = 0; i < getComponentEntryList().size(); i++) {
-			Component component = getComponentEntryList().get(i).getComponent();
-			GridLayoutParams params = (GridLayoutParams) getComponentEntryList().get(i).getLayoutParams();
+		for (int i = 0; i < getContentViewEntryList().size(); i++) {
+			ContentView component = getContentViewEntryList().get(i).contentView();
+			GridLayoutParams params = (GridLayoutParams) getContentViewEntryList().get(i).layoutParams();
 
 			checkOutOfGrid(params);
 
@@ -55,7 +55,7 @@ public final class GridLayout extends LayoutManager {
 			float requiredCellY = containerY + rowHeight * params.getRow();
 			float requiredCellWidth = colWidth * params.getColumnSpan();
 			float requiredCellHeight = rowHeight * params.getRowSpan();
-			
+
 			switch (getContainer().getContainerMode()) {
 			case IGNORE_CONSTRAINTS:
 				component.setConstrainDimensionsEnabled(false);
@@ -70,21 +70,24 @@ public final class GridLayout extends LayoutManager {
 				// allowed it
 				// also this mode don't control constrain mode for them, that need to be
 				// controlled with user settings like setConstrainDimensionsEnabled(boolean) etc
-				
-				// if constrain in the component is enabled, them it's not guaranteed about correct resize
+
+				// if constrain in the component is enabled, them it's not guaranteed about
+				// correct resize
 				component.setAbsoluteSize(requiredCellWidth, requiredCellHeight);
-				
+
 				float alignXLeft = requiredCellX;
-				float alignXCenter = requiredCellX+requiredCellWidth/2-component.getAbsoluteWidth()/2;
-				float alignXRight = requiredCellX+requiredCellWidth-component.getAbsoluteWidth();
-				
+				float alignXCenter = requiredCellX + requiredCellWidth / 2 - component.getAbsoluteWidth() / 2;
+				float alignXRight = requiredCellX + requiredCellWidth - component.getAbsoluteWidth();
+
 				float alignYTop = requiredCellY;
-				float alignYCenter = requiredCellY+requiredCellHeight/2-component.getAbsoluteHeight()/2;
-				float alignYBottom = requiredCellY+requiredCellHeight-component.getAbsoluteHeight();
-				
-				float correctPosX = params.getAlignX() == -1 ? alignXLeft : params.getAlignX() == 1 ? alignXRight : alignXCenter;
-				float correctPosY =  params.getAlignY() == -1 ? alignYTop : params.getAlignY() == 1 ? alignYBottom : alignYCenter;
-	
+				float alignYCenter = requiredCellY + requiredCellHeight / 2 - component.getAbsoluteHeight() / 2;
+				float alignYBottom = requiredCellY + requiredCellHeight - component.getAbsoluteHeight();
+
+				float correctPosX = params.getAlignX() == -1 ? alignXLeft
+						: params.getAlignX() == 1 ? alignXRight : alignXCenter;
+				float correctPosY = params.getAlignY() == -1 ? alignYTop
+						: params.getAlignY() == 1 ? alignYBottom : alignYCenter;
+
 				component.setAbsolutePosition(correctPosX, correctPosY);
 
 				break;
@@ -94,8 +97,8 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	@Override
-	public void onAddComponent(ComponentEntry componentEntry) {
-		super.onAddComponent(componentEntry);
+	public void onAddContentView(ContentViewEntry componentEntry) {
+		super.onAddContentView(componentEntry);
 		checkComponentsForOverlap();
 	}
 
@@ -129,13 +132,13 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	private void checkComponentsForOverlap() {
-		for (ComponentEntry entry : getComponentEntryList()) {
+		for (ContentViewEntry entry : getContentViewEntryList()) {
 
-			GridLayoutParams params = (GridLayoutParams) entry.getLayoutParams();
+			GridLayoutParams params = (GridLayoutParams) entry.layoutParams();
 
-			for (ComponentEntry otherEntry : getComponentEntryList()) {
+			for (ContentViewEntry otherEntry : getContentViewEntryList()) {
 
-				GridLayoutParams paramsOther = (GridLayoutParams) otherEntry.getLayoutParams();
+				GridLayoutParams paramsOther = (GridLayoutParams) otherEntry.layoutParams();
 
 				int pc = params.getColumn(), pcs = params.getColumnSpan(), pr = params.getRow(),
 						prs = params.getRowSpan();

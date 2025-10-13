@@ -1,13 +1,13 @@
 package microui.layout;
 
-import microui.core.base.Container.ComponentEntry;
+import microui.core.base.Container.ContentViewEntry;
 
 public final class ColumnLayout extends LinearAxisLayout {
-	
+
 	@Override
-	public void onAddComponent(ComponentEntry componentEntry) {
-		super.onAddComponent(componentEntry);
-		if(isOutOfSpace()) {
+	public void onAddContentView(ContentViewEntry componentEntry) {
+		super.onAddContentView(componentEntry);
+		if (isOutOfSpace()) {
 			throw new IllegalStateException("weight limit out of bounds in ColumnLayout");
 		}
 	}

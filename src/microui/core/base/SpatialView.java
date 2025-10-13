@@ -24,7 +24,7 @@ public abstract class SpatialView extends View {
 	private HooksUpdateMode hooksUpdateMode;
 
 	private SpatialAnimator spatialAnimator;
-	
+
 	public SpatialView(float x, float y, float width, float height) {
 		initDefaultMinMaxSize();
 		setBounds(x, y, width, height);
@@ -47,7 +47,7 @@ public abstract class SpatialView extends View {
 		}
 
 		boolean isHooksCalling = isPosDirty || isDimDirty;
-		
+
 		if (hooksUpdateMode == REACTIVE) {
 			hooksUpdate();
 		} else {
@@ -58,27 +58,27 @@ public abstract class SpatialView extends View {
 		}
 
 		super.draw();
-		
-		if(isHooksCalling) {
-			debugOnDraw();	
+
+		if (isHooksCalling) {
+			debugOnDraw();
 		}
-		
-		if(spatialAnimator != null) {
+
+		if (spatialAnimator != null) {
 			spatialAnimator.update();
 		}
 	}
-	
+
 	public final SpatialAnimator getSpatialAnimator() {
 		return spatialAnimator;
 	}
 
 	public final void setSpatialAnimator(SpatialAnimator spatialAnimator) {
-		if(spatialAnimator == null) {
+		if (spatialAnimator == null) {
 			throw new NullPointerException("the spatialAnimator object cannot be null");
 		}
-		
+
 		this.spatialAnimator = spatialAnimator;
-		
+
 		spatialAnimator.setTargetSpatialView(this);
 	}
 
@@ -240,7 +240,7 @@ public abstract class SpatialView extends View {
 		setMinSize(minSize);
 		setMaxSize(maxSize);
 	}
-	
+
 	public final void setMinMaxSize(float minWidth, float minHeight, float maxWidth, float maxHeight) {
 		setMinWidth(minWidth);
 		setMinHeight(minHeight);
@@ -311,107 +311,109 @@ public abstract class SpatialView extends View {
 	}
 
 	public final void setHooksUpdateMode(HooksUpdateMode hooksUpdateMode) {
-		if(hooksUpdateMode == null) { throw new NullPointerException("hooksUpdateMode cannot be null"); }
+		if (hooksUpdateMode == null) {
+			throw new NullPointerException("hooksUpdateMode cannot be null");
+		}
 		this.hooksUpdateMode = hooksUpdateMode;
 	}
 
 	public final void setXFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setX(other.getX());
 	}
 
 	public final void setYFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setY(other.getY());
 	}
 
 	public final void setHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setHeight(other.getHeight());
 	}
 
 	public final void setWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setWidth(other.getWidth());
 	}
 
 	public final void setPositionFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setPosition(other.getX(), other.getY());
 	}
 
 	public final void setSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setSize(other.getWidth(), other.getHeight());
 	}
 
 	public final void setBoundsFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setBounds(other.getX(), other.getY(), other.getWidth(), other.getHeight());
 	}
 
 	public final void setMinWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMinWidth(other.getMinWidth());
 	}
 
 	public final void setMinHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMinHeight(other.getMinHeight());
 	}
 
 	public final void setMaxWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMaxWidth(other.getMaxWidth());
 	}
 
 	public final void setMaxHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMaxHeight(other.getMaxHeight());
 	}
 
 	public final void setMaxSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMaxWidthFrom(other);
 		setMaxHeightFrom(other);
 	}
 
 	public final void setMinSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMinWidthFrom(other);
 		setMinHeightFrom(other);
 	}
 
 	public final void setMinMaxSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMinSize(other.getMinWidth(), other.getMinHeight());
 		setMaxSize(other.getMaxWidth(), other.getMaxHeight());
 	}
 
 	public final void setSpatialConfigFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setConstrainConfigFrom(other);
 		setBoundsFrom(other);
 	}
 
 	public final void setConstrainConfigFrom(SpatialView other) {
 		checkSpatialViewObject(other);
-		
+
 		setMinWidth(other.getMinWidth());
 		setMinHeight(other.getMinHeight());
 		setMaxWidth(other.getMaxWidth());
@@ -462,8 +464,8 @@ public abstract class SpatialView extends View {
 		return abs(firstValue - secondValue) < EPSILON;
 	}
 
-	//static int hooksCalledCount;
-	private void hooksUpdate() {	
+	// static int hooksCalledCount;
+	private void hooksUpdate() {
 		if (isPosDirty || isDimDirty) {
 			onChangeBounds();
 			if (isPosDirty) {
@@ -472,10 +474,10 @@ public abstract class SpatialView extends View {
 			if (isDimDirty) {
 				onChangeDimensions();
 			}
-			//hooksCalledCount++;
-			//System.out.println("count of called hooks: "+hooksCalledCount);
-			//Metrics.printAll();
-			
+			// hooksCalledCount++;
+			// System.out.println("count of called hooks: "+hooksCalledCount);
+			// Metrics.printAll();
+
 			isPosDirty = isDimDirty = false;
 		}
 	}
@@ -515,20 +517,19 @@ public abstract class SpatialView extends View {
 
 	private void checkSpatialViewObject(SpatialView other) {
 		requireNonNull(other, "other SpatialView cannot be null");
-		
+
 		if (other == this) {
 			throw new IllegalArgumentException("Cannot set property from itself");
 		}
 	}
-	
+
 	private void debugOnDraw() {
-		if(MicroUI.isDebugModeEnabled()) {
-			ctx.fill(255,0,0,64);
+		if (MicroUI.isDebugModeEnabled()) {
+			ctx.fill(255, 0, 0, 64);
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
 		}
 	}
 
-	
 	public static enum HooksUpdateMode {
 		REACTIVE(0), FAST(16), NORMAL(32), SLOW(64), VERY_SLOW(128);
 
@@ -541,7 +542,7 @@ public abstract class SpatialView extends View {
 		public int getMs() {
 			return ms;
 		}
-		
+
 	}
-	
+
 }

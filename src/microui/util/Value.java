@@ -12,7 +12,7 @@ public final class Value {
 	private Listener onChangeValueListener;
 
 	public Value(float min, float max, float value) {
-		set(min,max,value);
+		set(min, max, value);
 	}
 
 	public Value(float max) {
@@ -28,17 +28,17 @@ public final class Value {
 	}
 
 	public Value setMin(float min) {
-		if(min > max) {
+		if (min > max) {
 			throw new IllegalStateException("min value cannot be greater than max value");
 		}
-		
+
 		this.min = min;
-		
+
 		if (min > value) {
 			value = min;
 			onChangeValue();
 		}
-		
+
 		return this;
 	}
 
@@ -47,17 +47,17 @@ public final class Value {
 	}
 
 	public Value setMax(float max) {
-		if(max < min) {
+		if (max < min) {
 			throw new IllegalStateException("max value cannot be lower than min value");
 		}
-		
+
 		this.max = max;
-		
+
 		if (max < value) {
 			value = max;
 			onChangeValue();
 		}
-		
+
 		return this;
 	}
 
@@ -66,10 +66,12 @@ public final class Value {
 	}
 
 	public Value set(float value) {
-		if(this.value == value) { return this; }
-		this.value = constrain(value,getEffectiveMin(),getEffectiveMax());
+		if (this.value == value) {
+			return this;
+		}
+		this.value = constrain(value, getEffectiveMin(), getEffectiveMax());
 		onChangeValue();
-		
+
 		return this;
 	}
 
@@ -77,26 +79,26 @@ public final class Value {
 		setMin(min);
 		setMax(max);
 		set(value);
-		
+
 		return this;
 	}
 
 	public Value setMinMax(float min, float max) {
 		setMin(min);
 		setMax(max);
-		
+
 		return this;
 	}
 
 	public Value append(float append) {
-		set(get()+append);
-		
+		set(get() + append);
+
 		return this;
 	}
 
 	public Value setSilently(float value) {
 		this.value = value;
-		
+
 		return this;
 	}
 
@@ -108,7 +110,7 @@ public final class Value {
 		if (onChangeValueListener != null) {
 			onChangeValueListener.action();
 		}
-		
+
 		return this;
 	}
 
@@ -117,18 +119,18 @@ public final class Value {
 			throw new NullPointerException("onChangeValueListener cannot be null");
 		}
 		this.onChangeValueListener = onChangeValueListener;
-		
+
 		return this;
 	}
-	
+
 	public float getEffectiveMin() {
-		return min(min,max);
+		return min(min, max);
 	}
-	
+
 	public float getEffectiveMax() {
-		return max(min,max);
+		return max(min, max);
 	}
-	
+
 	public static float constrain(float value, float min, float max) {
 		return value < min ? min : value > max ? max : value;
 	}

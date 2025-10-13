@@ -4,9 +4,9 @@ package microui.core.style;
 //Last Reviewed: 11.10.2025
 public class GradientLoopColor extends AbstractGradientColor {
 	private boolean isLoopEnabled;
-	
+
 	public GradientLoopColor(AbstractColor start, AbstractColor end) {
-		super(start,end);
+		super(start, end);
 		setLoopEnabled(true);
 		getAnimator().setSpeed(.01f);
 	}
@@ -18,11 +18,11 @@ public class GradientLoopColor extends AbstractGradientColor {
 	public final void setLoopEnabled(boolean isLoopEnabled) {
 		getAnimator().setLoopEnabled(isLoopEnabled);
 	}
-	
+
 	@Override
 	protected void preApply() {
 		super.preApply();
-		if(isLoopEnabled) {
+		if (isLoopEnabled) {
 			getAnimator().update();
 		}
 	}

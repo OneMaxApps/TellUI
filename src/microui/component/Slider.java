@@ -14,23 +14,23 @@ public class Slider extends LinearRangeControl {
 
 	public Slider(float x, float y, float w, float h) {
 		super(x, y, w, h);
-		progress = new Rect(x,y,w,h);
-		
+		progress = new Rect(x, y, w, h);
+
 		setValue(0, 100, 0);
 
 		onDragging(() -> {
 			recalculateProgressBounds();
 		});
-		
+
 		onPress(() -> {
 			recalculateProgressBounds();
 		});
 	}
 
 	public Slider() {
-		this(0,0,0,0);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
+		this(0, 0, 0, 0);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class Slider extends LinearRangeControl {
 	public final void setProgressColor(AbstractColor color) {
 		progress.color = color;
 	}
-	
+
 	private void recalculateProgressBounds() {
 		switch (getOrientation()) {
 		case HORIZONTAL:
@@ -116,13 +116,13 @@ public class Slider extends LinearRangeControl {
 		}
 
 	}
-	
+
 	private void updateProgressBounds() {
 		if (progress == null) {
 			return;
 		}
 
-		progress.setBounds(getX(),getY(),getWidth(),getHeight());
+		progress.setBounds(getX(), getY(), getWidth(), getHeight());
 
 		switch (getOrientation()) {
 

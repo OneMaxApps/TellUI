@@ -6,7 +6,6 @@ import static processing.core.PConstants.PROJECT;
 
 import microui.core.AbstractButton;
 import microui.core.style.AbstractColor;
-import microui.core.style.Color;
 import microui.event.Listener;
 
 public class CheckBox extends AbstractButton {
@@ -18,11 +17,11 @@ public class CheckBox extends AbstractButton {
 		super(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
 		setMinMaxSize(DEFAULT_SIZE);
 		onClick(() -> toggle());
-		markColor = new Color(getTheme().getPrimaryColor());
+		markColor = getTheme().getPrimaryColor();
 	}
 
 	public CheckBox(boolean isChecked) {
-		this(ctx.width/2-DEFAULT_SIZE/2, ctx.height/2-DEFAULT_SIZE/2);
+		this(ctx.width / 2 - DEFAULT_SIZE / 2, ctx.height / 2 - DEFAULT_SIZE / 2);
 		setChecked(isChecked);
 	}
 
@@ -84,5 +83,5 @@ public class CheckBox extends AbstractButton {
 				getY() + getHeight() * .8f);
 		ctx.popStyle();
 	}
-	
+
 }

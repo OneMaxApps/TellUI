@@ -14,28 +14,26 @@ import microui.core.ImageBuffer;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.Color;
-import microui.event.Listener;
 import microui.layout.LayoutManager;
 import microui.layout.LayoutParams;
 import processing.core.PImage;
 import processing.event.MouseEvent;
 
-
 public final class Container extends Component implements KeyPressable, Scrollable {
-	private final List<ComponentEntry> componentEntryList;
+	private final List<ContentViewEntry> contentViewEntryList;
 	private final LayoutManager layoutManager;
 	private ImageBuffer backgroundImage;
 	private ContainerMode containerMode;
 	private int maxPriority;
-	
+
 	public Container(LayoutManager layoutManager, float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setConstrainDimensionsEnabled(false);
-		setMinMaxSize(1,1,width,height);
-		
-		setBackgroundColor(new Color(0,0));
+		setMinMaxSize(1, 1, width, height);
 
-		componentEntryList = new ArrayList<ComponentEntry>();
+		setBackgroundColor(Color.TRANSPARENT);
+
+		contentViewEntryList = new ArrayList<ContentViewEntry>();
 
 		this.layoutManager = requireNonNull(layoutManager, "layout manager cannot be null");
 		layoutManager.setContainer(this);
@@ -54,18 +52,18 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 		debugOnDraw();
 
-		componentsOnDraw();
+		contentViewsOnDraw();
 	}
 
 	@Override
 	public void mouseWheel(MouseEvent event) {
-		if (componentEntryList.isEmpty()) {
+		if (contentViewEntryList.isEmpty()) {
 			return;
 		}
 
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component instanceof Scrollable scrollable) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView instanceof Scrollable scrollable) {
 				scrollable.mouseWheel(event);
 			}
 		}
@@ -74,123 +72,105 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	@Override
 	public void keyPressed() {
-		if (componentEntryList.isEmpty()) {
+		if (contentViewEntryList.isEmpty()) {
 			return;
 		}
 
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component instanceof KeyPressable pressable) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView instanceof KeyPressable pressable) {
 				pressable.keyPressed();
 			}
 		}
-		
+
 	}
 
-	public Component getComponentById(final int id) {
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component.getId() == id) {
-				return component;
+	public ContentView getContentViewById(final int id) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView.getId() == id) {
+				return contentView;
 			}
 		}
-		
-		throw new IllegalArgumentException("component with id: " + id + " is not found in to this Container");
+
+		throw new IllegalArgumentException("contentView with id: " + id + " is not found in to this Container");
 	}
-	
+
 	public Container getContainerById(final int id) {
-		return (Container) getComponentById(id);
+		return (Container) getContentViewById(id);
 	}
 
-	public Component getComponentByTextId(final String textId) {
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component.getTextId().equals(textId)) {
-				return component;
+	public ContentView getContentViewByTextId(final String textId) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView.getTextId().equals(textId)) {
+				return contentView;
 			}
 		}
-		
-		throw new IllegalArgumentException("component with text id: " + textId + " is not found in to this Container");
-	}
-	
-	public Component getContainerByTextId(final String textId) {
-		return (Container) getComponentByTextId(textId);
+
+		throw new IllegalArgumentException("contentView with text id: " + textId + " is not found in to this Container");
 	}
 
-	public Container addComponent(Component component, LayoutParams layoutParams, int id) {
-		addComponentSafe(component, layoutParams);
-		component.setId(id);
+	public ContentView getContainerByTextId(final String textId) {
+		return (Container) getContentViewByTextId(textId);
+	}
+
+	public Container addContentView(ContentView contentView, LayoutParams layoutParams, int id) {
+		addContentViewSafe(contentView, layoutParams);
+		contentView.setId(id);
 		return this;
 	}
 
-	public Container addComponent(Component component, LayoutParams layoutParams, int id, Listener onClickListener) {
-		addComponent(component, layoutParams, id);
-		component.onClick(onClickListener);
+	public Container addContentView(ContentView contentView, LayoutParams layoutParams, String textId) {
+		addContentViewSafe(contentView, layoutParams);
+		contentView.setTextId(textId);
 		return this;
 	}
 
-	public Container addComponent(Component component, LayoutParams layoutParams, String textId) {
-		addComponentSafe(component, layoutParams);
-		component.setTextId(textId);
+	public Container addContentView(ContentView contentView, LayoutParams layoutParams) {
+		addContentViewSafe(contentView, layoutParams);
 		return this;
 	}
 
-	public Container addComponent(Component component, LayoutParams layoutParams, String textId,Listener onClickListener) {
-		addComponent(component, layoutParams, textId);
-		component.onClick(onClickListener);
+	public Container removeContentView(ContentView contentView) {
+		removeContentViewSafe(contentView);
 		return this;
 	}
 
-	public Container addComponent(Component component, LayoutParams layoutParams) {
-		addComponentSafe(component, layoutParams);
-		return this;
-	}
-
-	public Container addComponent(Component component, LayoutParams layoutParams, Listener onClickListener) {
-		addComponent(component, layoutParams);
-		component.onClick(onClickListener);
-		return this;
-	}
-
-	public Container removeComponent(Component component) {
-		removeComponentSafe(component);
-		return this;
-	}
-
-	public Container removeComponentById(int id) {	
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component.getId() == id) {
-				removeComponentSafe(component);
+	public Container removeContentViewById(int id) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView.getId() == id) {
+				removeContentViewSafe(contentView);
 				return this;
 			}
 		}
-		
-		throw new IllegalArgumentException("component with id: \" "+ id +"\" is not found in to Container");
+
+		throw new IllegalArgumentException("contentView with id: \" " + id + "\" is not found in to Container");
 	}
-	
-	public Container removeComponentByTextId(String textId) {
-		if(textId == null) {
+
+	public Container removeContentViewByTextId(String textId) {
+		if (textId == null) {
 			throw new NullPointerException("textId cannot be null");
 		}
-		
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component component = componentEntryList.get(i).getComponent();
-			if(component.getTextId().equals(textId)) {
-				removeComponentSafe(component);
+
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView contentView = contentViewEntryList.get(i).contentView();
+			if (contentView.getTextId().equals(textId)) {
+				removeContentViewSafe(contentView);
 				return this;
 			}
 		}
-		
-		throw new IllegalArgumentException("component with text id: \""+ textId +"\" is not found in to Container");
+
+		throw new IllegalArgumentException("contentView with text id: \"" + textId + "\" is not found in to Container");
 	}
 
-	public void removeAllComponents() {
-		componentEntryList.clear();
+	public void removeAllContentViews() {
+		contentViewEntryList.clear();
 	}
 
-	public List<ComponentEntry> getComponentEntryList() {
-		return Collections.unmodifiableList(componentEntryList);
+	public List<ContentViewEntry> getContentViewEntryList() {
+		return Collections.unmodifiableList(contentViewEntryList);
 	}
 
 	public ContainerMode getContainerMode() {
@@ -201,7 +181,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		if (containerMode == null) {
 			throw new NullPointerException("containerMode cannot be null");
 		}
-		
+
 		if (this.containerMode == containerMode) {
 			return this;
 		}
@@ -215,9 +195,11 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	public void setBackgroundImage(PImage image) {
 		ensureBackgroundImage();
-		
-		if(image == backgroundImage.get()) { return; }
-		
+
+		if (image == backgroundImage.get()) {
+			return;
+		}
+
 		backgroundImage.set(image);
 		requestUpdate();
 	}
@@ -234,52 +216,51 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		if (layoutManager != null) {
 			layoutManager.recalculate();
 		}
-		
+
 		if (backgroundImage != null) {
 			backgroundImage.setBounds(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		}
 	}
-	
+
 	private void recalculateMaxPriority() {
 		maxPriority = 0;
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			int priority = componentEntryList.get(i).getComponent().getPriority();
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			int priority = contentViewEntryList.get(i).contentView().getPriority();
 			maxPriority = max(maxPriority, priority);
 		}
 	}
 
-	private void addComponentSafe(Component component, LayoutParams layoutParams) {
-		checkComponentNotNull(component);
+	private void addContentViewSafe(ContentView contentView, LayoutParams layoutParams) {
+		checkContentViewNotNull(contentView);
 		checkLayoutParamsNotNull(layoutParams);
-		checkComponentAlreadyAddedInList(component);
-		
-		ComponentEntry componentEntry = new ComponentEntry(component, layoutParams);
-		componentEntryList.add(componentEntry);
-		layoutManager.onAddComponent(componentEntry);
+		checkContentViewAlreadyAddedInList(contentView);
 
-		
+		ContentViewEntry contentViewEntry = new ContentViewEntry(contentView, layoutParams);
+		contentViewEntryList.add(contentViewEntry);
+		layoutManager.onAddContentView(contentViewEntry);
+
 		recalculateMaxPriority();
 	}
 
-	private void componentsOnDraw() {
-		if (componentEntryList.isEmpty()) {
+	private void contentViewsOnDraw() {
+		if (contentViewEntryList.isEmpty()) {
 			return;
 		}
-		
-		for(int priority = 0; priority <= maxPriority; priority++) {
-			for(int i = 0; i < componentEntryList.size(); i++) {
-				Component component = componentEntryList.get(i).getComponent();
-				if(component.getPriority() == priority) {
-					component.draw();
+
+		for (int priority = 0; priority <= maxPriority; priority++) {
+			for (int i = 0; i < contentViewEntryList.size(); i++) {
+				ContentView contentView = contentViewEntryList.get(i).contentView();
+				if (contentView.getPriority() == priority) {
+					contentView.draw();
 				}
 			}
 		}
-		
+
 	}
 
 	private void debugOnDraw() {
 		if (isDebugModeEnabled()) {
-			
+
 			ctx.pushStyle();
 			ctx.noStroke();
 			ctx.fill(0, 0, 255, 32);
@@ -290,9 +271,9 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	private void checkComponentNotNull(Component component) {
-		if (component == null) {
-			throw new NullPointerException("component cannot be null");
+	private void checkContentViewNotNull(ContentView contentView) {
+		if (contentView == null) {
+			throw new NullPointerException("contentView cannot be null");
 		}
 	}
 
@@ -302,13 +283,13 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	private void checkComponentAlreadyAddedInList(Component component) {
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			if(componentEntryList.get(i).getComponent() == component) {
-				throw new IllegalArgumentException("component cannot be added twice");
+	private void checkContentViewAlreadyAddedInList(ContentView contentView) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			if (contentViewEntryList.get(i).contentView() == contentView) {
+				throw new IllegalArgumentException("contentView cannot be added twice");
 			}
 		}
-		
+
 	}
 
 	private void backgroundOnDraw() {
@@ -327,59 +308,34 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 		backgroundImage = new ImageBuffer();
 	}
-	
-	private void removeComponentSafe(Component component) {
-		checkComponentNotNull(component);
-		checkComponentExistInList(component);
-		
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			Component c = componentEntryList.get(i).getComponent();
-			if(c == component) {
-				componentEntryList.remove(i);
+
+	private void removeContentViewSafe(ContentView contentView) {
+		checkContentViewNotNull(contentView);
+		checkContentViewExistInList(contentView);
+
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView c = contentViewEntryList.get(i).contentView();
+			if (c == contentView) {
+				contentViewEntryList.remove(i);
 			}
 		}
-		
-		layoutManager.onRemoveComponent();
-		
+
+		layoutManager.onRemoveContentView();
+
 		recalculateMaxPriority();
-		
+
 	}
-	
-	private void checkComponentExistInList(Component component) {
-		for(int i = 0; i < componentEntryList.size(); i++) {
-			if(componentEntryList.get(i).getComponent() == component) {
+
+	private void checkContentViewExistInList(ContentView contentView) {
+		for (int i = 0; i < contentViewEntryList.size(); i++) {
+			ContentView content = contentViewEntryList.get(i).contentView();
+			if (content == contentView) {
 				return;
 			}
 		}
 
-		throw new IllegalArgumentException("component not found in to Container");
+		throw new IllegalArgumentException("contentView not found in to Container");
 	}
-
-	public final static class ComponentEntry {
-		private final Component component;
-		private final LayoutParams layoutParams;
-
-		private ComponentEntry(Component component, LayoutParams layoutParams) {
-			super();
-			if(component == null) {
-				throw new NullPointerException("component cannot be null");
-			}
-			
-			if(layoutParams == null) {
-				throw new NullPointerException("layoutParams cannot be null");
-			}
-			
-			this.component = component;
-			this.layoutParams = layoutParams;
-		}
-
-		public final Component getComponent() {
-			return component;
-		}
-
-		public final LayoutParams getLayoutParams() {
-			return layoutParams;
-		}
-
-	}
+	
+	public static final record ContentViewEntry(ContentView contentView, LayoutParams layoutParams) {}
 }

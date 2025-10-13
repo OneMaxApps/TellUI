@@ -16,7 +16,7 @@ public class ImageBuffer extends SpatialView {
 
 	public ImageBuffer() {
 		setVisible(true);
-		color = new Color(255);
+		color = Color.WHITE;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class ImageBuffer extends SpatialView {
 		if (isLoaded()) {
 			ctx.pushStyle();
 			color.applyTint();
-			ctx.image(image, getX(), getY(),getWidth(),getHeight());
+			ctx.image(image, getX(), getY(), getWidth(), getHeight());
 			ctx.popStyle();
 		}
 	}
@@ -59,21 +59,21 @@ public class ImageBuffer extends SpatialView {
 	}
 
 	public final void setColor(AbstractColor color) {
-		if(color == null) {
+		if (color == null) {
 			throw new NullPointerException("the color cannot be null");
 		}
-		
+
 		this.color = color;
-		
+
 	}
 
 	public final void removeTexture() {
 		image = null;
 	}
-	
+
 	private static final void updateDimensionsOfImageCorrect(PImage image) {
-		if(image.width > ctx.width || image.height > ctx.height) {
-			image.resize((int) max(1,ctx.width) , (int) max(1,ctx.height));
+		if (image.width > ctx.width || image.height > ctx.height) {
+			image.resize((int) max(1, ctx.width), (int) max(1, ctx.height));
 		}
 	}
 }

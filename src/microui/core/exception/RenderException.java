@@ -6,5 +6,5 @@ public class RenderException extends MicroUIException {
 	public RenderException(String message) {
 		super(message);
 	}
-	
+
 }

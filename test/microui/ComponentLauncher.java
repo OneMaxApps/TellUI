@@ -1,6 +1,7 @@
 package microui;
 
-import microui.component.Button;
+import microui.component.EditText;
+import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
 import microui.core.effect.SpatialAnimator;
@@ -12,16 +13,16 @@ import microui.util.SpatialState;
 import processing.core.PApplet;
 
 public class ComponentLauncher extends PApplet {
-	
-	private Button button;
-	
+
+	private Component component;
+
 	public static void main(String[] args) {
 		PApplet.main("microui.ComponentLauncher");
 	}
 
 	@Override
 	public void settings() {
-		size(640,480);
+		size(640, 480);
 //		fullScreen();
 	}
 
@@ -31,19 +32,19 @@ public class ComponentLauncher extends PApplet {
 //		MicroUI.setDebugModeEnabled(true);
 		ThemeManager.setTheme(new ThemeBlack());
 		ContainerManager cm = ContainerManager.getInstance();
-		cm.add(new Container(new GridLayout(5,5)).addComponent(button = new Button("INFO"), new GridLayoutParams(2,2,1,1)));
-		
-		button.setTooltipText("if you can see this, it's means that it's working");
-		button.setConstrainDimensionsEnabled(false);
-		
-		button.setSpatialAnimator(new SpatialAnimator(
-				new SpatialState(button),
-				new SpatialState(button.getX()-100,button.getY(),300,100), () -> button.isHover()));
+		cm.add(new Container(new GridLayout(5, 5)).addContentView(component = new EditText(),
+				new GridLayoutParams(2, 2, 1, 1)));
+
+		component.setTooltip("if you can see this, it's means that it's working");
+		component.setConstrainDimensionsEnabled(false);
+
+		component.setSpatialAnimator(new SpatialAnimator(new SpatialState(component),
+				new SpatialState(component.getX() - 100, component.getY(), 300, 100), () -> component.isHover()));
 	}
 
 	@Override
 	public void draw() {
 		background(164);
 	}
-	
+
 }

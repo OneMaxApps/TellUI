@@ -10,15 +10,15 @@ public final class InteractionHandler extends AbstractEventSystem {
 
 	public InteractionHandler(SpatialView spatialView) {
 		super(spatialView);
-		
+
 		dispatcher = new EventDispatcher();
-		
+
 	}
-	
+
 	@Override
 	public void listen() {
 		super.listen();
-		
+
 		if (getDetector().isPress()) {
 			dispatcher.dispatch(EventType.PRESS);
 		}
@@ -58,23 +58,23 @@ public final class InteractionHandler extends AbstractEventSystem {
 		if (getDetector().isClick()) {
 			dispatcher.dispatch(EventType.CLICK);
 		}
-		
+
 		if (getDetector().isDoubleClick()) {
 			dispatcher.dispatch(EventType.DOUBLE_CLICK);
 		}
-		
+
 		if (getDetector().isDragStart()) {
 			dispatcher.dispatch(EventType.DRAG_START);
 		}
-		
+
 		if (getDetector().isDragging()) {
 			dispatcher.dispatch(EventType.DRAGGING);
 		}
-		
+
 		if (getDetector().isDragEnd()) {
 			dispatcher.dispatch(EventType.DRAG_END);
 		}
-		
+
 		if (getDetector().isHover()) {
 			dispatcher.dispatch(EventType.HOVER);
 		}

@@ -13,8 +13,8 @@ public class Button extends AbstractButton {
 
 	public Button(String text, float x, float y, float w, float h) {
 		super(x, y, w, h);
-		setMinMaxSize(20,10,100,40);
-		
+		setMinMaxSize(20, 10, 100, 40);
+
 		textView = new TextView(getX(), getY(), getWidth(), getHeight());
 		textView.setConstrainDimensionsEnabled(false);
 		textView.setAutoResizeModeEnabled(true);
@@ -28,9 +28,9 @@ public class Button extends AbstractButton {
 	}
 
 	public Button(String text) {
-		this(requireNonNull(text, "text cannot be null"), 0,0,0,0);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
+		this(requireNonNull(text, "text cannot be null"), 0, 0, 0, 0);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 
 	public Button() {

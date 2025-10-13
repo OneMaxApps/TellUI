@@ -16,7 +16,7 @@ public class ThemeWhite extends AbstractTheme {
 	public AbstractColor getTextViewColor() {
 		return Color.BLACK;
 	}
-	
+
 	@Override
 	public AbstractColor getButtonTextColor() {
 		return Color.BLACK;
@@ -29,7 +29,7 @@ public class ThemeWhite extends AbstractTheme {
 
 	@Override
 	public AbstractColor getHoverColor() {
-		return new Color(100,200,255,24);
+		return new Color(100, 200, 255, 24);
 	}
 
 	@Override
@@ -49,27 +49,27 @@ public class ThemeWhite extends AbstractTheme {
 
 	@Override
 	public AbstractColor getSelectColor() {
-		return new Color(0,0,200,32);
+		return new Color(0, 0, 200, 32);
 	}
 
 	@Override
 	public AbstractColor getCursorColor() {
-		return new Color(0,232);
+		return new Color(0, 232);
 	}
 
 	@Override
 	public AbstractColor getEditableBackgroundColor() {
 		return Color.WHITE;
 	}
-	
+
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new GradientColor(new Color(232,0), Color.GRAY_232L, () -> true);
+		return new GradientColor(new Color(232, 0), Color.GRAY_232L, () -> true);
 
 	}
 
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.BLACK, new Color(0,154)), () -> true);
+		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.BLACK, new Color(0, 154)), () -> true);
 	}
 }

@@ -30,7 +30,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	private boolean isAnimationEnabled;
 	private Container prevContainer, currentContainer;
 	private final TooltipManager tooltipManager;
-	
+
 	private ContainerManager() {
 		setVisible(true);
 		containerList = new ArrayList<Container>();
@@ -38,7 +38,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		setAnimationEnabled(true);
 
 		tooltipManager = TooltipManager.getInstance();
-		
+
 		getContext().registerMethod("keyPressed", this);
 		getContext().registerMethod("keyEvent", this);
 		getContext().registerMethod("mouseEvent", this);
@@ -54,7 +54,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				currentContainer.draw();
 			}
 		}
-		
+
 		tooltipManager.draw();
 	}
 
@@ -371,7 +371,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	private final class Animation extends View {
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private AnimationType animationType;
-		private final ImageBuffer prevContainerImage,currentContainerImage;
+		private final ImageBuffer prevContainerImage, currentContainerImage;
 		private float speed;
 		private int randDirX, randDirY;
 		private boolean isAnimationRunningEnabled, isNewContainerPrepared, isEasing;
@@ -379,13 +379,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		private Animation() {
 			super();
 			setVisible(true);
-			
+
 			prevContainerImage = new ImageBuffer();
 			currentContainerImage = new ImageBuffer();
-			
-			prevContainerImage.setSize(ctx.width,ctx.height);
-			currentContainerImage.setSize(ctx.width,ctx.height);
-			
+
+			prevContainerImage.setSize(ctx.width, ctx.height);
+			currentContainerImage.setSize(ctx.width, ctx.height);
+
 			setSpeed(max(1, ctx.width * .1f));
 			setAnimationType(AnimationType.SLIDE_RANDOM);
 			setEasingEnabled(true);
@@ -394,7 +394,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		@Override
 		protected void render() {
 			if (isAnimationRunningEnabled()) {
-				if(!prevContainerImage.isLoaded()) {
+				if (!prevContainerImage.isLoaded()) {
 					prevContainer.draw();
 					prevContainerImage.set(getScreenBuffer());
 					return;
@@ -424,33 +424,32 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 					slideDirection(randDirX, randDirY);
 					break;
 				}
-				
-				
+
 				if (isAnimationRunningEnabled()) {
-					if(!currentContainerImage.isLoaded()) {
+					if (!currentContainerImage.isLoaded()) {
 						currentContainer.draw();
 						currentContainerImage.set(getScreenBuffer());
 					}
-					
+
 					prevContainerImage.draw();
 					currentContainerImage.draw();
 				}
-			
+
 			}
-			
-			if(!isAnimationRunningEnabled()) {
+
+			if (!isAnimationRunningEnabled()) {
 				prevContainerImage.removeTexture();
 				currentContainerImage.removeTexture();
-				
+
 				currentContainer.draw();
 			}
 		}
 
 		PImage getScreenBuffer() {
-			return ctx.get(0,0,ctx.width,ctx.height);
-		
+			return ctx.get(0, 0, ctx.width, ctx.height);
+
 		}
-		
+
 		boolean isAnimationRunningEnabled() {
 			return isAnimationRunningEnabled;
 		}

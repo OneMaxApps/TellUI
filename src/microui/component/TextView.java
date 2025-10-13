@@ -23,14 +23,14 @@ public final class TextView extends Component {
 	private AutoResizeMode autoResizeMode;
 	private float textSize, autoTextSize;
 	private int alignX, alignY;
-	private boolean isAutoResizeModeEnabled,isClipModeEnabled;
-	
+	private boolean isAutoResizeModeEnabled, isClipModeEnabled;
+
 	public TextView(String text, float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setMinSize(10);
 		setMaxSize(100, 40);
 
-		setBackgroundColor(new Color(0,0));
+		setBackgroundColor(Color.TRANSPARENT);
 		setTextColor(textColor = getTheme().getTextViewColor());
 
 		setText(text);
@@ -47,9 +47,9 @@ public final class TextView extends Component {
 	}
 
 	public TextView(String text) {
-		this(0,0,0,0);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
+		this(0, 0, 0, 0);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 		setText(text);
 	}
 
@@ -62,7 +62,7 @@ public final class TextView extends Component {
 	}
 
 	public void setAlignX(int alignX) {
-		if(alignX != LEFT && alignX != CENTER && alignX != RIGHT) {
+		if (alignX != LEFT && alignX != CENTER && alignX != RIGHT) {
 			throw new IllegalArgumentException("alignX for text must be only LEFT, CENTER or RIGHT");
 		}
 		this.alignX = alignX;
@@ -73,10 +73,10 @@ public final class TextView extends Component {
 	}
 
 	public void setAlignY(int alignY) {
-		if(alignY != TOP && alignY != CENTER && alignY != BOTTOM) {
+		if (alignY != TOP && alignY != CENTER && alignY != BOTTOM) {
 			throw new IllegalArgumentException("alignY for text must be only TOP, CENTER or BOTTOM");
 		}
-		
+
 		this.alignY = alignY;
 	}
 
@@ -147,12 +147,12 @@ public final class TextView extends Component {
 	}
 
 	public void setTextColor(AbstractColor color) {
-		if(color == null) {
+		if (color == null) {
 			throw new NullPointerException("the color cannot be null");
 		}
 		textColor = color;
 	}
-	
+
 	@Override
 	protected void render() {
 		ctx.noStroke();
@@ -174,13 +174,13 @@ public final class TextView extends Component {
 		}
 		textColor.apply();
 		ctx.textAlign(alignX, alignY);
-		
-		if(isClipModeEnabled()) {
+
+		if (isClipModeEnabled()) {
 			ctx.text(text, getX(), getY(), getWidth(), getHeight());
 		} else {
 			ctx.text(text, getX(), getY());
 		}
-		
+
 	}
 
 	@Override

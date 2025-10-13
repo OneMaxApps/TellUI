@@ -34,7 +34,7 @@ public final class TooltipManager extends View {
 	private float getCorrectPositionX() {
 		return constrain(ctx.mouseX, 0, ctx.width - tooltip.getContent().getAbsoluteWidth());
 	}
-	
+
 	private float getCorrectPositionY() {
 		return constrain(ctx.mouseY, 0, ctx.height - tooltip.getContent().getAbsoluteHeight());
 	}

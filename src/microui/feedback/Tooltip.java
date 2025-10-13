@@ -8,17 +8,17 @@ import microui.util.Metrics;
 public final class Tooltip extends View {
 	private TooltipContent content;
 	private boolean isMustBeClosed;
-	
+
 	public Tooltip(Component component) {
 		super();
 		setVisible(false);
-		
-		if(component == null) {
+
+		if (component == null) {
 			throw new NullPointerException("the component for Tooltip cannot be null");
 		}
-		
+
 		component.onEnterLong(() -> {
-			if(content != null && content.isPreparedShow()) {
+			if (content != null && content.isPreparedShow()) {
 				setVisible(true);
 			}
 		});
@@ -26,7 +26,7 @@ public final class Tooltip extends View {
 		component.onLeave(() -> {
 			isMustBeClosed = true;
 		});
-		
+
 		component.onPress(() -> {
 			isMustBeClosed = true;
 		});
@@ -36,11 +36,11 @@ public final class Tooltip extends View {
 	}
 
 	public void listen() {
-		if(isMustBeClosed && content != null && content.isPreparedClose()) {
+		if (isMustBeClosed && content != null && content.isPreparedClose()) {
 			setVisible(false);
 			isMustBeClosed = false;
 		}
-		
+
 		if (isVisible()) {
 			TooltipManager.setTooltip(this);
 		}
@@ -51,16 +51,16 @@ public final class Tooltip extends View {
 	}
 
 	public void setContent(TooltipContent content) {
-		if(content == null) {
+		if (content == null) {
 			throw new NullPointerException("the content for tooltip cannot be null");
 		}
 		this.content = content;
 		content.setTooltip(this);
 	}
-	
+
 	@Override
 	protected void render() {
-		if(content != null) {
+		if (content != null) {
 			content.draw();
 		}
 	}

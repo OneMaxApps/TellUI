@@ -53,9 +53,9 @@ public class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton(String title) {
-		this(title,0,0,0,0);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
+		this(title, 0, 0, 0, 0);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 
 	public MenuButton(String title, String... items) {
@@ -391,7 +391,7 @@ public class MenuButton extends Button implements Scrollable {
 		if (itemList.isEmpty()) {
 			return;
 		}
-		
+
 		if (!isOpen) {
 			for (int i = 0; i < itemList.size(); i++) {
 				if (itemList.get(i) instanceof MenuButton subMenu) {
@@ -414,13 +414,13 @@ public class MenuButton extends Button implements Scrollable {
 		final boolean isCanToBeInRightSide = getX() + getWidth() * 2 < ctx.width;
 		final float correctX = isCanToBeInRightSide ? getX() + getWidth() : getX() - getWidth();
 		float correctY = 0;
-		
+
 		for (int i = 0; i < title.length; i++) {
 			correctY = getY() + listHeight;
 			itemList.add(new Button(title[i], correctX, correctY, getWidth(), getHeight()));
 			listHeight += getHeight();
 		}
-		
+
 	}
 
 	private void setRoot(MenuButton root) {
@@ -493,7 +493,7 @@ public class MenuButton extends Button implements Scrollable {
 				protected void render() {
 				}
 			};
-			
+
 			event = new Event(spatial);
 			enable = true;
 		}

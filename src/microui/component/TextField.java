@@ -18,7 +18,6 @@ import microui.core.TextController;
 import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
-import microui.core.style.Color;
 import microui.core.style.Stroke;
 import microui.event.KeyboardManager;
 import microui.util.Clipboard;
@@ -50,9 +49,9 @@ public final class TextField extends Component implements KeyPressable {
 		setMaxHeight(40);
 
 		stroke = new Stroke();
-		
+
 		setBackgroundColor(getTheme().getEditableBackgroundColor());
-		
+
 		text = new Text();
 		cursor = new Cursor();
 		selection = new Selection();
@@ -64,9 +63,9 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	public TextField() {
-		this(0,0,0,0);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
+		this(0, 0, 0, 0);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 
 	@Override
@@ -137,8 +136,8 @@ public final class TextField extends Component implements KeyPressable {
 				return;
 			}
 
-			cursor.column
-					.set((int) MathUtils.convert(ctx.mouseX - getX(), text.getX(), text.getX() + text.getWidth(), 0, text.length()));
+			cursor.column.set((int) MathUtils.convert(ctx.mouseX - getX(), text.getX(), text.getX() + text.getWidth(),
+					0, text.length()));
 
 			if (ctx.frameCount % 3 == 0) {
 				if (cursor.isCloseToLeftSide()) {
@@ -195,7 +194,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private final void createPGraphics() {
-		pg = ctx.createGraphics((int) MathUtils.max(1, getWidth()), (int) MathUtils.max(1, getHeight()), ctx.sketchRenderer());
+		pg = ctx.createGraphics((int) Math.max(1, getWidth()), (int) Math.max(1, getHeight()), ctx.sketchRenderer());
 		componentSizeChanged = false;
 		Metrics.register(pg);
 	}
@@ -358,7 +357,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		private Text() {
 			super();
-			color = new Color(getTheme().getEditableTextColor());
+			color = getTheme().getEditableTextColor();
 			size = new Size();
 			font = new Font();
 
@@ -498,7 +497,7 @@ public final class TextField extends Component implements KeyPressable {
 		private float positionX, positionY, height;
 
 		private Cursor() {
-			color = new Color(getTheme().getCursorColor());
+			color = getTheme().getCursorColor();
 			weight = new Size(2);
 			column = new Column();
 			blink = new Blink();
@@ -646,21 +645,22 @@ public final class TextField extends Component implements KeyPressable {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt((int) MathUtils.min(column, text.length() - 1)));
+				return pg.textWidth(text.getAsString().charAt((int) Math.min(column, text.length() - 1)));
 			}
 
 			private final float getNextCharWidth() {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt((int) MathUtils.min(column + 1, text.length() - 1)));
+				return pg.textWidth(text.getAsString().charAt((int) Math.min(column + 1, text.length() - 1)));
 			}
 
 			private final float getBackCharWidth() {
 				if (text.isEmpty()) {
 					return 0;
 				}
-				return pg.textWidth(text.getAsString().charAt((int) MathUtils.max(0, MathUtils.min(column - 1, text.length() - 1))));
+				return pg.textWidth(
+						text.getAsString().charAt((int) Math.max(0, Math.min(column - 1, text.length() - 1))));
 			}
 		}
 
@@ -696,7 +696,7 @@ public final class TextField extends Component implements KeyPressable {
 		private boolean isStarted;
 
 		private Selection() {
-			color = new Color(getTheme().getSelectColor());
+			color = getTheme().getSelectColor();
 			y = getHeight() * .1f;
 			h = getHeight() * .8f;
 		}
@@ -733,7 +733,7 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private final int getStartColumn() {
-			return (int) MathUtils.min(startColumn, endColumn);
+			return (int) Math.min(startColumn, endColumn);
 		}
 
 		private final void setStartColumn(int startColumn) {
@@ -748,7 +748,7 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private final int getEndColumn() {
-			return (int) MathUtils.max(startColumn, endColumn);
+			return (int) Math.max(startColumn, endColumn);
 		}
 
 		private final void setEndColumn(int endColumn) {

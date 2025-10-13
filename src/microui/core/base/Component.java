@@ -18,7 +18,7 @@ public abstract class Component extends ContentView {
 	private final InteractionHandler interactionHandler;
 	private final Tooltip tooltip;
 	private AbstractColor backgroundColor;
-	
+
 	public Component(float x, float y, float width, float height) {
 		super(x, y, width, height);
 
@@ -26,7 +26,7 @@ public abstract class Component extends ContentView {
 		event = new Event(this);
 		interactionHandler = new InteractionHandler(this);
 		tooltip = new Tooltip(this);
-		
+
 	}
 
 	public Component() {
@@ -44,9 +44,9 @@ public abstract class Component extends ContentView {
 		event.listen();
 
 		interactionHandler.listen();
-		
+
 		tooltip.listen();
-		
+
 	}
 
 	public final AbstractColor getBackgroundColor() {
@@ -54,13 +54,13 @@ public abstract class Component extends ContentView {
 	}
 
 	public final Component setBackgroundColor(AbstractColor color) {
-		
-		if(color == null) {
+
+		if (color == null) {
 			throw new NullPointerException("the color cannot be null");
 		}
-		
+
 		backgroundColor = color;
-		
+
 		return this;
 	}
 
@@ -215,29 +215,29 @@ public abstract class Component extends ContentView {
 	}
 
 	// NEW TOOLTIP API //////////////////////////////////
-	
-	public final void setTooltipContent(TooltipContent tooltipContent) {
+
+	public final void setTooltip(TooltipContent tooltipContent) {
 		tooltip.setContent(tooltipContent);
 	}
-	
+
 	public final TooltipContent getTooltipContent() {
 		return tooltip.getContent();
 	}
-	
+
 	// Sugar API
-	public final void setTooltipText(String text) {
-		if(tooltip.getContent() instanceof TooltipTextViewContent content) {
+	public final void setTooltip(String text) {
+		if (tooltip.getContent() instanceof TooltipTextViewContent content) {
 			content.setText(text);
 		} else {
 			tooltip.setContent(new TooltipTextViewContent(text));
 		}
 	}
-	
+
 	public final String getTooltipText() {
-		if(tooltip.getContent() instanceof TooltipTextViewContent content) {
+		if (tooltip.getContent() instanceof TooltipTextViewContent content) {
 			return content.getText();
 		}
-		
+
 		throw new IllegalStateException("tooltip not instance of TooltipTextViewContent");
 	}
 

@@ -1,20 +1,20 @@
 package microui.layout;
 
-import microui.core.base.Container.ComponentEntry;
+import microui.core.base.Container.ContentViewEntry;
 
 public final class RowLayout extends LinearAxisLayout {
-	
+
 	@Override
-	public void onAddComponent(ComponentEntry componentEntry) {
-		super.onAddComponent(componentEntry);
-		if(isOutOfSpace()) {
+	public void onAddContentView(ContentViewEntry componentEntry) {
+		super.onAddContentView(componentEntry);
+		if (isOutOfSpace()) {
 			throw new IllegalStateException("weight limit out of bounds in RowLayout");
 		}
 	}
-	
+
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
-		if(!(layoutParams instanceof RowLayoutParams)) {
+		if (!(layoutParams instanceof RowLayoutParams)) {
 			throw new IllegalArgumentException("using not correct layout params for RowLayout");
 		}
 	}

@@ -19,49 +19,49 @@ public final class LabeledCheckBox extends Component {
 	private final CheckBox checkBox;
 	private final TextView textView;
 	private final Hover hover;
-	
+
 	public LabeledCheckBox(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setMinSize(DEFAULT_SIZE);
-		setMaxSize(ctx.width/2,DEFAULT_SIZE);
-		
+		setMaxSize(ctx.width / 2, DEFAULT_SIZE);
+
 		checkBox = new CheckBox();
 		checkBox.setPriority(1);
 		checkBox.setMarginLeft(10);
-		
+
 		textView = new TextView();
-		
+
 		hover = new Hover(this);
-		hover.setColor(new Color(32,16));
-		
+		hover.setColor(new Color(32, 16));
+
 		onClick(() -> {
-			if(!checkBox.isHover()) {
-				checkBox.toggle();	
+			if (!checkBox.isHover()) {
+				checkBox.toggle();
 			}
 		});
-		
-		textView.setPadding(20,0);
+
+		textView.setPadding(20, 0);
 		textView.setAutoResizeModeEnabled(false);
 		textView.setAlignX(LEFT);
 		textView.setTextSize(DEFAULT_SIZE);
 		textView.setConstrainDimensionsEnabled(true);
-		textView.setMaxSize(ctx.width,DEFAULT_SIZE);
-		
+		textView.setMaxSize(ctx.width, DEFAULT_SIZE);
+
 		container = new Container(new RowLayout(), x, y, width, height);
 		container.setContainerMode(ContainerMode.RESPECT_CONSTRAINTS);
-		container.addComponent(checkBox, new RowLayoutParams(.1f));
-		container.addComponent(textView, new RowLayoutParams(.9f));
-		
+		container.addContentView(checkBox, new RowLayoutParams(.1f));
+		container.addContentView(textView, new RowLayoutParams(.9f));
+
 	}
-	
+
 	public LabeledCheckBox(String label) {
-		this(0,0,DEFAULT_SIZE,DEFAULT_SIZE);
-		setSize(getMaxWidth(),getMaxHeight());
-		setPosition(ctx.width/2-getMaxWidth()/2,ctx.height/2-getMaxHeight()/2);
-		
+		this(0, 0, DEFAULT_SIZE, DEFAULT_SIZE);
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
+
 		setText(label);
 	}
-	
+
 	public LabeledCheckBox() {
 		this("");
 	}
@@ -75,12 +75,12 @@ public final class LabeledCheckBox extends Component {
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();
-		
-		if(container != null) {
+
+		if (container != null) {
 			container.setBoundsFrom(this);
 		}
 	}
-	
+
 	public boolean isHoverEnabled() {
 		return hover.isEnabled();
 	}
@@ -89,16 +89,16 @@ public final class LabeledCheckBox extends Component {
 		hover.setEnabled(enabled);
 		return this;
 	}
-	
+
 	public AbstractColor getHoverColor() {
 		return hover.getColor();
 	}
-	
+
 	public LabeledCheckBox setHoverColor(AbstractColor color) {
 		hover.setColor(color);
 		return this;
 	}
-	
+
 	public float getHoverSpeed() {
 		return hover.getSpeed();
 	}
@@ -107,7 +107,7 @@ public final class LabeledCheckBox extends Component {
 		hover.setSpeed(speed);
 		return this;
 	}
-	
+
 	public boolean isChecked() {
 		return checkBox.isChecked();
 	}
@@ -135,7 +135,7 @@ public final class LabeledCheckBox extends Component {
 		checkBox.onStateChangedListener(listener);
 		return this;
 	}
-	
+
 	public String getText() {
 		return textView.getText();
 	}

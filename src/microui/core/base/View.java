@@ -20,7 +20,8 @@ import processing.core.PApplet;
  * </p>
  */
 public abstract class View implements Visible {
-	protected static final PApplet ctx = requireNonNull(getContext(), "Context (PApplet) for MicroUI is not initialized");
+	protected static final PApplet ctx = requireNonNull(getContext(),
+			"Context (PApplet) for MicroUI is not initialized");
 	private static final String DEFAULT_EMPTY_TEXT_ID = "";
 	private String textId;
 	private int priority, id;
@@ -110,7 +111,8 @@ public abstract class View implements Visible {
 	/**
 	 * Sets text identifier for this View object.
 	 * 
-	 * @param textId new text identifier for this View object (cannot be null and (or) empty)
+	 * @param textId new text identifier for this View object (cannot be null and
+	 *               (or) empty)
 	 */
 	public final void setTextId(final String textId) {
 		if (textId == null) {
@@ -123,8 +125,6 @@ public abstract class View implements Visible {
 		this.textId = textId;
 	}
 
-	
-	
 	/**
 	 * Renders the element if it is visible. Automatically manages Processing styles
 	 * (push/pop style).
@@ -133,16 +133,16 @@ public abstract class View implements Visible {
 	 * Calls the {@link #render() method} only if the element is visible.
 	 */
 	public void draw() {
-		if(!MicroUI.isFlexibleRenderModeEnabled()) {
-			if(!ContainerManager.isInitialized()) {
+		if (!MicroUI.isFlexibleRenderModeEnabled()) {
+			if (!ContainerManager.isInitialized()) {
 				throw new RenderException("ContainerManager is not initialized");
 			}
-			
-			if(!ContainerManager.isCanDraw()) {
+
+			if (!ContainerManager.isCanDraw()) {
 				throw new RenderException("Cannot draw outside from ContainerManager");
 			}
 		}
-		
+
 		if (isVisible()) {
 			ctx.pushStyle();
 			render();
@@ -150,9 +150,9 @@ public abstract class View implements Visible {
 		}
 
 	}
-	
+
 	/**
-	 * Abstract method for sub-classes for implementation them drawing logic 
+	 * Abstract method for sub-classes for implementation them drawing logic
 	 */
 	protected abstract void render();
 

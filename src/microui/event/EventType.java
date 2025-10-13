@@ -7,11 +7,11 @@ public enum EventType {
 	PRESSED, // LEVEL [1]
 	RELEASE, // EDGE [1]
 	RELEASED, // LEVEL [1]
-	
-	LONG_PRESS, // EDGE [1] 
-	
+
+	LONG_PRESS, // EDGE [1]
+
 	ENTER, // EDGE [1]
-	LEAVE, // EDGE [1] 
+	LEAVE, // EDGE [1]
 	ENTER_LONG, // EDGE [1]
 	LEAVE_LONG, // EDGE [1]
 
@@ -21,6 +21,6 @@ public enum EventType {
 	DRAG_START, // EDGE [1]
 	DRAGGING, // LEVEL [1]
 	DRAG_END, // EDGE [1]
-	
+
 	HOVER; // LEVEL [1]
 }

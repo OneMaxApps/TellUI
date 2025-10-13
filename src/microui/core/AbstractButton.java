@@ -12,7 +12,7 @@ public abstract class AbstractButton extends Component {
 	private final Ripples ripples;
 	private final Hover hover;
 	private final Stroke stroke;
-	
+
 	public AbstractButton(float x, float y, float w, float h) {
 		super(x, y, w, h);
 		setBackgroundColor(getTheme().getBackgroundColor());
@@ -56,15 +56,15 @@ public abstract class AbstractButton extends Component {
 	public final void setHoverEnabled(boolean isEnabled) {
 		hover.setEnabled(isEnabled);
 	}
-	
+
 	public AbstractColor getHoverColor() {
 		return hover.getColor();
 	}
-	
+
 	public void setHoverColor(AbstractColor color) {
 		hover.setColor(color);
 	}
-	
+
 	public final float getHoverSpeed() {
 		return hover.getSpeed();
 	}
@@ -92,11 +92,11 @@ public abstract class AbstractButton extends Component {
 	protected final Ripples getMutableRipples() {
 		return ripples;
 	}
-	
+
 	protected final Hover getMutableHover() {
 		return hover;
 	}
-	
+
 	protected final Stroke getMutableStroke() {
 		return stroke;
 	}

@@ -8,20 +8,19 @@ public abstract class LinearRangeControl extends RangeControl {
 	private Orientation orientation;
 	private boolean valueChangeStart, valueChangeEnd;
 	private Listener onStartChangeValueListener, onChangeValueListener, onEndChangeValueListener;
-	
+
 	public LinearRangeControl(float x, float y, float width, float height) {
 		super(x, y, width, height);
-		setMinMaxSize(10,20,200,20);
+		setMinMaxSize(10, 20, 200, 20);
 
 		getMutableValue().setOnChangeValueListener(() -> requestUpdate());
-		
+
 		onPress(() -> valueChangeEnd = true);
 
-		
 		orientation = Orientation.HORIZONTAL;
 
 	}
-	
+
 	@Override
 	protected void render() {
 
@@ -49,7 +48,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			valueChangeEnd = false;
 		}
 	}
-	
+
 	@Override
 	public void mouseWheel(MouseEvent event) {
 		getMutableScrolling().init(event);
@@ -78,7 +77,7 @@ public abstract class LinearRangeControl extends RangeControl {
 		}
 		final float w = getWidth(), h = getHeight();
 		this.orientation = orientation;
-		
+
 		setWidth(h);
 		setHeight(w);
 		requestUpdate();
@@ -90,7 +89,7 @@ public abstract class LinearRangeControl extends RangeControl {
 		} else {
 			orientation = Orientation.HORIZONTAL;
 		}
-		
+
 	}
 
 	public final Listener getOnChangeValueListener() {
@@ -137,7 +136,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			onEndChangeValueListener.action();
 		}
 	}
-	
+
 	protected final void autoScroll() {
 		getMutableValue().append(getMutableScrolling().get());
 		onChangeValue();

@@ -6,7 +6,6 @@ import static microui.core.style.theme.ThemeManager.getTheme;
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
-import microui.core.style.Color;
 import microui.util.MathUtils;
 
 //Status: STABLE - Do not modify
@@ -21,7 +20,7 @@ public final class Hover extends View {
 		super();
 		setVisible(true);
 
-		color = new Color(getTheme().getHoverColor());
+		color = getTheme().getHoverColor();
 
 		this.component = requireNonNull(component, "component cannot be null");
 
@@ -68,7 +67,7 @@ public final class Hover extends View {
 	}
 
 	public void setColor(AbstractColor color) {
-		if(color == null) {
+		if (color == null) {
 			throw new NullPointerException("the color cannot be null");
 		}
 	}

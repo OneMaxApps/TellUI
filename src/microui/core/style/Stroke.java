@@ -15,22 +15,22 @@ public final class Stroke {
 	private float weight;
 
 	public Stroke(AbstractColor color, float weight) {
-		if(color == null) {
+		if (color == null) {
 			throw new NullPointerException("color cannot be null");
 		}
 		Metrics.register(this);
-		this.color = new Color(color);
+		setColor(color);
 		setWeight(weight);
 	}
-	
+
 	public Stroke(AbstractColor color) {
-		this(color,DEFAULT_STROKE_WEIGHT);
+		this(color, DEFAULT_STROKE_WEIGHT);
 	}
-	
+
 	public Stroke(float weight) {
-		this(ThemeManager.getTheme().getStrokeColor(),weight);
+		this(ThemeManager.getTheme().getStrokeColor(), weight);
 	}
-	
+
 	public Stroke() {
 		this(DEFAULT_STROKE_WEIGHT);
 	}
@@ -40,9 +40,9 @@ public final class Stroke {
 		color.applyStroke();
 		getContext().strokeWeight(weight);
 	}
-	
+
 	public void apply(PGraphics pGraphics) {
-		if(pGraphics == null) {
+		if (pGraphics == null) {
 			throw new NullPointerException("pGraphics cannot be null");
 		}
 		pGraphics.strokeCap(SQUARE);
@@ -51,7 +51,7 @@ public final class Stroke {
 	}
 
 	public void setWeight(float weight) {
-		if(weight <= 0) {
+		if (weight <= 0) {
 			throw new IllegalArgumentException("stroke weight cannot be lower than 1");
 		}
 		this.weight = weight;
@@ -62,10 +62,10 @@ public final class Stroke {
 	}
 
 	public void set(Stroke stroke) {
-		if(stroke == null) {
+		if (stroke == null) {
 			throw new NullPointerException("stroke cannot be null");
 		}
-		
+
 		color = stroke.getColor();
 		weight = stroke.getWeight();
 	}
@@ -75,7 +75,7 @@ public final class Stroke {
 	}
 
 	public void setColor(AbstractColor color) {
-		if(color == null) {
+		if (color == null) {
 			throw new NullPointerException("color cannot be null");
 		}
 		this.color = color;
