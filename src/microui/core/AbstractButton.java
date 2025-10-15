@@ -28,8 +28,6 @@ public abstract class AbstractButton extends Component {
 		stroke.apply();
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
-		ripples.draw();
-		hover.draw();
 		ctx.popStyle();
 	}
 
@@ -89,15 +87,15 @@ public abstract class AbstractButton extends Component {
 		stroke.setColor(color);
 	}
 
-	protected final Ripples getMutableRipples() {
+	protected final Ripples getRipplesInternal() {
 		return ripples;
 	}
 
-	protected final Hover getMutableHover() {
+	protected final Hover getHoverInternal() {
 		return hover;
 	}
 
-	protected final Stroke getMutableStroke() {
+	protected final Stroke getStrokeInternal() {
 		return stroke;
 	}
 }

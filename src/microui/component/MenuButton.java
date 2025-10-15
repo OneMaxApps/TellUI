@@ -337,7 +337,6 @@ public class MenuButton extends Button implements Scrollable {
 		if (ctx.mousePressed && isLeave() && !inside) {
 			close();
 		}
-
 	}
 
 	private final boolean checkInsideToAnyIn() {

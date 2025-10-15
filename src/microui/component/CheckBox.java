@@ -32,7 +32,10 @@ public class CheckBox extends AbstractButton {
 	@Override
 	protected void render() {
 		super.render();
-
+		
+		getRipplesInternal().draw();
+		getHoverInternal().draw();
+		
 		if (isChecked) {
 			markOnDraw();
 		}

@@ -13,7 +13,6 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	private static boolean isDebugModeEnabled;
 	private static boolean isFlexibleRenderModeEnabled;
 
 	private MicroUI() {
@@ -31,14 +30,6 @@ public final class MicroUI {
 
 	public static String getVersion() {
 		return VERSION;
-	}
-
-	public static boolean isDebugModeEnabled() {
-		return isDebugModeEnabled;
-	}
-
-	public static void setDebugModeEnabled(boolean isDebugModeEnabled) {
-		MicroUI.isDebugModeEnabled = isDebugModeEnabled;
 	}
 
 	public static boolean isFlexibleRenderModeEnabled() {

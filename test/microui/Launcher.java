@@ -8,6 +8,7 @@ import microui.component.EditText;
 import microui.component.Knob;
 import microui.component.LabeledCheckBox;
 import microui.component.MenuButton;
+import microui.component.MenuButtonNew;
 import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
@@ -15,7 +16,7 @@ import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
-import microui.core.style.theme.ThemeBlack;
+import microui.core.style.theme.ThemeGray;
 import microui.core.style.theme.ThemeManager;
 import microui.layout.ColumnLayout;
 import microui.layout.ColumnLayoutParams;
@@ -46,8 +47,10 @@ public final class Launcher extends PApplet {
 	@Override
 	public void setup() {
 		MicroUI.setContext(this);
-		MicroUI.setDebugModeEnabled(true);
-		ThemeManager.setTheme(new ThemeBlack());
+//		MicroUI.setDebugModeEnabled(true);
+		//Debugger.setDebugModeEnabled(true);
+		
+		ThemeManager.setTheme(new ThemeGray());
 
 		cm = ContainerManager.getInstance();
 
@@ -64,6 +67,8 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerWith(new TextView()), "TextView");
 
+		
+		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 	}
 
 	@Override
@@ -95,7 +100,7 @@ public final class Launcher extends PApplet {
 		Container container = new Container(new GridLayout(3, 4));
 
 		Container ContainerMenuItem = new Container(new ColumnLayout());
-		ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
+		//ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
 
 		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")), new ColumnLayoutParams(.2f));
 
@@ -117,6 +122,13 @@ public final class Launcher extends PApplet {
 		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
 
 		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
+		
+		MenuButtonNew menuButtonNew = new MenuButtonNew();
+		container.add(menuButtonNew, new GridLayoutParams(0, 1));
+		
+		for(int i = 0; i < 10; i++) {
+			menuButtonNew.add("title "+i);
+		}
 		
 		return container;
 	}

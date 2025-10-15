@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import microui.MicroUI;
 import microui.core.ImageBuffer;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.event.KeyboardManager;
 import microui.service.TooltipManager;
+import microui.util.Debugger;
 import microui.util.MathUtils;
 import processing.core.PImage;
 import processing.event.KeyEvent;
@@ -406,11 +406,11 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void debugOnDraw() {
-		if (MicroUI.isDebugModeEnabled()) {
+		if (Debugger.isDebugModeEnabled()) {
 			ctx.push();
 			ctx.fill(255);
 			ctx.textSize(24);
-			ctx.text("fps: " + (int) ctx.frameRate, 10, 24);
+			ctx.text("fps: " + (int) ctx.frameRate+"\n"+Debugger.getAdditionalInfo(), 10, 24);
 			ctx.pop();
 		}
 	}

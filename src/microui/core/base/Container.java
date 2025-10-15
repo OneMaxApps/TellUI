@@ -1,7 +1,6 @@
 package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
-import static microui.MicroUI.isDebugModeEnabled;
 import static microui.core.base.Container.Mode.RESPECT_CONSTRAINTS;
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.layout.LayoutManager;
 import microui.layout.LayoutParams;
+import microui.util.Debugger;
 import processing.core.PImage;
 import processing.event.MouseEvent;
 
@@ -287,7 +287,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void debugOnDraw() {
-		if (isDebugModeEnabled()) {
+		if (Debugger.isDebugModeEnabled()) {
 
 			ctx.pushStyle();
 			ctx.noStroke();

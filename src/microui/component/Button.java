@@ -5,12 +5,15 @@ import static microui.constants.AutoResizeMode.BIG;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.AbstractButton;
+import microui.core.ImageBuffer;
 import microui.core.style.AbstractColor;
 import processing.core.PFont;
+import processing.core.PImage;
 
 public class Button extends AbstractButton {
 	private final TextView textView;
-
+	private final ImageBuffer image;
+	
 	public Button(String text, float x, float y, float w, float h) {
 		super(x, y, w, h);
 		setMinMaxSize(20, 10, 100, 40);
@@ -21,6 +24,9 @@ public class Button extends AbstractButton {
 		textView.setAutoResizeMode(BIG);
 		textView.setTextColor(getTheme().getButtonTextColor());
 		setText(text);
+		
+		image = new ImageBuffer();
+		image.setVisible(true);
 	}
 
 	public Button(float x, float y, float w, float h) {
@@ -35,12 +41,6 @@ public class Button extends AbstractButton {
 
 	public Button() {
 		this("BUTTON");
-	}
-
-	@Override
-	protected void render() {
-		super.render();
-		textView.draw();
 	}
 
 	public final String getText() {
@@ -74,6 +74,22 @@ public class Button extends AbstractButton {
 	public final void setTextVisible(boolean isVisible) {
 		textView.setVisible(isVisible);
 	}
+	
+	public final PImage getImage() {
+		return image.get();
+	}
+	
+	public final void setImage(PImage image) {
+		this.image.set(image);
+	}
+	
+	public final AbstractColor getImageColor() {
+		return image.getColor();
+	}
+	
+	public final void setImageColor(AbstractColor color) {
+		image.setColor(color);
+	}
 
 	@Override
 	protected void onChangeBounds() {
@@ -81,6 +97,20 @@ public class Button extends AbstractButton {
 		if (textView != null) {
 			textView.setBoundsFrom(this);
 		}
+		
+		if(image != null) {
+			image.setBoundsFrom(this);
+		}
+		
 	}
 
+	@Override
+	protected void render() {
+		super.render();
+		image.draw();
+		getRipplesInternal().draw();
+		getHoverInternal().draw();
+		textView.draw();
+	}
+	
 }

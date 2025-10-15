@@ -7,8 +7,8 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
 import static microui.core.base.SpatialView.HooksUpdateMode.REACTIVE;
 
-import microui.MicroUI;
 import microui.core.effect.SpatialAnimator;
+import microui.util.Debugger;
 
 //Status: STABLE - Do not modify
 //Last Reviewed: 11.10.2025
@@ -524,7 +524,7 @@ public abstract class SpatialView extends View {
 	}
 
 	private void debugOnDraw() {
-		if (MicroUI.isDebugModeEnabled()) {
+		if (Debugger.isDebugModeEnabled()) {
 			ctx.fill(255, 0, 0, 64);
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
 		}

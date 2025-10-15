@@ -2,7 +2,7 @@ package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
 
-import microui.MicroUI;
+import microui.util.Debugger;
 
 //Status: STABLE - Do not modify
 //Last Reviewed: 07.10.2025
@@ -327,7 +327,7 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	private void debugOnDraw() {
-		if (MicroUI.isDebugModeEnabled()) {
+		if (Debugger.isDebugModeEnabled()) {
 			ctx.pushStyle();
 			ctx.noFill();
 			ctx.strokeWeight(4);
