@@ -12,6 +12,7 @@ import microui.core.ImageBuffer;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
+import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.layout.LayoutManager;
 import microui.layout.LayoutParams;
@@ -22,7 +23,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	private final List<Entry> entryList;
 	private final LayoutManager layoutManager;
 	private final PriorityManager priorityManager;
-	private ImageBuffer backgroundImage;
+	private final ImageBuffer image;
 	private Mode mode;
 
 	public Container(LayoutManager layoutManager, float x, float y, float width, float height) {
@@ -38,7 +39,9 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		layoutManager.setContainer(this);
 
 		priorityManager = new PriorityManager(entryList);
-
+		
+		image = new ImageBuffer();
+		
 		setMode(RESPECT_CONSTRAINTS);
 	}
 
@@ -158,7 +161,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			return this;
 		}
 		
-		throw new IllegalArgumentException("contentView with id: \" " + id + "\" is not found in to Container");
+		throw new IllegalArgumentException("contentView with id: \" " + id + "\" is not found in this Container");
 	}
 
 	public Container removeByTextId(String textId) {
@@ -169,7 +172,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			return this;
 		}
 		
-		throw new IllegalArgumentException("contentView with text id: \"" + textId + "\" is not found in to Container");
+		throw new IllegalArgumentException("contentView with text id: \"" + textId + "\" is not found in this Container");
 	}
 
 	public void removeAll() {
@@ -200,20 +203,21 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		return this;
 	}
 
-	public void setBackgroundImage(PImage image) {
-		ensureBackgroundImage();
-
-		if (image == backgroundImage.get()) {
-			return;
-		}
-
-		backgroundImage.set(image);
-		requestUpdate();
+	public PImage getImage() {
+		return image.get();
+	}
+	
+	public void setImage(PImage image) {
+		this.image.set(image);
+		this.image.setBoundsFrom(this);
+	}
+	
+	public AbstractColor getImageColor() {
+		return image.getColor();
 	}
 
-	public void setBackgroundImageColor(Color color) {
-		ensureBackgroundImage();
-		backgroundImage.setColor(color);
+	public void setImageColor(Color color) {
+		image.setColor(color);
 	}
 
 	@Override
@@ -233,8 +237,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			layoutManager.recalculate();
 		}
 
-		if (backgroundImage != null) {
-			backgroundImage.setBounds(getPadX(), getPadY(), getPadWidth(), getPadHeight());
+		if (image != null) {
+			image.setBounds(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		}
 	}
 
@@ -317,20 +321,13 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void backgroundOnDraw() {
-		if (backgroundImage != null && backgroundImage.isLoaded()) {
-			backgroundImage.draw();
+		if (image != null && image.isLoaded()) {
+			image.draw();
 		} else {
 			ctx.noStroke();
 			getBackgroundColor().apply();
 			ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		}
-	}
-
-	private void ensureBackgroundImage() {
-		if (backgroundImage != null) {
-			return;
-		}
-		backgroundImage = new ImageBuffer();
 	}
 
 	private void checkContentViewExistInList(ContentView contentView) {

@@ -3,7 +3,6 @@ package microui.feedback;
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.service.TooltipManager;
-import microui.util.Metrics;
 
 public final class Tooltip extends View {
 	private TooltipContent content;
@@ -30,8 +29,6 @@ public final class Tooltip extends View {
 		component.onPress(() -> {
 			isMustBeClosed = true;
 		});
-
-		Metrics.register(this);
 
 	}
 

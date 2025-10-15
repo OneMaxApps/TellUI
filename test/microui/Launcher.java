@@ -71,7 +71,8 @@ public final class Launcher extends PApplet {
 		background(100);
 
 		// cm.getContainerByTextId("container_main").getComponentByTextId("edit_text").setSize(mouseX,mouseY);
-		//Metrics.printAll();
+
+		// Metrics.printAll();
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public final class Launcher extends PApplet {
 			}
 
 			if (keyCode == TAB) {
-				cm.switchOnNextContainer();
+				cm.switchOnNext();
 			}
 		}
 
@@ -116,7 +117,7 @@ public final class Launcher extends PApplet {
 		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
 
 		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
-
+		
 		return container;
 	}
 

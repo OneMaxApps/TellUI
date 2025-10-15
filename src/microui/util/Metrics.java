@@ -6,6 +6,7 @@ import java.util.Map;
 //Status: STABLE - Do not modify
 //Last Reviewed: 26.09.2025
 public final class Metrics {
+	private static int totalCreatedObjects;
 	private static final Map<String, Integer> metrics = new LinkedHashMap<String, Integer>();
 
 	private Metrics() {
@@ -18,10 +19,12 @@ public final class Metrics {
 		String name = object.getClass().getSimpleName();
 
 		if (name.isEmpty()) {
-			name = "Anonim class: " + object.getClass().getName();
+			name = "Anonim class : " + object.getClass().getName();
 		}
 
 		metrics.put(name, metrics.getOrDefault(name, 0) + 1);
+		
+		totalCreatedObjects++;
 	}
 
 	public static void printAll() {
@@ -30,6 +33,9 @@ public final class Metrics {
 		}
 
 		System.out.println("\n////////////////////");
+		
+		System.out.println("Total created objects : "+totalCreatedObjects);
+		
 		metrics.forEach((k, v) -> {
 			System.out.println(k + " : " + v);
 		});

@@ -21,28 +21,24 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 26.09.2025
+//Last Reviewed: 15.10.2025
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
-	private static final ContainerManager INSTANCE;
-	private static boolean isInitialized, isCanDraw, isAnimationEnabled;
+	private static ContainerManager instance;
+	private static boolean isInitialized, isCanDraw;
 	private final List<Container> containerList;
 	private final Animation animation;
-	private Container prevContainer, currentContainer;
 	private final TooltipManager tooltipManager;
-	
-	static {
-		INSTANCE = new ContainerManager();
-	}
+	private Container prevContainer, currentContainer;
+	private boolean isAnimationEnabled;
 
 	private ContainerManager() {
 		setVisible(true);
 		containerList = new ArrayList<Container>();
 		animation = new Animation();
-		setAnimationEnabled(true);
-		
 		tooltipManager = TooltipManager.getInstance();
-		
-		
+
+		setAnimationEnabled(true);
+
 		getContext().registerMethod("keyPressed", this);
 		getContext().registerMethod("keyEvent", this);
 		getContext().registerMethod("mouseEvent", this);
@@ -130,7 +126,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void add(Container container) {
-		addContainerSafe(container);
+		addSafe(container);
 	}
 
 	public void add(Container container, String textId) {
@@ -139,13 +135,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			throw new IllegalArgumentException("textId cannot be empty");
 		}
 
-		addContainerSafe(container);
+		addSafe(container);
 
 		container.setTextId(textId);
 	}
 
 	public void add(Container container, int id) {
-		addContainerSafe(container);
+		addSafe(container);
 		container.setId(id);
 	}
 
@@ -153,7 +149,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		requireNonNull(containers, "container's cannot be null");
 
 		for (Container container : containers) {
-			removeContainerSafe(container);
+			removeSafe(container);
 		}
 
 	}
@@ -162,7 +158,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		requireNonNull(id, "id cannot be null");
 
 		for (int i : id) {
-			removeContainerSafe(i);
+			removeSafe(i);
 		}
 
 	}
@@ -171,7 +167,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		requireNonNull(textId, "textId cannot be null");
 
 		for (String currentTextId : textId) {
-			removeContainerSafe(currentTextId);
+			removeSafe(currentTextId);
 		}
 
 	}
@@ -186,7 +182,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOn(int id) {
-		lauchContainer(getContainerById(id));
+		lauchContainer(getById(id));
 	}
 
 	public void switchOn(int id, AnimationType animationType) {
@@ -195,7 +191,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOn(String textId) {
-		lauchContainer(getContainerByTextId(textId));
+		lauchContainer(getByTextId(textId));
 	}
 
 	public void switchOn(String textId, AnimationType animationType) {
@@ -203,7 +199,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		switchOn(textId);
 	}
 
-	public void switchOnPreviousContainer() {
+	public void switchOnPrevious() {
 		if (animation.isAnimationRunningEnabled()) {
 			return;
 		}
@@ -222,7 +218,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	public void switchOnNextContainer() {
+	public void switchOnNext() {
 		if (animation.isAnimationRunningEnabled()) {
 			return;
 		}
@@ -241,22 +237,59 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	public Container getContainerById(int id) {
-		return containerList.stream().filter(container -> container.getId() == id).findFirst()
-				.orElseThrow(() -> new RuntimeException("container is not found"));
+	public Container findById(final int id) {
+		if(id < 0) {
+			throw new IllegalArgumentException("id cannot be negative");
+		}
+		for (int i = 0; i < containerList.size(); i++) {
+			Container c = containerList.get(i);
+			if (c.getId() == id) {
+				return c;
+			}
+		}
+		return null;
 	}
 
-	public Container getContainerByTextId(String textId) {
-		return containerList.stream().filter(container -> container.getTextId().equals(textId)).findFirst()
-				.orElseThrow(() -> new RuntimeException("container is not found"));
+	public Container getById(int id) {
+		final Container c = findById(id);
+		if (c == null) {
+			throw new RuntimeException("container is not found");
+		}
+		return c;
 	}
 
-	public static boolean isAnimationEnabled() {
+	public Container findByTextId(final String textId) {
+		if(textId == null) {
+			throw new NullPointerException("the textId cannot be null");
+		}
+		
+		if(textId.isEmpty()) {
+			throw new IllegalArgumentException("textId cannot be empty");
+		}
+		
+		for (int i = 0; i < containerList.size(); i++) {
+			Container c = containerList.get(i);
+			if (c.getTextId().equals(textId)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	public Container getByTextId(String textId) {
+		final Container c = findByTextId(textId);
+		if(c == null) {
+			throw new RuntimeException("container is not found");
+		}
+		return c;
+	}
+
+	public boolean isAnimationEnabled() {
 		return isAnimationEnabled;
 	}
 
-	public static void setAnimationEnabled(boolean isAnimationEnabled) {
-		ContainerManager.isAnimationEnabled = isAnimationEnabled;
+	public void setAnimationEnabled(boolean isAnimationEnabled) {
+		this.isAnimationEnabled = isAnimationEnabled;
 	}
 
 	public static final boolean isInitialized() {
@@ -272,8 +305,12 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public static ContainerManager getInstance() {
-		isInitialized = true;
-		return INSTANCE;
+		if (instance == null) {
+			instance = new ContainerManager();
+			isInitialized = true;
+		}
+
+		return instance;
 	}
 
 	public final class Render {
@@ -300,7 +337,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 
 		if (!containerList.contains(container)) {
-			throw new IllegalArgumentException("container is not found in to ContainerManager");
+			throw new IllegalArgumentException("container is not found in ContainerManager");
 		}
 
 		prevContainer = currentContainer;
@@ -308,7 +345,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		animation.setAnimationRunningEnabled(true);
 	}
 
-	private void addContainerSafe(Container container) {
+	private void addSafe(Container container) {
 		requireNonNull(container, "container cannot be null");
 		if (containerList.contains(container)) {
 			throw new IllegalArgumentException("container cannot be added twice");
@@ -325,7 +362,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	private void removeContainerSafe(Container container) {
+	private void removeSafe(Container container) {
 		requireNonNull(container, "container cannot be null");
 
 		if (containerList.contains(container)) {
@@ -340,22 +377,22 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			}
 
 		} else {
-			throw new RuntimeException("container is not found in to ContainerManager");
+			throw new RuntimeException("container is not found in this ContainerManager");
 		}
 	}
 
-	private void removeContainerSafe(int id) {
+	private void removeSafe(int id) {
 		requireNonNull(id, "id cannot be null");
 
-		removeContainerSafe(containerList.stream().filter(c -> c.getId() == id).findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("id: " + id + " is not found in to ContainerManager")));
+		removeSafe(containerList.stream().filter(c -> c.getId() == id).findFirst().orElseThrow(
+				() -> new IllegalArgumentException("id: " + id + " is not found in this ContainerManager")));
 	}
 
-	private void removeContainerSafe(String textId) {
+	private void removeSafe(String textId) {
 		requireNonNull(textId, "textId cannot be null");
 
-		removeContainerSafe(containerList.stream().filter(c -> c.getTextId().equals(textId)).findFirst().orElseThrow(
-				() -> new IllegalArgumentException("text id: " + textId + " is not found in to ContainerManager")));
+		removeSafe(containerList.stream().filter(c -> c.getTextId().equals(textId)).findFirst().orElseThrow(
+				() -> new IllegalArgumentException("text id: " + textId + " is not found in this ContainerManager")));
 	}
 
 	private void debugOnDraw() {
