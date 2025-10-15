@@ -61,7 +61,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	@Override
 	public void draw() {
 		if (!isCanDraw) {
-			throw new RenderException("ContainerManager calling draw() only inside");
+			throw new RenderException("ContainerManager calls draw() only inside.");
 		}
 		super.draw();
 		debugOnDraw();
@@ -173,7 +173,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOn(Container container) {
-		lauchContainer(container);
+		launchContainer(container);
 	}
 
 	public void switchOn(Container container, AnimationType animationType) {
@@ -182,7 +182,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOn(int id) {
-		lauchContainer(getById(id));
+		launchContainer(getById(id));
 	}
 
 	public void switchOn(int id, AnimationType animationType) {
@@ -191,7 +191,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOn(String textId) {
-		lauchContainer(getByTextId(textId));
+		launchContainer(getByTextId(textId));
 	}
 
 	public void switchOn(String textId, AnimationType animationType) {
@@ -203,38 +203,36 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		if (animation.isAnimationRunningEnabled()) {
 			return;
 		}
+		
+		int currentContainerIndex = containerList.indexOf(currentContainer);
 
-		int currentContainerIndex = 0;
-		for (int i = 0; i < containerList.size(); i++) {
-			if (currentContainer == containerList.get(i)) {
-				currentContainerIndex = i;
-			}
-		}
-
-		if (currentContainerIndex > 0) {
-			switchOn(containerList.get(currentContainerIndex - 1));
+		Container prev = null;
+		
+		if(currentContainerIndex != 0) {
+			prev = containerList.get(currentContainerIndex-1);
 		} else {
-			switchOn(containerList.get(containerList.size() - 1));
+			prev = containerList.get(containerList.size()-1);
 		}
+		
+		switchOn(prev);
 	}
 
 	public void switchOnNext() {
 		if (animation.isAnimationRunningEnabled()) {
 			return;
 		}
-		int currentContainerIndex = 0;
-
-		for (int i = 0; i < containerList.size(); i++) {
-			if (currentContainer == containerList.get(i)) {
-				currentContainerIndex = i;
-			}
-		}
-
-		if (currentContainerIndex < containerList.size() - 1) {
-			switchOn(containerList.get(currentContainerIndex + 1));
+		
+		int currentContainerIndex = containerList.indexOf(currentContainer);
+		
+		Container next = null;
+		
+		if(currentContainerIndex != containerList.size()-1) {
+			next = containerList.get(currentContainerIndex+1);
 		} else {
-			switchOn(0);
+			next = containerList.get(0);
 		}
+		
+		switchOn(next);
 	}
 
 	public Container findById(final int id) {
@@ -253,7 +251,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	public Container getById(int id) {
 		final Container c = findById(id);
 		if (c == null) {
-			throw new RuntimeException("container is not found");
+			throw new RuntimeException("");
 		}
 		return c;
 	}
@@ -326,7 +324,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	private void lauchContainer(Container container) {
+	private void launchContainer(Container container) {
 		if (containerList.size() <= 1) {
 			throw new IllegalStateException(
 					"cannot switch container when ContainerManager have only 1 container inner");
