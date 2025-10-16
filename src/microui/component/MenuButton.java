@@ -165,6 +165,18 @@ public final class MenuButton extends Button implements Scrollable {
 
 		throw new ClassCastException("Item: \"" + title + "\" not MenuButton");
 	}
+	
+	public MenuButton remove(String... title) {
+		if(title == null) {
+			throw new NullPointerException("Title array cannot be null");
+		}
+		
+		for(int i = 0; i < title.length; i++) {
+			items.removeInternal(title[i]);
+		}
+		
+		return this;
+	}
 
 	public MenuButton setMarkColor(AbstractColor color) {
 		mark.setColor(color);
@@ -196,7 +208,8 @@ public final class MenuButton extends Button implements Scrollable {
 		super.onChangeBounds();
 
 		items.recalculatePosition();
-
+		items.recalculateDimensions();
+		
 		mark.setPosition(getAbsoluteX(),getAbsoluteY());
 		mark.setSize(getAbsoluteWidth(), getAbsoluteHeight());
 	}
@@ -322,10 +335,87 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 			
 		}
+		
+		public void addInternal(Button button) {
+			if (button == null) {
+				throw new NullPointerException("Button cannot be null");
+			}
+
+			if (list.contains(button)) {
+				throw new IllegalArgumentException("Button cannot be added twice in MenuButton");
+			}
+
+			if (button instanceof MenuButton subMenu) {
+				subMenu.setRootModeEnabled(false);
+				subMenu.setRoot(parent.getRoot());
+			} else {
+				button.onClick(() -> parent.getRoot().setOpen(false));
+			}
+
+			button.setStrokeColor(Color.TRANSPARENT);
+
+			button.setBackgroundColor(getTheme().getMenuButtonItemColor());
+			button.setTextColor(getTheme().getMenuButtonItemTextColor());
+
+			button.setTextAlignX(LEFT);
+			button.setPadding(10, 0);
+
+			list.add(button);
+
+			recalculatePosition();
+			recalculateDimensions();
+		}
+
+		public Button findInternal(String title) {
+			if (title == null) {
+				throw new NullPointerException("Title cannot be null");
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+				if (b.getText().equals(title)) {
+					return b;
+				}
+
+				if (b instanceof MenuButton m) {
+					return m.find(title);
+				}
+			}
+
+			return null;
+		}
+		
+		public void removeInternal(String title) {
+			final Button b = findInternal(title);
+			
+			if(b == null) {
+				throw new NoSuchElementException("Item: \""+title+"\" not found in MenuButton");
+			}
+			
+			findListWhichContainsButtonInternal(b).remove(b);
+			
+			recalculatePosition();
+			recalculateDimensions();
+		}
 
 		@Override
 		protected void render() {
 			itemsOnDraw();
+		}
+		
+		private List<Button> findListWhichContainsButtonInternal(Button button) {
+			if(list.contains(button)) {
+				return list;
+			}
+			
+			for(int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+				if(b instanceof MenuButton m) {
+					return m.items.findListWhichContainsButtonInternal(button);
+				}
+			}
+			
+			return null;
 		}
 
 		private boolean isHover() {
@@ -378,54 +468,6 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 		}
 
-		private void addInternal(Button button) {
-			if (button == null) {
-				throw new NullPointerException("Button cannot be null");
-			}
-
-			if (list.contains(button)) {
-				throw new IllegalArgumentException("Button cannot be added twice in MenuButton");
-			}
-
-			if (button instanceof MenuButton subMenu) {
-				subMenu.setRootModeEnabled(false);
-				subMenu.setRoot(parent.getRoot());
-			} else {
-				button.onClick(() -> parent.getRoot().setOpen(false));
-			}
-
-			button.setStrokeColor(Color.TRANSPARENT);
-
-			button.setBackgroundColor(getTheme().getMenuButtonItemColor());
-			button.setTextColor(getTheme().getMenuButtonItemTextColor());
-
-			button.setTextAlignX(LEFT);
-			button.setPadding(10, 0);
-
-			list.add(button);
-
-			recalculatePosition();
-			recalculateDimensions();
-		}
-
-		public Button findInternal(String title) {
-			if (title == null) {
-				throw new NullPointerException("Title cannot be null");
-			}
-
-			for (int i = 0; i < list.size(); i++) {
-				Button b = list.get(i);
-				if (b.getText().equals(title)) {
-					return b;
-				}
-
-				if (b instanceof MenuButton m) {
-					return m.find(title);
-				}
-			}
-
-			return null;
-		}
 	}
 
 	private static class Mark extends SpatialView {

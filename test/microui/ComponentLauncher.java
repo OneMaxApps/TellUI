@@ -1,20 +1,12 @@
 package microui;
 
-import microui.component.EditText;
-import microui.core.base.Component;
-import microui.core.base.Container;
-import microui.core.base.ContainerManager;
-import microui.core.effect.SpatialAnimator;
-import microui.core.style.theme.ThemeBlack;
-import microui.core.style.theme.ThemeManager;
-import microui.layout.GridLayout;
-import microui.layout.GridLayoutParams;
-import microui.util.SpatialState;
+import microui.component.MenuButton;
 import processing.core.PApplet;
+import processing.event.MouseEvent;
 
 public class ComponentLauncher extends PApplet {
 
-	private Component component;
+	private MenuButton component;
 
 	public static void main(String[] args) {
 		PApplet.main("microui.ComponentLauncher");
@@ -29,22 +21,31 @@ public class ComponentLauncher extends PApplet {
 	@Override
 	public void setup() {
 		MicroUI.setContext(this);
-//		MicroUI.setDebugModeEnabled(true);
-		ThemeManager.setTheme(new ThemeBlack());
-		ContainerManager cm = ContainerManager.getInstance();
-		cm.add(new Container(new GridLayout(5, 5)).add(component = new EditText(),
-				new GridLayoutParams(2, 2, 1, 1)));
-
-		component.setTooltip("if you can see this, it's means that it's working");
-		component.setConstrainDimensionsEnabled(false);
-
-		component.setSpatialAnimator(new SpatialAnimator(new SpatialState(component),
-				new SpatialState(component.getX() - 100, component.getY(), 300, 100), () -> component.isHover()));
+		MicroUI.setFlexibleRenderModeEnabled(true);
+		
+		component = new MenuButton("File",0,0,100,24);
+		
+		component.addMenu("New", "Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
+		
+		component.add("Open File...,Open Projects from File System...,Recent Files".split(","));
+		component.add("Close Editor,Close All Editors,Save,Save As...,Save All,Revert File".split(","));
+		
+		component.setTextId("mb");
 	}
-
+	
 	@Override
 	public void draw() {
 		background(164);
+		
+		component.draw();
 	}
 
+	@Override
+	public void mouseWheel(MouseEvent event) {
+		super.mouseWheel(event);
+		component.mouseWheel(event);
+	}
+
+	
+	
 }
