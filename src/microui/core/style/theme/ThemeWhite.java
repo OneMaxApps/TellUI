@@ -72,4 +72,14 @@ public class ThemeWhite extends AbstractTheme {
 	public AbstractColor getTooltipTextColor() {
 		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.BLACK, new Color(0, 154)), () -> true);
 	}
+	
+	@Override
+	public AbstractColor getMenuButtonItemColor() {
+		return Color.GRAY_232L;
+	}
+
+	@Override
+	public AbstractColor getMenuButtonItemTextColor() {
+		return Color.BLACK;
+	}
 }

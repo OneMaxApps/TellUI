@@ -90,6 +90,14 @@ public class Button extends AbstractButton {
 	public final void setImageColor(AbstractColor color) {
 		image.setColor(color);
 	}
+	
+	public final void setTextAlignX(int alignX) {
+		textView.setAlignX(alignX);
+	}
+	
+	public final void setTextAlignY(int alignY) {
+		textView.setAlignY(alignY);
+	}
 
 	@Override
 	protected void onChangeBounds() {

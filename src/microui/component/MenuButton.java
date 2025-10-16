@@ -1,66 +1,53 @@
 package microui.component;
 
 import static microui.core.style.theme.ThemeManager.getTheme;
+import static processing.core.PConstants.LEFT;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import microui.core.base.SpatialView;
+import microui.core.base.View;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
-import microui.event.Event;
+import microui.core.style.Color;
+import microui.core.style.GradientColor;
+import microui.core.style.GradientLoopColor;
+import microui.core.style.Stroke;
+import microui.event.Listener;
 import processing.event.MouseEvent;
 
-// TODO make setting padding, color etc for items
-public class MenuButton extends Button implements Scrollable {
-	private boolean isOpen, isAutoCloseEnabled, isRoot, isMarkVisible;
-
-	private int selectedId;
-
-	private float listHeight;
-	private float markX, markY, markW, markH;
-
-	private final AbstractColor indicatorColor;
-
-	private final ArrayList<Button> itemList;
-	private final Scrolling scrolling;
-
+// if menu is root - vertical list else horizontal swing
+public final class MenuButton extends Button implements Scrollable {
+	private static final int DEFAULT_ITEM_WIDTH = 200;
+	private static final int DEFAULT_ITEM_HEIGHT = 24;
+	
+	private final Items items;
+	private final Mark mark;
 	private MenuButton root;
+	private ItemDimensions itemDimensions;
+	private boolean isOpen, isRootModeEnabled;
 
-	public MenuButton(String title, float x, float y, float w, float h) {
-		super(title, x, y, w, h);
-		setPriority(1);
-		isAutoCloseEnabled = true;
-		itemList = new ArrayList<Button>();
-		selectedId = -1;
-		isRoot = true;
-		isMarkVisible = true;
-		root = this;
-		calculateMarkBounds();
-		scrolling = new Scrolling();
-
-		onClick(() -> {
-			isOpen = !isOpen;
-			if (!isOpen) {
-				closeAllSubMenus();
-			} else {
-				selectedId = -1;
-			}
-		});
-
-		indicatorColor = getTheme().getPrimaryColor();
-
+	public MenuButton(String text, float x, float y, float w, float h) {
+		super(text, x, y, w, h);
+		items = new Items(this);
+		mark = new Mark(this);
+		onClick(() -> setOpen(!isOpen()));
+		setRoot(this);
+		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH,DEFAULT_ITEM_HEIGHT));
+		setRootModeEnabled(true);
 	}
 
-	public MenuButton(String title) {
-		this(title, 0, 0, 0, 0);
+	public MenuButton(float x, float y, float w, float h) {
+		this("Menu Button", x, y, w, h);
+	}
+
+	public MenuButton(String text) {
+		this(1, 1, 1, 1);
 		setSize(getMaxWidth(), getMaxHeight());
-		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
-	}
-
-	public MenuButton(String title, String... items) {
-		this(title);
-		add(items);
+		setPosition(ctx.width / 2 - getWidth() / 2, ctx.height / 2 - getHeight() / 2);
+		setText(text);
 	}
 
 	public MenuButton() {
@@ -68,473 +55,382 @@ public class MenuButton extends Button implements Scrollable {
 	}
 
 	@Override
-	protected final void render() {
-		super.render();
-		scrolling.update();
-
-		itemsOnDraw();
-		markOnDraw();
-		checkClosingFromOut();
+	public void mouseWheel(MouseEvent mouseEvent) {
+		items.mouseWheel(mouseEvent);
+	}
+	
+	private ItemDimensions getItemDimensions() {
+		return itemDimensions;
 	}
 
-	public final void setAutoClose(boolean autoClose) {
-		this.isAutoCloseEnabled = autoClose;
+	private void setItemDimensions(ItemDimensions itemDimensions) {
+		if (itemDimensions == null) {
+			throw new NullPointerException("ItemDimensions cannot be null");
+		}
+		
+		if (this.itemDimensions == itemDimensions) {
+			return;
+		}
+		
+		this.itemDimensions = itemDimensions;
+		
+		items.recalculatePosition();
 	}
 
-	public final boolean isOpen() {
+	public boolean isOpen() {
 		return isOpen;
 	}
 
-	public final void open() {
-		this.isOpen = true;
+	public MenuButton setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+
+		if(!isOpen) {
+			items.close();
+		}
+		
+		return this;
 	}
 
-	public final void close() {
-		this.isOpen = false;
-	}
-
-	public final int getSelectedId() {
-		return selectedId;
-	}
-
-	public final boolean isSelected(final String title) {
-
-		for (Button item : itemList) {
-			if (item.getText().equals(title)) {
-				return true;
-			}
+	public MenuButton add(String... titles) {
+		if (titles == null) {
+			throw new NullPointerException("Titles array cannot be null");
 		}
 
-		return false;
-	}
-
-	public final boolean isSelectedDeep(final String title) {
-		if (selectedId == -1) {
-			return false;
-		}
-
-		boolean selected = false;
-
-		if (itemList.get(selectedId).getText().equals(title)) {
-			selected = true;
-		}
-
-		if (selected) {
-			return true;
-		}
-
-		if (itemList.get(selectedId) instanceof MenuButton subMenu) {
-			selected = subMenu.isSelectedDeep(title);
-		}
-
-		return selected;
-	}
-
-	public final void setSelectedId(final int selectedId) {
-		if (selectedId < 0 || selectedId >= itemList.size()) {
-			throw new IndexOutOfBoundsException("Index out of bounds of selecting");
-		}
-		this.selectedId = selectedId;
-		if (isOpen) {
-			isOpen = !isOpen;
-		}
-	}
-
-	public final MenuButton add(final String... title) {
-		if (isRoot) {
-			rootListState(title);
-		} else {
-			childListState(title);
+		for (int i = 0; i < titles.length; i++) {
+			items.addInternal(new Button(titles[i]));
 		}
 
 		return this;
 	}
 
-	public final MenuButton add(final int... numbers) {
-		add(Arrays.stream(numbers).mapToObj(String::valueOf).toArray(String[]::new));
-		return this;
-	}
-
-	public final void add(final MenuButton... subMenu) {
-		final boolean CAN_BE_IN_RIGHT_SIDE = getX() + getWidth() * 2 < ctx.width;
-		for (int i = 0; i < subMenu.length; i++) {
-			itemList.add(subMenu[i]);
-			subMenu[i].setRoot(root);
-			if (isRoot) {
-				subMenu[i].setBounds(getX(), getY() + getHeight() + listHeight, getWidth(), getHeight());
-			} else {
-				subMenu[i].setBounds(CAN_BE_IN_RIGHT_SIDE ? getX() + getWidth() : getX() - getWidth(),
-						getY() + listHeight, getWidth(), getHeight());
-			}
-			listHeight += getHeight();
+	public MenuButton add(String title, Listener onClickListener) {
+		if (onClickListener == null) {
+			throw new NullPointerException("OnClickListener cannot be null");
 		}
-
-		setRootForSubMenus();
-
-		requestUpdate();
-	}
-
-	public final MenuButton addSubMenu(final MenuButton subMenu, final String... items) {
-		add(subMenu);
-		subMenu.add(items);
-		return this;
-	}
-
-	public final MenuButton addSubMenu(final String... items) {
-		final MenuButton subMenu = new MenuButton(items[0]);
-		add(subMenu);
-		String[] itemsCopy = Arrays.copyOfRange(items, 1, items.length);
-		subMenu.add(itemsCopy);
+		Button b = new Button(title);
+		b.onClick(onClickListener);
+		items.addInternal(b);
 
 		return this;
 	}
 
-	public final void remove(final int index) {
-		if (itemList == null || itemList.isEmpty() || index < 0 || index >= itemList.size()) {
-			return;
+	public MenuButton addMenu(String title, String... titles) {
+		items.addInternal(new MenuButton(title).add(titles));
+
+		return this;
+	}
+
+	public Button find(String title) {
+		return items.findInternal(title);
+	}
+
+	public MenuButton findMenu(String title) {
+		Button b = find(title);
+
+		if (b instanceof MenuButton m) {
+			return m;
 		}
 
-		itemList.remove(index);
-		listHeight -= getHeight();
-		final boolean CAN_BE_IN_RIGHT_SIDE = getX() + getWidth() * 2 < ctx.width;
-		for (int i = 0; i < itemList.size(); i++) {
-			final Button item = itemList.get(i);
-			if (isRoot) {
-				item.setPosition(getX(), getY() + getHeight() * (i + 1));
-			} else {
-				item.setPosition(CAN_BE_IN_RIGHT_SIDE ? getX() + getWidth() : getX() - getWidth(),
-						getY() + getHeight() * (1 + i) - getHeight());
-			}
-		}
+		return null;
 	}
 
-	public final int getItemsCount() {
-		return itemList.size();
-	}
+	public Button get(String title) {
+		final Button b = find(title);
 
-	public final void setItemsColor(final AbstractColor color) {
-		for (Button item : itemList) {
-			item.setBackgroundColor(color);
-
-			if (item instanceof MenuButton subMenu) {
-				subMenu.setItemsColor(color);
-			}
-		}
-	}
-
-	public final Button getItemDeep(final String title) {
-		Button ref = null;
-
-		for (Button item : itemList) {
-			if (item.getText().equals(title)) {
-				return item;
-			}
+		if (b == null) {
+			throw new NoSuchElementException("Title: \"" + title + "\" not found in MenuButton");
 		}
 
-		for (Button item : itemList) {
-			if (item instanceof MenuButton subMenu) {
-				if (ref == null) {
-					ref = subMenu.getItemDeep(title);
-				}
-			}
+		return b;
+	}
+
+	public MenuButton getMenu(String title) {
+		Button b = get(title);
+
+		if (b instanceof MenuButton m) {
+			return m;
 		}
 
-		if (isRoot && ref == null) {
-			throw new IllegalArgumentException(title + "  is not exists");
-		}
-
-		return ref;
+		throw new ClassCastException("Item: \"" + title + "\" not MenuButton");
 	}
 
-	public final Button getItem(final String title) {
+	public MenuButton setMarkColor(AbstractColor color) {
+		mark.setColor(color);
 
-		for (Button item : itemList) {
-			if (item.getText().equals(title)) {
-				return item;
-			}
-		}
-
-		throw new IllegalArgumentException(title + "  is not exists");
+		return this;
 	}
 
-	public final MenuButton getSubMenu(final String subMenuItem) {
-		return (MenuButton) getItem(subMenuItem);
-	}
-
-	public final MenuButton getSubMenuDeep(final String subMenuItem) {
-		return (MenuButton) getItemDeep(subMenuItem);
-	}
-
-	public final ArrayList<Button> getItems() {
-		return itemList;
-	}
-
-	public final boolean isMarkVisible() {
-		return isMarkVisible;
-	}
-
-	public final void setMarkVisible(boolean markVisible) {
-		this.isMarkVisible = markVisible;
-	}
-
-	public final void setMarksVisible(boolean markVisible) {
-		this.isMarkVisible = markVisible;
-
-		itemList.forEach(i -> {
-			if (i instanceof MenuButton subMenu) {
-				subMenu.setMarksVisible(markVisible);
-			}
-		});
+	public AbstractColor getMarkColor() {
+		return mark.getColor();
 	}
 
 	@Override
-	public final void mouseWheel(MouseEvent e) {
-		scrolling.init(e);
+	protected void render() {
+		super.render();
 
-		for (Button item : itemList) {
-			if (item instanceof MenuButton subMenu) {
-				subMenu.mouseWheel(e);
-			}
+		if (isOpen()) {
+			items.draw();
 		}
+
+		if (ctx.mousePressed && isOpen() && !items.isHoverDeep() && !getRoot().isHover()) {
+			setOpen(false);
+		}
+
+		mark.draw();
 	}
 
 	@Override
-	protected final void onChangeBounds() {
+	protected void onChangeBounds() {
 		super.onChangeBounds();
-		if (itemList == null) {
-			return;
-		}
 
-		final boolean canBeInRightSide = getX() + getWidth() * 2 < ctx.width;
+		items.recalculatePosition();
 
-		listHeight = 0;
-		for (int i = 0; i < itemList.size(); i++) {
-			final Button item = itemList.get(i);
-			item.setConstrainDimensionsEnabled(false);
-			item.setSize(getWidth(), getHeight());
-			if (isRoot) {
-				item.setPosition(getX(), getY() + getHeight() * (i + 1));
-			} else {
-				item.setPosition(canBeInRightSide ? getX() + getWidth() : getX() - getWidth(),
-						getY() + getHeight() * (1 + i) - getHeight());
-			}
-
-			listHeight += item.getHeight();
-		}
-
-		calculateMarkBounds();
-
+		mark.setPositionFrom(this);
+		mark.setSize(getWidth() * .99f, getHeight() * .99f);
 	}
 
-	private final void checkClosingFromOut() {
-		if (!isOpen) {
-			return;
-		}
-		boolean inside = false;
-
-		inside = checkInsideToAnyIn();
-
-		if (ctx.mousePressed && isLeave() && !inside) {
-			close();
-		}
-	}
-
-	private final boolean checkInsideToAnyIn() {
-		boolean insideState = false;
-		if (scrolling.event.isEnter()) {
-			insideState = true;
-		}
-
-		for (Button item : itemList) {
-			if (item instanceof MenuButton subMenu) {
-				if (subMenu.checkInsideToAnyIn() && subMenu.isOpen()) {
-					insideState = true;
-				}
-			}
-		}
-
-		return insideState;
-	}
-
-	private final MenuButton setRootForSubMenus() {
-		for (Button item : itemList) {
-			if (item instanceof MenuButton subMenu) {
-				subMenu.setRoot(root);
-				for (Button innerItem : subMenu.itemList) {
-					if (innerItem instanceof MenuButton innerSubMenu) {
-						innerSubMenu.setRoot(root);
-						innerSubMenu.setRootForSubMenus();
-					}
-				}
-			}
-		}
-		return this;
-	}
-
-	private final void closeAllSubMenusWithoutSelected() {
-		if (itemList.isEmpty() || selectedId == -1) {
-			return;
-		}
-		for (int i = 0; i < itemList.size(); i++) {
-			if (i == selectedId) {
-				continue;
-			}
-			if (itemList.get(i) instanceof MenuButton subMenu) {
-				subMenu.closeAllSubMenus();
-				subMenu.close();
-			}
-		}
-	}
-
-	private final void closeAllSubMenus() {
-		if (itemList.isEmpty()) {
-			return;
-		}
-
-		if (!isOpen) {
-			for (int i = 0; i < itemList.size(); i++) {
-				if (itemList.get(i) instanceof MenuButton subMenu) {
-					subMenu.close();
-					subMenu.closeAllSubMenus();
-				}
-			}
-		}
-
-	}
-
-	private void rootListState(String... title) {
-		for (int i = 0; i < title.length; i++) {
-			itemList.add(new Button(title[i], getX(), getY() + getHeight() + listHeight, getWidth(), getHeight()));
-			listHeight += getHeight();
-		}
-	}
-
-	private void childListState(String... title) {
-		final boolean isCanToBeInRightSide = getX() + getWidth() * 2 < ctx.width;
-		final float correctX = isCanToBeInRightSide ? getX() + getWidth() : getX() - getWidth();
-		float correctY = 0;
-
-		for (int i = 0; i < title.length; i++) {
-			correctY = getY() + listHeight;
-			itemList.add(new Button(title[i], correctX, correctY, getWidth(), getHeight()));
-			listHeight += getHeight();
-		}
-
+	private MenuButton getRoot() {
+		return root;
 	}
 
 	private void setRoot(MenuButton root) {
 		if (root == null) {
-			return;
+			throw new NullPointerException("Root for MenuButton cannot be null");
 		}
 		this.root = root;
-		if (root != this) {
-			isRoot = false;
-		}
 	}
 
-	private void markOnDraw() {
-		if (!isMarkVisible) {
-			return;
-		}
-		ctx.pushStyle();
-		ctx.noStroke();
-
-		if (isOpen) {
-			indicatorColor.apply();
-		} else {
-			ctx.fill(255, 128);
-		}
-
-		ctx.rect(markX, markY, markW, markH);
-		ctx.popStyle();
-
+	private boolean isRootModeEnabled() {
+		return isRootModeEnabled;
 	}
 
-	private void calculateMarkBounds() {
-		markX = getX() + getWidth() * .2f;
-		markY = getY() + getHeight() * .8f;
-		markW = getWidth() * .6f;
-		markH = getHeight() * .05f;
-
+	private void setRootModeEnabled(boolean isRoot) {
+		this.isRootModeEnabled = isRoot;
 	}
 
-	private void itemsOnDraw() {
-		if (!isOpen || itemList.isEmpty()) {
-			return;
-		}
-
-		for (int i = 0; i < itemList.size(); i++) {
-			Button item = itemList.get(i);
-			item.draw();
-
-			if (item.isClick()) {
-				selectedId = i;
-				closeAllSubMenusWithoutSelected();
-
-				if (!(item instanceof MenuButton)) {
-					if (isAutoCloseEnabled) {
-						root.close();
-						root.closeAllSubMenus();
-					}
-				}
+	public static final record ItemDimensions(float width, float height) {
+		
+		public ItemDimensions {
+			if (width <= 0 || height <= 0) {
+				throw new IllegalArgumentException("Dimensions for MenuButton item cannot be less or equal zero");
 			}
 		}
 	}
+	
+	private static final class Items extends View implements Scrollable {
+		private final MenuButton parent;
+		private final List<Button> list;
 
-	private final class Scrolling {
-		private final Event event;
-		private final SpatialView spatial;
-		boolean enable;
+		public Items(MenuButton parent) {
+			super();
+			setVisible(true);
+			this.parent = parent;
+			list = new ArrayList<Button>();
 
-		Scrolling() {
-			spatial = new SpatialView() {
-				@Override
-				protected void render() {
-				}
-			};
-
-			event = new Event(spatial);
-			enable = true;
 		}
 
-		final void update() {
-			event.listen();
-			if (itemList.isEmpty()) {
+		@Override
+		public void mouseWheel(MouseEvent mouseEvent) {
+			if (list.isEmpty()) {
 				return;
 			}
 
-			if (isRoot) {
-				spatial.setBounds(itemList.get(0).getX(), getY() + getHeight(), itemList.get(0).getWidth(), listHeight);
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i) instanceof MenuButton m) {
+					m.mouseWheel(mouseEvent);
+				}
+			}
+
+			if (list.size() == 1) {
+				return;
+			}
+
+			if (!isHover()) {
+				return;
+			}
+
+			final boolean isDown = mouseEvent.getCount() > 0;
+
+			final float firstItemY = list.get(0).getY();
+			final float lastItemY = list.get(list.size() - 1).getY();
+
+			for (int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+				b.setY(isDown ? b.getY() + b.getHeight() : b.getY() - b.getHeight());
+			}
+
+			if (isDown) {
+				list.add(0, list.remove(list.size() - 1));
+				list.get(0).setY(firstItemY);
 			} else {
-				spatial.setBounds(itemList.get(0).getX(), getY(), itemList.get(0).getWidth(), listHeight);
+				list.add(list.size() - 1, list.remove(0));
+				list.get(list.size() - 1).setY(lastItemY);
 			}
 		}
 
-		final void init(final MouseEvent e) {
-			if (!enable || !event.isHover() || itemList.size() <= 1) {
-				return;
+		public void close() {
+			for(int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				if(b instanceof MenuButton m) {
+					m.setOpen(false);
+				}
 			}
-
-			for (int i = 0; i < itemList.size(); i++) {
-				final Button item = itemList.get(i);
-
-				if (e.getCount() > 0) {
-					item.setY(item.getY() + item.getHeight());
+		}
+		
+		public void recalculatePosition() {
+			float totalHeight = 0;
+			for (int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+				b.setConstrainDimensionsEnabled(false);
+				
+				// vertical list under the root menu
+				if (parent.isRootModeEnabled()) {
+					b.setAbsoluteX(parent.getX());
+					b.setAbsoluteY(parent.getY() + parent.getHeight() + totalHeight);
 				} else {
-					item.setY(item.getY() - item.getHeight());
+					// swing on horizontal
+					b.setAbsoluteX(parent.getX() + b.getWidth());
+					b.setAbsoluteY(parent.getY() + totalHeight);
+				}
+				
+				b.setWidth(parent.getItemDimensions().width());
+				b.setHeight(parent.getItemDimensions().height());
+
+				totalHeight += b.getHeight();
+			}
+		}
+
+		@Override
+		protected void render() {
+			itemsOnDraw();
+		}
+
+		private boolean isHover() {
+			if (!parent.isRootModeEnabled() && parent.isHover()) {
+				return true;
+			}
+
+			if (list.isEmpty()) {
+				return false;
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				if (b.isHover()) {
+					return true;
 				}
 
 			}
 
-			if (e.getCount() > 0) {
-				itemList.add(0, itemList.remove(itemList.size() - 1));
-				itemList.get(0).setY(itemList.get(1).getY() - itemList.get(0).getHeight());
-			} else {
-				itemList.add(itemList.size() - 1, itemList.remove(0));
-				itemList.get(itemList.size() - 1)
-						.setY(itemList.get(itemList.size() - 2).getY() + itemList.get(itemList.size() - 1).getHeight());
+			return false;
+		}
+
+		private boolean isHoverDeep() {
+			if (isHover()) {
+				return true;
 			}
 
+			for (int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+
+				if (b instanceof MenuButton m) {
+
+					if (m.items.isHoverDeep() && m.isOpen()) {
+						return true;
+					}
+
+				}
+			}
+
+			return false;
 		}
+
+		private void itemsOnDraw() {
+			if (list.isEmpty()) {
+				return;
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i).draw();
+			}
+		}
+
+		private void addInternal(Button button) {
+			if (button == null) {
+				throw new NullPointerException("Button cannot be null");
+			}
+
+			if (list.contains(button)) {
+				throw new IllegalArgumentException("Button cannot be added twice in MenuButton");
+			}
+
+			if (button instanceof MenuButton subMenu) {
+				subMenu.setRootModeEnabled(false);
+				subMenu.setRoot(parent.getRoot());
+			} else {
+				button.onClick(() -> parent.getRoot().setOpen(false));
+			}
+			
+			button.setStrokeColor(Color.TRANSPARENT);
+			
+			button.setBackgroundColor(getTheme().getMenuButtonItemColor());
+			button.setTextColor(getTheme().getMenuButtonItemTextColor());
+			
+			button.setTextAlignX(LEFT);
+			button.setPadding(10,0);
+			
+			list.add(button);
+
+			recalculatePosition();
+		}
+
+		public Button findInternal(String title) {
+			if (title == null) {
+				throw new NullPointerException("Title cannot be null");
+			}
+
+			for (int i = 0; i < list.size(); i++) {
+				Button b = list.get(i);
+				if (b.getText().equals(title)) {
+					return b;
+				}
+
+				if (b instanceof MenuButton m) {
+					return m.find(title);
+				}
+			}
+
+			return null;
+		}
+	}
+
+	private static class Mark extends SpatialView {
+		private final Stroke stroke;
+
+		public Mark(MenuButton menu) {
+			setVisible(true);
+			stroke = new Stroke();
+			stroke.setWeight(2);
+			
+			setColor(new GradientColor(Color.TRANSPARENT,
+					new GradientLoopColor(Color.GRAY_232L, new Color(0,0,232, 64)).setSpeed(.01f),
+					() -> menu.isOpen() && !menu.isRootModeEnabled()));
+		}
+
+		public AbstractColor getColor() {
+			return stroke.getColor();
+		}
+
+		public void setColor(AbstractColor color) {
+			stroke.setColor(color);
+		}
+
+		@Override
+		protected void render() {
+			ctx.noFill();
+			stroke.apply();
+			ctx.rect(getX(), getY(), getWidth(), getHeight());
+		}
+
 	}
 }

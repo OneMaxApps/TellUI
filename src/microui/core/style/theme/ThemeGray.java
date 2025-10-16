@@ -69,4 +69,16 @@ public class ThemeGray extends AbstractTheme {
 	public AbstractColor getTooltipTextColor() {
 		return new Color(32);
 	}
+
+	@Override
+	public AbstractColor getMenuButtonItemColor() {
+		return Color.GRAY_32L;
+	}
+
+	@Override
+	public AbstractColor getMenuButtonItemTextColor() {
+		return Color.WHITE;
+	}
+	
+	
 }

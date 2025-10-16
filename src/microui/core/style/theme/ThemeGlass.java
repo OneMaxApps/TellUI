@@ -71,4 +71,13 @@ public class ThemeGlass extends AbstractTheme {
 		return new Color(0);
 	}
 
+	@Override
+	public AbstractColor getMenuButtonItemColor() {
+		return Color.GRAY_64L;
+	}
+
+	@Override
+	public AbstractColor getMenuButtonItemTextColor() {
+		return Color.WHITE;
+	}
 }

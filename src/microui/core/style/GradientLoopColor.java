@@ -18,7 +18,7 @@ public class GradientLoopColor extends AbstractGradientColor {
 	public final void setLoopEnabled(boolean isLoopEnabled) {
 		getAnimator().setLoopEnabled(isLoopEnabled);
 	}
-
+	
 	@Override
 	protected void preApply() {
 		super.preApply();

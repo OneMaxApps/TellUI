@@ -3,7 +3,7 @@ package microui.core.style;
 import microui.util.MathUtils;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 11.10.2025
+//Last Reviewed: 16.10.2025
 public abstract class AbstractGradientColor extends AbstractColor {
 	private final AbstractColor start, end;
 	private final Animator animator;
@@ -66,6 +66,16 @@ public abstract class AbstractGradientColor extends AbstractColor {
 	@Override
 	public int getAlpha() {
 		return lerp(getStart().getAlpha(), getEnd().getAlpha());
+	}
+	
+	public final float getSpeed() {
+		return getAnimator().getSpeed();
+	}
+	
+	public final AbstractGradientColor setSpeed(float speed) {
+		getAnimator().setSpeed(speed);
+		
+		return this;
 	}
 
 	protected final Animator getAnimator() {

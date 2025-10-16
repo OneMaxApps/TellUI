@@ -1,14 +1,12 @@
 package microui;
 
-import static microui.core.base.Container.Mode.IGNORE_CONSTRAINTS;
-
 import microui.component.Button;
 import microui.component.CheckBox;
 import microui.component.EditText;
 import microui.component.Knob;
 import microui.component.LabeledCheckBox;
 import microui.component.MenuButton;
-import microui.component.MenuButtonNew;
+import microui.component.MenuButtonOld;
 import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
@@ -16,8 +14,6 @@ import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
-import microui.core.style.theme.ThemeGray;
-import microui.core.style.theme.ThemeManager;
 import microui.layout.ColumnLayout;
 import microui.layout.ColumnLayoutParams;
 import microui.layout.GridLayout;
@@ -49,8 +45,8 @@ public final class Launcher extends PApplet {
 		MicroUI.setContext(this);
 //		MicroUI.setDebugModeEnabled(true);
 		//Debugger.setDebugModeEnabled(true);
-		
-		ThemeManager.setTheme(new ThemeGray());
+
+		//ThemeManager.setTheme(new ThemeBlack());
 
 		cm = ContainerManager.getInstance();
 
@@ -61,14 +57,15 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new EditText()), "EditText");
 		cm.add(getContainerWith(new Knob()), "Knob");
 		cm.add(getContainerWith(new LabeledCheckBox()), "LabeledCheckBox");
-		cm.add(getContainerWith(new MenuButton()), "MenuButton");
+		cm.add(getContainerWith(new MenuButtonOld()), "MenuButton");
 		cm.add(getContainerWith(new Scroll()), "Scroll");
 		cm.add(getContainerWith(new Slider()), "Slider");
 		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerWith(new TextView()), "TextView");
 
-		
 		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
+		
+		cm.getByTextId("main").setConstrainDimensionsEnabled(false);
 	}
 
 	@Override
@@ -78,6 +75,11 @@ public final class Launcher extends PApplet {
 		// cm.getContainerByTextId("container_main").getComponentByTextId("edit_text").setSize(mouseX,mouseY);
 
 		// Metrics.printAll();
+		
+		if(mouseButton == RIGHT) {
+			cm.getByTextId("main").setSize(mouseX,mouseY);
+		}
+		
 	}
 
 	@Override
@@ -100,13 +102,14 @@ public final class Launcher extends PApplet {
 		Container container = new Container(new GridLayout(3, 4));
 
 		Container ContainerMenuItem = new Container(new ColumnLayout());
-		//ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
+		// ContainerMenuItem.setMode(IGNORE_CONSTRAINTS);
 
-		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")), new ColumnLayoutParams(.2f));
+		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")),
+				new ColumnLayoutParams(.2f));
 
-		MenuButton menuButtonOfComponents;
+		MenuButtonOld menuButtonOfComponents;
 		ContainerMenuItem.add(
-				menuButtonOfComponents = new MenuButton("show component", "Button", "CheckBox", "EditText", "Knob",
+				menuButtonOfComponents = new MenuButtonOld("show component", "Button", "CheckBox", "EditText", "Knob",
 						"LabeledCheckBox", "MenuButton", "Scroll", "Slider", "TextField", "TextView"),
 				new ColumnLayoutParams(.2f));
 
@@ -122,13 +125,15 @@ public final class Launcher extends PApplet {
 		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
 
 		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
+
+		MenuButton menuButton = new MenuButton();
+		container.add(menuButton, new GridLayoutParams(0, 0, 1, 1, -1, -1));
+		menuButton.setMaxSize(100,24);
 		
-		MenuButtonNew menuButtonNew = new MenuButtonNew();
-		container.add(menuButtonNew, new GridLayoutParams(0, 1));
+		menuButton.addMenu("New", "Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
 		
-		for(int i = 0; i < 10; i++) {
-			menuButtonNew.add("title "+i);
-		}
+		menuButton.add("Open File...,Open Projects from File System...,Recent Files".split(","));
+		menuButton.add("Close Editor,Close All Editors,Save,Save As...,Save All,Revert File".split(","));
 		
 		return container;
 	}
@@ -140,7 +145,7 @@ public final class Launcher extends PApplet {
 		container.add(new CheckBox(), new GridLayoutParams(1, 0));
 		container.add(new EditText(), new GridLayoutParams(2, 0));
 		container.add(new LabeledCheckBox("confirm"), new GridLayoutParams(3, 0));
-		container.add(new MenuButton().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
+		container.add(new MenuButtonOld().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
 		container.add(new Scroll(), new GridLayoutParams(0, 1), "scroll");
 		container.add(new Slider(), new GridLayoutParams(1, 1));
 		container.add(new TextField(), new GridLayoutParams(2, 1));
@@ -152,7 +157,7 @@ public final class Launcher extends PApplet {
 
 	private Container getContainerWith(Component component) {
 		Container container = new Container(new GridLayout(11, 11));
-		container.setMode(IGNORE_CONSTRAINTS);
+		//container.setMode(IGNORE_CONSTRAINTS);
 
 		if (component instanceof EditText) {
 			container.add(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");

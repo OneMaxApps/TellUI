@@ -3,7 +3,11 @@ package microui.util;
 public final class Debugger {
 	private static String additionalInfo = "";
 	
-	private static boolean isDebugModeEnabled;
+	private static boolean isDebugModeEnabled,isHotKeySwitchEnabled;
+	
+	static {
+		setHotKeySwitchEnabled(true);
+	}
 	
 	public static boolean isDebugModeEnabled() {
 		return isDebugModeEnabled;
@@ -23,6 +27,14 @@ public final class Debugger {
 		}
 		
 		Debugger.additionalInfo = additionalInfo;
+	}
+
+	public static boolean isHotKeySwitchEnabled() {
+		return isHotKeySwitchEnabled;
+	}
+
+	public static void setHotKeySwitchEnabled(boolean isHotKeySwitchEnabled) {
+		Debugger.isHotKeySwitchEnabled = isHotKeySwitchEnabled;
 	}
 	
 }

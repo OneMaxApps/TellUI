@@ -66,6 +66,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 		super.draw();
 		debugOnDraw();
+		
 	}
 
 	@Override
@@ -73,11 +74,18 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		if (currentContainer == null) {
 			return;
 		}
+		
 		currentContainer.keyPressed();
 	}
 
 	public void keyEvent(KeyEvent keyEvent) {
 		if (keyEvent.getAction() == KeyEvent.PRESS) {
+			if (Debugger.isHotKeySwitchEnabled()) {
+				if (keyEvent.isAltDown()) {
+					Debugger.setDebugModeEnabled(!Debugger.isDebugModeEnabled());
+				}
+			}
+			
 			KeyboardManager.keyPressed();
 			keyPressed();
 		}

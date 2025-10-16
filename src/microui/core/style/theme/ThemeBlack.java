@@ -73,4 +73,16 @@ public class ThemeBlack extends AbstractTheme {
 				() -> true);
 	}
 
+	@Override
+	public AbstractColor getMenuButtonItemColor() {
+		return Color.BLACK;
+	}
+
+	@Override
+	public AbstractColor getMenuButtonItemTextColor() {
+		return Color.WHITE;
+	}
+	
+	
+
 }

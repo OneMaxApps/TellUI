@@ -28,4 +28,9 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getTooltipBackgroundColor();
 
 	public abstract AbstractColor getTooltipTextColor();
+	
+	public abstract AbstractColor getMenuButtonItemColor();
+	
+	public abstract AbstractColor getMenuButtonItemTextColor();
+	
 }
