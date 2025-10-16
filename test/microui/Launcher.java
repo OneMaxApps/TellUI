@@ -76,10 +76,6 @@ public final class Launcher extends PApplet {
 
 		// Metrics.printAll();
 		
-		if(mouseButton == RIGHT) {
-			cm.getByTextId("main").setSize(mouseX,mouseY);
-		}
-		
 	}
 
 	@Override
@@ -134,6 +130,8 @@ public final class Launcher extends PApplet {
 		
 		menuButton.add("Open File...,Open Projects from File System...,Recent Files".split(","));
 		menuButton.add("Close Editor,Close All Editors,Save,Save As...,Save All,Revert File".split(","));
+		
+		menuButton.setTextId("mb");
 		
 		return container;
 	}
