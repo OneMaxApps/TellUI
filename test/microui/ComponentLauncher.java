@@ -1,6 +1,10 @@
 package microui;
 
 import microui.component.MenuButton;
+import microui.component.MenuButton.ItemDimensions;
+import microui.core.base.ContainerManager;
+import microui.core.style.theme.ThemeBlack;
+import microui.core.style.theme.ThemeManager;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
@@ -14,23 +18,34 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void settings() {
-		size(640, 480);
+		size(800, 480);
 //		fullScreen();
 	}
 
 	@Override
 	public void setup() {
 		MicroUI.setContext(this);
+		
 		MicroUI.setFlexibleRenderModeEnabled(true);
 		
-		component = new MenuButton("File",0,0,100,24);
+		ContainerManager.getInstance();
+		
+		ThemeManager.setTheme(new ThemeBlack());
+		
+		component = new MenuButton("File",0,0,64,20);
 		
 		component.addMenu("New", "Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
 		
 		component.add("Open File...,Open Projects from File System...,Recent Files".split(","));
 		component.add("Close Editor,Close All Editors,Save,Save As...,Save All,Revert File".split(","));
+		component.getMenu("New").addMenu("New 1","Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
 		
-		component.setTextId("mb");
+		component.getMenu("New 1").addMenu("New 2","1,2,3,4,5,6,7,8,9,10".split(","));
+		
+		component.setItemDimensions(new ItemDimensions(100,20));
+		
+		component.getMenu("New 2").setTooltip("i'm sun-menu item in MenuButton");
+		
 	}
 	
 	@Override
@@ -38,6 +53,7 @@ public class ComponentLauncher extends PApplet {
 		background(164);
 		
 		component.draw();
+		
 	}
 
 	@Override

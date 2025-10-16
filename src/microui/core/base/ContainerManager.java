@@ -496,7 +496,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				prevContainerImage.removeTexture();
 				currentContainerImage.removeTexture();
 
-				currentContainer.draw();
+				if(currentContainer != null) {
+					currentContainer.draw();
+				}
+				
 			}
 		}
 
