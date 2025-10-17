@@ -3,8 +3,6 @@ package microui;
 import microui.component.MenuButton;
 import microui.component.MenuButton.ItemDimensions;
 import microui.core.base.ContainerManager;
-import microui.core.style.theme.ThemeBlack;
-import microui.core.style.theme.ThemeManager;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
@@ -30,9 +28,9 @@ public class ComponentLauncher extends PApplet {
 		
 		ContainerManager.getInstance();
 		
-		ThemeManager.setTheme(new ThemeBlack());
+		//ThemeManager.setTheme(new ThemeBlack());
 		
-		component = new MenuButton("File",0,0,64,20);
+		component = new MenuButton("File",400,0,64,20);
 		
 		component.addMenu("New", "Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
 		
@@ -46,6 +44,8 @@ public class ComponentLauncher extends PApplet {
 		
 		component.getMenu("New 2").setTooltip("i'm sun-menu item in MenuButton");
 		
+		component.get("Package").onClick(() -> exit());
+		component.get("1").onClick(() -> System.out.println(1));
 	}
 	
 	@Override

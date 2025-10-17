@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import microui.core.base.SpatialView;
 
 public final class InteractionHandler extends AbstractEventSystem {
+	private boolean isEnabled;
 	private final EventDispatcher dispatcher;
 
 	public InteractionHandler(SpatialView spatialView) {
@@ -13,10 +14,15 @@ public final class InteractionHandler extends AbstractEventSystem {
 
 		dispatcher = new EventDispatcher();
 
+		setEnabled(true);
 	}
 
 	@Override
 	public void listen() {
+		if(!isEnabled()) {
+			return;
+		}
+		
 		super.listen();
 
 		if (getDetector().isPress()) {
@@ -79,6 +85,16 @@ public final class InteractionHandler extends AbstractEventSystem {
 			dispatcher.dispatch(EventType.HOVER);
 		}
 
+	}
+	
+	
+
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 
 	public void addListener(EventType eventType, Listener listener) {

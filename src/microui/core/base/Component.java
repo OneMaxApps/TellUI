@@ -12,7 +12,7 @@ import microui.feedback.TooltipContent;
 import microui.feedback.TooltipTextViewContent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 07.10.2025
+//Last Reviewed: 17.10.2025
 public abstract class Component extends ContentView {
 	private final Event event;
 	private final InteractionHandler interactionHandler;
@@ -122,6 +122,17 @@ public abstract class Component extends ContentView {
 
 	public boolean isHover() {
 		return event.isHover();
+	}
+	
+	
+	public final boolean isInteractionHandlerEnabled() {
+		return interactionHandler.isEnabled();
+	}
+	
+	public final Component setInteractionHandlerEnabled(boolean isEnabled) {
+		interactionHandler.setEnabled(isEnabled);
+		
+		return this;
 	}
 
 	public final Component onHover(Listener listener) {

@@ -19,7 +19,6 @@ import microui.event.Listener;
 import processing.event.MouseEvent;
 
 // if menu is root - it's vertical list, else add horizontal shifting
-
 public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_MAX_WIDTH = 100;
 	private static final int DEFAULT_MAX_HEIGHT = 24;
@@ -27,7 +26,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_ITEM_HEIGHT = 22;
 	private final Items items;
 	private final Mark mark;
-	private MenuButton root;
+	private MenuButton root,activeSubMenu;
 	private ItemDimensions itemDimensions;
 	private DirectionMode directionMode;
 	private boolean isOpen, isRootModeEnabled;
@@ -35,19 +34,15 @@ public final class MenuButton extends Button implements Scrollable {
 	public MenuButton(String title, float x, float y, float w, float h) {
 		super(title, x, y, w, h);
 		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
-
+		
 		items = new Items(this);
 		mark = new Mark(this);
 		onClick(() -> setOpen(!isOpen()));
-		onEnterLong(() -> {
-			if(this != getRoot()) {
-				setOpen(true);
-			}
-		});
 		setRoot(this);
 		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT));
 		setRootModeEnabled(true);
-		setDirectionMode(DirectionMode.RIGHT);
+		setDirectionMode(DirectionMode.AUTO);
+		
 	}
 
 	public MenuButton(String title) {
@@ -63,7 +58,12 @@ public final class MenuButton extends Button implements Scrollable {
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
-		items.mouseWheel(mouseEvent);
+		if(this == getRoot() && getActiveSubMenu() != null) {
+			getActiveSubMenu().mouseWheel(mouseEvent);
+		} else {
+			items.mouseWheel(mouseEvent);
+		}
+		
 	}
 
 	public DirectionMode getDirectionMode() {
@@ -111,6 +111,12 @@ public final class MenuButton extends Button implements Scrollable {
 
 		if (!isOpen) {
 			items.close();
+			
+			setActiveSubMenu(null);
+		}
+		
+		if(isOpen && getRoot() != this) {
+			setActiveSubMenu(this);
 		}
 
 		return this;
@@ -201,16 +207,22 @@ public final class MenuButton extends Button implements Scrollable {
 	@Override
 	protected void render() {
 		super.render();
-
-		if (isOpen()) {
+		
+		if (isOpen() && getActiveSubMenu() != this) {
 			items.draw();
 		}
-
+		
+		if(this == getRoot() && getActiveSubMenu() != null) {
+			getActiveSubMenu().items.draw();
+		}
+		
 		if (ctx.mousePressed && isOpen() && !items.isHoverDeep() && !getRoot().isHover()) {
 			setOpen(false);
 		}
 
 		mark.draw();
+		
+		
 	}
 
 	@Override
@@ -242,13 +254,20 @@ public final class MenuButton extends Button implements Scrollable {
 	private void setRootModeEnabled(boolean isRoot) {
 		this.isRootModeEnabled = isRoot;
 	}
-	
+
+	private MenuButton getActiveSubMenu() {
+		return getRoot().activeSubMenu;
+	}
+
+	private void setActiveSubMenu(MenuButton activeSubMenu) {
+		getRoot().activeSubMenu = activeSubMenu;
+	}
+
 	public static enum DirectionMode {
 		AUTO, LEFT, RIGHT;
 	}
 
 	public static final record ItemDimensions(float width, float height) {
-
 		public ItemDimensions {
 			if (width <= 0 || height <= 0) {
 				throw new IllegalArgumentException("Dimensions for MenuButton item cannot be less or equal zero");
@@ -289,6 +308,10 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			if (!isHover()) {
+				return;
+			}
+			
+			if(parent.isHover()) {
 				return;
 			}
 
@@ -546,11 +569,9 @@ public final class MenuButton extends Button implements Scrollable {
 				final Button b = list.get(i);
 
 				if (b instanceof MenuButton m) {
-
 					if (m.items.isHoverDeep() && m.isOpen()) {
 						return true;
 					}
-
 				}
 			}
 
@@ -574,8 +595,16 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			for (int i = 0; i < list.size(); i++) {
-				list.get(i).draw();
+				final Button b = list.get(i);
+				if(!(b instanceof MenuButton)) {
+					b.setInteractionHandlerEnabled(isShouldReact());
+				}
+				b.draw();
 			}
+		}
+		
+		private boolean isShouldReact() {
+			return parent == parent.getRoot() || parent == parent.getActiveSubMenu() || (parent.getActiveSubMenu() != null && !parent.getActiveSubMenu().isOpen()) || parent.getActiveSubMenu() == null;
 		}
 
 	}
