@@ -604,7 +604,27 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 		
 		private boolean isShouldReact() {
-			return parent == parent.getRoot() || parent == parent.getActiveSubMenu() || (parent.getActiveSubMenu() != null && !parent.getActiveSubMenu().isOpen()) || parent.getActiveSubMenu() == null;
+			final MenuButton root = parent.getRoot();
+			final MenuButton active = parent.getActiveSubMenu();
+			final boolean isHasActive = parent.getActiveSubMenu() != null;
+			
+			if(parent == root) {
+				return true;
+			}
+			
+			if(parent == active) {
+				return true;
+			}
+			
+			if(isHasActive && !active.isOpen()) {
+				return true;
+			}
+			
+			if(!isHasActive) {
+				return true;
+			}
+			
+			return false;
 		}
 
 	}

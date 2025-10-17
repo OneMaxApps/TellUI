@@ -16,7 +16,7 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void settings() {
-		size(800, 480);
+		size(300, 480);
 //		fullScreen();
 	}
 
@@ -30,7 +30,7 @@ public class ComponentLauncher extends PApplet {
 		
 		//ThemeManager.setTheme(new ThemeBlack());
 		
-		component = new MenuButton("File",400,0,64,20);
+		component = new MenuButton("File",40,0,64,20);
 		
 		component.addMenu("New", "Java Project,Maven Project,Project...,Package,Class,Interface,Enum,Record,Annotation".split(","));
 		
