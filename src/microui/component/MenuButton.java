@@ -263,10 +263,6 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 	
 	private boolean isRoot() {
-		return this == getRoot();
-	}
-
-	private boolean isRootModeEnabled() {
 		return isRootModeEnabled;
 	}
 
@@ -377,7 +373,7 @@ public final class MenuButton extends Button implements Scrollable {
 				b.setConstrainDimensionsEnabled(false);
 
 				// vertical list under the root menu
-				if (parent.isRootModeEnabled()) {
+				if (parent.isRoot()) {
 					b.setAbsoluteX(parent.getX());
 					b.setAbsoluteY(parent.getY() + parent.getHeight() + totalHeight);
 				} else {
@@ -571,7 +567,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private boolean isHover() {
-			if (!parent.isRootModeEnabled() && parent.isHover()) {
+			if (!parent.isRoot() && parent.isHover()) {
 				return true;
 			}
 
@@ -673,7 +669,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 			setColor(new GradientColor(Color.TRANSPARENT,
 					new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
-					() -> menu.isOpen() && !menu.isRootModeEnabled()));
+					() -> menu.isOpen() && !menu.isRoot()));
 		
 			
 			setSpatialAnimator(
