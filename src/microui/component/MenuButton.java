@@ -17,6 +17,7 @@ import microui.core.style.GradientColor;
 import microui.core.style.GradientLoopColor;
 import microui.core.style.Stroke;
 import microui.event.Listener;
+import microui.util.Debugger;
 import microui.util.SpatialState;
 import processing.event.MouseEvent;
 
@@ -227,9 +228,11 @@ public final class MenuButton extends Button implements Scrollable {
 		
 		indicator.draw();
 		
-		if(isActiveSubMenu()) {
-			ctx.fill(0,200,0,100);
-			ctx.rect(getAbsoluteX(),getAbsoluteY(),getAbsoluteWidth(),getAbsoluteHeight());
+		if(Debugger.isDebugModeEnabled()) {
+			if(isActiveSubMenu()) {
+				ctx.fill(0,200,0,100);
+				ctx.rect(getAbsoluteX(),getAbsoluteY(),getAbsoluteWidth(),getAbsoluteHeight());
+			}
 		}
 	}
 
@@ -459,7 +462,10 @@ public final class MenuButton extends Button implements Scrollable {
 				if (b.getText().equals(title)) {
 					return b;
 				}
+			}
 
+			for(int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
 				if (b instanceof MenuButton m) {
 					return m.find(title);
 				}
@@ -669,6 +675,7 @@ public final class MenuButton extends Button implements Scrollable {
 					new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
 					() -> menu.isOpen() && !menu.isRootModeEnabled()));
 		
+			
 			setSpatialAnimator(
 					new SpatialAnimator(
 							new SpatialState(0,0,0,0)
