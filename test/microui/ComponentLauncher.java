@@ -22,6 +22,7 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void setup() {
+		
 		MicroUI.setContext(this);
 		
 		MicroUI.setFlexibleRenderModeEnabled(true);
@@ -42,7 +43,7 @@ public class ComponentLauncher extends PApplet {
 		
 		component.setItemDimensions(new ItemDimensions(100,20));
 		
-		component.getMenu("New 2").setTooltip("i'm sun-menu item in MenuButton");
+		component.getMenu("New 2").setTooltip("i'm sub-menu item in MenuButton");
 		
 		component.get("Package").onClick(() -> exit());
 		component.get("1").onClick(() -> System.out.println(1));

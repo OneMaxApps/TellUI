@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import microui.core.base.SpatialView;
 import microui.core.base.View;
+import microui.core.effect.SpatialAnimator;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
@@ -16,6 +17,7 @@ import microui.core.style.GradientColor;
 import microui.core.style.GradientLoopColor;
 import microui.core.style.Stroke;
 import microui.event.Listener;
+import microui.util.SpatialState;
 import processing.event.MouseEvent;
 
 // if menu is root - it's vertical list, else add horizontal shifting
@@ -25,7 +27,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_ITEM_WIDTH = 200;
 	private static final int DEFAULT_ITEM_HEIGHT = 22;
 	private final Items items;
-	private final Mark mark;
+	private final OpenStateIndicator indicator;
 	private MenuButton root,activeSubMenu;
 	private ItemDimensions itemDimensions;
 	private DirectionMode directionMode;
@@ -36,7 +38,7 @@ public final class MenuButton extends Button implements Scrollable {
 		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
 		
 		items = new Items(this);
-		mark = new Mark(this);
+		indicator = new OpenStateIndicator(this);
 		onClick(() -> setOpen(!isOpen()));
 		setRoot(this);
 		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT));
@@ -194,35 +196,41 @@ public final class MenuButton extends Button implements Scrollable {
 		return this;
 	}
 
-	public MenuButton setMarkColor(AbstractColor color) {
-		mark.setColor(color);
+	public MenuButton setOpenStateIndicatorColor(AbstractColor color) {
+		indicator.setColor(color);
 
 		return this;
 	}
 
-	public AbstractColor getMarkColor() {
-		return mark.getColor();
+	public AbstractColor getOpenStateIndicatorColor() {
+		return indicator.getColor();
 	}
 
 	@Override
 	protected void render() {
 		super.render();
 		
-		if (isOpen() && getActiveSubMenu() != this) {
+		// the active sub-menu does not render itself
+		if (isOpen() && !isActiveSubMenu()) {
 			items.draw();
 		}
 		
-		if(this == getRoot() && getActiveSubMenu() != null) {
+		// the root of MenuButton rendering the active sub-menu
+		if(isRoot() && hasActiveSubMenu()) {
 			getActiveSubMenu().items.draw();
 		}
 		
-		if (ctx.mousePressed && isOpen() && !items.isHoverDeep() && !getRoot().isHover()) {
+		if (isMustBeClosed()) {
 			setOpen(false);
 		}
 
-		mark.draw();
 		
+		indicator.draw();
 		
+		if(isActiveSubMenu()) {
+			ctx.fill(0,200,0,100);
+			ctx.rect(getAbsoluteX(),getAbsoluteY(),getAbsoluteWidth(),getAbsoluteHeight());
+		}
 	}
 
 	@Override
@@ -232,8 +240,12 @@ public final class MenuButton extends Button implements Scrollable {
 		items.recalculatePosition();
 		items.recalculateDimensions();
 
-		mark.setPosition(getAbsoluteX(), getAbsoluteY());
-		mark.setSize(getAbsoluteWidth()*.99f, getAbsoluteHeight()*.99f);
+		indicator.setPosition(getAbsoluteX(), getAbsoluteY());
+		indicator.setSize(getAbsoluteWidth()*.99f, getAbsoluteHeight()*.99f);
+	}
+	
+	private boolean isMustBeClosed() {
+		return ctx.mousePressed && isOpen() && !items.isHoverDeep() && !getRoot().isHover();
 	}
 
 	private MenuButton getRoot() {
@@ -245,6 +257,10 @@ public final class MenuButton extends Button implements Scrollable {
 			throw new NullPointerException("Root for MenuButton cannot be null");
 		}
 		this.root = root;
+	}
+	
+	private boolean isRoot() {
+		return this == getRoot();
 	}
 
 	private boolean isRootModeEnabled() {
@@ -261,6 +277,14 @@ public final class MenuButton extends Button implements Scrollable {
 
 	private void setActiveSubMenu(MenuButton activeSubMenu) {
 		getRoot().activeSubMenu = activeSubMenu;
+	}
+	
+	private boolean hasActiveSubMenu() {
+		return getRoot().activeSubMenu != null;
+	}
+	
+	private boolean isActiveSubMenu() {
+		return this == getActiveSubMenu();
 	}
 
 	public static enum DirectionMode {
@@ -604,15 +628,19 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 		
 		private boolean isShouldReact() {
-			final MenuButton root = parent.getRoot();
 			final MenuButton active = parent.getActiveSubMenu();
 			final boolean isHasActive = parent.getActiveSubMenu() != null;
 			
-			if(parent == root) {
+			if(parent.isRoot()) {
+				if(isHasActive) {
+					if(active.items.isHover()) {
+						return false;
+					}
+				}
 				return true;
 			}
 			
-			if(parent == active) {
+			if(parent.isActiveSubMenu()) {
 				return true;
 			}
 			
@@ -629,10 +657,10 @@ public final class MenuButton extends Button implements Scrollable {
 
 	}
 
-	private static class Mark extends SpatialView {
+	private static class OpenStateIndicator extends SpatialView {
 		private final Stroke stroke;
 
-		public Mark(MenuButton menu) {
+		public OpenStateIndicator(MenuButton menu) {
 			setVisible(true);
 			stroke = new Stroke();
 			stroke.setWeight(2);
@@ -640,6 +668,13 @@ public final class MenuButton extends Button implements Scrollable {
 			setColor(new GradientColor(Color.TRANSPARENT,
 					new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
 					() -> menu.isOpen() && !menu.isRootModeEnabled()));
+		
+			setSpatialAnimator(
+					new SpatialAnimator(
+							new SpatialState(0,0,0,0)
+							,menu
+							,() -> menu.isOpen())
+					.setPositionEnabled(false));
 		}
 
 		public AbstractColor getColor() {
