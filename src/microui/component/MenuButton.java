@@ -45,7 +45,6 @@ public final class MenuButton extends Button implements Scrollable {
 		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT));
 		setRootModeEnabled(true);
 		setDirectionMode(DirectionMode.AUTO);
-		
 	}
 
 	public MenuButton(String title) {
@@ -254,8 +253,8 @@ public final class MenuButton extends Button implements Scrollable {
 	protected void onChangeBounds() {
 		super.onChangeBounds();
 
-		items.recalculatePosition();
 		items.recalculateDimensions();
+		items.recalculatePosition();
 
 		indicator.setPosition(getAbsoluteX(), getAbsoluteY());
 		indicator.setSize(getAbsoluteWidth()*.99f, getAbsoluteHeight()*.99f);
@@ -405,15 +404,17 @@ public final class MenuButton extends Button implements Scrollable {
 
 					switch (menu.getDirectionMode()) {
 					case AUTO:
+						
 						if (isRightSideHasEnoughPlace()) {
 							newX = menu.getX() + menu.getAbsoluteWidth();
 						} else {
-							newX = menu.getX() - menu.getAbsoluteWidth();
+							newX = menu.getX() - getMaxItemWidth();
 						}
+						
 						break;
 
 					case LEFT:
-						newX = menu.getX() - menu.getAbsoluteWidth();
+						newX = menu.getX() - getMaxItemWidth();
 						break;
 
 					case RIGHT:
@@ -651,6 +652,16 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			return true;
+		}
+		
+		private float getMaxItemWidth() {
+			float max = 0;
+			for (int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				max = Math.max(max, b.getAbsoluteWidth());
+			}
+			
+			return max;
 		}
 
 		private void itemsOnDraw() {
