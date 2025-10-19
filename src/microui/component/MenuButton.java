@@ -113,25 +113,16 @@ public final class MenuButton extends Button implements Scrollable {
 
 		if (!isOpen) {
 			items.close();
-			
-			if(isActiveSubMenu() && getParent() != null) {
+
+			if(getParent() == getRoot()) {
+				setActiveSubMenu(null);
+			} else {
 				setActiveSubMenu(getParent());
 			}
 			
-			if(isRoot()) {
-				setActiveSubMenu(null);
-			}
-			
-			if(getParent() == null) {
-				setActiveSubMenu(null);
-			}
-			
-			if(getParent() == getRoot()) {
-				setActiveSubMenu(null);
-			}
 		}
 		
-		if(isOpen && getRoot() != this) {
+		if(!isRoot() && isOpen) {
 			setActiveSubMenu(this);
 		}
 
@@ -687,21 +678,21 @@ public final class MenuButton extends Button implements Scrollable {
 		
 		private boolean isShouldReact() {
 			final MenuButton active = menu.getActiveSubMenu();
-			final boolean isHasActive = menu.getActiveSubMenu() != null;
+			final boolean isHasActive = active != null;
 			
 			if(!isHasActive) {
 				return true;
 			}
 			
-			if(menu == active) {
+			if(menu.isActiveSubMenu()) {
 				return true;
 			}
 			
-			if(isHasActive && menu != active && !active.isHover() && !active.items.isHover() ) {
+			if(!menu.isActiveSubMenu() && !active.isHover() && !active.items.isHover() ) {
 				return true;
 			}
 			
-			if(isHasActive && menu == active.getParent()) {
+			if(menu == active.getParent()) {
 				return true;
 			}
 			

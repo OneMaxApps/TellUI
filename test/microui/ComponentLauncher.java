@@ -4,6 +4,7 @@ import microui.component.MenuButton;
 import microui.component.MenuButton.ItemDimensions;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
+import processing.event.MouseEvent;
 
 public class ComponentLauncher extends PApplet {
 
@@ -15,17 +16,16 @@ public class ComponentLauncher extends PApplet {
 	
 	@Override
 	public void settings() {
-		fullScreen(); // 1680:1050
+		fullScreen(P2D,0); // 1680:1050
 	}
 
 	@Override
 	public void setup() {
 		MicroUI.setFlexibleRenderModeEnabled(true);
-		
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
 		
-		mFile = new MenuButton("File");
+		mFile = new MenuButton("File",0,0,64,20);
 		
 		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
 		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
@@ -47,11 +47,16 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void keyPressed() {
-		if(keyCode == RIGHT) { mFile.appendWidth(10); }
-		if(keyCode == LEFT) { mFile.appendWidth(-10); }
-		if(keyCode == UP) { mFile.appendHeight(-10); }
-		if(keyCode == DOWN) { mFile.appendHeight(10); }
+		if(keyCode == RIGHT) { mFile.appendX(10); }
+		if(keyCode == LEFT) { mFile.appendX(-10); }
+		if(keyCode == UP) { mFile.appendY(-10); }
+		if(keyCode == DOWN) { mFile.appendY(10); }
 		
+	}
+
+	@Override
+	public void mouseWheel(MouseEvent event) {
+		mFile.mouseWheel(event);
 	}
 	
 }
