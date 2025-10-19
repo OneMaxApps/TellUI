@@ -448,8 +448,8 @@ public final class MenuButton extends Button implements Scrollable {
 				return;
 			}
 
-			final float newWidth = menu.getRoot().getItemDimensions().width();
-			final float newHeight = menu.getRoot().getItemDimensions().height();
+			final float newWidth = menu.getItemDimensions().width();
+			final float newHeight = menu.getItemDimensions().height();
 
 			for (int i = 0; i < list.size(); i++) {
 				list.get(i).setSize(newWidth, newHeight);
