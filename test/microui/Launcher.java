@@ -62,7 +62,7 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerWith(new TextView()), "TextView");
 
-		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
+//		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
 		cm.getByTextId("main").setConstrainDimensionsEnabled(false);
 	}

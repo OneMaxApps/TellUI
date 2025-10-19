@@ -29,7 +29,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_ITEM_HEIGHT = 22;
 	private final Items items;
 	private final OpenStateIndicator indicator;
-	private MenuButton root,activeSubMenu;
+	private MenuButton root,activeSubMenu,parent;
 	private ItemDimensions itemDimensions;
 	private DirectionMode directionMode;
 	private boolean isOpen, isRootModeEnabled;
@@ -115,7 +115,21 @@ public final class MenuButton extends Button implements Scrollable {
 		if (!isOpen) {
 			items.close();
 			
-			setActiveSubMenu(null);
+			if(isActiveSubMenu() && getParent() != null) {
+				setActiveSubMenu(getParent());
+			}
+			
+			if(isRoot()) {
+				setActiveSubMenu(null);
+			}
+			
+			if(getParent() == null) {
+				setActiveSubMenu(null);
+			}
+			
+			if(getParent() == getRoot()) {
+				setActiveSubMenu(null);
+			}
 		}
 		
 		if(isOpen && getRoot() != this) {
@@ -270,6 +284,14 @@ public final class MenuButton extends Button implements Scrollable {
 		this.isRootModeEnabled = isRoot;
 	}
 
+	private MenuButton getParent() {
+		return parent;
+	}
+
+	private void setParent(MenuButton parent) {
+		this.parent = parent;
+	}
+
 	private MenuButton getActiveSubMenu() {
 		return getRoot().activeSubMenu;
 	}
@@ -299,13 +321,13 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	private static final class Items extends View implements Scrollable {
-		private final MenuButton parent;
+		private final MenuButton menu;
 		private final List<Button> list;
 
-		public Items(MenuButton parent) {
+		public Items(MenuButton menu) {
 			super();
 			setVisible(true);
-			this.parent = parent;
+			this.menu = menu;
 			list = new ArrayList<Button>();
 
 		}
@@ -334,7 +356,7 @@ public final class MenuButton extends Button implements Scrollable {
 				return;
 			}
 			
-			if(parent.isHover()) {
+			if(menu.isHover()) {
 				return;
 			}
 
@@ -373,38 +395,50 @@ public final class MenuButton extends Button implements Scrollable {
 				b.setConstrainDimensionsEnabled(false);
 
 				// vertical list under the root menu
-				if (parent.isRoot()) {
-					b.setAbsoluteX(parent.getX());
-					b.setAbsoluteY(parent.getY() + parent.getHeight() + totalHeight);
+				if (menu.isRoot()) {
+					b.setAbsoluteX(menu.getX());
+					b.setAbsoluteY(menu.getY() + menu.getHeight() + totalHeight);
 				} else {
-					// swing on horizontal
+					// vertical list with horizontal shifting on horizontal
 
 					float newX = 0;
 
-					switch (parent.getDirectionMode()) {
+					switch (menu.getDirectionMode()) {
 					case AUTO:
 						if (isRightSideHasEnoughPlace()) {
-							newX = parent.getX() + parent.getAbsoluteWidth();
+							newX = menu.getX() + menu.getAbsoluteWidth();
 						} else {
-							newX = parent.getX() - parent.getAbsoluteWidth();
+							newX = menu.getX() - menu.getAbsoluteWidth();
 						}
 						break;
 
 					case LEFT:
-						newX = parent.getX() - parent.getAbsoluteWidth();
+						newX = menu.getX() - menu.getAbsoluteWidth();
 						break;
 
 					case RIGHT:
-						newX = parent.getX() + parent.getAbsoluteWidth();
+						newX = menu.getX() + menu.getAbsoluteWidth();
 						break;
 					}
 
 					b.setX(newX);
 
-					b.setY(parent.getY() + totalHeight);
+					b.setY(menu.getY() + totalHeight);
 				}
 
 				totalHeight += b.getHeight();
+			}
+		}
+		
+		public void recalculatePositionAllRecursive() {
+			recalculatePosition();
+			
+			for(int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				
+				if(b instanceof MenuButton m) {
+					m.items.recalculatePositionAllRecursive();
+				}
 			}
 		}
 
@@ -413,8 +447,8 @@ public final class MenuButton extends Button implements Scrollable {
 				return;
 			}
 
-			final float newWidth = parent.getRoot().getItemDimensions().width();
-			final float newHeight = parent.getRoot().getItemDimensions().height();
+			final float newWidth = menu.getRoot().getItemDimensions().width();
+			final float newHeight = menu.getRoot().getItemDimensions().height();
 
 			for (int i = 0; i < list.size(); i++) {
 				list.get(i).setSize(newWidth, newHeight);
@@ -480,11 +514,11 @@ public final class MenuButton extends Button implements Scrollable {
 					throw new NoSuchElementException("Item with title: \"" + title + "\" not found in MenuButton");
 				}
 		
-				findListWhichContainsButtonInternal(b).remove(b);
+				if(findListWhichContainsButtonInternal(b).remove(b)) {
+					recalculatePositionAllRecursive();
+				}
 			}
 			
-			recalculatePosition();
-			recalculateDimensions();
 		}
 
 		@Override
@@ -501,10 +535,13 @@ public final class MenuButton extends Button implements Scrollable {
 				throw new IllegalArgumentException("Button cannot be added twice in MenuButton");
 			}
 
+			
+			
 			prepareGeneralItemStyle(button);
 			
 			if (button instanceof MenuButton m) {
 				prepareMenuItem(m);
+				
 			} else {
 				preparePlainItem(button);
 			}
@@ -536,14 +573,15 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 		
 		private void preparePlainItem(Button button) {
-			button.onClick(() -> parent.getRoot().setOpen(false));
+			button.onClick(() -> menu.getRoot().setOpen(false));
 
 			button.setTextColor(getTheme().getMenuButtonItemTextColor());
 		}
 		
 		private void prepareMenuItem(MenuButton menuButton) {
 			menuButton.setRootModeEnabled(false);
-			menuButton.setRoot(parent.getRoot());
+			menuButton.setRoot(menu.getRoot());
+			menuButton.setParent(menu);
 			
 			final AbstractColor c = getTheme().getMenuButtonItemTextColor();
 			final AbstractColor c1 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 200);
@@ -567,7 +605,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private boolean isHover() {
-			if (!parent.isRoot() && parent.isHover()) {
+			if (!menu.isRoot() && menu.isHover()) {
 				return true;
 			}
 
@@ -607,7 +645,7 @@ public final class MenuButton extends Button implements Scrollable {
 		private boolean isRightSideHasEnoughPlace() {
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
-				if (parent.getAbsoluteX() + parent.getAbsoluteWidth() + b.getAbsoluteWidth() > ctx.width) {
+				if (menu.getAbsoluteX() + menu.getAbsoluteWidth() + b.getAbsoluteWidth() > ctx.width) {
 					return false;
 				}
 			}
@@ -622,35 +660,37 @@ public final class MenuButton extends Button implements Scrollable {
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
-				if(!(b instanceof MenuButton)) {
-					b.setInteractionHandlerEnabled(isShouldReact());
-				}
+				b.setInteractionHandlerEnabled(isShouldReact());
 				b.draw();
+				
+				if(Debugger.isDebugModeEnabled()) {
+					if(menu.isActiveSubMenu()) {
+						ctx.pushStyle();
+						ctx.fill(0,200,0,32);
+						ctx.rect(b.getAbsoluteX(), b.getAbsoluteY(), b.getAbsoluteWidth(), b.getAbsoluteHeight());
+						ctx.popStyle();
+					}
+				}
 			}
 		}
 		
 		private boolean isShouldReact() {
-			final MenuButton active = parent.getActiveSubMenu();
-			final boolean isHasActive = parent.getActiveSubMenu() != null;
-			
-			if(parent.isRoot()) {
-				if(isHasActive) {
-					if(active.items.isHover()) {
-						return false;
-					}
-				}
-				return true;
-			}
-			
-			if(parent.isActiveSubMenu()) {
-				return true;
-			}
-			
-			if(isHasActive && !active.isOpen()) {
-				return true;
-			}
+			final MenuButton active = menu.getActiveSubMenu();
+			final boolean isHasActive = menu.getActiveSubMenu() != null;
 			
 			if(!isHasActive) {
+				return true;
+			}
+			
+			if(menu == active) {
+				return true;
+			}
+			
+			if(isHasActive && menu != active && !active.isHover() && !active.items.isHover() ) {
+				return true;
+			}
+			
+			if(isHasActive && menu == active.getParent()) {
 				return true;
 			}
 			
