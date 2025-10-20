@@ -776,7 +776,7 @@ public final class MenuButton extends Button implements Scrollable {
 		public OpenStateIndicator(MenuButton menu) {
 			setVisible(true);
 			stroke = new Stroke();
-			stroke.setWeight(2);
+			stroke.setWeight(2); 
 
 			setColor(new GradientColor(Color.TRANSPARENT,
 					new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
