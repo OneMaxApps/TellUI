@@ -31,6 +31,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private final OpenStateIndicator indicator;
 	private MenuButton root,activeSubMenu,parent;
 	private ItemDimensions itemDimensions;
+	private List<MenuButton> renderOrderList;
 	private DirectionMode directionMode;
 	private boolean isOpen, isRootModeEnabled;
 
@@ -51,7 +52,6 @@ public final class MenuButton extends Button implements Scrollable {
 		this(title, 1, 1, 1, 1);
 		setSize(getMaxWidth(), getMaxHeight());
 		setPosition(ctx.width / 2 - getWidth() / 2, ctx.height / 2 - getHeight() / 2);
-		setText(title);
 	}
 
 	public MenuButton() {
@@ -60,7 +60,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
-		if(this == getRoot() && getActiveSubMenu() != null) {
+		if(isRoot() && getActiveSubMenu() != null) {
 			getActiveSubMenu().mouseWheel(mouseEvent);
 		} else {
 			items.mouseWheel(mouseEvent);
@@ -215,14 +215,16 @@ public final class MenuButton extends Button implements Scrollable {
 	protected void render() {
 		super.render();
 		
-		// the active sub-menu does not render itself
-		if (isOpen() && !isActiveSubMenu()) {
+		if(isOpen() && isRoot()) {
 			items.draw();
-		}
-		
-		// the root of MenuButton rendering the active sub-menu
-		if(isRoot() && hasActiveSubMenu()) {
-			getActiveSubMenu().items.draw();
+			
+			for(int i = 0; i < getRenderOrderList().size(); i++) {
+				final MenuButton m = getRenderOrderList().get(i);
+				if(m.isOpen()) {
+					m.items.draw();
+				}
+			}
+			
 		}
 		
 		if (isMustBeClosed()) {
@@ -251,12 +253,24 @@ public final class MenuButton extends Button implements Scrollable {
 		indicator.setSize(getAbsoluteWidth()*.99f, getAbsoluteHeight()*.99f);
 	}
 	
+	private List<MenuButton> getRenderOrderList() {
+		if(getRoot().renderOrderList == null) {
+			getRoot().renderOrderList = new ArrayList<MenuButton>();
+		}
+		
+		return getRoot().renderOrderList;
+	}
+	
 	private boolean isMustBeClosed() {
 		return ctx.mousePressed && isOpen() && !items.isHoverDeep() && !getRoot().isHover();
 	}
 
 	private MenuButton getRoot() {
-		return root;
+		if(getParent() == null) {
+			return root;
+		} else {
+			return getParent().getRoot();
+		}
 	}
 
 	private void setRoot(MenuButton root) {
@@ -288,10 +302,6 @@ public final class MenuButton extends Button implements Scrollable {
 
 	private void setActiveSubMenu(MenuButton activeSubMenu) {
 		getRoot().activeSubMenu = activeSubMenu;
-	}
-	
-	private boolean hasActiveSubMenu() {
-		return getRoot().activeSubMenu != null;
 	}
 	
 	private boolean isActiveSubMenu() {
@@ -507,6 +517,7 @@ public final class MenuButton extends Button implements Scrollable {
 				}
 		
 				if(findListWhichContainsButtonInternal(b).remove(b)) {
+					menu.getRenderOrderList().remove(b);
 					recalculatePositionAllRecursive();
 				}
 			}
@@ -527,13 +538,10 @@ public final class MenuButton extends Button implements Scrollable {
 				throw new IllegalArgumentException("Button cannot be added twice in MenuButton");
 			}
 
-			
-			
 			prepareGeneralItemStyle(button);
 			
 			if (button instanceof MenuButton m) {
 				prepareMenuItem(m);
-				
 			} else {
 				preparePlainItem(button);
 			}
@@ -574,6 +582,7 @@ public final class MenuButton extends Button implements Scrollable {
 			menuButton.setRootModeEnabled(false);
 			menuButton.setRoot(menu.getRoot());
 			menuButton.setParent(menu);
+			menu.getRenderOrderList().add(menuButton);
 			
 			final AbstractColor c = getTheme().getMenuButtonItemTextColor();
 			final AbstractColor c1 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 200);

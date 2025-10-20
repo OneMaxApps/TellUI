@@ -40,7 +40,7 @@ public class ComponentLauncher extends PApplet {
 	
 	@Override
 	public void draw() {
-		background(200);
+		background(132);
 		mFile.draw();
 		
 	}
