@@ -19,6 +19,7 @@ import microui.core.style.Stroke;
 import microui.event.Listener;
 import microui.util.Debugger;
 import microui.util.SpatialState;
+import processing.core.PApplet;
 import processing.event.MouseEvent;
 
 // if menu is root - it's vertical list, else add horizontal shifting
@@ -29,6 +30,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_ITEM_HEIGHT = 22;
 	private final Items items;
 	private final OpenStateIndicator indicator;
+	private final Arrow arrow;
 	private MenuButton root, activeSubMenu, parent;
 	private ItemDimensions itemDimensions;
 	private List<MenuButton> renderOrderList;
@@ -41,6 +43,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		items = new Items(this);
 		indicator = new OpenStateIndicator(this);
+		arrow = new Arrow(this);
 		onClick(() -> setOpen(!isOpen()));
 		setRoot(this);
 		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT));
@@ -256,6 +259,31 @@ public final class MenuButton extends Button implements Scrollable {
 
 		return this;
 	}
+	
+	public AbstractColor getArrowColor() {
+		return arrow.getColor();
+	}
+	
+	public MenuButton setArrowColor(AbstractColor color) {
+		arrow.setColor(color);
+		
+		return this;
+	}
+	
+	public MenuButton setArrowColorRecursive(AbstractColor color) {
+		setArrowColor(color);
+		
+		for(int i = 0; i < items.list.size(); i++) {
+			final Button b = items.list.get(i);
+			
+			if(b instanceof MenuButton m) {
+				m.setArrowColorRecursive(color);
+			}
+			
+		}
+		
+		return this;
+	}
 
 	@Override
 	protected void render() {
@@ -278,7 +306,8 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		indicator.draw();
-
+		arrow.draw();
+		
 		if (Debugger.isDebugModeEnabled()) {
 			if (isActiveSubMenu()) {
 				ctx.fill(0, 200, 0, 100);
@@ -297,6 +326,9 @@ public final class MenuButton extends Button implements Scrollable {
 
 		indicator.setPosition(getAbsoluteX(), getAbsoluteY());
 		indicator.setSize(getAbsoluteWidth() * .99f, getAbsoluteHeight() * .99f);
+		
+		arrow.setPosition(getX()+getWidth(), getY());
+		arrow.setSize(getPaddingRight(),getAbsoluteHeight());
 	}
 
 	private List<MenuButton> getRenderOrderList() {
@@ -401,10 +433,6 @@ public final class MenuButton extends Button implements Scrollable {
 			if (!isHover()) {
 				return;
 			}
-
-//			if (menu.isHover()) {
-//				return;
-//			}
 
 			final boolean isDown = mouseEvent.getCount() > 0;
 
@@ -666,9 +694,6 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private boolean isHover() {
-//			if (!menu.isRoot() && menu.isHover()) {
-//				return true;
-//			}
 
 			if (list.isEmpty()) {
 				return false;
@@ -799,6 +824,52 @@ public final class MenuButton extends Button implements Scrollable {
 			ctx.noFill();
 			stroke.apply();
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
+		}
+
+	}
+	
+	private static final class Arrow extends SpatialView {
+		private static final int DEFAULT_SIZE = 8;
+		private static final String CLOSE_SYMBOL = "▶";
+		private static final String OPEN_SYMBOL = "▼";
+		private final MenuButton menu;
+		private AbstractColor color;
+		
+		public Arrow(MenuButton menu) {
+			super();
+			setVisible(true);
+			if(menu == null) {
+				throw new NullPointerException("MenuButton for Arrow cannot be null");
+			}
+			
+			setColor(getTheme().getPrimaryColor());
+			
+			
+			this.menu = menu;
+		}
+
+		@Override
+		protected void render() {
+			if(menu.isRoot()) {
+				return;
+			}
+			
+			color.apply();
+			ctx.textAlign(PApplet.CENTER,PApplet.CENTER);
+			ctx.textSize(DEFAULT_SIZE);
+			ctx.text(menu.isOpen ? OPEN_SYMBOL : CLOSE_SYMBOL, getX(), getY(), getWidth(), getHeight());
+			
+		}
+
+		public AbstractColor getColor() {
+			return color;
+		}
+
+		public void setColor(AbstractColor color) {
+			if(color == null) {
+				throw new NullPointerException("Color cannot be null");
+			}
+			this.color = color;
 		}
 
 	}
