@@ -36,7 +36,7 @@ public final class Launcher extends PApplet {
 
 	@Override
 	public void settings() {
-		fullScreen(P2D);
+		fullScreen();
 	}
 
 	@Override
