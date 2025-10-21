@@ -1,78 +1,106 @@
 package microui.core.effect;
 
-import static java.util.Objects.requireNonNull;
-import static processing.core.PConstants.CORNERS;
-import static processing.core.PConstants.SQUARE;
-
-import microui.core.base.SpatialView;
+import microui.core.base.ContentView;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.util.MathUtils;
 
-@Deprecated
 public final class Shadow extends View {
-	private final AbstractColor color;
-	private final SpatialView bounds;
-	private int leftSize, rightSize, upSize, downSize;
-	private byte absoluteSize;
+	private static final int MAX_WEIGHT = 10;
+	private static final int DEFAULT_WEIGHT = 4;
+	private final ContentView targetView;
+	private AbstractColor color;
+	private DirectionMode directionMode;
+	private int weight;
 
-	public Shadow(SpatialView bounds) {
+	public Shadow(ContentView targetView) {
 		super();
-		this.bounds = requireNonNull(bounds, "bounds cannot be null");
-		color = Color.GRAY_32L;
-		leftSize = 10;
-		upSize = 10;
-		rightSize = 10;
-		downSize = 20;
-		absoluteSize = 10;
 		setVisible(true);
-	}
 
-	@Override
-	public void render() {
-		if (bounds.isVisible()) {
-			ctx.pushStyle();
-
-			for (int i = 0; i < absoluteSize; i++) {
-				ctx.strokeWeight(2);
-				ctx.strokeCap(SQUARE);
-				color.applyStroke();
-				ctx.noFill();
-				ctx.rectMode(CORNERS);
-				if (bounds instanceof SpatialView) {
-					ctx.rect(bounds.getX() - MathUtils.convert(i, 0f, absoluteSize, 0f, leftSize),
-							bounds.getY() - MathUtils.convert(i, 0f, absoluteSize, 0f, upSize),
-							bounds.getX() + bounds.getWidth() + MathUtils.convert(i, 0f, absoluteSize, 0f, rightSize),
-							bounds.getY() + bounds.getHeight() + MathUtils.convert(i, 0f, absoluteSize, 0f, downSize),
-							leftSize, upSize, rightSize, downSize);
-				}
-
-			}
-			ctx.popStyle();
+		if (targetView == null) {
+			throw new NullPointerException("ContentView for Shadow cannot be null");
 		}
+
+		this.targetView = targetView;
+
+		setColor(new Color(0, 32));
+		setDirectionMode(DirectionMode.LEFT);
+		setWeight(DEFAULT_WEIGHT);
 	}
 
-	public final AbstractColor getColor() {
+	public AbstractColor getColor() {
 		return color;
 	}
 
-	public void set(float left, float up, float right, float down) {
-		leftSize = (int) MathUtils.constrain(left, 0, 20);
-		upSize = (int) MathUtils.constrain(up, 0, 20);
-		rightSize = (int) MathUtils.constrain(right, 0, 20);
-		downSize = (int) MathUtils.constrain(down, 0, 20);
-	}
-
-	public void set(float angles) {
-		if (angles < 0) {
-			throw new IllegalArgumentException("angles cannot be less than zero");
+	public void setColor(AbstractColor color) {
+		if (color == null) {
+			throw new NullPointerException("Color for Shadow cannot be null");
 		}
-		leftSize = upSize = rightSize = downSize = (int) MathUtils.constrain(angles, 0, 20);
+		this.color = color;
 	}
 
-	public int[] get() {
-		return new int[] { leftSize, upSize, rightSize, downSize };
+	public DirectionMode getDirectionMode() {
+		return directionMode;
 	}
 
+	public void setDirectionMode(DirectionMode directionMode) {
+		if (directionMode == null) {
+			throw new NullPointerException("DirectionMode for Shadow cannot be null");
+		}
+
+		this.directionMode = directionMode;
+	}
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		if (weight <= 0) {
+			throw new IllegalArgumentException("Weight for Shadow cannot be less or equal zero");
+		}
+
+		if (weight > MAX_WEIGHT) {
+			throw new IllegalArgumentException("Weight for Shadow cannot be greater than " + MAX_WEIGHT);
+		}
+
+		this.weight = weight;
+	}
+
+	@Override
+	protected void render() {
+		color.applyStroke();
+		ctx.noFill();
+		
+		for (int i = 0; i < getWeight(); i++) {
+			
+			switch (getDirectionMode()) {
+				case LEFT:
+					shadowFormOnDraw(i, 0, 0, 0);
+					break;
+					
+				case TOP:
+					shadowFormOnDraw(0, i, 0, 0);
+					break;
+					
+				case RIGHT:
+					shadowFormOnDraw(0, 0, i, 0);
+					break;
+					
+				case BOTTOM:
+					shadowFormOnDraw(0, 0, 0, i);
+					break;
+			}
+
+		}
+	}
+
+	private void shadowFormOnDraw(int shiftLeft, int shiftTop, int shiftRight, int shiftBottom) {
+		ctx.rect(targetView.getPadX() - shiftLeft, targetView.getPadY() - shiftTop,
+				targetView.getPadWidth() + shiftRight, targetView.getPadHeight() + shiftBottom);
+	}
+
+	public static enum DirectionMode {
+		LEFT, RIGHT, TOP, BOTTOM;
+	}
 }

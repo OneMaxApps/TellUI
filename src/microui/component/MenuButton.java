@@ -22,6 +22,9 @@ import microui.util.SpatialState;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 21.10.2025
+
 // if menu is root - it's vertical list, else add horizontal shifting
 public final class MenuButton extends Button implements Scrollable {
 	private static final int DEFAULT_MAX_WIDTH = 100;
@@ -640,7 +643,7 @@ public final class MenuButton extends Button implements Scrollable {
 			recalculatePosition();
 		}
 
-		private static void checkTitle(String... titles) {
+		private void checkTitle(String... titles) {
 			if (titles == null) {
 				throw new NullPointerException("Titles array for MenuButton items cannot be null");
 			}
@@ -648,6 +651,10 @@ public final class MenuButton extends Button implements Scrollable {
 			for (int i = 0; i < titles.length; i++) {
 				if (titles[i] == null) {
 					throw new NullPointerException("Title for MenuButton item cannot be null");
+				}
+				
+				if(titles[i].isEmpty()) {
+					throw new IllegalArgumentException("Title cannot be empty [Inside MenuButton: "+menu.getText()+"]");
 				}
 			}
 		}

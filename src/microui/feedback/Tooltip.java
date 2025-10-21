@@ -4,6 +4,8 @@ import microui.core.base.Component;
 import microui.core.base.View;
 import microui.service.TooltipManager;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 21.10.2025
 public final class Tooltip extends View {
 	private TooltipContent content;
 	private boolean isMustBeClosed;

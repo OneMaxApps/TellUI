@@ -2,14 +2,16 @@ package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
 
+import microui.core.effect.Shadow;
 import microui.util.Debugger;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 07.10.2025
+//Last Reviewed: 21.10.2025
 public abstract class ContentView extends SpatialView {
 	private final Padding padding;
 	private final Margin margin;
-
+	private Shadow shadow;
+	
 	public ContentView(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setVisible(true);
@@ -33,9 +35,26 @@ public abstract class ContentView extends SpatialView {
 			return;
 		}
 
+		if(shadow != null) {
+			shadow.draw();
+		}
+		
 		super.draw();
 
 		debugOnDraw();
+	}
+	
+	public final Shadow getShadow() {
+		return shadow;
+	}
+
+	public final ContentView setShadow(Shadow shadow) {
+		if(shadow == null) {
+			throw new NullPointerException("Shadow for "+getClass().getName()+" cannot be null");
+		}
+		this.shadow = shadow;
+		
+		return this;
 	}
 
 	public final ContentView setPaddingLeft(float left) {

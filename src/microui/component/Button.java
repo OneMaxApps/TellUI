@@ -10,10 +10,12 @@ import microui.core.style.AbstractColor;
 import processing.core.PFont;
 import processing.core.PImage;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 21.10.2025
 public class Button extends AbstractButton {
 	private final TextView textView;
 	private final ImageBuffer image;
-	
+
 	public Button(String text, float x, float y, float w, float h) {
 		super(x, y, w, h);
 		setMinMaxSize(20, 10, 100, 40);
@@ -24,7 +26,7 @@ public class Button extends AbstractButton {
 		textView.setAutoResizeMode(BIG);
 		textView.setTextColor(getTheme().getButtonTextColor());
 		setText(text);
-		
+
 		image = new ImageBuffer();
 		image.setVisible(true);
 	}
@@ -47,56 +49,72 @@ public class Button extends AbstractButton {
 		return textView.getText();
 	}
 
-	public final void setText(String text) {
+	public final Button setText(String text) {
 		this.textView.setText(text);
+
+		return this;
 	}
 
 	public final PFont getFont() {
 		return textView.getFont();
 	}
 
-	public final void setFont(PFont font) {
+	public final Button setFont(PFont font) {
 		textView.setFont(requireNonNull(font, "font cannot be null"));
+
+		return this;
 	}
 
 	public final AbstractColor getTextColor() {
 		return textView.getTextColor();
 	}
 
-	public final void setTextColor(AbstractColor color) {
+	public final Button setTextColor(AbstractColor color) {
 		textView.setTextColor(color);
+
+		return this;
 	}
 
 	public final boolean isTextVisible() {
 		return textView.isVisible();
 	}
 
-	public final void setTextVisible(boolean isVisible) {
+	public final Button setTextVisible(boolean isVisible) {
 		textView.setVisible(isVisible);
+
+		return this;
 	}
-	
+
 	public final PImage getImage() {
 		return image.get();
 	}
-	
-	public final void setImage(PImage image) {
+
+	public final Button setImage(PImage image) {
 		this.image.set(image);
+
+		return this;
 	}
-	
+
 	public final AbstractColor getImageColor() {
 		return image.getColor();
 	}
-	
-	public final void setImageColor(AbstractColor color) {
+
+	public final Button setImageColor(AbstractColor color) {
 		image.setColor(color);
+
+		return this;
 	}
-	
-	public final void setTextAlignX(int alignX) {
+
+	public final Button setTextAlignX(int alignX) {
 		textView.setAlignX(alignX);
+
+		return this;
 	}
-	
-	public final void setTextAlignY(int alignY) {
+
+	public final Button setTextAlignY(int alignY) {
 		textView.setAlignY(alignY);
+
+		return this;
 	}
 
 	@Override
@@ -105,11 +123,11 @@ public class Button extends AbstractButton {
 		if (textView != null) {
 			textView.setBoundsFrom(this);
 		}
-		
-		if(image != null) {
+
+		if (image != null) {
 			image.setBoundsFrom(this);
 		}
-		
+
 	}
 
 	@Override
@@ -120,5 +138,5 @@ public class Button extends AbstractButton {
 		getHoverInternal().draw();
 		textView.draw();
 	}
-	
+
 }

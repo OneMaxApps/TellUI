@@ -2,7 +2,10 @@ package microui.service;
 
 import microui.core.base.View;
 import microui.feedback.Tooltip;
+import microui.util.MathUtils;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 21.10.2025
 public final class TooltipManager extends View {
 	private static final TooltipManager INSTANCE = new TooltipManager();
 	private static Tooltip tooltip;
@@ -10,14 +13,6 @@ public final class TooltipManager extends View {
 	private TooltipManager() {
 		super();
 		setVisible(true);
-	}
-
-	@Override
-	protected void render() {
-		if (tooltip != null) {
-			tooltip.getContent().setAbsolutePosition(getCorrectPositionX(), getCorrectPositionY());
-			tooltip.draw();
-		}
 	}
 
 	public static void setTooltip(Tooltip tooltip) {
@@ -31,15 +26,19 @@ public final class TooltipManager extends View {
 		return INSTANCE;
 	}
 
+	@Override
+	protected void render() {
+		if (tooltip != null) {
+			tooltip.getContent().setAbsolutePosition(getCorrectPositionX(), getCorrectPositionY());
+			tooltip.draw();
+		}
+	}
+	
 	private float getCorrectPositionX() {
-		return constrain(ctx.mouseX, 0, ctx.width - tooltip.getContent().getAbsoluteWidth());
+		return MathUtils.constrain(ctx.mouseX, 0, ctx.width - tooltip.getContent().getAbsoluteWidth());
 	}
 
 	private float getCorrectPositionY() {
-		return constrain(ctx.mouseY, 0, ctx.height - tooltip.getContent().getAbsoluteHeight());
-	}
-
-	private static float constrain(float value, float min, float max) {
-		return value < min ? min : value > max ? max : value;
+		return MathUtils.constrain(ctx.mouseY, 0, ctx.height - tooltip.getContent().getAbsoluteHeight());
 	}
 }
