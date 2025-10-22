@@ -23,6 +23,7 @@ public abstract class ContentView extends SpatialView {
 
 		setPaddingEnabled(true);
 		setMarginEnabled(true);
+		
 	}
 
 	public ContentView() {

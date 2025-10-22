@@ -10,15 +10,12 @@ public class PlainShadow extends AbstractShadow {
 
 	public PlainShadow() {
 		super();
-
-		setWeight(DEFAULT_WEIGHT_LEFT, DEFAULT_WEIGHT_TOP, DEFAULT_WEIGHT_RIGHT, DEFAULT_WEIGHT_BOTTOM);
-		setAlphaFadeOutEnabled(false);
+		setAlphaFadeOutEnabled(true);
 	}
 
 	public PlainShadow(ContentView target) {
 		this();
 		setTarget(target);
-
 	}
 
 	public boolean isAlphaFadeOutEnabled() {
@@ -30,10 +27,44 @@ public class PlainShadow extends AbstractShadow {
 		
 		return this;
 	}
+	
+	@Override
+	public AbstractShadow setWeightLeft(int weightLeft) {
+		return super.setWeightLeft(weightLeft);
+	}
 
 	@Override
+	public AbstractShadow setWeightTop(int weightTop) {
+		return super.setWeightTop(weightTop);
+	}
+
+	@Override
+	public AbstractShadow setWeightRight(int weightRight) {
+		return super.setWeightRight(weightRight);
+	}
+
+	@Override
+	public AbstractShadow setWeightBottom(int weightBottom) {
+		return super.setWeightBottom(weightBottom);
+	}
+
+	@Override
+	public AbstractShadow setWeight(int weight) {
+		return super.setWeight(weight);
+	}
+
+	@Override
+	public AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
+		return super.setWeight(weightHorizontal, weightVertical);
+	}
+
+	@Override
+	public AbstractShadow setWeight(int left, int top, int right, int bottom) {
+		return super.setWeight(left, top, right, bottom);
+	}
+	
+	@Override
 	protected void render() {
-		ctx.noStroke();
 		getColor().apply();
 		
 		float x = getTargetX();

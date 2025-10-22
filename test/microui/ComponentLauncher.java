@@ -2,7 +2,6 @@ package microui;
 
 import microui.component.MenuButton;
 import microui.core.base.ContainerManager;
-import microui.core.effect.PlainShadow;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
@@ -27,20 +26,18 @@ public class ComponentLauncher extends PApplet {
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
 
-		mFile = new MenuButton("File", 100, 100, 64, 20);
+		mFile = new MenuButton("File");
 
 		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
 		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
 		mFile.getMenu("New").addMenu("New 1", "1,2,3,4,5,6,7,8".split(","));
-		mFile.setShadow(new PlainShadow().setAlphaFadeOutEnabled(true));
-		
+
 	}
 
 	@Override
 	public void draw() {
 		background(132);
 		mFile.draw();
-
 	}
 
 	@Override

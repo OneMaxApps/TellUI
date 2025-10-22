@@ -71,7 +71,7 @@ public final class Launcher extends PApplet {
 
 	@Override
 	public void draw() {
-		background(100);
+		background(232);
 
 		// cm.getContainerByTextId("container_main").getComponentByTextId("edit_text").setSize(mouseX,mouseY);
 
