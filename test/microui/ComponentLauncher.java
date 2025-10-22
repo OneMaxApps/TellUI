@@ -18,7 +18,7 @@ public class ComponentLauncher extends PApplet {
 	public void settings() {
 		// fullScreen(); // 1680:1050
 		
-		size(640,360);
+		size(640,360,P2D);
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class ComponentLauncher extends PApplet {
 		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
 		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
 		mFile.getMenu("New").addMenu("New 1", "1,2,3,4,5,6,7,8".split(","));
-		mFile.setShadow(new PlainShadow());
+		mFile.setShadow(new PlainShadow().setAlphaFadeOutEnabled(true));
 		
 	}
 
