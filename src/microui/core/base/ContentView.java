@@ -2,7 +2,7 @@ package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
 
-import microui.core.effect.Shadow;
+import microui.core.effect.AbstractShadow;
 import microui.util.Debugger;
 
 //Status: STABLE - Do not modify
@@ -10,7 +10,7 @@ import microui.util.Debugger;
 public abstract class ContentView extends SpatialView {
 	private final Padding padding;
 	private final Margin margin;
-	private Shadow shadow;
+	private AbstractShadow shadow;
 	
 	public ContentView(float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -44,15 +44,18 @@ public abstract class ContentView extends SpatialView {
 		debugOnDraw();
 	}
 	
-	public final Shadow getShadow() {
+	public final AbstractShadow getShadow() {
 		return shadow;
 	}
 
-	public final ContentView setShadow(Shadow shadow) {
+	public final ContentView setShadow(AbstractShadow shadow) {
 		if(shadow == null) {
-			throw new NullPointerException("Shadow for "+getClass().getName()+" cannot be null");
+			throw new NullPointerException("Shadow cannot be null");
 		}
+		
 		this.shadow = shadow;
+		
+		shadow.setTarget(this);
 		
 		return this;
 	}

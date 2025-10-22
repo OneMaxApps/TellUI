@@ -18,7 +18,8 @@ public final class Shadow extends View {
 	private final ContentView targetView;
 	private AbstractColor color;
 	private int weightLeft, weightTop, weightRight, weightBottom;
-
+	private boolean isAlphaFadeOutEnabled;
+	
 	public Shadow(ContentView targetView) {
 		super();
 		setVisible(true);
@@ -31,6 +32,14 @@ public final class Shadow extends View {
 
 		setColor(new Color(0, 32));
 		setWeight(DEFAULT_WEIGHT_LEFT, DEFAULT_WEIGHT_TOP, DEFAULT_WEIGHT_RIGHT, DEFAULT_WEIGHT_BOTTOM);
+	}
+	
+	public boolean isAlphaFadeOutEnabled() {
+		return isAlphaFadeOutEnabled;
+	}
+
+	public void setAlphaFadeOutEnabled(boolean isAlphaFadeOutEnabled) {
+		this.isAlphaFadeOutEnabled = isAlphaFadeOutEnabled;
 	}
 
 	public AbstractColor getColor() {
@@ -129,8 +138,13 @@ public final class Shadow extends View {
 		ctx.strokeCap(PROJECT);
 
 		for (int i = 0; i < MAX_WEIGHT; i++) {
-			ctx.stroke(color.getRed(), color.getGreen(), color.getBlue(),convert(i, 0, MAX_WEIGHT, color.getAlpha(), 0));
-
+			
+			if(isAlphaFadeOutEnabled()) {
+				ctx.stroke(color.getRed(), color.getGreen(), color.getBlue(),convert(i, 0, MAX_WEIGHT, color.getAlpha(), 0));
+			} else {
+				color.applyStroke();
+			}
+			
 			float x = 0;
 			float y = 0;
 			float x1 = 0;
@@ -196,15 +210,10 @@ public final class Shadow extends View {
 
 	}
 
-	private void checkWeight(int weight) {
-		if (weight < MIN_WEIGHT) {
-			throw new IllegalArgumentException("Weight for Shadow cannot be less than " + MIN_WEIGHT);
+	private static void checkWeight(int weight) {
+		if(weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
+			throw new IllegalArgumentException("Weight must be between " + MIN_WEIGHT + " and " + MAX_WEIGHT);
 		}
-
-		if (weight > MAX_WEIGHT) {
-			throw new IllegalArgumentException("Weight for Shadow cannot be greater than " + MAX_WEIGHT);
-		}
-		
 	}
 	
 }
