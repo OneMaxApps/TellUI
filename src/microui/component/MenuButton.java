@@ -11,7 +11,7 @@ import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.core.base.View;
 import microui.core.effect.AbstractShadow;
-import microui.core.effect.ReactiveShadow;
+import microui.core.effect.PlainShadow;
 import microui.core.effect.SpatialAnimator;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
@@ -26,7 +26,7 @@ import processing.core.PApplet;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 21.10.2025
+//Last Reviewed: 23.10.2025
 
 // if menu is root - it's vertical list, else add horizontal shifting
 public final class MenuButton extends Button implements Scrollable {
@@ -555,7 +555,9 @@ public final class MenuButton extends Button implements Scrollable {
 		public void recalculateAllRecursive() {
 			recalculateDimensions();
 			recalculatePosition();
-
+			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
+			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b instanceof MenuButton m) {
@@ -811,7 +813,7 @@ public final class MenuButton extends Button implements Scrollable {
 				return true;
 			}
 
-			if (!menu.isActiveSubMenu() && !active.isHover() && !active.items.isHover() && !active.isHover()) {
+			if (!menu.isActiveSubMenu() && !active.isHover() && !active.items.isHover()) {
 				return true;
 			}
 
@@ -829,7 +831,7 @@ public final class MenuButton extends Button implements Scrollable {
 				super();
 				setVisible(true);
 				this.menu = menu;
-				setShadow(new ReactiveShadow());
+				setShadow(new PlainShadow());
 			}
 
 			public void recalculatePosition() {
@@ -844,7 +846,7 @@ public final class MenuButton extends Button implements Scrollable {
 			
 			@Override
 			protected void render() {
-				getShadow().setVisible(menu.isActiveSubMenu() || menu.isRoot() && menu.getActiveSubMenu() == null || menu == menu.getActiveSubMenu().getParent());
+				getShadow().setVisible(menu.isActiveSubMenu() || (menu.isRoot() && menu.getActiveSubMenu() == null));
 			}
 		}
 		

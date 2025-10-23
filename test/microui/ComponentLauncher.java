@@ -1,6 +1,7 @@
 package microui;
 
 import microui.component.MenuButton;
+import microui.component.MenuButton.ItemDimensions;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
@@ -15,8 +16,8 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void settings() {
-		fullScreen(P2D,0); // 1680:1050
-		
+//		fullScreen(P2D,0); // 1680:1050
+		fullScreen();
 //		size(640,360,P2D);
 	}
 
@@ -31,12 +32,12 @@ public class ComponentLauncher extends PApplet {
 		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
 		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
 		mFile.getMenu("New").addMenu("New 1", "1,2,3,4,5,6,7,8".split(","));
-
+		mFile.getMenu("New").setItemDimensions(new ItemDimensions(100,20));
 	}
 
 	@Override
 	public void draw() {
-		background(230);
+		background(200);
 		mFile.draw();
 	}
 
