@@ -13,6 +13,8 @@ import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
+import microui.core.style.theme.ThemeGray;
+import microui.core.style.theme.ThemeManager;
 import microui.layout.ColumnLayout;
 import microui.layout.ColumnLayoutParams;
 import microui.layout.GridLayout;
@@ -44,7 +46,7 @@ public final class Launcher extends PApplet {
 //		MicroUI.setDebugModeEnabled(true);
 		//Debugger.setDebugModeEnabled(true);
 
-		//ThemeManager.setTheme(new ThemeBlack());
+		ThemeManager.setTheme(new ThemeGray());
 
 		cm = ContainerManager.getInstance();
 

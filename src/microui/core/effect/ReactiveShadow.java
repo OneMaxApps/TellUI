@@ -18,6 +18,10 @@ public class ReactiveShadow extends AbstractShadow {
 		setTarget(target);
 
 	}
+	
+	public void requestUpdateWeights() {
+		updateWeights();
+	}
 
 	@Override
 	protected void render() {

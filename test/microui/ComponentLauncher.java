@@ -1,7 +1,6 @@
 package microui;
 
 import microui.component.MenuButton;
-import microui.component.MenuButton.ItemDimensions;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
@@ -29,10 +28,11 @@ public class ComponentLauncher extends PApplet {
 
 		mFile = new MenuButton("File",0,0,100,32);
 
-		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
-		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
-		mFile.getMenu("New").addMenu("New 1", "1,2,3,4,5,6,7,8".split(","));
-		mFile.getMenu("New").setItemDimensions(new ItemDimensions(100,20));
+		mFile.addMenu("menu 0","1,2,3,4,5".split(","));
+		
+		for(int i = 0; i < 100; i++) {
+			mFile.getMenu("menu " + i).addMenu("menu "+(i+1),"1,2,3,4,5".split(","));
+		}
 	}
 
 	@Override

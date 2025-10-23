@@ -11,7 +11,7 @@ import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.core.base.View;
 import microui.core.effect.AbstractShadow;
-import microui.core.effect.PlainShadow;
+import microui.core.effect.ReactiveShadow;
 import microui.core.effect.SpatialAnimator;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
@@ -26,7 +26,7 @@ import processing.core.PApplet;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 23.10.2025
+//Last Reviewed: 24.10.2025
 
 // if menu is root - it's vertical list, else add horizontal shifting
 public final class MenuButton extends Button implements Scrollable {
@@ -74,17 +74,17 @@ public final class MenuButton extends Button implements Scrollable {
 		} else {
 			items.mouseWheel(mouseEvent);
 		}
-		
+
 	}
-	
+
 	public AbstractShadow getItemsShadow() {
-		
+
 		return items.shadow.getShadow();
 	}
-	
+
 	public MenuButton setItemsShadow(AbstractShadow shadow) {
 		items.shadow.setShadow(shadow);
-		
+
 		return this;
 	}
 
@@ -276,29 +276,29 @@ public final class MenuButton extends Button implements Scrollable {
 
 		return this;
 	}
-	
+
 	public AbstractColor getArrowColor() {
 		return arrow.getColor();
 	}
-	
+
 	public MenuButton setArrowColor(AbstractColor color) {
 		arrow.setColor(color);
-		
+
 		return this;
 	}
-	
+
 	public MenuButton setArrowColorRecursive(AbstractColor color) {
 		setArrowColor(color);
-		
-		for(int i = 0; i < items.list.size(); i++) {
+
+		for (int i = 0; i < items.list.size(); i++) {
 			final Button b = items.list.get(i);
-			
-			if(b instanceof MenuButton m) {
+
+			if (b instanceof MenuButton m) {
 				m.setArrowColorRecursive(color);
 			}
-			
+
 		}
-		
+
 		return this;
 	}
 
@@ -306,6 +306,10 @@ public final class MenuButton extends Button implements Scrollable {
 	protected void render() {
 		super.render();
 
+		if(items.list.isEmpty()) {
+			return;
+		}
+		
 		if (isOpen() && isRoot()) {
 			items.draw();
 
@@ -324,14 +328,14 @@ public final class MenuButton extends Button implements Scrollable {
 
 		indicator.draw();
 		arrow.draw();
-		
+
 		if (Debugger.isDebugModeEnabled()) {
 			if (isActiveSubMenu()) {
 				ctx.fill(0, 200, 0, 100);
 				ctx.rect(getAbsoluteX(), getAbsoluteY(), getAbsoluteWidth(), getAbsoluteHeight());
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -343,9 +347,9 @@ public final class MenuButton extends Button implements Scrollable {
 
 		indicator.setPosition(getAbsoluteX(), getAbsoluteY());
 		indicator.setSize(getAbsoluteWidth() * .99f, getAbsoluteHeight() * .99f);
-		
-		arrow.setPosition(getX()+getWidth(), getY());
-		arrow.setSize(getPaddingRight(),getAbsoluteHeight());
+
+		arrow.setPosition(getX() + getWidth(), getY());
+		arrow.setSize(getPaddingRight(), getAbsoluteHeight());
 	}
 
 	private List<MenuButton> getRenderOrderList() {
@@ -408,7 +412,8 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public static final record ItemDimensions(float width, float height) {
-		public ItemDimensions {
+		public ItemDimensions
+		{
 			if (width <= 0 || height <= 0) {
 				throw new IllegalArgumentException("Dimensions for MenuButton item cannot be less or equal zero");
 			}
@@ -419,7 +424,7 @@ public final class MenuButton extends Button implements Scrollable {
 		private final MenuButton menu;
 		private final List<Button> list;
 		private final ShadowWrapper shadow;
-		
+
 		public Items(MenuButton menu) {
 			super();
 			setVisible(true);
@@ -522,7 +527,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 				totalHeight += b.getHeight();
 			}
-			
+
 			shadow.recalculatePosition();
 		}
 
@@ -550,14 +555,16 @@ public final class MenuButton extends Button implements Scrollable {
 				list.get(i).setSize(newWidth, newHeight);
 			}
 
+			shadow.recalculateDimensions();
 		}
 
 		public void recalculateAllRecursive() {
 			recalculateDimensions();
 			recalculatePosition();
+			
 			shadow.recalculateDimensions();
 			shadow.recalculatePosition();
-			
+
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b instanceof MenuButton m) {
@@ -632,8 +639,8 @@ public final class MenuButton extends Button implements Scrollable {
 				}
 			}
 
-			shadow.recalculatePosition();
 			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
 		}
 
 		@Override
@@ -663,8 +670,9 @@ public final class MenuButton extends Button implements Scrollable {
 
 			recalculateDimensions();
 			recalculatePosition();
-			
+
 			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
 		}
 
 		private void checkTitle(String... titles) {
@@ -676,9 +684,10 @@ public final class MenuButton extends Button implements Scrollable {
 				if (titles[i] == null) {
 					throw new NullPointerException("Title for MenuButton item cannot be null");
 				}
-				
-				if(titles[i].isEmpty()) {
-					throw new IllegalArgumentException("Title cannot be empty [Inside MenuButton: "+menu.getText()+"]");
+
+				if (titles[i].isEmpty()) {
+					throw new IllegalArgumentException(
+							"Title cannot be empty [Inside MenuButton: " + menu.getText() + "]");
 				}
 			}
 		}
@@ -823,33 +832,54 @@ public final class MenuButton extends Button implements Scrollable {
 
 			return false;
 		}
-		
+
 		private static final class ShadowWrapper extends ContentView {
 			private final MenuButton menu;
-			
+	
 			public ShadowWrapper(MenuButton menu) {
 				super();
 				setVisible(true);
 				this.menu = menu;
-				setShadow(new PlainShadow());
+				menu.onClick(() -> {
+					if(getShadow() instanceof ReactiveShadow s) {
+						s.requestUpdateWeights();
+					}
+				});
+				setShadow(new ReactiveShadow());
+
 			}
 
 			public void recalculatePosition() {
-				if(menu.items.list.isEmpty()) { return; }
+				if(menu.items.list == null) {
+					return;
+				}
+				
+				if(menu.items.list.isEmpty()) {
+					return;
+				}
+				
 				setPosition(menu.items.list.get(0).getAbsoluteX(), menu.items.list.get(0).getAbsoluteY());
 			}
-			
+
 			public void recalculateDimensions() {
-				if(menu.items.list.isEmpty()) { return; }
-				setSize(menu.items.list.get(0).getAbsoluteWidth(),menu.getItemDimensions().height()*menu.items.list.size());
+				if(menu.items.list == null) {
+					return;
+				}
+				
+				if (menu.items.list.isEmpty()) {
+					return;
+				}
+				
+				setSize(menu.items.list.get(0).getAbsoluteWidth(),menu.getItemDimensions().height() * menu.items.list.size());
+				
 			}
-			
+
 			@Override
 			protected void render() {
 				getShadow().setVisible(menu.isActiveSubMenu() || (menu.isRoot() && menu.getActiveSubMenu() == null));
 			}
 		}
-		
+
 	}
 
 	private static class OpenStateIndicator extends SpatialView {
@@ -858,7 +888,7 @@ public final class MenuButton extends Button implements Scrollable {
 		public OpenStateIndicator(MenuButton menu) {
 			setVisible(true);
 			stroke = new Stroke();
-			stroke.setWeight(2); 
+			stroke.setWeight(2);
 
 			setColor(new GradientColor(Color.TRANSPARENT,
 					new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
@@ -884,38 +914,37 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 	}
-	
+
 	private static final class Arrow extends SpatialView {
 		private static final int DEFAULT_SIZE = 8;
 		private static final String CLOSE_SYMBOL = "▶";
 		private static final String OPEN_SYMBOL = "▼";
 		private final MenuButton menu;
 		private AbstractColor color;
-		
+
 		public Arrow(MenuButton menu) {
 			super();
 			setVisible(true);
-			if(menu == null) {
+			if (menu == null) {
 				throw new NullPointerException("MenuButton for Arrow cannot be null");
 			}
-			
+
 			setColor(getTheme().getPrimaryColor());
-			
-			
+
 			this.menu = menu;
 		}
 
 		@Override
 		protected void render() {
-			if(menu.isRoot()) {
+			if (menu.isRoot()) {
 				return;
 			}
-			
+
 			color.apply();
-			ctx.textAlign(PApplet.CENTER,PApplet.CENTER);
+			ctx.textAlign(PApplet.CENTER, PApplet.CENTER);
 			ctx.textSize(DEFAULT_SIZE);
 			ctx.text(menu.isOpen ? OPEN_SYMBOL : CLOSE_SYMBOL, getX(), getY(), getWidth(), getHeight());
-			
+
 		}
 
 		public AbstractColor getColor() {
@@ -923,7 +952,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public void setColor(AbstractColor color) {
-			if(color == null) {
+			if (color == null) {
 				throw new NullPointerException("Color cannot be null");
 			}
 			this.color = color;
