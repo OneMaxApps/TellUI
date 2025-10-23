@@ -6,7 +6,6 @@ import microui.component.EditText;
 import microui.component.Knob;
 import microui.component.LabeledCheckBox;
 import microui.component.MenuButton;
-import microui.component.MenuButtonOld;
 import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
@@ -56,7 +55,6 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new EditText()), "EditText");
 		cm.add(getContainerWith(new Knob()), "Knob");
 		cm.add(getContainerWith(new LabeledCheckBox()), "LabeledCheckBox");
-		cm.add(getContainerWith(new MenuButtonOld()), "MenuButton");
 		cm.add(getContainerWith(new Scroll()), "Scroll");
 		cm.add(getContainerWith(new Slider()), "Slider");
 		cm.add(getContainerWith(new TextField()), "TextField");
@@ -104,22 +102,24 @@ public final class Launcher extends PApplet {
 		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")),
 				new ColumnLayoutParams(.2f));
 
-		MenuButtonOld menuButtonOfComponents;
+		MenuButton menuButtonOfComponents;
 		ContainerMenuItem.add(
-				menuButtonOfComponents = new MenuButtonOld("show component", "Button", "CheckBox", "EditText", "Knob",
-						"LabeledCheckBox", "MenuButton", "Scroll", "Slider", "TextField", "TextView"),
+				menuButtonOfComponents = new MenuButton(),
 				new ColumnLayoutParams(.2f));
 
-		menuButtonOfComponents.getItem("Button").onClick(() -> cm.switchOn("Button"));
-		menuButtonOfComponents.getItem("CheckBox").onClick(() -> cm.switchOn("CheckBox"));
-		menuButtonOfComponents.getItem("EditText").onClick(() -> cm.switchOn("EditText"));
-		menuButtonOfComponents.getItem("Knob").onClick(() -> cm.switchOn("Knob"));
-		menuButtonOfComponents.getItem("LabeledCheckBox").onClick(() -> cm.switchOn("LabeledCheckBox"));
-		menuButtonOfComponents.getItem("MenuButton").onClick(() -> cm.switchOn("MenuButton"));
-		menuButtonOfComponents.getItem("Scroll").onClick(() -> cm.switchOn("Scroll"));
-		menuButtonOfComponents.getItem("Slider").onClick(() -> cm.switchOn("Slider"));
-		menuButtonOfComponents.getItem("TextField").onClick(() -> cm.switchOn("TextField"));
-		menuButtonOfComponents.getItem("TextView").onClick(() -> cm.switchOn("TextView"));
+		menuButtonOfComponents.add("show component", "Button", "CheckBox", "EditText", "Knob",
+		"LabeledCheckBox", "MenuButton", "Scroll", "Slider", "TextField", "TextView");
+		
+		menuButtonOfComponents.get("Button").onClick(() -> cm.switchOn("Button"));
+		menuButtonOfComponents.get("CheckBox").onClick(() -> cm.switchOn("CheckBox"));
+		menuButtonOfComponents.get("EditText").onClick(() -> cm.switchOn("EditText"));
+		menuButtonOfComponents.get("Knob").onClick(() -> cm.switchOn("Knob"));
+		menuButtonOfComponents.get("LabeledCheckBox").onClick(() -> cm.switchOn("LabeledCheckBox"));
+		menuButtonOfComponents.get("MenuButton").onClick(() -> cm.switchOn("MenuButton"));
+		menuButtonOfComponents.get("Scroll").onClick(() -> cm.switchOn("Scroll"));
+		menuButtonOfComponents.get("Slider").onClick(() -> cm.switchOn("Slider"));
+		menuButtonOfComponents.get("TextField").onClick(() -> cm.switchOn("TextField"));
+		menuButtonOfComponents.get("TextView").onClick(() -> cm.switchOn("TextView"));
 
 		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
 
@@ -144,7 +144,7 @@ public final class Launcher extends PApplet {
 		container.add(new CheckBox(), new GridLayoutParams(1, 0));
 		container.add(new EditText(), new GridLayoutParams(2, 0));
 		container.add(new LabeledCheckBox("confirm"), new GridLayoutParams(3, 0));
-		container.add(new MenuButtonOld().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
+		container.add(new MenuButton().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
 		container.add(new Scroll(), new GridLayoutParams(0, 1), "scroll");
 		container.add(new Slider(), new GridLayoutParams(1, 1));
 		container.add(new TextField(), new GridLayoutParams(2, 1));

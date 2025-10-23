@@ -15,9 +15,9 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void settings() {
-		// fullScreen(); // 1680:1050
+		fullScreen(P2D,0); // 1680:1050
 		
-		size(640,360,P2D);
+//		size(640,360,P2D);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class ComponentLauncher extends PApplet {
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
 
-		mFile = new MenuButton("File");
+		mFile = new MenuButton("File",0,0,100,32);
 
 		mFile.addMenu("New", "Java Project,Maven Project,Project...".split(","));
 		mFile.add("Open File...,Open Projects from File System...,Recent Files".split(","));
@@ -36,7 +36,7 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void draw() {
-		background(132);
+		background(230);
 		mFile.draw();
 	}
 

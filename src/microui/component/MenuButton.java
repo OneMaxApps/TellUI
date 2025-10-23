@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.core.base.View;
+import microui.core.effect.AbstractShadow;
+import microui.core.effect.ReactiveShadow;
 import microui.core.effect.SpatialAnimator;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
@@ -72,6 +75,17 @@ public final class MenuButton extends Button implements Scrollable {
 			items.mouseWheel(mouseEvent);
 		}
 		
+	}
+	
+	public AbstractShadow getItemsShadow() {
+		
+		return items.shadow.getShadow();
+	}
+	
+	public MenuButton setItemsShadow(AbstractShadow shadow) {
+		items.shadow.setShadow(shadow);
+		
+		return this;
 	}
 
 	public DirectionMode getDirectionMode() {
@@ -404,13 +418,14 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final class Items extends View implements Scrollable {
 		private final MenuButton menu;
 		private final List<Button> list;
-
+		private final ShadowWrapper shadow;
+		
 		public Items(MenuButton menu) {
 			super();
 			setVisible(true);
 			this.menu = menu;
 			list = new ArrayList<Button>();
-
+			shadow = new ShadowWrapper(menu);
 		}
 
 		@Override
@@ -507,6 +522,8 @@ public final class MenuButton extends Button implements Scrollable {
 
 				totalHeight += b.getHeight();
 			}
+			
+			shadow.recalculatePosition();
 		}
 
 		public void recalculatePositionAllRecursive() {
@@ -613,10 +630,13 @@ public final class MenuButton extends Button implements Scrollable {
 				}
 			}
 
+			shadow.recalculatePosition();
+			shadow.recalculateDimensions();
 		}
 
 		@Override
 		protected void render() {
+			shadow.draw();
 			itemsOnDraw();
 		}
 
@@ -641,6 +661,8 @@ public final class MenuButton extends Button implements Scrollable {
 
 			recalculateDimensions();
 			recalculatePosition();
+			
+			shadow.recalculateDimensions();
 		}
 
 		private void checkTitle(String... titles) {
@@ -799,7 +821,33 @@ public final class MenuButton extends Button implements Scrollable {
 
 			return false;
 		}
+		
+		private static final class ShadowWrapper extends ContentView {
+			private final MenuButton menu;
+			
+			public ShadowWrapper(MenuButton menu) {
+				super();
+				setVisible(true);
+				this.menu = menu;
+				setShadow(new ReactiveShadow());
+			}
 
+			public void recalculatePosition() {
+				if(menu.items.list.isEmpty()) { return; }
+				setPosition(menu.items.list.get(0).getAbsoluteX(), menu.items.list.get(0).getAbsoluteY());
+			}
+			
+			public void recalculateDimensions() {
+				if(menu.items.list.isEmpty()) { return; }
+				setSize(menu.items.list.get(0).getAbsoluteWidth(),menu.getItemDimensions().height()*menu.items.list.size());
+			}
+			
+			@Override
+			protected void render() {
+				getShadow().setVisible(menu.isActiveSubMenu() || menu.isRoot() && menu.getActiveSubMenu() == null || menu == menu.getActiveSubMenu().getParent());
+			}
+		}
+		
 	}
 
 	private static class OpenStateIndicator extends SpatialView {
