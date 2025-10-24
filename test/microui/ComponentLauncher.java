@@ -29,10 +29,19 @@ public class ComponentLauncher extends PApplet {
 		mFile = new MenuButton("File",0,0,100,32);
 
 		mFile.addMenu("menu 0","1,2,3,4,5".split(","));
-		
-		for(int i = 0; i < 100; i++) {
-			mFile.getMenu("menu " + i).addMenu("menu "+(i+1),"1,2,3,4,5".split(","));
+		mFile.getMenu("menu 0").addMenu("menu new", "1,2,3,4,5".split(","));
+
+		mFile.addMenu("menu 1","1,2,3,4,5".split(","));
+		for(int i = 1; i < 10; i++) {
+			
+			if(i == 9) {
+				mFile.getMenu("menu " + i).addMenu("spacial","re");
+			} else {
+				mFile.getMenu("menu " + i).addMenu("menu "+(i+1),"1,2,3,4,5".split(","));
+			}
+			
 		}
+		
 	}
 
 	@Override

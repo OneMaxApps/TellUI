@@ -4,6 +4,7 @@ import static microui.util.MathUtils.constrain;
 import static microui.util.MathUtils.convert;
 
 import microui.core.base.ContentView;
+import microui.core.style.Color;
 import processing.core.PApplet;
 
 public class ReactiveShadow extends AbstractShadow {
@@ -11,6 +12,7 @@ public class ReactiveShadow extends AbstractShadow {
 	public ReactiveShadow() {
 		super();
 		clearAllWeight();
+		setColor(new Color(0,32));
 	}
 	
 	public ReactiveShadow(ContentView target) {
@@ -29,7 +31,7 @@ public class ReactiveShadow extends AbstractShadow {
 			updateWeights();
 		}
 		
-		getColor().apply();
+		ctx.noFill();
 		
 		float x = getTargetX();
 		float y = getTargetY();

@@ -20,15 +20,20 @@ import processing.core.PApplet;
  * </p>
  */
 public abstract class View implements Visible {
-	protected static final PApplet ctx = requireNonNull(getContext(),
-			"Context (PApplet) for MicroUI is not initialized");
-	private static final String DEFAULT_EMPTY_TEXT_ID = "";
+	protected static final PApplet ctx = requireNonNull(getContext(),"Context (PApplet) for MicroUI is not initialized");
+	public static final String DEFAULT_TEXT_ID = "";
+	public static final int DEFAULT_ID = 0;
+	public static final int MIN_PRIORITY = 0;
+	public static final int MIN_ID = 0;
+	public static final int MAX_ID = Integer.MAX_VALUE;
 	private String textId;
 	private int priority, id;
-	private boolean isVisible;
+	private boolean visible;
 
 	public View() {
 		Metrics.register(this);
+		id = DEFAULT_ID;
+		textId = DEFAULT_TEXT_ID;
 	}
 
 	/**
@@ -38,17 +43,17 @@ public abstract class View implements Visible {
 	 */
 	@Override
 	public final boolean isVisible() {
-		return isVisible;
+		return visible;
 	}
 
 	/**
 	 * Sets the visibility of the element.
 	 *
-	 * @param isVisible true to show the element, false to hide
+	 * @param visible true to show the element, false to hide
 	 */
 	@Override
-	public final void setVisible(final boolean isVisible) {
-		this.isVisible = isVisible;
+	public final void setVisible(final boolean visible) {
+		this.visible = visible;
 	}
 
 	/**
@@ -67,9 +72,9 @@ public abstract class View implements Visible {
 	 * @param priority new rendering priority (must be ≥ 0)
 	 * @throws IllegalArgumentException if priority is less than 0
 	 */
-	public final void setPriority(final int priority) {
-		if (priority < 0) {
-			throw new IllegalArgumentException("priority cannot be less than zero");
+	public final void setPriority(int priority) {
+		if (priority < MIN_PRIORITY) {
+			throw new IllegalArgumentException("Priority cannot be less than zero");
 		}
 		this.priority = priority;
 	}
@@ -86,12 +91,12 @@ public abstract class View implements Visible {
 	/**
 	 * Sets the numeric identifier of the element.
 	 *
-	 * @param id new identifier (must be ≥ 0)
+	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID (Integer.MAX_VALUE))
 	 * @throws IllegalArgumentException if the identifier is less than 0
 	 */
 	public final void setId(int id) {
-		if (id < 0) {
-			throw new IllegalArgumentException("id cannot be negative");
+		if(id < MIN_ID || id > MAX_ID) {
+			throw new IllegalArgumentException("Id must be between ["+MIN_ID+"]"+" ["+MAX_ID+"]");
 		}
 		this.id = id;
 	}
@@ -102,9 +107,6 @@ public abstract class View implements Visible {
 	 * @return text id of the View object
 	 */
 	public final String getTextId() {
-		if (textId == null) {
-			return DEFAULT_EMPTY_TEXT_ID;
-		}
 		return textId;
 	}
 
@@ -116,13 +118,29 @@ public abstract class View implements Visible {
 	 */
 	public final void setTextId(final String textId) {
 		if (textId == null) {
-			throw new IllegalArgumentException("text id cannot be null");
+			throw new IllegalArgumentException("Text id cannot be null");
 		}
-		if (textId.trim().isEmpty()) {
-			throw new IllegalArgumentException("text id cannot be empty");
+		if (textId.isBlank()) {
+			throw new IllegalArgumentException("Text id cannot be blank");
 		}
 
 		this.textId = textId;
+	}
+
+	/**
+	 * 
+	 * @return true if id is not equal to DEFAULT_ID (0)
+	 */
+	public final boolean hasId() {
+		return id != DEFAULT_ID;
+	}
+
+	/**
+	 * 
+	 * @return true if text id is not equal to DEFAULT_TEXT_ID ("")
+	 */
+	public final boolean hasTextId() {
+		return !textId.equals(DEFAULT_TEXT_ID);
 	}
 
 	/**
