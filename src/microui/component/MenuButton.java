@@ -296,6 +296,16 @@ public final class MenuButton extends Button implements Scrollable {
 		items.removeInternal(title);
 		return this;
 	}
+	
+	public MenuButton removeById(int... id) {
+		items.removeByIdInternal(id);
+		return this;
+	}
+	
+	public MenuButton removeByTextId(String... textId) {
+		items.removeByTextIdInternal(textId);
+		return this;
+	}
 
 	public MenuButton setOpenStateIndicatorColor(AbstractColor color) {
 		indicator.setColor(color);
@@ -701,9 +711,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public Button findByIdInternal(int id) {
-			if(id < MIN_ID || id > MAX_ID) {
-				throw new IllegalArgumentException("Id must be between ["+MIN_ID+"]"+" ["+MAX_ID+"] in MenuButton with title: "+menu.getText());
-			}
+			checkId(id);
 			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -727,13 +735,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 		
 		public Button findByTextIdInternal(String textId) {
-			if(textId == null) {
-				throw new NullPointerException("TextId cannot be null in MenuButton with title: "+menu.getText());
-			}
-			
-			if(textId.isBlank()) {
-				throw new IllegalArgumentException("TextId cannot be blank for search in MenuButton with title: "+menu.getText());
-			}
+			checkTextId(textId);
 			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -764,6 +766,50 @@ public final class MenuButton extends Button implements Scrollable {
 
 				if (b == null) {
 					throw new NoSuchElementException("Item with title: \"" + title + "\" not found in MenuButton");
+				}
+
+				final List<Button> found = findListWhichContainsButtonInternal(b);
+				if (found != null) {
+					found.remove(b);
+					menu.getRenderOrderList().remove(b);
+					recalculatePositionAllRecursive();
+				}
+			}
+
+			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
+		}
+		
+		public void removeByIdInternal(int... id) {
+			checkId(id);
+
+			for (int i = 0; i < id.length; i++) {
+				final Button b = findByIdInternal(id[i]);
+
+				if (b == null) {
+					throw new NoSuchElementException("Item with id: \"" + id[i] + "\" not found in MenuButton");
+				}
+
+				final List<Button> found = findListWhichContainsButtonInternal(b);
+				if (found != null) {
+					found.remove(b);
+					menu.getRenderOrderList().remove(b);
+					recalculatePositionAllRecursive();
+				}
+			}
+
+			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
+		}
+		
+		public void removeByTextIdInternal(String... textId) {
+			checkTextId(textId);
+
+			for (int i = 0; i < textId.length; i++) {
+				final Button b = findByTextIdInternal(textId[i]);
+
+				if (b == null) {
+					throw new NoSuchElementException("Item with text id: \"" + textId[i] + "\" not found in MenuButton");
 				}
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
@@ -976,6 +1022,30 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			return false;
+		}
+		
+		private void checkId(int... id) {
+			if(id == null) {
+				throw new NullPointerException("Id array cannot be null");
+			}
+			for(int i = 0; i < id.length; i++) {
+				if(id[i] < MIN_ID || id[i] > MAX_ID) {
+					throw new IllegalArgumentException("Id must be between ["+MIN_ID+"]"+" ["+MAX_ID+"] in MenuButton with title: "+menu.getText());
+				}
+			}
+			
+		}
+		
+		private void checkTextId(String... textId) {
+			if(textId == null) {
+				throw new NullPointerException("TextId cannot be null in MenuButton with title: "+menu.getText());
+			}
+			
+			for(int i = 0; i < textId.length; i++) {
+				if(textId[i].isBlank()) {
+					throw new IllegalArgumentException("TextId cannot be blank for search in MenuButton with title: "+menu.getText());
+				}
+			}
 		}
 
 		private static final class ShadowWrapper extends ContentView {
