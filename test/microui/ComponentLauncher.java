@@ -45,6 +45,8 @@ public class ComponentLauncher extends PApplet {
 		mFile.getMenu("menu 5").setTextId("m");
 		
 		mFile.removeByTextId("m");
+		
+		mFile.setText(null);
 	}
 
 	@Override

@@ -59,7 +59,7 @@ public class CheckBox extends AbstractButton {
 
 	public final void setMarkColor(AbstractColor color) {
 		if (color == null) {
-			throw new NullPointerException("the mark color cannot be null");
+			throw new NullPointerException("Color for mark cannot be null");
 		}
 
 		markColor = color;
@@ -67,7 +67,7 @@ public class CheckBox extends AbstractButton {
 
 	public final void onStateChangedListener(Listener listener) {
 		if (listener == null) {
-			throw new NullPointerException("on the state changed listener cannot be null");
+			throw new NullPointerException("Listener cannot be null");
 		}
 		onClick(listener);
 	}

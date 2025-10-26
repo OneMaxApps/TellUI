@@ -75,7 +75,7 @@ public final class Knob extends RangeControl {
 
 	public void setIndicatorColor(AbstractColor color) {
 		if (color == null) {
-			throw new NullPointerException("the color cannot be null");
+			throw new NullPointerException("Color cannot be null");
 		}
 		indicatorColor = color;
 	}

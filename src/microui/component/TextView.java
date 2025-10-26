@@ -13,6 +13,7 @@ import microui.constants.AutoResizeMode;
 import microui.core.base.Component;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.util.CheckOnNPE;
 import processing.core.PFont;
 
 public final class TextView extends Component {
@@ -105,7 +106,7 @@ public final class TextView extends Component {
 
 	public void setFont(PFont font) {
 		if (font == null) {
-			throw new IllegalArgumentException("font cannot be null");
+			throw new IllegalArgumentException("Font cannot be null");
 		}
 		this.font = font;
 	}
@@ -115,9 +116,7 @@ public final class TextView extends Component {
 	}
 
 	public void setText(String text) {
-		if (text == null) {
-			throw new IllegalArgumentException("text cannot be null");
-		}
+		CheckOnNPE.checkParam(text, "text");
 		this.text = text;
 	}
 
@@ -148,7 +147,7 @@ public final class TextView extends Component {
 
 	public void setTextColor(AbstractColor color) {
 		if (color == null) {
-			throw new NullPointerException("the color cannot be null");
+			throw new NullPointerException("Color for text cannot be null");
 		}
 		textColor = color;
 	}

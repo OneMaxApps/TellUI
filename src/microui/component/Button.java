@@ -1,6 +1,5 @@
 package microui.component;
 
-import static java.util.Objects.requireNonNull;
 import static microui.constants.AutoResizeMode.BIG;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
@@ -36,7 +35,7 @@ public class Button extends AbstractButton {
 	}
 
 	public Button(String text) {
-		this(requireNonNull(text, "text cannot be null"), 0, 0, 0, 0);
+		this(text, 0, 0, 0, 0);
 		setSize(getMaxWidth(), getMaxHeight());
 		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
@@ -60,7 +59,7 @@ public class Button extends AbstractButton {
 	}
 
 	public final Button setFont(PFont font) {
-		textView.setFont(requireNonNull(font, "font cannot be null"));
+		textView.setFont(font);
 
 		return this;
 	}

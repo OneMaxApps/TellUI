@@ -13,7 +13,7 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	private static boolean isFlexibleRenderModeEnabled;
+	private static boolean flexibleRenderModeEnabled;
 
 	private MicroUI() {
 	}
@@ -33,11 +33,11 @@ public final class MicroUI {
 	}
 
 	public static boolean isFlexibleRenderModeEnabled() {
-		return isFlexibleRenderModeEnabled;
+		return flexibleRenderModeEnabled;
 	}
 
-	public static void setFlexibleRenderModeEnabled(boolean isFlexibleRenderModeEnabled) {
-		MicroUI.isFlexibleRenderModeEnabled = isFlexibleRenderModeEnabled;
+	public static void setFlexibleRenderModeEnabled(boolean flexibleRenderModeEnabled) {
+		MicroUI.flexibleRenderModeEnabled = flexibleRenderModeEnabled;
 	}
 
 }

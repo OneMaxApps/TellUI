@@ -41,12 +41,12 @@ public class ImageBuffer extends SpatialView {
 	}
 
 	public final void set(final PImage image) {
-		this.image = requireNonNull(image, "image cannot be null");
+		this.image = requireNonNull(image, "Image cannot be null");
 		updateDimensionsOfImageCorrect(image);
 	}
 
 	public final void load(final String path) {
-		image = ctx.loadImage(requireNonNull(path, "path cannot be null"));
+		image = ctx.loadImage(requireNonNull(path, "Path cannot be null"));
 		updateDimensionsOfImageCorrect(image);
 	}
 
@@ -60,7 +60,7 @@ public class ImageBuffer extends SpatialView {
 
 	public final void setColor(AbstractColor color) {
 		if (color == null) {
-			throw new NullPointerException("the color cannot be null");
+			throw new NullPointerException("Color cannot be null");
 		}
 
 		this.color = color;

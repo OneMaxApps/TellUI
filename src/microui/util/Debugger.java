@@ -9,6 +9,10 @@ public final class Debugger {
 		setHotKeySwitchEnabled(true);
 	}
 	
+	private Debugger() {
+		
+	}
+	
 	public static boolean isDebugModeEnabled() {
 		return isDebugModeEnabled;
 	}
