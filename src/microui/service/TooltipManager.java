@@ -1,5 +1,7 @@
 package microui.service;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.core.base.View;
 import microui.feedback.Tooltip;
 import microui.util.MathUtils;
@@ -16,10 +18,7 @@ public final class TooltipManager extends View {
 	}
 
 	public static void setTooltip(Tooltip tooltip) {
-		if (tooltip == null) {
-			throw new NullPointerException("the tooltip cannot be null");
-		}
-		TooltipManager.tooltip = tooltip;
+		TooltipManager.tooltip = requireNonNull(tooltip,"tooltip");
 	}
 
 	public static TooltipManager getInstance() {

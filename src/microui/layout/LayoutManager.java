@@ -1,5 +1,7 @@
 package microui.layout;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 
 import microui.MicroUI;
@@ -30,10 +32,7 @@ public abstract class LayoutManager {
 	}
 
 	public final void setContainer(Container container) {
-		if (container == null) {
-			throw new NullPointerException("container cannot be null");
-		}
-		this.container = container;
+		this.container = requireNonNull(container,"container");
 		entryList = container.getEntryList();
 	}
 

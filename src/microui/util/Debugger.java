@@ -1,5 +1,7 @@
 package microui.util;
 
+import static java.util.Objects.requireNonNull;
+
 public final class Debugger {
 	private static String additionalInfo = "";
 	
@@ -26,11 +28,7 @@ public final class Debugger {
 	}
 
 	public static void setAdditionalInfo(String additionalInfo) {
-		if(additionalInfo == null) {
-			throw new NullPointerException("AdditionalInfo cannot be null");
-		}
-		
-		Debugger.additionalInfo = additionalInfo;
+		Debugger.additionalInfo = requireNonNull(additionalInfo,"additionalInfo");
 	}
 
 	public static boolean isHotKeySwitchEnabled() {

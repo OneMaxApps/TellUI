@@ -1,5 +1,6 @@
 package microui.core.base;
 
+import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.style.AbstractColor;
@@ -53,13 +54,8 @@ public abstract class Component extends ContentView {
 		return backgroundColor;
 	}
 
-	public final Component setBackgroundColor(AbstractColor color) {
-
-		if (color == null) {
-			throw new NullPointerException("the color cannot be null");
-		}
-
-		backgroundColor = color;
+	public final Component setBackgroundColor(AbstractColor backgroundColor) {
+		this.backgroundColor = requireNonNull(backgroundColor,"backgroundColor");
 
 		return this;
 	}

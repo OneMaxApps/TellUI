@@ -2,6 +2,7 @@ package microui.util;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Objects.requireNonNull;
 
 import microui.event.Listener;
 
@@ -115,10 +116,7 @@ public final class Value {
 	}
 
 	public Value setOnChangeValueListener(Listener onChangeValueListener) {
-		if (onChangeValueListener == null) {
-			throw new NullPointerException("onChangeValueListener cannot be null");
-		}
-		this.onChangeValueListener = onChangeValueListener;
+		this.onChangeValueListener = requireNonNull(onChangeValueListener,"onChangeValueListener");
 
 		return this;
 	}

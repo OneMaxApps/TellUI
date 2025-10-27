@@ -1,5 +1,7 @@
 package microui.core.style;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.util.MathUtils;
 
 //Status: STABLE - Do not modify
@@ -10,17 +12,9 @@ public abstract class AbstractGradientColor extends AbstractColor {
 
 	public AbstractGradientColor(AbstractColor start, AbstractColor end) {
 		super();
-
-		if (start == null) {
-			throw new NullPointerException("the start color for GradientColor cannot be null");
-		}
-
-		if (end == null) {
-			throw new NullPointerException("the end color for GradientColor cannot be null");
-		}
-
-		this.start = start;
-		this.end = end;
+		
+		this.start = requireNonNull(start,"start");
+		this.end = requireNonNull(end,"end");
 
 		animator = new Animator();
 	}

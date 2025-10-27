@@ -61,6 +61,7 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new Slider()), "Slider");
 		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerWith(new TextView()), "TextView");
+		cm.add(getContainerWith(new MenuButton()), "MenuButton");
 
 //		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		

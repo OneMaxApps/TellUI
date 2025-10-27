@@ -7,12 +7,12 @@ import microui.core.base.SpatialView;
 public record SpatialState(float x, float y, float width, float height) {
 
 	public SpatialState(SpatialView source) {
-		this(requireNonNull(source, "the source object for SpatialState cannot be null").getX(), source.getY(),
+		this(requireNonNull(source, "source").getX(), source.getY(),
 				source.getWidth(), source.getHeight());
 	}
 
 	public SpatialState(SpatialState source) {
-		this(requireNonNull(source, "the source object for SpatialState cannot be null").x(), source.y(),
+		this(requireNonNull(source, "source").x(), source.y(),
 				source.width(), source.height());
 	}
 }

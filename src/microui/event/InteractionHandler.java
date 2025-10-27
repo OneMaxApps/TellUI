@@ -1,5 +1,7 @@
 package microui.event;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 
@@ -120,26 +122,16 @@ public final class InteractionHandler extends AbstractEventSystem {
 		}
 
 		public void addListenerSafe(EventType eventType, Listener listener) {
-			if (eventType == null) {
-				throw new NullPointerException("eventType cannot be null");
-			}
-
-			if (listener == null) {
-				throw new NullPointerException("listener cannot be null");
-			}
+			requireNonNull(eventType,"eventType");
+			requireNonNull(listener,"listener");
 
 			listeners.putIfAbsent(eventType, new ArrayList<Listener>());
 			listeners.get(eventType).add(listener);
 		}
 
 		public void removeListenerSafe(EventType eventType, Listener listener) {
-			if (eventType == null) {
-				throw new NullPointerException("eventType cannot be null");
-			}
-
-			if (listener == null) {
-				throw new NullPointerException("listener cannot be null");
-			}
+			requireNonNull(eventType,"eventType");
+			requireNonNull(listener,"listener");
 
 			if (listeners.get(eventType) == null || !listeners.get(eventType).contains(listener)) {
 				throw new IllegalStateException("listener is not found");

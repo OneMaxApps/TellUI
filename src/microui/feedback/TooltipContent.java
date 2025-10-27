@@ -1,5 +1,7 @@
 package microui.feedback;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.core.base.ContentView;
 
 public abstract class TooltipContent extends ContentView {
@@ -24,10 +26,7 @@ public abstract class TooltipContent extends ContentView {
 	}
 
 	public final void setTooltip(Tooltip tooltip) {
-		if (tooltip == null) {
-			throw new NullPointerException("the tooltip cannot be null");
-		}
-		this.tooltip = tooltip;
+		this.tooltip = requireNonNull(tooltip,"tooltip");
 	}
 
 }

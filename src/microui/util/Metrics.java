@@ -1,5 +1,7 @@
 package microui.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,9 +15,8 @@ public final class Metrics {
 	}
 
 	public static void register(Object object) {
-		if (object == null) {
-			throw new NullPointerException("object for registration in Metrics cannot be null");
-		}
+		requireNonNull(object,"object");
+		
 		String name = object.getClass().getSimpleName();
 
 		if (name.isEmpty()) {
@@ -43,12 +44,7 @@ public final class Metrics {
 	}
 
 	public static void print(String className) {
-
-		if (className == null) {
-			throw new NullPointerException("the className cannot be null");
-		}
-
-		System.out.println(className + " : " + metrics.getOrDefault(className, 0));
+		System.out.println(requireNonNull(className,"className") + " : " + metrics.getOrDefault(className, 0));
 	}
 
 	public static void clear() {

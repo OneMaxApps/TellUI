@@ -1,5 +1,7 @@
 package microui.feedback;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.service.TooltipManager;
@@ -14,9 +16,7 @@ public final class Tooltip extends View {
 		super();
 		setVisible(false);
 
-		if (component == null) {
-			throw new NullPointerException("the component for Tooltip cannot be null");
-		}
+		requireNonNull(component,"component");
 
 		component.onEnterLong(() -> {
 			if (content != null && content.isPreparedShow()) {
@@ -50,10 +50,7 @@ public final class Tooltip extends View {
 	}
 
 	public void setContent(TooltipContent content) {
-		if (content == null) {
-			throw new NullPointerException("the content for tooltip cannot be null");
-		}
-		this.content = content;
+		this.content = requireNonNull(content,"content");
 		content.setTooltip(this);
 	}
 

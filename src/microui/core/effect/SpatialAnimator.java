@@ -24,27 +24,14 @@ public final class SpatialAnimator {
 
 	public SpatialAnimator(SpatialState startSpatialState, SpatialState endSpatialState, BooleanSupplier condition) {
 		super();
-
-		if (startSpatialState == null) {
-			throw new NullPointerException("the startSpatialState object cannot be null");
-		}
-
-		if (endSpatialState == null) {
-			throw new NullPointerException("the endSpatialState object cannot be null");
-		}
-
-		if (condition == null) {
-			throw new NullPointerException("the condition object cannot be null");
-		}
-
-		this.startSpatialState = startSpatialState;
-		this.endSpatialState = endSpatialState;
-		this.condition = condition;
+		
+		this.startSpatialState = requireNonNull(startSpatialState,"startSpatialState");
+		this.endSpatialState = requireNonNull(endSpatialState,"endSpatialState");
+		this.condition = requireNonNull(condition,"condition");
 
 		timer = new Timer();
 		timer.setSpeed(.2f);
 		
-//		setReactionMode(ReactionMode.TRIGGER);
 		setReactionMode(ReactionMode.REACTIVE);
 		setEnabled(true);
 		setPositionEnabled(true);
@@ -52,19 +39,19 @@ public final class SpatialAnimator {
 	}
 
 	public SpatialAnimator(ContentView start, SpatialState end, BooleanSupplier condition) {
-		this(new SpatialState(requireNonNull(start, "SpatialView for SpatialAnimator cannot be null").getX(),
+		this(new SpatialState(requireNonNull(start, "start").getX(),
 				start.getY(), start.getAbsoluteWidth(), start.getAbsoluteHeight()), end, condition);
 		startContentView = start;
 	}
 
 	public SpatialAnimator(SpatialState start, ContentView end, BooleanSupplier condition) {
-		this(start, new SpatialState(requireNonNull(end, "SpatialView for SpatialAnimator cannot be null").getX(),
+		this(start, new SpatialState(requireNonNull(end, "end").getX(),
 				end.getY(), end.getAbsoluteWidth(), end.getAbsoluteHeight()), condition);
 		endContentView = end;
 	}
 
 	public SpatialAnimator(ContentView start, ContentView end, BooleanSupplier condition) {
-		this(start, new SpatialState(requireNonNull(end, "SpatialView for SpatialAnimator cannot be null").getX(),
+		this(start, new SpatialState(requireNonNull(end, "end").getX(),
 				end.getY(), end.getAbsoluteWidth(), end.getAbsoluteHeight()), condition);
 		startContentView = start;
 		endContentView = end;
@@ -75,10 +62,7 @@ public final class SpatialAnimator {
 	}
 
 	public SpatialAnimator setReactionMode(ReactionMode reactionMode) {
-		if (reactionMode == null) {
-			throw new NullPointerException("the reactionMode object cannot be null");
-		}
-		this.reactionMode = reactionMode;
+		this.reactionMode = requireNonNull(reactionMode,"reactionMode");
 
 		return this;
 	}
@@ -108,11 +92,7 @@ public final class SpatialAnimator {
 	}
 
 	public SpatialAnimator setTargetSpatialView(SpatialView targetSpatialView) {
-		if (targetSpatialView == null) {
-			throw new NullPointerException("the targetSpatialView object cannot be null");
-		}
-
-		this.targetSpatialView = targetSpatialView;
+		this.targetSpatialView = requireNonNull(targetSpatialView,"targetSpatialView");
 
 		return this;
 	}

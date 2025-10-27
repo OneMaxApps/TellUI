@@ -2,14 +2,13 @@ package microui.component;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.BOTTOM;
 import static processing.core.PConstants.CENTER;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.TOP;
-
-import java.util.Objects;
 
 import microui.constants.AutoResizeMode;
 import microui.core.base.Component;
@@ -117,7 +116,7 @@ public final class TextView extends Component {
 	}
 
 	public void setText(String text) {
-		this.text = Objects.requireNonNull(text, "text");
+		this.text = requireNonNull(text, "text");
 	}
 
 	public boolean isAutoResizeModeEnabled() {
@@ -145,11 +144,8 @@ public final class TextView extends Component {
 		return textColor;
 	}
 
-	public void setTextColor(AbstractColor color) {
-		if (color == null) {
-			throw new NullPointerException("Color for text cannot be null");
-		}
-		textColor = color;
+	public void setTextColor(AbstractColor textColor) {
+		this.textColor = requireNonNull(textColor,"textColor");
 	}
 
 	@Override

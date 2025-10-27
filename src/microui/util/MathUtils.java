@@ -1,5 +1,7 @@
 package microui.util;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.core.base.SpatialView;
 
 public final class MathUtils {
@@ -16,16 +18,8 @@ public final class MathUtils {
 	}
 
 	public static final boolean isColliding(SpatialView spatialViewFirst, SpatialView spatialViewSecond) {
-		if (spatialViewFirst == null) {
-			throw new NullPointerException("the spatialViewFirst cannot be null");
-		}
-
-		if (spatialViewSecond == null) {
-			throw new NullPointerException("the spatialViewSecond cannot be null");
-		}
-
-		SpatialView f = spatialViewFirst;
-		SpatialView s = spatialViewSecond;
+		SpatialView f = requireNonNull(spatialViewFirst,"spatialViewFirst");
+		SpatialView s = requireNonNull(spatialViewSecond,"spatialViewSecond");
 
 		return f.getX() + f.getWidth() > s.getX() && f.getX() < s.getX() + s.getWidth()
 				&& f.getY() + f.getHeight() > s.getY() && f.getY() < s.getY() + s.getHeight();

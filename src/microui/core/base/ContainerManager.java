@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import microui.core.ImageBuffer;
+import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
@@ -22,7 +23,7 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 15.10.2025
+//Last Reviewed: 27.10.2025
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean isInitialized, isCanDraw;
@@ -139,11 +140,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void add(Container container, String textId) {
-		requireNonNull(textId, "TextId cannot be null");
-		if (textId.isEmpty()) {
-			throw new IllegalArgumentException("TextId cannot be empty");
-		}
-
 		addInternal(container);
 
 		container.setTextId(textId);
@@ -155,7 +151,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void remove(final Container... containers) {
-		requireNonNull(containers, "Containers array cannot be null");
+		requireNonNull(containers, "containers");
 
 		for (Container container : containers) {
 			removeInternal(container);
@@ -163,19 +159,19 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	public void removeById(final int... id) {
-		requireNonNull(id, "Id's array cannot be null");
+	public void removeById(final int... ids) {
+		requireNonNull(ids, "Ids");
 
-		for (int i : id) {
+		for (int i : ids) {
 			removeInternal(i);
 		}
 
 	}
 
-	public void removeByTextId(final String... textId) {
-		requireNonNull(textId, "TextId's array cannot be null");
+	public void removeByTextId(final String... textIds) {
+		requireNonNull(textIds, "textIds");
 
-		for (String currentTextId : textId) {
+		for (String currentTextId : textIds) {
 			removeInternal(currentTextId);
 		}
 
@@ -225,10 +221,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public Container findById(final int id) {
-		if(id < 0) {
-			throw new IllegalArgumentException("Id cannot be negative");
-		}
-		
 		for (int i = 0; i < containerList.size(); i++) {
 			Container c = containerList.get(i);
 			if (c.getId() == id) {
@@ -250,13 +242,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public Container findByTextId(final String textId) {
-		if(textId == null) {
-			throw new NullPointerException("TextId cannot be null");
-		}
-		
-		if(textId.isEmpty()) {
-			throw new IllegalArgumentException("TextId cannot be empty");
-		}
+		requireNonNull(textId,"textId");
 		
 		for (int i = 0; i < containerList.size(); i++) {
 			Container c = containerList.get(i);
@@ -270,9 +256,11 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	public Container getByTextId(String textId) {
 		final Container c = findByTextId(textId);
+		
 		if(c == null) {
 			throw new NoSuchElementException("Container with textId: " + textId + " not found in ContainerManager");
 		}
+		
 		return c;
 	}
 
@@ -351,16 +339,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void launchContainer(Container container) {
-		if (containerList.size() <= 1) {
-			throw new IllegalStateException("Cannot switch container: ContainerManager has only one container");
+		requireNonNull(container,"container");
+		
+		if (containerList.size() < 2) {
+			throw new IllegalStateException("Cannot switch containers, because ContainerManager has less than 2 containers");
 		}
-
-		if (container == null) {
-			throw new NullPointerException("Container cannot be null");
-		}
-
+		
 		if (!containerList.contains(container)) {
-			throw new IllegalArgumentException("Container not found in ContainerManager");
+			throw new NoSuchElementException("Container not found in ContainerManager");
 		}
 
 		prevContainer = currentContainer;
@@ -369,9 +355,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void addInternal(Container container) {
-		requireNonNull(container, "Container cannot be null");
+		requireNonNull(container, "container");
+		
 		if (containerList.contains(container)) {
-			throw new IllegalStateException("Container cannot be added twice");
+			throw new DuplicateItemException("Container cannot be added twice");
 		}
 
 		container.setConstrainDimensionsEnabled(true);
@@ -386,9 +373,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void removeInternal(Container container) {
-		if(container == null) {
-			throw new NullPointerException("Container cannot be null");
-		}
+		requireNonNull(container,"container");
 		
 		if(!containerList.contains(container)) {
 			throw new NoSuchElementException("Container not found in ContainerManager");
@@ -539,10 +524,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 
 		void setAnimationType(AnimationType animationType) {
-			if (animationType == null) {
-				throw new NullPointerException("AnimationType cannot be null");
-			}
-			this.animationType = animationType;
+			this.animationType = requireNonNull(animationType,"animationType");
 		}
 
 		boolean isEasingEnabled() {

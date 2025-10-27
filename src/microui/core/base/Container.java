@@ -35,7 +35,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 		entryList = new ArrayList<Entry>();
 
-		this.layoutManager = requireNonNull(layoutManager, "layout manager cannot be null");
+		this.layoutManager = requireNonNull(layoutManager, "layoutManager");
 		layoutManager.setContainer(this);
 
 		priorityManager = new PriorityManager(entryList);
@@ -101,13 +101,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 	
 	public ContentView findByTextId(final String textId) {
-		if(textId == null) {
-			throw new NullPointerException("the textId cannot be null");
-		}
-		
-		if(textId.isEmpty()) {
-			throw new IllegalArgumentException("textId cannot be empty");
-		}
+		requireNonNull(textId,"textId");
 		
 		for (int i = 0; i < entryList.size(); i++) {
 			ContentView contentView = entryList.get(i).contentView();
@@ -188,9 +182,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	public Container setMode(Mode mode) {
-		if (mode == null) {
-			throw new NullPointerException("mode for container cannot be null");
-		}
+		requireNonNull(mode,"mode");
 
 		if (this.mode == mode) {
 			return this;
@@ -243,8 +235,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void addInternal(ContentView contentView, LayoutParams layoutParams) {
-		checkContentViewNotNull(contentView);
-		checkLayoutParamsNotNull(layoutParams);
+		requireNonNull(contentView,"contentView");
+		requireNonNull(layoutParams,"layoutParams");
 		checkContentViewAlreadyAddedInList(contentView);
 
 		Entry entry = new Entry(contentView, layoutParams);
@@ -255,7 +247,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void removeInternal(ContentView contentView) {
-		checkContentViewNotNull(contentView);
+		requireNonNull(contentView,"contentView");
 		checkContentViewExistInList(contentView);
 
 		for (int i = 0; i < entryList.size(); i++) {
@@ -296,18 +288,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			ctx.popStyle();
 
 			layoutManager.debugOnDraw();
-		}
-	}
-
-	private void checkContentViewNotNull(ContentView contentView) {
-		if (contentView == null) {
-			throw new NullPointerException("contentView cannot be null");
-		}
-	}
-
-	private void checkLayoutParamsNotNull(LayoutParams layoutParams) {
-		if (layoutParams == null) {
-			throw new NullPointerException("layoutParams cannot be null");
 		}
 	}
 

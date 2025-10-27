@@ -1,26 +1,24 @@
 package microui.core.style;
 
+import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
+import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.SQUARE;
 
-import microui.core.style.theme.ThemeManager;
 import microui.util.Metrics;
 import processing.core.PGraphics;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 13.09.2025
+//Last Reviewed: 27.10.2025
 public final class Stroke {
 	private static final int DEFAULT_STROKE_WEIGHT = 1;
 	private AbstractColor color;
 	private float weight;
 
 	public Stroke(AbstractColor color, float weight) {
-		if (color == null) {
-			throw new NullPointerException("color cannot be null");
-		}
-		Metrics.register(this);
 		setColor(color);
 		setWeight(weight);
+		Metrics.register(this);
 	}
 
 	public Stroke(AbstractColor color) {
@@ -28,7 +26,7 @@ public final class Stroke {
 	}
 
 	public Stroke(float weight) {
-		this(ThemeManager.getTheme().getStrokeColor(), weight);
+		this(getTheme().getStrokeColor(), weight);
 	}
 
 	public Stroke() {
@@ -42,9 +40,8 @@ public final class Stroke {
 	}
 
 	public void apply(PGraphics pGraphics) {
-		if (pGraphics == null) {
-			throw new NullPointerException("pGraphics cannot be null");
-		}
+		requireNonNull(pGraphics,"pGraphics");
+		
 		pGraphics.strokeCap(SQUARE);
 		color.applyStroke(pGraphics);
 		pGraphics.strokeWeight(weight);
@@ -62,9 +59,7 @@ public final class Stroke {
 	}
 
 	public void set(Stroke stroke) {
-		if (stroke == null) {
-			throw new NullPointerException("stroke cannot be null");
-		}
+		requireNonNull(stroke,"stroke");
 
 		color = stroke.getColor();
 		weight = stroke.getWeight();
@@ -75,9 +70,6 @@ public final class Stroke {
 	}
 
 	public void setColor(AbstractColor color) {
-		if (color == null) {
-			throw new NullPointerException("color cannot be null");
-		}
-		this.color = color;
+		this.color = requireNonNull(color,"color");
 	}
 }

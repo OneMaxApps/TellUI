@@ -1,5 +1,7 @@
 package microui.core.style;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.function.BooleanSupplier;
 
 //Status: STABLE - Do not modify
@@ -11,11 +13,7 @@ public final class GradientColor extends AbstractGradientColor {
 	public GradientColor(AbstractColor start, AbstractColor end, BooleanSupplier condition) {
 		super(start, end);
 
-		if (condition == null) {
-			throw new NullPointerException("the condition for GradientColor cannot be null");
-		}
-
-		this.condition = condition;
+		this.condition = requireNonNull(condition,"condition");
 
 		getAnimator().setSpeed(.025f);
 	}

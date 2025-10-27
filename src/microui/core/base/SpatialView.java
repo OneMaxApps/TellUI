@@ -32,7 +32,7 @@ public abstract class SpatialView extends View {
 	}
 
 	public SpatialView(SpatialView spatialView) {
-		this(requireNonNull(spatialView, "SpatialView cannot be null").getX(), spatialView.getY(),
+		this(requireNonNull(spatialView, "spatialView").getX(), spatialView.getY(),
 				spatialView.getWidth(), spatialView.getHeight());
 	}
 
@@ -73,11 +73,7 @@ public abstract class SpatialView extends View {
 	}
 
 	public final void setSpatialAnimator(SpatialAnimator spatialAnimator) {
-		if (spatialAnimator == null) {
-			throw new NullPointerException("the spatialAnimator object cannot be null");
-		}
-
-		this.spatialAnimator = spatialAnimator;
+		this.spatialAnimator = requireNonNull(spatialAnimator,"spatialAnimator");
 
 		spatialAnimator.setTargetSpatialView(this);
 	}
@@ -311,10 +307,7 @@ public abstract class SpatialView extends View {
 	}
 
 	public final void setHooksUpdateMode(HooksUpdateMode hooksUpdateMode) {
-		if (hooksUpdateMode == null) {
-			throw new NullPointerException("hooksUpdateMode cannot be null");
-		}
-		this.hooksUpdateMode = hooksUpdateMode;
+		this.hooksUpdateMode = requireNonNull(hooksUpdateMode,"hooksUpdateMode");
 	}
 
 	public final void setXFrom(SpatialView other) {
@@ -516,7 +509,7 @@ public abstract class SpatialView extends View {
 	}
 
 	private void checkSpatialViewObject(SpatialView other) {
-		requireNonNull(other, "other SpatialView cannot be null");
+		requireNonNull(other, "other");
 
 		if (other == this) {
 			throw new IllegalArgumentException("Cannot set property from itself");

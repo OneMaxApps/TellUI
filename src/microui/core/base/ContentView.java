@@ -50,11 +50,7 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	public final ContentView setShadow(AbstractShadow shadow) {
-		if(shadow == null) {
-			throw new NullPointerException("Shadow cannot be null");
-		}
-		
-		this.shadow = shadow;
+		this.shadow = requireNonNull(shadow,"shadow");
 		
 		shadow.setTarget(this);
 		
@@ -104,9 +100,9 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	public final ContentView copyPaddingFrom(ContentView otherContentView) {
-		setPadding(requireNonNull(otherContentView, "other ContentView cannot be null").getPaddingLeft(),
-				otherContentView.getPaddingRight(), otherContentView.getPaddingTop(),
-				otherContentView.getPaddingBottom());
+		requireNonNull(otherContentView, "otherContentView");
+		
+		setPadding(otherContentView.getPaddingLeft(),otherContentView.getPaddingRight(), otherContentView.getPaddingTop(),otherContentView.getPaddingBottom());
 		return this;
 	}
 
@@ -216,8 +212,10 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	public final ContentView copyMarginFrom(ContentView otherContentView) {
-		setMargin(requireNonNull(otherContentView, "other ContentView cannot be null").getMarginLeft(),
-				otherContentView.getMarginRight(), otherContentView.getMarginTop(), otherContentView.getMarginBottom());
+		requireNonNull(otherContentView, "otherContentView");
+		
+		setMargin(otherContentView.getMarginLeft(),otherContentView.getMarginRight(), otherContentView.getMarginTop(), otherContentView.getMarginBottom());
+		
 		return this;
 	}
 
@@ -308,42 +306,32 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	public final void setMarginFrom(ContentView other) {
-		if (other == null) {
-			throw new NullPointerException("the other ContentView object cannot be null");
-		}
+		requireNonNull(other,"other");
 
 		setMargin(other.getMarginLeft(), other.getMarginRight(), other.getMarginTop(), other.getMarginBottom());
 	}
 
 	public final void setPaddingFrom(ContentView other) {
-		if (other == null) {
-			throw new NullPointerException("the other ContentView object cannot be null");
-		}
+		requireNonNull(other,"other");
 
 		setPadding(other.getPaddingLeft(), other.getPaddingRight(), other.getPaddingTop(), other.getPaddingBottom());
 	}
 
 	public final void setAbsolutePositionFrom(ContentView other) {
-		if (other == null) {
-			throw new NullPointerException("the other ContentView object cannot be null");
-		}
-
+		requireNonNull(other,"other");
+		
 		setAbsolutePosition(other.getAbsoluteX(), other.getAbsoluteY());
 	}
 
 	public final void setAbsoluteDimensionsFrom(ContentView other) {
-		if (other == null) {
-			throw new NullPointerException("the other ContentView object cannot be null");
-		}
+		requireNonNull(other,"other");
 
 		setAbsoluteSize(other.getAbsoluteWidth(), other.getAbsoluteHeight());
 
 	}
 
 	public final void setAbsoluteBoundsFrom(ContentView other) {
-		if (other == null) {
-			throw new NullPointerException("the other ContentView object cannot be null");
-		}
+		requireNonNull(other,"other");
 
 		setAbsolutePositionFrom(other);
 		setAbsoluteDimensionsFrom(other);

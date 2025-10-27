@@ -1,6 +1,7 @@
 package microui.component;
 
 import static java.lang.Math.max;
+import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.PROJECT;
 
@@ -57,19 +58,12 @@ public class CheckBox extends AbstractButton {
 		return markColor;
 	}
 
-	public final void setMarkColor(AbstractColor color) {
-		if (color == null) {
-			throw new NullPointerException("Color for mark cannot be null");
-		}
-
-		markColor = color;
+	public final void setMarkColor(AbstractColor markColor) {
+		this.markColor = requireNonNull(markColor,"markColor");
 	}
 
-	public final void onStateChangedListener(Listener listener) {
-		if (listener == null) {
-			throw new NullPointerException("Listener cannot be null");
-		}
-		onClick(listener);
+	public final void onStateChangedListener(Listener onStateChangedListener) {
+		onClick(requireNonNull(onStateChangedListener,"onStateChangedListener"));
 	}
 
 	private void markOnDraw() {

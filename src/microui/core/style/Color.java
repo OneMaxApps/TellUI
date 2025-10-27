@@ -1,6 +1,7 @@
 package microui.core.style;
 
 import static java.util.Objects.requireNonNull;
+import static microui.util.MathUtils.constrain;
 
 //Status: STABLE - Do not modify
 //Last Reviewed: 11.10.2025
@@ -28,10 +29,10 @@ public class Color extends AbstractColor {
 	private final int red, green, blue, alpha;
 
 	public Color(float red, float green, float blue, float alpha) {
-		this.red = constrain(red, MIN_VALUE, MAX_VALUE);
-		this.green = constrain(green, MIN_VALUE, MAX_VALUE);
-		this.blue = constrain(blue, MIN_VALUE, MAX_VALUE);
-		this.alpha = constrain(alpha, MIN_VALUE, MAX_VALUE);
+		this.red   = (int) constrain(red, MIN_VALUE, MAX_VALUE);
+		this.green = (int) constrain(green, MIN_VALUE, MAX_VALUE);
+		this.blue  = (int) constrain(blue, MIN_VALUE, MAX_VALUE);
+		this.alpha = (int) constrain(alpha, MIN_VALUE, MAX_VALUE);
 	}
 
 	public Color(float red, float green, float blue) {
@@ -47,7 +48,7 @@ public class Color extends AbstractColor {
 	}
 
 	public Color(AbstractColor color) {
-		this(requireNonNull(color, "color cannot be null").getRed(), color.getGreen(), color.getBlue(),
+		this(requireNonNull(color, "color").getRed(), color.getGreen(), color.getBlue(),
 				color.getAlpha());
 	}
 

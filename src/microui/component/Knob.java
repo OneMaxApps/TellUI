@@ -3,6 +3,7 @@ package microui.component;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
+import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PApplet.dist;
 
@@ -73,11 +74,8 @@ public final class Knob extends RangeControl {
 		return indicatorColor;
 	}
 
-	public void setIndicatorColor(AbstractColor color) {
-		if (color == null) {
-			throw new NullPointerException("Color cannot be null");
-		}
-		indicatorColor = color;
+	public void setIndicatorColor(AbstractColor indicatorColor) {
+		this.indicatorColor = requireNonNull(indicatorColor,"indicatorColor");
 	}
 
 	private void recalculateCenter() {

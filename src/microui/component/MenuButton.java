@@ -1,5 +1,6 @@
 package microui.component;
 
+import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.LEFT;
 
@@ -97,10 +98,7 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton setDirectionMode(DirectionMode directionMode) {
-		if (directionMode == null) {
-			throw new NullPointerException("DirectionMode cannot be null");
-		}
-		this.directionMode = directionMode;
+		this.directionMode = requireNonNull(directionMode,"directionMode");
 		
 		return this;
 	}
@@ -110,11 +108,7 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton setItemDimensions(ItemDimensions itemDimensions) {
-		if (itemDimensions == null) {
-			throw new NullPointerException("ItemDimensions cannot be null");
-		}
-
-		if (this.itemDimensions == itemDimensions) {
+		if (this.itemDimensions == requireNonNull(itemDimensions,"itemDimensions")) {
 			return this;
 		}
 
@@ -175,10 +169,6 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton add(String title, Listener onClickListener) {
-		if (onClickListener == null) {
-			throw new NullPointerException("OnClickListener cannot be null");
-		}
-
 		items.addPlainItemInternal(title);
 		items.findInternal(title).onClick(onClickListener);
 		return this;
@@ -457,10 +447,7 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	private void setRoot(MenuButton root) {
-		if (root == null) {
-			throw new NullPointerException("Root for MenuButton cannot be null");
-		}
-		this.root = root;
+		this.root = requireNonNull(root,"root");
 	}
 
 	private boolean isRoot() {
@@ -475,6 +462,7 @@ public final class MenuButton extends Button implements Scrollable {
 		return parent;
 	}
 
+	// can be null, it's okay because root not have parent
 	private void setParent(MenuButton parent) {
 		this.parent = parent;
 	}
@@ -518,9 +506,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		@Override
 		public void mouseWheel(MouseEvent mouseEvent) {
-			if (mouseEvent == null) {
-				throw new NullPointerException("MouseEvent cannot be null");
-			}
+			requireNonNull(mouseEvent,"mouseEvent");
 
 			if (list.isEmpty()) {
 				return;
@@ -664,15 +650,13 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 		}
 
-		public void addPlainItemInternal(int... number) {
-			if (number == null) {
-				throw new NullPointerException("Number array for MenuButton cannot be null");
-			}
+		public void addPlainItemInternal(int... numbers) {
+			requireNonNull(numbers,"numbers");
 
 			final StringBuilder sb = new StringBuilder();
 
-			for (int i = 0; i < number.length; i++) {
-				sb.append(number[i] + ",");
+			for (int i = 0; i < numbers.length; i++) {
+				sb.append(numbers[i] + ",");
 			}
 
 			addPlainItemInternal(sb.toString().split(","));
@@ -711,8 +695,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public Button findByIdInternal(int id) {
-			checkId(id);
-			
+
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b.getId() == id) {
@@ -735,7 +718,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 		
 		public Button findByTextIdInternal(String textId) {
-			checkTextId(textId);
+			requireNonNull(textId,"textId");
 			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -758,14 +741,14 @@ public final class MenuButton extends Button implements Scrollable {
 			return null;
 		}
 
-		public void removeInternal(String... title) {
-			checkTitle(title);
-
-			for (int i = 0; i < title.length; i++) {
-				final Button b = findInternal(title[i]);
+		public void removeInternal(String... titles) {
+			requireNonNull(titles,"titles");
+			
+			for (int i = 0; i < titles.length; i++) {
+				final Button b = findInternal(titles[i]);
 
 				if (b == null) {
-					throw new NoSuchElementException("Item with title: \"" + title + "\" not found in MenuButton");
+					throw new NoSuchElementException("Item with title: \"" + titles[i] + "\" not found in MenuButton");
 				}
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
@@ -780,14 +763,14 @@ public final class MenuButton extends Button implements Scrollable {
 			shadow.recalculatePosition();
 		}
 		
-		public void removeByIdInternal(int... id) {
-			checkId(id);
-
-			for (int i = 0; i < id.length; i++) {
-				final Button b = findByIdInternal(id[i]);
+		public void removeByIdInternal(int... ids) {
+			requireNonNull(ids,"ids");
+			
+			for (int i = 0; i < ids.length; i++) {
+				final Button b = findByIdInternal(ids[i]);
 
 				if (b == null) {
-					throw new NoSuchElementException("Item with id: \"" + id[i] + "\" not found in MenuButton");
+					throw new NoSuchElementException("Item with id: \"" + ids[i] + "\" not found in MenuButton");
 				}
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
@@ -802,14 +785,14 @@ public final class MenuButton extends Button implements Scrollable {
 			shadow.recalculatePosition();
 		}
 		
-		public void removeByTextIdInternal(String... textId) {
-			checkTextId(textId);
-
-			for (int i = 0; i < textId.length; i++) {
-				final Button b = findByTextIdInternal(textId[i]);
+		public void removeByTextIdInternal(String... textIds) {
+			requireNonNull(textIds,"textIds");
+			
+			for (int i = 0; i < textIds.length; i++) {
+				final Button b = findByTextIdInternal(textIds[i]);
 
 				if (b == null) {
-					throw new NoSuchElementException("Item with text id: \"" + textId[i] + "\" not found in MenuButton");
+					throw new NoSuchElementException("Item with text id: \"" + textIds[i] + "\" not found in MenuButton");
 				}
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
@@ -831,9 +814,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private void addInternal(Button button) {
-			if (button == null) {
-				throw new NullPointerException("Button cannot be null");
-			}
+			requireNonNull(button,"button");
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -861,18 +842,14 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private void checkTitle(String... titles) {
-			if (titles == null) {
-				throw new NullPointerException("Titles array for MenuButton items cannot be null");
-			}
+			requireNonNull(titles,"titles");
 
 			for (int i = 0; i < titles.length; i++) {
-				if (titles[i] == null) {
-					throw new NullPointerException("Title for MenuButton item cannot be null");
-				}
+				requireNonNull(titles[i],"titles["+i+"]");
 
-				if (titles[i].isEmpty()) {
+				if (titles[i].isBlank()) {
 					throw new IllegalArgumentException(
-							"Title cannot be empty [Inside MenuButton: " + menu.getText() + "]");
+							"Title cannot be blank [Inside MenuButton: " + menu.getText() + "]");
 				}
 			}
 		}
@@ -1023,30 +1000,6 @@ public final class MenuButton extends Button implements Scrollable {
 
 			return false;
 		}
-		
-		private void checkId(int... id) {
-			if(id == null) {
-				throw new NullPointerException("Id array cannot be null");
-			}
-			for(int i = 0; i < id.length; i++) {
-				if(id[i] < MIN_ID || id[i] > MAX_ID) {
-					throw new IllegalArgumentException("Id must be between ["+MIN_ID+"]"+" ["+MAX_ID+"] in MenuButton with title: "+menu.getText());
-				}
-			}
-			
-		}
-		
-		private void checkTextId(String... textId) {
-			if(textId == null) {
-				throw new NullPointerException("TextId cannot be null in MenuButton with title: "+menu.getText());
-			}
-			
-			for(int i = 0; i < textId.length; i++) {
-				if(textId[i].isBlank()) {
-					throw new IllegalArgumentException("TextId cannot be blank for search in MenuButton with title: "+menu.getText());
-				}
-			}
-		}
 
 		private static final class ShadowWrapper extends ContentView {
 			private final MenuButton menu;
@@ -1133,13 +1086,11 @@ public final class MenuButton extends Button implements Scrollable {
 		public Arrow(MenuButton menu) {
 			super();
 			setVisible(true);
-			if (menu == null) {
-				throw new NullPointerException("MenuButton for Arrow cannot be null");
-			}
+
+			this.menu = requireNonNull(menu,"menu");
 
 			setColor(getTheme().getPrimaryColor());
 
-			this.menu = menu;
 		}
 
 		@Override
@@ -1160,10 +1111,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public void setColor(AbstractColor color) {
-			if (color == null) {
-				throw new NullPointerException("Color cannot be null");
-			}
-			this.color = color;
+			this.color = requireNonNull(color,"color");
 		}
 
 	}

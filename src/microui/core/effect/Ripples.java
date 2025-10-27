@@ -25,7 +25,7 @@ public final class Ripples extends View {
 
 		animation = new Animation();
 
-		this.component = requireNonNull(component, "component cannot be null");
+		this.component = requireNonNull(component, "component");
 		initCallbackForComponent();
 
 		setEnabled(true);
@@ -141,11 +141,7 @@ public final class Ripples extends View {
 		}
 
 		void setColor(AbstractColor color) {
-			if (color == null) {
-				throw new NullPointerException("color cannot be null");
-			}
-
-			this.color = color;
+			this.color = requireNonNull(color,"color");
 		}
 
 		void preparePosition() {

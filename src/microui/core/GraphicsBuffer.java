@@ -19,7 +19,7 @@ public class GraphicsBuffer extends SpatialView {
 	}
 
 	public GraphicsBuffer(SpatialView spatialView) {
-		this(requireNonNull(spatialView, "spatialView cannot be null").getX(), spatialView.getY(),
+		this(requireNonNull(spatialView, "spatialView").getX(), spatialView.getY(),
 				spatialView.getWidth(), spatialView.getHeight());
 	}
 

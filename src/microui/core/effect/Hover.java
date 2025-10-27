@@ -22,7 +22,7 @@ public final class Hover extends View {
 
 		color = getTheme().getHoverColor();
 
-		this.component = requireNonNull(component, "component cannot be null");
+		this.component = requireNonNull(component, "component");
 
 		timerMax = 100;
 
@@ -67,9 +67,7 @@ public final class Hover extends View {
 	}
 
 	public void setColor(AbstractColor color) {
-		if (color == null) {
-			throw new NullPointerException("the color cannot be null");
-		}
+		this.color = requireNonNull(color,"color");
 	}
 
 	public float getSpeed() {

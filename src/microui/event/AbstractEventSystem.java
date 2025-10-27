@@ -1,5 +1,7 @@
 package microui.event;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.MicroUI;
 import microui.core.base.Component;
 import microui.core.base.SpatialView;
@@ -10,11 +12,7 @@ public abstract class AbstractEventSystem {
 	private final EventDetector detector;
 
 	public AbstractEventSystem(SpatialView spatialView) {
-		if (spatialView == null) {
-			throw new NullPointerException("spatialView cannot be null");
-		}
-
-		this.spatialView = spatialView;
+		this.spatialView = requireNonNull(spatialView,"spatialView");
 
 		detector = new EventDetector();
 

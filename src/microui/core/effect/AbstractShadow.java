@@ -1,5 +1,7 @@
 package microui.core.effect;
 
+import static java.util.Objects.requireNonNull;
+
 import microui.core.base.ContentView;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
@@ -30,11 +32,7 @@ public abstract class AbstractShadow extends View {
 	}
 
 	public AbstractShadow setTarget(ContentView target) {
-		if(target == null) {
-			throw new NullPointerException("Target for Shadow cannot be null");
-		}
-		
-		this.target = target;
+		this.target = requireNonNull(target,"target");
 		
 		return this;
 	}
@@ -44,11 +42,7 @@ public abstract class AbstractShadow extends View {
 	}
 
 	public AbstractShadow setColor(AbstractColor color) {
-		if(color == null) {
-			throw new NullPointerException("Color for Shadow cannot be null");
-		}
-		
-		this.color = color;
+		this.color = requireNonNull(color,"color");
 		
 		return this;
 	}
