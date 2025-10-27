@@ -1,6 +1,5 @@
 package microui.core.base;
 
-import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
 
 import microui.MicroUI;
@@ -20,12 +19,12 @@ import processing.core.PApplet;
  * </p>
  */
 public abstract class View implements Visible {
-	protected static final PApplet ctx = requireNonNull(getContext(),"Context (PApplet) for MicroUI is not initialized");
 	public static final String DEFAULT_TEXT_ID = "";
 	public static final int DEFAULT_ID = 0;
 	public static final int MIN_PRIORITY = 0;
 	public static final int MIN_ID = 0;
 	public static final int MAX_ID = Integer.MAX_VALUE;
+	protected static final PApplet ctx = getContext();
 	private String textId;
 	private int priority, id;
 	private boolean visible;

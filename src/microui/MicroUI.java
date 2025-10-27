@@ -25,6 +25,10 @@ public final class MicroUI {
 	}
 
 	public static PApplet getContext() {
+		if(ctx == null) {
+			throw new IllegalStateException("Context (PApplet) for MicroUI is not initialized");
+		}
+		
 		return ctx;
 	}
 
