@@ -9,11 +9,12 @@ import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.TOP;
 
+import java.util.Objects;
+
 import microui.constants.AutoResizeMode;
 import microui.core.base.Component;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.util.CheckOnNPE;
 import processing.core.PFont;
 
 public final class TextView extends Component {
@@ -116,8 +117,7 @@ public final class TextView extends Component {
 	}
 
 	public void setText(String text) {
-		CheckOnNPE.checkParam(text, "text");
-		this.text = text;
+		this.text = Objects.requireNonNull(text, "text");
 	}
 
 	public boolean isAutoResizeModeEnabled() {
