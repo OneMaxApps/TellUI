@@ -68,6 +68,7 @@ public class ComponentLauncher extends PApplet {
 		    .add("Exit");
 		
 		menuFile.setIcon(loadImage("C:\\Users\\002\\Desktop\\icon.png"), "Open File...");
+		
 	}
 
 	@Override

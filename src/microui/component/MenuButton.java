@@ -32,7 +32,7 @@ import processing.core.PImage;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 28.10.2025
+//Last Reviewed: 29.10.2025
 
 // if menu is root - it's vertical list, else add horizontal shifting
 public final class MenuButton extends Button implements Scrollable {
@@ -162,12 +162,12 @@ public final class MenuButton extends Button implements Scrollable {
 
 	public MenuButton add(String title, Listener onClickListener) {
 		add(title);
-		get(title,false).onClick(onClickListener);
+		get(title, false).onClick(onClickListener);
 		return this;
 	}
 
 	public MenuButton add(String title, PImage icon, Listener onClickListener) {
-		add(title,onClickListener);
+		add(title, onClickListener);
 		setIcon(icon, title);
 		return this;
 	}
@@ -179,68 +179,66 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton addMenu(String menuTitle, PImage icon, String... itemTitles) {
-		addMenu(menuTitle,itemTitles);
+		addMenu(menuTitle, itemTitles);
 		setIcon(icon, menuTitle);
 		return this;
 	}
 
-	
-
 	public Button find(String title, boolean recursive) {
 		return items.findInternal(title, recursive);
 	}
-	
+
 	public Button find(String title) {
-		return find(title,true);
+		return find(title, true);
 	}
 
 	public MenuButton findMenu(String title, boolean recursive) {
-		if (find(title,recursive) instanceof MenuButton m) {
+		if (find(title, recursive) instanceof MenuButton m) {
 			return m;
 		}
 		return null;
 	}
-	
+
 	public MenuButton findMenu(String title) {
-		return findMenu(title,true);
+		return findMenu(title, true);
 	}
 
 	public Button findById(int id, boolean recursive) {
 		return items.findByIdInternal(id, recursive);
 	}
-	
+
 	public Button findById(int id) {
 		return findById(id, true);
 	}
-	
+
 	public MenuButton findMenuById(int id, boolean recursive) {
-		if (findById(id,recursive) instanceof MenuButton m) {
+		if (findById(id, recursive) instanceof MenuButton m) {
 			return m;
 		}
 		return null;
 	}
-	
+
 	public MenuButton findMenuById(int id) {
-		return findMenuById(id,true);
+		return findMenuById(id, true);
 	}
 
 	public Button findByTextId(String textId, boolean recursive) {
 		return items.findByTextIdInternal(textId, recursive);
 	}
-	
+
 	public Button findByTextId(String textId) {
-		return findByTextId(textId,true);
+		return findByTextId(textId, true);
 	}
 
 	public MenuButton findMenuByTextId(String title, boolean recursive) {
-		if (findByTextId(title,recursive) instanceof MenuButton m) {
+		if (findByTextId(title, recursive) instanceof MenuButton m) {
 			return m;
 		}
 		return null;
 	}
-	
+
 	public MenuButton findMenuByTextId(String title) {
-		return findMenuByTextId(title,true);
+		return findMenuByTextId(title, true);
 	}
 
 	public Button get(String title) {
@@ -370,13 +368,13 @@ public final class MenuButton extends Button implements Scrollable {
 		for (int i = 0; i < items.list.size(); i++) {
 			final Button b = items.list.get(i);
 			b.setBackgroundColor(color);
-			
-			if(recursive) {
+
+			if (recursive) {
 				if (b instanceof MenuButton m) {
-					m.setItemsBackgroundColor(color,recursive);
+					m.setItemsBackgroundColor(color, recursive);
 				}
 			}
-			
+
 		}
 		return this;
 	}
@@ -385,9 +383,9 @@ public final class MenuButton extends Button implements Scrollable {
 		for (int i = 0; i < items.list.size(); i++) {
 			final Button b = items.list.get(i);
 			b.setTextColor(color);
-			if(recursive) {
+			if (recursive) {
 				if (b instanceof MenuButton m) {
-					m.setItemsTextColor(color,recursive);
+					m.setItemsTextColor(color, recursive);
 				}
 			}
 		}
@@ -401,15 +399,15 @@ public final class MenuButton extends Button implements Scrollable {
 	public MenuButton setArrowColor(AbstractColor color, boolean recursive) {
 		arrow.setColor(color);
 
-		if(recursive) {
+		if (recursive) {
 			for (int i = 0; i < items.list.size(); i++) {
 				final Button b = items.list.get(i);
 				if (b instanceof MenuButton m) {
-					m.setArrowColor(color,recursive);
+					m.setArrowColor(color, recursive);
 				}
 			}
 		}
-		
+
 		return this;
 	}
 
@@ -949,89 +947,62 @@ public final class MenuButton extends Button implements Scrollable {
 			requireNonNull(titles, "titles");
 
 			for (int i = 0; i < titles.length; i++) {
-				final Button b = findInternal(titles[i], true);
-
-				if (b == null) {
-					throw new NoSuchElementException("Item with title: \"" + titles[i] + "\" not found in MenuButton");
-				}
-
-				final List<Button> found = findListWhichContainsButtonInternal(b);
-				if (found != null) {
-					if (found == menu.items.list) {
-						iconList.remove(menu.items.list.indexOf(b));
-					}
-
-					found.remove(b);
-
-					menu.getRenderOrderList().remove(b);
-
-					recalculatePositionAllRecursive();
-				}
+				removeSafe(menu.get(titles[i]));
 			}
 
-			shadow.recalculateDimensions();
-			shadow.recalculatePosition();
 		}
 
 		public void removeByIdInternal(int... ids) {
 			requireNonNull(ids, "ids");
 
 			for (int i = 0; i < ids.length; i++) {
-				final Button b = findByIdInternal(ids[i], true);
-
-				if (b == null) {
-					throw new NoSuchElementException("Item with id: \"" + ids[i] + "\" not found in MenuButton");
-				}
-
-				final List<Button> found = findListWhichContainsButtonInternal(b);
-				if (found != null) {
-					found.remove(b);
-					menu.getRenderOrderList().remove(b);
-
-					if (found == menu.items.list) {
-						iconList.remove(menu.items.list.indexOf(b));
-					}
-
-					recalculatePositionAllRecursive();
-				}
+				removeSafe(menu.getById(ids[i]));
 			}
-
-			shadow.recalculateDimensions();
-			shadow.recalculatePosition();
 		}
 
 		public void removeByTextIdInternal(String... textIds) {
 			requireNonNull(textIds, "textIds");
 
 			for (int i = 0; i < textIds.length; i++) {
-				final Button b = findByTextIdInternal(textIds[i], true);
-
-				if (b == null) {
-					throw new NoSuchElementException(
-							"Item with text id: \"" + textIds[i] + "\" not found in MenuButton");
-				}
-
-				final List<Button> found = findListWhichContainsButtonInternal(b);
-				if (found != null) {
-					found.remove(b);
-					menu.getRenderOrderList().remove(b);
-
-					if (found == menu.items.list) {
-						iconList.remove(menu.items.list.indexOf(b));
-					}
-
-					recalculatePositionAllRecursive();
-				}
+				removeSafe(menu.getByTextId(textIds[i]));
 			}
-
-			shadow.recalculateDimensions();
-			shadow.recalculatePosition();
+			
 		}
 
 		@Override
 		protected void render() {
 			shadow.draw();
 			itemsOnDraw();
+		}
+		
+		private void removeSafe(Button button) {
+			final MenuButton m = findMenuWhichContains(button);
+			final List<Button> l = m.items.list;
+			final int index = l.indexOf(button);
+			m.items.iconList.remove(index);
+			l.remove(button);
+
+			if (button instanceof MenuButton mb) {
+				menu.items.removeMenuFromRenderOrderList(mb);
+			}
+
+			recalculatePositionAllRecursive();
+			
+			shadow.recalculateDimensions();
+			shadow.recalculatePosition();
+		}
+
+		private void removeMenuFromRenderOrderList(MenuButton menuButton) {
+			menu.getRenderOrderList().remove(menuButton);
+
+			for (int i = 0; i < menuButton.items.list.size(); i++) {
+				final Button b = menuButton.items.list.get(i);
+
+				if (b instanceof MenuButton m) {
+					m.items.removeMenuFromRenderOrderList(m);
+				}
+
+			}
 		}
 
 		private void addInternal(Button button) {
@@ -1116,17 +1087,17 @@ public final class MenuButton extends Button implements Scrollable {
 			menuButton.setTextColor(new GradientLoopColor(c, c1).setSpeed(.05f));
 		}
 
-		private List<Button> findListWhichContainsButtonInternal(Button button) {
+		private MenuButton findMenuWhichContains(Button button) {
 			if (list.contains(button)) {
-				return list;
+				return menu;
 			}
 
 			for (int i = 0; i < list.size(); i++) {
 				Button b = list.get(i);
-				List<Button> found = null;
+				MenuButton found = null;
 
 				if (b instanceof MenuButton m) {
-					found = m.items.findListWhichContainsButtonInternal(button);
+					found = m.items.findMenuWhichContains(button);
 
 					if (found != null) {
 						return found;
@@ -1138,7 +1109,6 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private boolean isHover() {
-
 			if (list.isEmpty()) {
 				return false;
 			}
