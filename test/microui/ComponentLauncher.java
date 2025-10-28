@@ -5,6 +5,7 @@ import static microui.Render.Mode.FLEXIBLE;
 import microui.component.MenuButton;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.event.MouseEvent;
 
 public class ComponentLauncher extends PApplet {
@@ -27,28 +28,26 @@ public class ComponentLauncher extends PApplet {
 		Render.setMode(FLEXIBLE);
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
-
+		PImage icon = loadImage("C:\\Users\\002\\Desktop\\icon.png");
+		
 		mFile = new MenuButton("File",0,0,100,32);
 
 		mFile.addMenu("menu 0","1,2,3,4,5".split(","));
 		mFile.getMenu("menu 0").addMenu("menu new", "1,2,3,4,5".split(","));
 
-		mFile.addMenu("menu 1","1,2,3,4,5".split(","));
+		mFile.addMenu("menu 1",icon,"1,2,3,4,5".split(","));
 		for(int i = 1; i < 10; i++) {
 			
 			if(i == 9) {
-				mFile.getMenu("menu " + i).addMenu("spacial","re");
+				mFile.getMenu("menu " + i).addMenu("spacial", icon ,"re");
 			} else {
-				mFile.getMenu("menu " + i).addMenu("menu "+(i+1),"1,2,3,4,5".split(","));
+				mFile.getMenu("menu " + i).addMenu("menu "+(i+1), icon ,"1,2,3,4,5".split(","));
 			}
 			
 		}
 		
 		mFile.getMenu("menu 5").setTextId("m");
 		
-		mFile.removeByTextId("m");
-		
-		mFile.setIcon(loadImage("C:\\Users\\002\\Desktop\\icon.png"), "menu 0");
 		
 	}
 
