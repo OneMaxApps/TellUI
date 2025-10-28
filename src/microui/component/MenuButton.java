@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import microui.core.ImageBuffer;
 import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.core.base.View;
@@ -26,6 +27,7 @@ import microui.event.Listener;
 import microui.util.Debugger;
 import microui.util.SpatialState;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
@@ -432,6 +434,12 @@ public final class MenuButton extends Button implements Scrollable {
 	public float getItemHeight() {
 		return itemDimensions.getHeight();
 	}
+	
+	public MenuButton setIcon(PImage icon, String title) {
+		items.setIcon(icon, title);
+		
+		return this;
+	}
 
 	@Override
 	protected void render() {
@@ -616,6 +624,7 @@ public final class MenuButton extends Button implements Scrollable {
 	private static final class Items extends View implements Scrollable {
 		private final MenuButton menu;
 		private final List<Button> list;
+		private final List<ImageBuffer> iconList;
 		private final ShadowWrapper shadow;
 
 		public Items(MenuButton menu) {
@@ -623,6 +632,7 @@ public final class MenuButton extends Button implements Scrollable {
 			setVisible(true);
 			this.menu = menu;
 			list = new ArrayList<Button>();
+			iconList = new ArrayList<ImageBuffer>();
 			shadow = new ShadowWrapper(menu);
 		}
 
@@ -667,6 +677,10 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 		}
 
+		public void setIcon(PImage icon, String title) {
+			iconList.get(list.indexOf(menu.get(title))).set(icon);
+		}
+		
 		public void close() {
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -720,6 +734,7 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			shadow.recalculatePosition();
+			recalculateIconsPositions();
 		}
 
 		public void recalculatePositionAllRecursive() {
@@ -747,15 +762,13 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			shadow.recalculateDimensions();
+			recalculateIconsDimensions();
 		}
 
 		public void recalculateAllRecursive() {
 			recalculateDimensions();
 			recalculatePosition();
-
-			shadow.recalculateDimensions();
-			shadow.recalculatePosition();
-
+			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b instanceof MenuButton m) {
@@ -956,12 +969,32 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			list.add(button);
-
+			iconList.add(new ImageBuffer());
+			
 			recalculateDimensions();
 			recalculatePosition();
 
+			recalculateIconsPositions();
+			recalculateIconsDimensions();
+			
 			shadow.recalculateDimensions();
 			shadow.recalculatePosition();
+		}
+		
+		private void recalculateIconsPositions() {
+			for(int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				
+				iconList.get(i).setPosition(b.getPadX(), b.getPadY());
+			}
+		}
+		
+		private void recalculateIconsDimensions() {
+			for(int i = 0; i < list.size(); i++) {
+				final Button b = list.get(i);
+				
+				iconList.get(i).setSize(b.getPaddingLeft(), b.getHeight());
+			}
 		}
 
 		private void checkTitle(String... titles) {
@@ -979,7 +1012,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		private static void prepareGeneralItemStyle(Button button) {
 			button.setTextAlignX(LEFT);
-			button.setPadding(10, 0);
+			button.setPadding(20, 10, 0, 0);
 
 			button.setStrokeColor(Color.TRANSPARENT);
 			button.setBackgroundColor(getTheme().getMenuButtonItemColor());
@@ -1098,6 +1131,11 @@ public final class MenuButton extends Button implements Scrollable {
 						ctx.popStyle();
 					}
 				}
+			}
+			
+			for(int i = 0; i < iconList.size(); i++) {
+				final ImageBuffer img = iconList.get(i);
+				img.draw();
 			}
 		}
 

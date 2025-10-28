@@ -48,6 +48,8 @@ public class ComponentLauncher extends PApplet {
 		
 		mFile.removeByTextId("m");
 		
+		mFile.setIcon(loadImage("C:\\Users\\002\\Desktop\\icon.png"), "menu 0");
+		
 	}
 
 	@Override

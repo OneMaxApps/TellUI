@@ -42,12 +42,12 @@ public class ImageBuffer extends SpatialView {
 
 	public final void set(final PImage image) {
 		this.image = requireNonNull(image, "image");
-		updateDimensionsOfImageCorrect(image);
+		clampDimensions(image);
 	}
 
 	public final void load(final String path) {
 		image = ctx.loadImage(requireNonNull(path, "path"));
-		updateDimensionsOfImageCorrect(image);
+		clampDimensions(image);
 	}
 
 	public final PImage get() {
@@ -67,7 +67,7 @@ public class ImageBuffer extends SpatialView {
 		image = null;
 	}
 
-	private static final void updateDimensionsOfImageCorrect(PImage image) {
+	private static final void clampDimensions(PImage image) {
 		if (image.width > ctx.width || image.height > ctx.height) {
 			image.resize((int) max(1, ctx.width), (int) max(1, ctx.height));
 		}
