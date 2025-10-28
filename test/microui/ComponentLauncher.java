@@ -5,7 +5,6 @@ import static microui.Render.Mode.FLEXIBLE;
 import microui.component.MenuButton;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
-import processing.core.PImage;
 import processing.event.MouseEvent;
 
 public class ComponentLauncher extends PApplet {
@@ -19,8 +18,8 @@ public class ComponentLauncher extends PApplet {
 	@Override
 	public void settings() {
 //		fullScreen(P2D,0); // 1680:1050
-//		fullScreen();
-		size(640,360,P2D);
+		fullScreen();
+//		size(640,360,P2D);
 	}
 
 	@Override
@@ -28,8 +27,7 @@ public class ComponentLauncher extends PApplet {
 		Render.setMode(FLEXIBLE);
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
-		PImage icon = loadImage("C:\\Users\\002\\Desktop\\icon.png");
-		
+
 		menuFile = new MenuButton("File",0,0,100,32);
 
 		menuFile
@@ -69,7 +67,7 @@ public class ComponentLauncher extends PApplet {
 		    .add("Properties")
 		    .add("Exit");
 		
-		menuFile.setIcon(icon, "Open File...");
+		menuFile.setIcon(loadImage("C:\\Users\\002\\Desktop\\icon.png"), "Open File...");
 	}
 
 	@Override
