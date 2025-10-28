@@ -6,6 +6,7 @@ import static microui.util.Debugger.isDebugModeEnabled;
 import static processing.core.PConstants.LEFT;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -757,16 +758,16 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 
 			if (isDown) {
-				list.add(0, list.remove(list.size() - 1));
+				Collections.rotate(list, 1);
+				Collections.rotate(iconList, 1);
+				
 				list.get(0).setY(firstItemY);
-				
-				iconList.add(0,iconList.remove(iconList.size()-1));
-				
 			} else {
-				list.add(list.size() - 1, list.remove(0));
-				list.get(list.size() - 1).setY(lastItemY);
 				
-				iconList.add(iconList.size() - 1,iconList.remove(0));
+				Collections.rotate(list, -1);
+				Collections.rotate(iconList, -1);
+				
+				list.get(list.size() - 1).setY(lastItemY);
 				
 			}
 			
@@ -888,13 +889,10 @@ public final class MenuButton extends Button implements Scrollable {
 		public void addPlainItemInternal(int... numbers) {
 			requireNonNull(numbers, "numbers");
 
-			final StringBuilder sb = new StringBuilder();
-
 			for (int i = 0; i < numbers.length; i++) {
-				sb.append(numbers[i] + ",");
+				addPlainItemInternal(String.valueOf(numbers[i]));
 			}
-
-			addPlainItemInternal(sb.toString().split(","));
+			
 		}
 
 		public void addMenuItemInternal(String... title) {

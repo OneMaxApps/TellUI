@@ -10,7 +10,7 @@ import processing.event.MouseEvent;
 
 public class ComponentLauncher extends PApplet {
 
-	MenuButton mFile;
+	MenuButton menuFile;
 
 	public static void main(String[] args) {
 		PApplet.main("microui.ComponentLauncher");
@@ -19,8 +19,8 @@ public class ComponentLauncher extends PApplet {
 	@Override
 	public void settings() {
 //		fullScreen(P2D,0); // 1680:1050
-		fullScreen();
-//		size(640,360,P2D);
+//		fullScreen();
+		size(640,360,P2D);
 	}
 
 	@Override
@@ -30,54 +30,75 @@ public class ComponentLauncher extends PApplet {
 		ContainerManager.getInstance();
 		PImage icon = loadImage("C:\\Users\\002\\Desktop\\icon.png");
 		
-		mFile = new MenuButton("File",0,0,100,32);
+		menuFile = new MenuButton("File",0,0,100,32);
 
-		mFile.addMenu("menu 0","1,2,3,4,5".split(","));
-		mFile.getMenu("menu 0").addMenu("menu new", "1,2,3,4,5".split(","));
-
-		mFile.addMenu("menu 1",icon,"1,2,3,4,5".split(","));
-		for(int i = 1; i < 10; i++) {
-			
-			if(i == 9) {
-				mFile.getMenu("menu " + i).addMenu("spacial", icon ,"re");
-			} else {
-				mFile.getMenu("menu " + i).addMenu("menu "+(i+1), icon ,"1,2,3,4,5".split(","));
-			}
-			
-		}
+		menuFile
+		    .addMenu("New", 
+		        "Project...",
+		        "Package",
+		        "Class", 
+		        "Interface",
+		        "Enum",
+		        "Annotation", 
+		        "Source Folder",
+		        "File",
+		        "Folder",
+		        "Untitled Text File",
+		        "JUnit Test Case", 
+		        "Task"
+		    )
+		    .add("Open File...")
+		    .add("Open Projects from File System...")
+		    .add("Close")
+		    .add("Close All")
+		    .add("Save") 
+		    .add("Save As...")
+		    .add("Save All")
+		    .add("Revert")
+		    .add("Move...")
+		    .add("Rename...")
+		    .add("Refresh")
+		    .addMenu("Convert Line Delimiters To",
+		        "Windows (CRLF)",
+		        "Unix (LF)", 
+		        "Mac OS 9 (CR)"
+		    )
+		    .add("Print...")
+		    .add("Import...")
+		    .add("Export...")
+		    .add("Properties")
+		    .add("Exit");
 		
-		mFile.getMenu("menu 5").setTextId("m");
-		
-		
+		menuFile.setIcon(icon, "Open File...");
 	}
 
 	@Override
 	public void draw() {
 		background(200);
-		mFile.draw();
+		menuFile.draw();
 		
 	}
 
 	@Override
 	public void keyPressed() {
 		if (keyCode == RIGHT) {
-			mFile.appendX(10);
+			menuFile.appendX(10);
 		}
 		if (keyCode == LEFT) {
-			mFile.appendX(-10);
+			menuFile.appendX(-10);
 		}
 		if (keyCode == UP) {
-			mFile.appendY(-10);
+			menuFile.appendY(-10);
 		}
 		if (keyCode == DOWN) {
-			mFile.appendY(10);
+			menuFile.appendY(10);
 		}
 
 	}
 
 	@Override
 	public void mouseWheel(MouseEvent event) {
-		mFile.mouseWheel(event);
+		menuFile.mouseWheel(event);
 	}
 
 }
