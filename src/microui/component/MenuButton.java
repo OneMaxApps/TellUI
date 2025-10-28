@@ -1000,12 +1000,13 @@ public final class MenuButton extends Button implements Scrollable {
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
 				if (found != null) {
-					found.remove(b);
-					menu.getRenderOrderList().remove(b);
-
 					if(found == menu.items.list) {
 						iconList.remove(menu.items.list.indexOf(b));
 					}
+					
+					found.remove(b);
+					
+					menu.getRenderOrderList().remove(b);
 					
 					recalculatePositionAllRecursive();
 				}
@@ -1361,7 +1362,6 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	private static final class Arrow extends SpatialView {
-		private static final int DEFAULT_SIZE = 8;
 		private static final String CLOSE_SYMBOL = "▶";
 		private static final String OPEN_SYMBOL = "▼";
 		private final MenuButton menu;
@@ -1385,7 +1385,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 			color.apply();
 			ctx.textAlign(PApplet.CENTER, PApplet.CENTER);
-			ctx.textSize(DEFAULT_SIZE);
+			ctx.textSize(menu.getItemHeight()/3);
 			ctx.text(menu.isOpen() ? OPEN_SYMBOL : CLOSE_SYMBOL, getX(), getY(), getWidth(), getHeight());
 
 		}
