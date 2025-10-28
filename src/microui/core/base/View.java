@@ -1,12 +1,19 @@
 package microui.core.base;
 
+import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
+import static microui.Render.getMode;
+import static microui.Render.Mode.STRICT;
+import static microui.core.base.ContainerManager.canDraw;
+import static microui.core.base.ContainerManager.isInitialized;
 
-import microui.MicroUI;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.Visible;
 import microui.util.Metrics;
 import processing.core.PApplet;
+
+//Status: STABLE - Do not modify
+//Last Reviewed: 28.10.2025
 
 /**
  * Abstract base class for all visual elements in MicroUI. Provides basic
@@ -23,7 +30,6 @@ public abstract class View implements Visible {
 	public static final int DEFAULT_ID = 0;
 	public static final int MIN_PRIORITY = 0;
 	public static final int MIN_ID = 0;
-	public static final int MAX_ID = Integer.MAX_VALUE;
 	protected static final PApplet ctx = getContext();
 	private String textId;
 	private int priority, id;
@@ -94,8 +100,8 @@ public abstract class View implements Visible {
 	 * @throws IllegalArgumentException if the identifier is less than 0
 	 */
 	public final void setId(int id) {
-		if(id < MIN_ID || id > MAX_ID) {
-			throw new IllegalArgumentException("Id must be between ["+MIN_ID+"]"+" ["+MAX_ID+"]");
+		if(id < MIN_ID) {
+			throw new IllegalArgumentException("Id cannot be negative");
 		}
 		this.id = id;
 	}
@@ -116,9 +122,8 @@ public abstract class View implements Visible {
 	 *               (or) empty)
 	 */
 	public final void setTextId(final String textId) {
-		if (textId == null) {
-			throw new IllegalArgumentException("Text id cannot be null");
-		}
+		requireNonNull(textId,"textId");
+		
 		if (textId.isBlank()) {
 			throw new IllegalArgumentException("Text id cannot be blank");
 		}
@@ -150,12 +155,12 @@ public abstract class View implements Visible {
 	 * Calls the {@link #render() method} only if the element is visible.
 	 */
 	public void draw() {
-		if (!MicroUI.isFlexibleRenderModeEnabled()) {
-			if (!ContainerManager.isInitialized()) {
+		if (getMode() == STRICT) {
+			if (!isInitialized()) {
 				throw new RenderException("ContainerManager is not initialized");
 			}
 
-			if (!ContainerManager.isCanDraw()) {
+			if (!canDraw()) {
 				throw new RenderException("Cannot draw outside from ContainerManager");
 			}
 		}

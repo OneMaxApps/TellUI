@@ -4,6 +4,10 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
+import static microui.util.Debugger.getAdditionalInfo;
+import static microui.util.Debugger.isDebugModeEnabled;
+import static microui.util.Debugger.isHotKeySwitchEnabled;
+import static microui.util.Debugger.setDebugModeEnabled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,27 +20,26 @@ import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.event.KeyboardManager;
 import microui.service.TooltipManager;
-import microui.util.Debugger;
 import microui.util.MathUtils;
 import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 27.10.2025
+//Last Reviewed: 28.10.2025
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
-	private static boolean isInitialized, isCanDraw;
-	private final List<Container> containerList;
+	private static boolean initialized, canDraw;
+	private final List<Container> list;
 	private final Animation animation;
 	private final TooltipManager tooltipManager;
 	private Container prevContainer, currentContainer;
-	private boolean isAnimationEnabled;
+	private boolean animationEnabled;
 
 	private ContainerManager() {
 		setVisible(true);
-		containerList = new ArrayList<Container>();
-		animation = new Animation();
+		list = new ArrayList<Container>();
+		animation = new Animation(this);
 		tooltipManager = TooltipManager.getInstance();
 
 		setAnimationEnabled(true);
@@ -62,12 +65,12 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	@Override
 	public void draw() {
-		if (!isCanDraw) {
-			throw new RenderException("Cannot call draw() manually. Enable flexibleRenderMode first");
+		if (!canDraw) {
+			throw new RenderException("Cannot call draw() manually. set render mode FLEXIBLE first");
 		}
 		super.draw();
 		debugOnDraw();
-		
+
 	}
 
 	@Override
@@ -75,18 +78,19 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		if (currentContainer == null) {
 			return;
 		}
-		
+
 		currentContainer.keyPressed();
 	}
 
 	public void keyEvent(KeyEvent keyEvent) {
 		if (keyEvent.getAction() == KeyEvent.PRESS) {
-			if (Debugger.isHotKeySwitchEnabled()) {
+
+			if (isHotKeySwitchEnabled()) {
 				if (keyEvent.isAltDown()) {
-					Debugger.setDebugModeEnabled(!Debugger.isDebugModeEnabled());
+					setDebugModeEnabled(!isDebugModeEnabled());
 				}
 			}
-			
+
 			KeyboardManager.keyPressed();
 			keyPressed();
 		}
@@ -135,6 +139,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		animation.setEasingEnabled(isEasing);
 	}
 
+	public boolean isAnimationEnabled() {
+		return animationEnabled;
+	}
+
+	public void setAnimationEnabled(boolean animationEnabled) {
+		this.animationEnabled = animationEnabled;
+	}
+
 	public void add(Container container) {
 		addInternal(container);
 	}
@@ -150,7 +162,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		container.setId(id);
 	}
 
-	public void remove(final Container... containers) {
+	public void remove(Container... containers) {
 		requireNonNull(containers, "containers");
 
 		for (Container container : containers) {
@@ -159,7 +171,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	public void removeById(final int... ids) {
+	public void removeById(int... ids) {
 		requireNonNull(ids, "Ids");
 
 		for (int i : ids) {
@@ -205,15 +217,15 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOnPrevious() {
-		if (animation.isAnimationRunningEnabled()) {
+		if (animation.isAnimating()) {
 			return;
 		}
-		
+
 		switchOn(getPreviousContainer());
 	}
 
 	public void switchOnNext() {
-		if (animation.isAnimationRunningEnabled()) {
+		if (animation.isAnimating()) {
 			return;
 		}
 
@@ -221,76 +233,68 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public Container findById(final int id) {
-		for (int i = 0; i < containerList.size(); i++) {
-			Container c = containerList.get(i);
+		for (int i = 0; i < list.size(); i++) {
+			Container c = list.get(i);
 			if (c.getId() == id) {
 				return c;
 			}
 		}
-		
+
 		return null;
 	}
 
 	public Container getById(int id) {
 		final Container c = findById(id);
-		
+
 		if (c == null) {
-			throw new NoSuchElementException("Container with id: " + id + " not found in ContainerManager");
+			throw new NoSuchElementException("Container with id: " + id + " not found");
 		}
-		
+
 		return c;
 	}
 
 	public Container findByTextId(final String textId) {
-		requireNonNull(textId,"textId");
-		
-		for (int i = 0; i < containerList.size(); i++) {
-			Container c = containerList.get(i);
+		requireNonNull(textId, "textId");
+
+		for (int i = 0; i < list.size(); i++) {
+			Container c = list.get(i);
 			if (c.getTextId().equals(textId)) {
 				return c;
 			}
 		}
-		
+
 		return null;
 	}
 
 	public Container getByTextId(String textId) {
 		final Container c = findByTextId(textId);
-		
-		if(c == null) {
-			throw new NoSuchElementException("Container with textId: " + textId + " not found in ContainerManager");
+
+		if (c == null) {
+			throw new NoSuchElementException("Container with textId: " + textId + " not found");
 		}
-		
+
 		return c;
 	}
 
-	public boolean isAnimationEnabled() {
-		return isAnimationEnabled;
-	}
-
-	public void setAnimationEnabled(boolean isAnimationEnabled) {
-		this.isAnimationEnabled = isAnimationEnabled;
-	}
-
 	public static final boolean isInitialized() {
-		return isInitialized;
+		return initialized;
 	}
 
-	public static final boolean isCanDraw() {
-		return isCanDraw;
-	}
-
-	public static enum AnimationType {
-		SLIDE_LEFT, SLIDE_RIGHT, SLIDE_TOP, SLIDE_BOTTOM, SLIDE_RANDOM;
+	public static final boolean canDraw() {
+		return canDraw;
 	}
 
 	public static ContainerManager getInstance() {
 		if (instance == null) {
 			instance = new ContainerManager();
-			isInitialized = true;
+			initialized = true;
 		}
 
 		return instance;
+	}
+
+	public static enum AnimationType {
+		SLIDE_LEFT, SLIDE_RIGHT, SLIDE_TOP, SLIDE_BOTTOM, SLIDE_RANDOM;
 	}
 
 	public final class Render {
@@ -300,64 +304,64 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 
 		public void draw() {
-			isCanDraw = true;
+			canDraw = true;
 			ContainerManager.this.draw();
-			isCanDraw = false;
+			canDraw = false;
 		}
 	}
-	
+
 	private int getCurrentContainerIndex() {
-		return containerList.indexOf(currentContainer);
+		return list.indexOf(currentContainer);
 	}
-	
+
 	private int getPreviousContainerIndex() {
 		final int curr = getCurrentContainerIndex();
-		
-		if(curr == 0) {
-			return containerList.size()-1;
+
+		if (curr == 0) {
+			return list.size() - 1;
 		}
-		
-		return curr-1;
+
+		return curr - 1;
 	}
-	
+
 	private int getNextContainerIndex() {
 		final int curr = getCurrentContainerIndex();
-		
-		if(curr == containerList.size()-1) {
+
+		if (curr == list.size() - 1) {
 			return 0;
 		}
-		
-		return curr+1;
+
+		return curr + 1;
 	}
-	
+
 	private Container getPreviousContainer() {
-		return containerList.get(getPreviousContainerIndex());
+		return list.get(getPreviousContainerIndex());
 	}
-	
+
 	private Container getNextContainer() {
-		return containerList.get(getNextContainerIndex());
+		return list.get(getNextContainerIndex());
 	}
 
 	private void launchContainer(Container container) {
-		requireNonNull(container,"container");
-		
-		if (containerList.size() < 2) {
+		requireNonNull(container, "container");
+
+		if (list.size() < 2) {
 			throw new IllegalStateException("Cannot switch containers, because ContainerManager has less than 2 containers");
 		}
-		
-		if (!containerList.contains(container)) {
+
+		if (!list.contains(container)) {
 			throw new NoSuchElementException("Container not found in ContainerManager");
 		}
 
 		prevContainer = currentContainer;
 		currentContainer = container;
-		animation.setAnimationRunningEnabled(true);
+		animation.setAnimating(true);
 	}
 
 	private void addInternal(Container container) {
 		requireNonNull(container, "container");
-		
-		if (containerList.contains(container)) {
+
+		if (list.contains(container)) {
 			throw new DuplicateItemException("Container cannot be added twice");
 		}
 
@@ -365,7 +369,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		container.setMaxSize(ctx.width, ctx.height);
 		container.setMinSize(ctx.width, ctx.height);
 
-		containerList.add(container);
+		list.add(container);
 
 		if (currentContainer == null) {
 			currentContainer = container;
@@ -373,13 +377,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void removeInternal(Container container) {
-		requireNonNull(container,"container");
-		
-		if(!containerList.contains(container)) {
+		requireNonNull(container, "container");
+
+		if (!list.contains(container)) {
 			throw new NoSuchElementException("Container not found in ContainerManager");
 		}
-		
-		containerList.remove(container);
+
+		list.remove(container);
 
 		if (prevContainer == container) {
 			prevContainer = null;
@@ -399,32 +403,35 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void debugOnDraw() {
-		if (Debugger.isDebugModeEnabled()) {
+		if (isDebugModeEnabled()) {
 			ctx.push();
 			ctx.fill(255);
 			ctx.textSize(24);
-			ctx.text("fps: " + (int) ctx.frameRate+"\n"+Debugger.getAdditionalInfo(), 10, 24);
+			ctx.text("fps: " + (int) ctx.frameRate + "\n" + getAdditionalInfo(), 10, 24);
 			ctx.pop();
 		}
 	}
 
-	private final class Animation extends View {
+	private static final class Animation extends View {
+		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
+		private final ImageBuffer prevImage, currentImage;
 		private AnimationType animationType;
-		private final ImageBuffer prevContainerImage, currentContainerImage;
 		private float speed;
 		private int randDirX, randDirY;
-		private boolean isAnimationRunningEnabled, isNewContainerPrepared, isEasing;
+		private boolean animating, newContainerPrepared, easing;
 
-		private Animation() {
+		private Animation(ContainerManager manager) {
 			super();
 			setVisible(true);
 
-			prevContainerImage = new ImageBuffer();
-			currentContainerImage = new ImageBuffer();
+			this.manager = requireNonNull(manager, "manager");
 
-			prevContainerImage.setSize(ctx.width, ctx.height);
-			currentContainerImage.setSize(ctx.width, ctx.height);
+			prevImage = new ImageBuffer();
+			currentImage = new ImageBuffer();
+
+			prevImage.setSize(ctx.width, ctx.height);
+			currentImage.setSize(ctx.width, ctx.height);
 
 			setSpeed(max(1, ctx.width * .1f));
 			setAnimationType(AnimationType.SLIDE_RANDOM);
@@ -433,152 +440,159 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		@Override
 		protected void render() {
-			if (isAnimationRunningEnabled()) {
-				if (!prevContainerImage.isLoaded()) {
-					prevContainer.draw();
-					prevContainerImage.set(getScreenBuffer());
-					return;
+			if (isAnimating()) {
+				updateAnimation();
+			} 
+			
+			if(!isAnimating()) {
+				if (prevImage.get() != null) {
+					prevImage.removeTexture();
 				}
 
-				switch (animationType) {
-				case SLIDE_LEFT:
-					slideDirection(-1, 0);
-					break;
-				case SLIDE_RIGHT:
-					slideDirection(1, 0);
-					break;
-				case SLIDE_TOP:
-					slideDirection(0, -1);
-					break;
-				case SLIDE_BOTTOM:
-					slideDirection(0, 1);
-					break;
-				case SLIDE_RANDOM:
-					if (!isNewContainerPrepared) {
-						do {
-							randDirX = (int) ctx.random(-1, 2);
-							randDirY = (int) ctx.random(-1, 2);
-						} while (randDirX != 0 && randDirY != 0 || randDirX == randDirY);
-
-					}
-					slideDirection(randDirX, randDirY);
-					break;
+				if (currentImage.get() != null) {
+					currentImage.removeTexture();
 				}
 
-				if (isAnimationRunningEnabled()) {
-					if (!currentContainerImage.isLoaded()) {
-						currentContainer.draw();
-						currentContainerImage.set(getScreenBuffer());
-					}
-
-					prevContainerImage.draw();
-					currentContainerImage.draw();
+				if (manager.currentContainer != null) {
+					manager.currentContainer.draw();
 				}
-
 			}
-
-			if (!isAnimationRunningEnabled()) {
-				prevContainerImage.removeTexture();
-				currentContainerImage.removeTexture();
-
-				if(currentContainer != null) {
-					currentContainer.draw();
-				}
-				
-			}
+			
 		}
 
-		PImage getScreenBuffer() {
-			return ctx.get(0, 0, ctx.width, ctx.height);
-
+		public boolean isAnimating() {
+			return animating;
 		}
 
-		boolean isAnimationRunningEnabled() {
-			return isAnimationRunningEnabled;
+		public void setAnimating(boolean animating) {
+			this.animating = animating;
 		}
 
-		void setAnimationRunningEnabled(boolean isAnimationRunningEnabled) {
-			this.isAnimationRunningEnabled = isAnimationRunningEnabled;
-		}
-
-		void complete() {
-			prevContainerImage.setBounds(0, 0, ctx.width, ctx.height);
-			currentContainerImage.setBoundsFrom(prevContainerImage);
-			setAnimationRunningEnabled(false);
-			isNewContainerPrepared = false;
-		}
-
-		float getRawSpeed() {
+		public float getRawSpeed() {
 			return speed;
 		}
 
-		void setSpeed(float speed) {
+		public void setSpeed(float speed) {
 			if (speed <= 0) {
 				throw new IllegalArgumentException("Animation speed must be greater than 0");
 			}
 			this.speed = speed;
 		}
 
-		AnimationType getAnimationType() {
+		public AnimationType getAnimationType() {
 			return animationType;
 		}
 
-		void setAnimationType(AnimationType animationType) {
-			this.animationType = requireNonNull(animationType,"animationType");
+		public void setAnimationType(AnimationType animationType) {
+			this.animationType = requireNonNull(animationType, "animationType");
 		}
 
-		boolean isEasingEnabled() {
-			return isEasing;
+		public boolean isEasingEnabled() {
+			return easing;
 		}
 
-		void setEasingEnabled(boolean isEasing) {
-			this.isEasing = isEasing;
+		public void setEasingEnabled(boolean easing) {
+			this.easing = easing;
+		}
+
+		private void updateAnimation() {
+			if (!prevImage.isLoaded()) {
+				manager.prevContainer.draw();
+				prevImage.set(getScreenBuffer());
+				return;
+			}
+
+			switch (animationType) {
+			case SLIDE_LEFT:
+				slideDirection(-1, 0);
+				break;
+			case SLIDE_RIGHT:
+				slideDirection(1, 0);
+				break;
+			case SLIDE_TOP:
+				slideDirection(0, -1);
+				break;
+			case SLIDE_BOTTOM:
+				slideDirection(0, 1);
+				break;
+			case SLIDE_RANDOM:
+				if (!newContainerPrepared) {
+					do {
+						randDirX = (int) ctx.random(-1, 2);
+						randDirY = (int) ctx.random(-1, 2);
+					} while (randDirX != 0 && randDirY != 0 || randDirX == randDirY);
+
+				}
+				slideDirection(randDirX, randDirY);
+				break;
+			}
+
+			if (isAnimating()) {
+				if (!currentImage.isLoaded()) {
+					manager.currentContainer.draw();
+					currentImage.set(getScreenBuffer());
+				}
+
+				prevImage.draw();
+				currentImage.draw();
+			}
+		}
+
+		private PImage getScreenBuffer() {
+			return ctx.get(0, 0, ctx.width, ctx.height);
 		}
 
 		private int getSpeedInternal() {
 			int additionalMinSpeed = 1;
-			if (isEasing) {
-				float dist = max(abs(currentContainerImage.getX()), abs(currentContainerImage.getY()));
+			if (easing) {
+				float dist = max(abs(currentImage.getX()), abs(currentImage.getY()));
 				return (int) (additionalMinSpeed + MathUtils.convert(abs(dist), 0, MAX_DIST, .1f, speed));
 			}
 			return (int) (additionalMinSpeed + speed);
 		}
 
+		private void complete() {
+			prevImage.setBounds(0, 0, ctx.width, ctx.height);
+			currentImage.setBoundsFrom(prevImage);
+			setAnimating(false);
+			newContainerPrepared = false;
+		}
+
 		private void slideDirection(int dirX, int dirY) {
-			if (!isNewContainerPrepared) {
-				currentContainerImage.setPosition(dirX == -1 ? ctx.width : dirX == 1 ? -ctx.width : 0,
+			if (!newContainerPrepared) {
+				currentImage.setPosition(dirX == -1 ? ctx.width : dirX == 1 ? -ctx.width : 0,
 						dirY == -1 ? ctx.height : dirY == 1 ? -ctx.height : 0);
-				isNewContainerPrepared = true;
+				newContainerPrepared = true;
 			}
 
 			if (dirX == -1) {
-				prevContainerImage.appendX(-getSpeedInternal());
-				currentContainerImage.appendX(-getSpeedInternal(), 0, ctx.width);
+				prevImage.appendX(-getSpeedInternal());
+				currentImage.appendX(-getSpeedInternal(), 0, ctx.width);
 			}
 
 			if (dirX == 1) {
-				prevContainerImage.appendX(getSpeedInternal());
-				currentContainerImage.appendX(getSpeedInternal(), -ctx.width, 0);
+				prevImage.appendX(getSpeedInternal());
+				currentImage.appendX(getSpeedInternal(), -ctx.width, 0);
 			}
 
 			if (dirY == -1) {
-				prevContainerImage.appendY(-getSpeedInternal());
-				currentContainerImage.appendY(-getSpeedInternal(), 0, ctx.height);
+				prevImage.appendY(-getSpeedInternal());
+				currentImage.appendY(-getSpeedInternal(), 0, ctx.height);
 			}
 
 			if (dirY == 1) {
-				prevContainerImage.appendY(getSpeedInternal());
-				currentContainerImage.appendY(getSpeedInternal(), -ctx.height, 0);
+				prevImage.appendY(getSpeedInternal());
+				currentImage.appendY(getSpeedInternal(), -ctx.height, 0);
 			}
 
 			if (dirX != 0) {
-				if ((int) currentContainerImage.getX() == 0) {
+				if ((int) currentImage.getX() == 0) {
 					complete();
 				}
 			}
 
 			if (dirY != 0) {
-				if ((int) currentContainerImage.getY() == 0) {
+				if ((int) currentImage.getY() == 0) {
 					complete();
 				}
 			}

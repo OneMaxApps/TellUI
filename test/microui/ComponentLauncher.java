@@ -1,5 +1,7 @@
 package microui;
 
+import static microui.Render.Mode.FLEXIBLE;
+
 import microui.component.MenuButton;
 import microui.core.base.ContainerManager;
 import processing.core.PApplet;
@@ -22,7 +24,7 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void setup() {
-		MicroUI.setFlexibleRenderModeEnabled(true);
+		Render.setMode(FLEXIBLE);
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
 

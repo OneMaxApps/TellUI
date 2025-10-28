@@ -1,9 +1,12 @@
 package microui;
 
+import static java.util.Objects.requireNonNull;
+
 import processing.core.PApplet;
 
 // Status: STABLE - Do not modify
-// Last Reviewed: 12.09.2025
+// Last Reviewed: 28.10.2025
+
 public final class MicroUI {
 	private static PApplet ctx;
 
@@ -13,13 +16,13 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	private static boolean flexibleRenderModeEnabled;
-
 	private MicroUI() {
 	}
 
 	public static final void setContext(PApplet context) {
-		if (context != null && MicroUI.ctx == null) {
+		requireNonNull(context,"context");
+		
+		if (MicroUI.ctx == null) {
 			MicroUI.ctx = context;
 		}
 	}
@@ -34,14 +37,6 @@ public final class MicroUI {
 
 	public static String getVersion() {
 		return VERSION;
-	}
-
-	public static boolean isFlexibleRenderModeEnabled() {
-		return flexibleRenderModeEnabled;
-	}
-
-	public static void setFlexibleRenderModeEnabled(boolean flexibleRenderModeEnabled) {
-		MicroUI.flexibleRenderModeEnabled = flexibleRenderModeEnabled;
 	}
 
 }
