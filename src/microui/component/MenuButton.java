@@ -2,6 +2,7 @@ package microui.component;
 
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
+import static microui.util.Debugger.isDebugModeEnabled;
 import static processing.core.PConstants.LEFT;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import processing.core.PApplet;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 25.10.2025
+//Last Reviewed: 28.10.2025
 
 // if menu is root - it's vertical list, else add horizontal shifting
 public final class MenuButton extends Button implements Scrollable {
@@ -39,11 +40,11 @@ public final class MenuButton extends Button implements Scrollable {
 	private final Items items;
 	private final OpenStateIndicator indicator;
 	private final Arrow arrow;
+	private final ItemDimensions itemDimensions;
 	private MenuButton root, activeSubMenu, parent;
-	private ItemDimensions itemDimensions;
 	private List<MenuButton> renderOrderList;
 	private DirectionMode directionMode;
-	private boolean open, isRootModeEnabled;
+	private boolean open, rootMode;
 
 	public MenuButton(String title, float x, float y, float w, float h) {
 		super(title, x, y, w, h);
@@ -54,8 +55,8 @@ public final class MenuButton extends Button implements Scrollable {
 		arrow = new Arrow(this);
 		onClick(() -> setOpen(!isOpen()));
 		setRoot(this);
-		setItemDimensions(new ItemDimensions(DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT));
-		setRootModeEnabled(true);
+		itemDimensions = new ItemDimensions(items, DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT);
+		setRootMode(true);
 		setDirectionMode(DirectionMode.AUTO);
 	}
 
@@ -83,6 +84,10 @@ public final class MenuButton extends Button implements Scrollable {
 		return items.list.isEmpty();
 	}
 
+	public int getItemsCount() {
+		return items.list.size();
+	}
+
 	public AbstractShadow getItemsShadow() {
 		return items.shadow.getShadow();
 	}
@@ -98,23 +103,7 @@ public final class MenuButton extends Button implements Scrollable {
 	}
 
 	public MenuButton setDirectionMode(DirectionMode directionMode) {
-		this.directionMode = requireNonNull(directionMode,"directionMode");
-		
-		return this;
-	}
-
-	public ItemDimensions getItemDimensions() {
-		return itemDimensions;
-	}
-
-	public MenuButton setItemDimensions(ItemDimensions itemDimensions) {
-		if (this.itemDimensions == requireNonNull(itemDimensions,"itemDimensions")) {
-			return this;
-		}
-
-		this.itemDimensions = itemDimensions;
-
-		items.recalculateAllRecursive();
+		this.directionMode = requireNonNull(directionMode, "directionMode");
 
 		return this;
 	}
@@ -193,7 +182,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		return null;
 	}
-	
+
 	public Button findById(int id) {
 		return items.findByIdInternal(id);
 	}
@@ -207,7 +196,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		return null;
 	}
-	
+
 	public Button findByTextId(String textId) {
 		return items.findByTextIdInternal(textId);
 	}
@@ -241,7 +230,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		throw new ClassCastException("Item with title: \"" + title + "\" cannot be cast to MenuButton type");
 	}
-	
+
 	public Button getById(int id) {
 		final Button b = findById(id);
 
@@ -261,7 +250,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		throw new ClassCastException("Item with id: \"" + id + "\" cannot be cast to MenuButton type");
 	}
-	
+
 	public Button getByTextId(String textId) {
 		final Button b = findByTextId(textId);
 
@@ -286,12 +275,12 @@ public final class MenuButton extends Button implements Scrollable {
 		items.removeInternal(title);
 		return this;
 	}
-	
+
 	public MenuButton removeById(int... id) {
 		items.removeByIdInternal(id);
 		return this;
 	}
-	
+
 	public MenuButton removeByTextId(String... textId) {
 		items.removeByTextIdInternal(textId);
 		return this;
@@ -376,11 +365,79 @@ public final class MenuButton extends Button implements Scrollable {
 		return this;
 	}
 
+	public MenuButton setItemSize(float width, float height) {
+		itemDimensions.setSize(width, height);
+
+		return this;
+	}
+
+	public MenuButton setItemSizeRecursive(float width, float height) {
+		setItemSize(width, height);
+
+		for (int i = 0; i < items.list.size(); i++) {
+			final Button b = items.list.get(i);
+
+			if (b instanceof MenuButton m) {
+				m.setItemSizeRecursive(width, height);
+			}
+		}
+
+		return this;
+	}
+
+	public MenuButton setItemWidth(float width) {
+		itemDimensions.setWidth(width);
+
+		return this;
+	}
+
+	public MenuButton setItemWidthRecursive(float width) {
+		setItemWidth(width);
+
+		for (int i = 0; i < items.list.size(); i++) {
+			final Button b = items.list.get(i);
+
+			if (b instanceof MenuButton m) {
+				m.setItemWidthRecursive(width);
+			}
+		}
+
+		return this;
+	}
+
+	public MenuButton setItemHeight(float height) {
+		itemDimensions.setHeight(height);
+
+		return this;
+	}
+
+	public MenuButton setItemHeightRecursive(float height) {
+		setItemHeight(height);
+
+		for (int i = 0; i < items.list.size(); i++) {
+			final Button b = items.list.get(i);
+
+			if (b instanceof MenuButton m) {
+				m.setItemHeightRecursive(height);
+			}
+		}
+
+		return this;
+	}
+
+	public float getItemWidth() {
+		return itemDimensions.getWidth();
+	}
+
+	public float getItemHeight() {
+		return itemDimensions.getHeight();
+	}
+
 	@Override
 	protected void render() {
 		super.render();
 
-		if (items.list.isEmpty()) {
+		if (isEmpty()) {
 			return;
 		}
 
@@ -396,18 +453,20 @@ public final class MenuButton extends Button implements Scrollable {
 
 		}
 
-		if (isMustBeClosed()) {
+		if (mustBeClosed()) {
 			setOpen(false);
 		}
 
 		indicator.draw();
 		arrow.draw();
 
-		if (Debugger.isDebugModeEnabled()) {
+		if (isDebugModeEnabled()) {
+
 			if (isActiveSubMenu()) {
 				ctx.fill(0, 200, 0, 100);
 				ctx.rect(getAbsoluteX(), getAbsoluteY(), getAbsoluteWidth(), getAbsoluteHeight());
 			}
+
 		}
 
 	}
@@ -434,29 +493,27 @@ public final class MenuButton extends Button implements Scrollable {
 		return getRoot().renderOrderList;
 	}
 
-	private boolean isMustBeClosed() {
+	private boolean mustBeClosed() {
 		return ctx.mousePressed && isOpen() && !isHover() && !items.isHoverDeep() && !getRoot().isHover();
 	}
 
 	private MenuButton getRoot() {
-		if (getParent() == null) {
-			return root;
-		} else {
-			return getParent().getRoot();
-		}
+		return root;
 	}
 
 	private void setRoot(MenuButton root) {
-		this.root = requireNonNull(root,"root");
+		this.root = requireNonNull(root, "root");
 	}
 
 	private boolean isRoot() {
-		return isRootModeEnabled;
+		return rootMode;
 	}
 
-	private void setRootModeEnabled(boolean isRoot) {
-		this.isRootModeEnabled = isRoot;
+	
+	private void setRootMode(boolean rootMode) {
+		this.rootMode = rootMode;
 	}
+	
 
 	private MenuButton getParent() {
 		return parent;
@@ -471,6 +528,7 @@ public final class MenuButton extends Button implements Scrollable {
 		return getRoot().activeSubMenu;
 	}
 
+	
 	private void setActiveSubMenu(MenuButton activeSubMenu) {
 		getRoot().activeSubMenu = activeSubMenu;
 	}
@@ -483,12 +541,76 @@ public final class MenuButton extends Button implements Scrollable {
 		AUTO, LEFT, RIGHT;
 	}
 
-	public static final record ItemDimensions(float width, float height) {
-		public ItemDimensions {
-			if (width <= 0 || height <= 0) {
-				throw new IllegalArgumentException("Dimensions for MenuButton item cannot be less or equal zero");
+	private static final class ItemDimensions {
+		private final Items items;
+		private float width, height;
+
+		public ItemDimensions(Items items, float width, float height) {
+			super();
+
+			this.items = requireNonNull(items, "items");
+
+			if (width < 1 || height < 1) {
+				throw new IllegalArgumentException("Dimensions for items in MenuButton cannot be less than 1");
 			}
+
+			this.width = width;
+			this.height = height;
+
+			items.recalculateAllRecursive();
 		}
+
+		public float getWidth() {
+			return width;
+		}
+
+		public void setWidth(float width) {
+			if (this.width == width) {
+				return;
+			}
+
+			if (width < 1) {
+				throw new IllegalArgumentException("Dimensions for items in MenuButton cannot be less than 1");
+			}
+
+			this.width = width;
+
+			items.recalculateAllRecursive();
+		}
+
+		public float getHeight() {
+			return height;
+		}
+
+		public void setHeight(float height) {
+			if (this.height == height) {
+				return;
+			}
+
+			if (height < 1) {
+				throw new IllegalArgumentException("Dimensions for items in MenuButton cannot be less than 1");
+			}
+
+			this.height = height;
+
+			items.recalculateAllRecursive();
+		}
+
+		public void setSize(float width, float height) {
+			if (this.width == width && this.height == height) {
+				return;
+			}
+
+			if (width < 1 || height < 1) {
+				throw new IllegalArgumentException("Dimensions for items in MenuButton cannot be less than 1");
+			}
+
+			this.width = width;
+			this.height = height;
+
+			items.recalculateAllRecursive();
+		}
+
 	}
 
 	private static final class Items extends View implements Scrollable {
@@ -506,7 +628,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 		@Override
 		public void mouseWheel(MouseEvent mouseEvent) {
-			requireNonNull(mouseEvent,"mouseEvent");
+			requireNonNull(mouseEvent, "mouseEvent");
 
 			if (list.isEmpty()) {
 				return;
@@ -617,8 +739,8 @@ public final class MenuButton extends Button implements Scrollable {
 				return;
 			}
 
-			final float newWidth = menu.getItemDimensions().width();
-			final float newHeight = menu.getItemDimensions().height();
+			final float newWidth = menu.getItemWidth();
+			final float newHeight = menu.getItemHeight();
 
 			for (int i = 0; i < list.size(); i++) {
 				list.get(i).setSize(newWidth, newHeight);
@@ -651,7 +773,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public void addPlainItemInternal(int... numbers) {
-			requireNonNull(numbers,"numbers");
+			requireNonNull(numbers, "numbers");
 
 			final StringBuilder sb = new StringBuilder();
 
@@ -716,10 +838,10 @@ public final class MenuButton extends Button implements Scrollable {
 
 			return null;
 		}
-		
+
 		public Button findByTextIdInternal(String textId) {
-			requireNonNull(textId,"textId");
-			
+			requireNonNull(textId, "textId");
+
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b.getTextId().equals(textId)) {
@@ -742,8 +864,8 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public void removeInternal(String... titles) {
-			requireNonNull(titles,"titles");
-			
+			requireNonNull(titles, "titles");
+
 			for (int i = 0; i < titles.length; i++) {
 				final Button b = findInternal(titles[i]);
 
@@ -762,10 +884,10 @@ public final class MenuButton extends Button implements Scrollable {
 			shadow.recalculateDimensions();
 			shadow.recalculatePosition();
 		}
-		
+
 		public void removeByIdInternal(int... ids) {
-			requireNonNull(ids,"ids");
-			
+			requireNonNull(ids, "ids");
+
 			for (int i = 0; i < ids.length; i++) {
 				final Button b = findByIdInternal(ids[i]);
 
@@ -784,15 +906,16 @@ public final class MenuButton extends Button implements Scrollable {
 			shadow.recalculateDimensions();
 			shadow.recalculatePosition();
 		}
-		
+
 		public void removeByTextIdInternal(String... textIds) {
-			requireNonNull(textIds,"textIds");
-			
+			requireNonNull(textIds, "textIds");
+
 			for (int i = 0; i < textIds.length; i++) {
 				final Button b = findByTextIdInternal(textIds[i]);
 
 				if (b == null) {
-					throw new NoSuchElementException("Item with text id: \"" + textIds[i] + "\" not found in MenuButton");
+					throw new NoSuchElementException(
+							"Item with text id: \"" + textIds[i] + "\" not found in MenuButton");
 				}
 
 				final List<Button> found = findListWhichContainsButtonInternal(b);
@@ -814,7 +937,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private void addInternal(Button button) {
-			requireNonNull(button,"button");
+			requireNonNull(button, "button");
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
@@ -842,10 +965,10 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private void checkTitle(String... titles) {
-			requireNonNull(titles,"titles");
+			requireNonNull(titles, "titles");
 
 			for (int i = 0; i < titles.length; i++) {
-				requireNonNull(titles[i],"titles["+i+"]");
+				requireNonNull(titles[i], "titles[" + i + "]");
 
 				if (titles[i].isBlank()) {
 					throw new IllegalArgumentException(
@@ -869,7 +992,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		private void prepareMenuItem(MenuButton menuButton) {
-			menuButton.setRootModeEnabled(false);
+			menuButton.setRootMode(false);
 			menuButton.setRoot(menu.getRoot());
 			menuButton.setParent(menu);
 			menu.getRenderOrderList().add(menuButton);
@@ -964,7 +1087,7 @@ public final class MenuButton extends Button implements Scrollable {
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
-				b.setInteractionHandlerEnabled(isShouldReact());
+				b.setInteractionHandlerEnabled(shouldReact());
 				b.draw();
 
 				if (Debugger.isDebugModeEnabled()) {
@@ -978,7 +1101,7 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 		}
 
-		private boolean isShouldReact() {
+		private boolean shouldReact() {
 			final MenuButton active = menu.getActiveSubMenu();
 			final boolean isHasActive = active != null;
 
@@ -1007,6 +1130,8 @@ public final class MenuButton extends Button implements Scrollable {
 			public ShadowWrapper(MenuButton menu) {
 				super();
 				setVisible(true);
+				setConstrainDimensionsEnabled(false);
+
 				this.menu = menu;
 				menu.onClick(() -> {
 					if (getShadow() instanceof ReactiveShadow s) {
@@ -1030,8 +1155,7 @@ public final class MenuButton extends Button implements Scrollable {
 					return;
 				}
 
-				setSize(menu.items.list.get(0).getAbsoluteWidth(),
-						menu.getItemDimensions().height() * menu.items.list.size());
+				setSize(menu.items.list.get(0).getAbsoluteWidth(), menu.getItemHeight() * menu.items.list.size());
 
 			}
 
@@ -1087,7 +1211,7 @@ public final class MenuButton extends Button implements Scrollable {
 			super();
 			setVisible(true);
 
-			this.menu = requireNonNull(menu,"menu");
+			this.menu = requireNonNull(menu, "menu");
 
 			setColor(getTheme().getPrimaryColor());
 
@@ -1111,7 +1235,7 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 
 		public void setColor(AbstractColor color) {
-			this.color = requireNonNull(color,"color");
+			this.color = requireNonNull(color, "color");
 		}
 
 	}
