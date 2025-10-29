@@ -13,8 +13,6 @@ import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
-import microui.core.style.theme.ThemeGray;
-import microui.core.style.theme.ThemeManager;
 import microui.layout.ColumnLayout;
 import microui.layout.ColumnLayoutParams;
 import microui.layout.GridLayout;
@@ -47,7 +45,7 @@ public final class Launcher extends PApplet {
 //		MicroUI.setDebugModeEnabled(true);
 		//Debugger.setDebugModeEnabled(true);
 
-		ThemeManager.setTheme(new ThemeGray());
+		// ThemeManager.setTheme(new ThemeGray());
 
 		cm = ContainerManager.getInstance();
 
@@ -105,24 +103,25 @@ public final class Launcher extends PApplet {
 		ContainerMenuItem.add(new Button("show all components").onClick(() -> cm.switchOn("all_components")),
 				new ColumnLayoutParams(.2f));
 
-		MenuButton menuButtonOfComponents;
+		MenuButton menuComponents;
 		ContainerMenuItem.add(
-				menuButtonOfComponents = new MenuButton(),
+				menuComponents = new MenuButton(),
 				new ColumnLayoutParams(.2f));
 
-		menuButtonOfComponents.add("show component", "Button", "CheckBox", "EditText", "Knob",
-		"LabeledCheckBox", "MenuButton", "Scroll", "Slider", "TextField", "TextView");
+
+		menuComponents.addMenu("Component");
+		menuComponents.getMenu("Component").add("Button","CheckBox","EditText","Knob","LabeledCheckBox","MenuButton","Scroll","Slider","TextField","TextView");
 		
-		menuButtonOfComponents.get("Button").onClick(() -> cm.switchOn("Button"));
-		menuButtonOfComponents.get("CheckBox").onClick(() -> cm.switchOn("CheckBox"));
-		menuButtonOfComponents.get("EditText").onClick(() -> cm.switchOn("EditText"));
-		menuButtonOfComponents.get("Knob").onClick(() -> cm.switchOn("Knob"));
-		menuButtonOfComponents.get("LabeledCheckBox").onClick(() -> cm.switchOn("LabeledCheckBox"));
-		menuButtonOfComponents.get("MenuButton").onClick(() -> cm.switchOn("MenuButton"));
-		menuButtonOfComponents.get("Scroll").onClick(() -> cm.switchOn("Scroll"));
-		menuButtonOfComponents.get("Slider").onClick(() -> cm.switchOn("Slider"));
-		menuButtonOfComponents.get("TextField").onClick(() -> cm.switchOn("TextField"));
-		menuButtonOfComponents.get("TextView").onClick(() -> cm.switchOn("TextView"));
+		menuComponents.get("Button").onClick(() -> cm.switchOn("Button"));
+		menuComponents.get("CheckBox").onClick(() -> cm.switchOn("CheckBox"));
+		menuComponents.get("EditText").onClick(() -> cm.switchOn("EditText"));
+		menuComponents.get("Knob").onClick(() -> cm.switchOn("Knob"));
+		menuComponents.get("LabeledCheckBox").onClick(() -> cm.switchOn("LabeledCheckBox"));
+		menuComponents.get("MenuButton").onClick(() -> cm.switchOn("MenuButton"));
+		menuComponents.get("Scroll").onClick(() -> cm.switchOn("Scroll"));
+		menuComponents.get("Slider").onClick(() -> cm.switchOn("Slider"));
+		menuComponents.get("TextField").onClick(() -> cm.switchOn("TextField"));
+		menuComponents.get("TextView").onClick(() -> cm.switchOn("TextView"));
 
 		container.add(ContainerMenuItem, new GridLayoutParams(1, 1));
 

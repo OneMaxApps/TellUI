@@ -423,10 +423,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private final ImageBuffer prevImage, currentImage;
-		private static final int[][] DIRECTIONS = {{-1,0},{1,0},{0,-1},{0,1}};
+		private static final byte[][] DIRECTIONS = {{-1,0},{1,0},{0,-1},{0,1}};
 		private AnimatorMode animatorMode;
 		private float speed;
-		private int randDirX, randDirY;
+		private byte randDirX, randDirY;
 		private boolean animating, newContainerPrepared, easing;
 
 		private Animator(ContainerManager manager) {
@@ -525,7 +525,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				break;
 			case SLIDE_RANDOM:
 				if (!newContainerPrepared) {
-					final int[] d = DIRECTIONS[(int) ctx.random(DIRECTIONS.length)];
+					final byte[] d = DIRECTIONS[(byte) ctx.random(DIRECTIONS.length)];
 					randDirX = d[0];
 					randDirY = d[1];
 				}
