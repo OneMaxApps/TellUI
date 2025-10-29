@@ -67,6 +67,7 @@ public final class Launcher extends PApplet {
 //		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
 		cm.getByTextId("main").setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
+		
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public final class Launcher extends PApplet {
 		background(32);
 
 		// cm.getContainerByTextId("container_main").getComponentByTextId("edit_text").setSize(mouseX,mouseY);
-
+		// cm.getByTextId("container_main").getByTextId("edit_text").setSize(mouseX,mouseY);
 		// Metrics.printAll();
 		
 	}

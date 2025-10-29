@@ -21,7 +21,7 @@ import processing.core.PApplet;
  * identification.
  * 
  * <p>
- * All visual components must be inherited from this class. and implement the
+ * All visual components must be inherited from this class and implement the
  * {@link #render()} method to determine the rendering logic.
  * </p>
  */
@@ -82,7 +82,7 @@ public abstract class View implements Visible {
 			throw new IllegalArgumentException("Priority cannot be less than zero");
 		}
 		this.priority = priority;
-		
+
 		return this;
 	}
 
@@ -98,15 +98,16 @@ public abstract class View implements Visible {
 	/**
 	 * Sets the numeric identifier of the element.
 	 *
-	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID (Integer.MAX_VALUE))
+	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID
+	 *           (Integer.MAX_VALUE))
 	 * @throws IllegalArgumentException if the identifier is less than 0
 	 */
 	public final View setId(int id) {
-		if(id < MIN_ID) {
+		if (id < MIN_ID) {
 			throw new IllegalArgumentException("Id cannot be negative");
 		}
 		this.id = id;
-		
+
 		return this;
 	}
 
@@ -126,14 +127,14 @@ public abstract class View implements Visible {
 	 *               (or) empty)
 	 */
 	public final View setTextId(final String textId) {
-		requireNonNull(textId,"textId");
-		
+		requireNonNull(textId, "textId");
+
 		if (textId.isBlank()) {
 			throw new IllegalArgumentException("Text id cannot be blank");
 		}
 
 		this.textId = textId;
-		
+
 		return this;
 	}
 

@@ -26,34 +26,36 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 28.10.2025
+//Last Reviewed: 29.10.2025
+
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean initialized, canDraw;
 	private final List<Container> list;
-	private final Animation animation;
+	private final Animator animator;
 	private final TooltipManager tooltipManager;
 	private Container prevContainer, currentContainer;
-	private boolean animationEnabled;
+	private boolean animatorEnabled;
 
 	private ContainerManager() {
 		setVisible(true);
 		list = new ArrayList<Container>();
-		animation = new Animation(this);
+		animator = new Animator(this);
 		tooltipManager = TooltipManager.getInstance();
 
-		setAnimationEnabled(true);
+		setAnimatorEnabled(true);
 
 		getContext().registerMethod("keyPressed", this);
 		getContext().registerMethod("keyEvent", this);
 		getContext().registerMethod("mouseEvent", this);
+
 		new Render();
 	}
 
 	@Override
 	public void render() {
-		if (isAnimationEnabled()) {
-			animation.draw();
+		if (isAnimatorEnabled()) {
+			animator.draw();
 		} else {
 			if (currentContainer != null) {
 				currentContainer.draw();
@@ -66,7 +68,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	@Override
 	public void draw() {
 		if (!canDraw) {
-			throw new RenderException("Cannot call draw() manually. set render mode FLEXIBLE first");
+			throw new RenderException("Cannot call draw() manually. set FLEXIBLE render mode first");
 		}
 		super.draw();
 		debugOnDraw();
@@ -83,6 +85,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void keyEvent(KeyEvent keyEvent) {
+		requireNonNull(keyEvent,"keyEvent");
+		
 		if (keyEvent.getAction() == KeyEvent.PRESS) {
 
 			if (isHotKeySwitchEnabled()) {
@@ -101,6 +105,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
+		requireNonNull(mouseEvent,"mouseEvent");
+		
 		if (currentContainer == null) {
 			return;
 		}
@@ -115,36 +121,36 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		mouseWheel(mouseEvent);
 	}
 
-	public AnimationType getAnimationType() {
-		return animation.getAnimationType();
+	public AnimatorMode getAnimatorMode() {
+		return animator.getAnimatorMode();
 	}
 
-	public void setAnimationType(AnimationType animationType) {
-		animation.setAnimationType(animationType);
+	public void setAnimatorMode(AnimatorMode animatorMode) {
+		animator.setAnimatorMode(animatorMode);
 	}
 
-	public float getAnimationSpeed() {
-		return animation.getRawSpeed();
+	public float getAnimatorSpeed() {
+		return animator.getRawSpeed();
 	}
 
-	public void setAnimationSpeed(float speed) {
-		animation.setSpeed(speed);
+	public void setAnimatorSpeed(float speed) {
+		animator.setSpeed(speed);
 	}
 
-	public boolean isAnimationEasingEnabled() {
-		return animation.isEasingEnabled();
+	public boolean isAnimatorEasingEnabled() {
+		return animator.isEasingEnabled();
 	}
 
-	public void setAnimationEasingEnabled(boolean isEasing) {
-		animation.setEasingEnabled(isEasing);
+	public void setAnimatorEasingEnabled(boolean easing) {
+		animator.setEasingEnabled(easing);
 	}
 
-	public boolean isAnimationEnabled() {
-		return animationEnabled;
+	public boolean isAnimatorEnabled() {
+		return animatorEnabled;
 	}
 
-	public void setAnimationEnabled(boolean animationEnabled) {
-		this.animationEnabled = animationEnabled;
+	public void setAnimatorEnabled(boolean animatorEnabled) {
+		this.animatorEnabled = animatorEnabled;
 	}
 
 	public void add(Container container) {
@@ -193,8 +199,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		launchContainer(container);
 	}
 
-	public void switchOn(Container container, AnimationType animationType) {
-		setAnimationType(animationType);
+	public void switchOn(Container container, AnimatorMode animatorMode) {
+		setAnimatorMode(animatorMode);
 		switchOn(container);
 	}
 
@@ -202,8 +208,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		launchContainer(getById(id));
 	}
 
-	public void switchOn(int id, AnimationType animationType) {
-		setAnimationType(animationType);
+	public void switchOn(int id, AnimatorMode animatorMode) {
+		setAnimatorMode(animatorMode);
 		switchOn(id);
 	}
 
@@ -211,13 +217,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		launchContainer(getByTextId(textId));
 	}
 
-	public void switchOn(String textId, AnimationType animationType) {
-		setAnimationType(animationType);
+	public void switchOn(String textId, AnimatorMode animatorMode) {
+		setAnimatorMode(animatorMode);
 		switchOn(textId);
 	}
 
 	public void switchOnPrevious() {
-		if (animation.isAnimating()) {
+		if (animator.isAnimating()) {
 			return;
 		}
 
@@ -225,7 +231,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void switchOnNext() {
-		if (animation.isAnimating()) {
+		if (animator.isAnimating()) {
 			return;
 		}
 
@@ -293,7 +299,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return instance;
 	}
 
-	public static enum AnimationType {
+	public static enum AnimatorMode {
 		SLIDE_LEFT, SLIDE_RIGHT, SLIDE_TOP, SLIDE_BOTTOM, SLIDE_RANDOM;
 	}
 
@@ -346,7 +352,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		requireNonNull(container, "container");
 
 		if (list.size() < 2) {
-			throw new IllegalStateException("Cannot switch containers, because ContainerManager has less than 2 containers");
+			throw new IllegalStateException(
+					"Cannot switch containers, because ContainerManager has less than 2 containers");
 		}
 
 		if (!list.contains(container)) {
@@ -355,7 +362,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		prevContainer = currentContainer;
 		currentContainer = container;
-		animation.setAnimating(true);
+		animator.setAnimating(true);
 	}
 
 	private void addInternal(Container container) {
@@ -412,16 +419,17 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	private static final class Animation extends View {
+	private static final class Animator extends View {
 		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private final ImageBuffer prevImage, currentImage;
-		private AnimationType animationType;
+		private static final int[][] DIRECTIONS = {{-1,0},{1,0},{0,-1},{0,1}};
+		private AnimatorMode animatorMode;
 		private float speed;
 		private int randDirX, randDirY;
 		private boolean animating, newContainerPrepared, easing;
 
-		private Animation(ContainerManager manager) {
+		private Animator(ContainerManager manager) {
 			super();
 			setVisible(true);
 
@@ -434,17 +442,17 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			currentImage.setSize(ctx.width, ctx.height);
 
 			setSpeed(max(1, ctx.width * .1f));
-			setAnimationType(AnimationType.SLIDE_RANDOM);
+			setAnimatorMode(AnimatorMode.SLIDE_RANDOM);
 			setEasingEnabled(true);
 		}
 
 		@Override
 		protected void render() {
 			if (isAnimating()) {
-				updateAnimation();
-			} 
-			
-			if(!isAnimating()) {
+				update();
+			}
+
+			if (!isAnimating()) {
 				if (prevImage.get() != null) {
 					prevImage.removeTexture();
 				}
@@ -457,7 +465,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 					manager.currentContainer.draw();
 				}
 			}
-			
+
 		}
 
 		public boolean isAnimating() {
@@ -474,17 +482,17 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		public void setSpeed(float speed) {
 			if (speed <= 0) {
-				throw new IllegalArgumentException("Animation speed must be greater than 0");
+				throw new IllegalArgumentException("Animator speed must be greater than 0");
 			}
 			this.speed = speed;
 		}
 
-		public AnimationType getAnimationType() {
-			return animationType;
+		public AnimatorMode getAnimatorMode() {
+			return animatorMode;
 		}
 
-		public void setAnimationType(AnimationType animationType) {
-			this.animationType = requireNonNull(animationType, "animationType");
+		public void setAnimatorMode(AnimatorMode animatorMode) {
+			this.animatorMode = requireNonNull(animatorMode, "animatorMode");
 		}
 
 		public boolean isEasingEnabled() {
@@ -495,14 +503,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			this.easing = easing;
 		}
 
-		private void updateAnimation() {
+		private void update() {
 			if (!prevImage.isLoaded()) {
 				manager.prevContainer.draw();
 				prevImage.set(getScreenBuffer());
 				return;
 			}
 
-			switch (animationType) {
+			switch (animatorMode) {
 			case SLIDE_LEFT:
 				slideDirection(-1, 0);
 				break;
@@ -517,11 +525,9 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				break;
 			case SLIDE_RANDOM:
 				if (!newContainerPrepared) {
-					do {
-						randDirX = (int) ctx.random(-1, 2);
-						randDirY = (int) ctx.random(-1, 2);
-					} while (randDirX != 0 && randDirY != 0 || randDirX == randDirY);
-
+					final int[] d = DIRECTIONS[(int) ctx.random(DIRECTIONS.length)];
+					randDirX = d[0];
+					randDirY = d[1];
 				}
 				slideDirection(randDirX, randDirY);
 				break;
