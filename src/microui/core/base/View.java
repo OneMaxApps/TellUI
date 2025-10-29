@@ -13,7 +13,7 @@ import microui.util.Metrics;
 import processing.core.PApplet;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 28.10.2025
+//Last Reviewed: 29.10.2025
 
 /**
  * Abstract base class for all visual elements in MicroUI. Provides basic
@@ -77,11 +77,13 @@ public abstract class View implements Visible {
 	 * @param priority new rendering priority (must be ≥ 0)
 	 * @throws IllegalArgumentException if priority is less than 0
 	 */
-	public final void setPriority(int priority) {
+	public final View setPriority(int priority) {
 		if (priority < MIN_PRIORITY) {
 			throw new IllegalArgumentException("Priority cannot be less than zero");
 		}
 		this.priority = priority;
+		
+		return this;
 	}
 
 	/**
@@ -99,11 +101,13 @@ public abstract class View implements Visible {
 	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID (Integer.MAX_VALUE))
 	 * @throws IllegalArgumentException if the identifier is less than 0
 	 */
-	public final void setId(int id) {
+	public final View setId(int id) {
 		if(id < MIN_ID) {
 			throw new IllegalArgumentException("Id cannot be negative");
 		}
 		this.id = id;
+		
+		return this;
 	}
 
 	/**
@@ -121,7 +125,7 @@ public abstract class View implements Visible {
 	 * @param textId new text identifier for this View object (cannot be null and
 	 *               (or) empty)
 	 */
-	public final void setTextId(final String textId) {
+	public final View setTextId(final String textId) {
 		requireNonNull(textId,"textId");
 		
 		if (textId.isBlank()) {
@@ -129,6 +133,8 @@ public abstract class View implements Visible {
 		}
 
 		this.textId = textId;
+		
+		return this;
 	}
 
 	/**

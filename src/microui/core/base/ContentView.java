@@ -6,7 +6,8 @@ import microui.core.effect.AbstractShadow;
 import microui.util.Debugger;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 21.10.2025
+//Last Reviewed: 29.10.2025
+
 public abstract class ContentView extends SpatialView {
 	private final Padding padding;
 	private final Margin margin;
@@ -228,8 +229,8 @@ public abstract class ContentView extends SpatialView {
 		return margin.isEnabled();
 	}
 
-	public final ContentView setMarginEnabled(boolean isEnabled) {
-		margin.setEnabled(isEnabled);
+	public final ContentView setMarginEnabled(boolean enabled) {
+		margin.setEnabled(enabled);
 		return this;
 	}
 
@@ -366,33 +367,33 @@ public abstract class ContentView extends SpatialView {
 
 	private final class Padding {
 		float left, right, top, bottom;
-		boolean isEnabled;
+		boolean enabled;
 
 		boolean isEnabled() {
-			return isEnabled;
+			return enabled;
 		}
 
-		void setEnabled(boolean isEnabled) {
-			this.isEnabled = isEnabled;
-			if (isEnabled) {
+		void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+			if (enabled) {
 				checkCorrectState();
 			}
 		}
 
 		float getLeft() {
-			return isEnabled ? left : 0;
+			return enabled ? left : 0;
 		}
 
 		float getRight() {
-			return isEnabled ? right : 0;
+			return enabled ? right : 0;
 		}
 
 		float getTop() {
-			return isEnabled ? top : 0;
+			return enabled ? top : 0;
 		}
 
 		float getBottom() {
-			return isEnabled ? bottom : 0;
+			return enabled ? bottom : 0;
 		}
 
 		void setLeft(float left) {
@@ -425,7 +426,7 @@ public abstract class ContentView extends SpatialView {
 
 		boolean isCorrectNewValue(float currentValue, float newValue) {
 			if (newValue < 0) {
-				throw new IllegalArgumentException("padding cannot be less than zero");
+				throw new IllegalArgumentException("Padding cannot be less than zero");
 			}
 
 			if (newValue == currentValue) {
@@ -437,7 +438,7 @@ public abstract class ContentView extends SpatialView {
 
 		void checkCorrectState() {
 			if (isNegativeDimensionsEnabled()) {
-				throw new IllegalStateException("negative dimensions must be disabled for using Padding system");
+				throw new IllegalStateException("Negative dimensions must be disabled for using Padding system");
 			}
 		}
 
@@ -445,22 +446,22 @@ public abstract class ContentView extends SpatialView {
 
 	private final class Margin {
 		private float left, right, top, bottom;
-		private boolean isEnabled;
+		private boolean enabled;
 
 		float getLeft() {
-			return isEnabled ? left : 0;
+			return enabled ? left : 0;
 		}
 
 		float getRight() {
-			return isEnabled ? right : 0;
+			return enabled ? right : 0;
 		}
 
 		float getTop() {
-			return isEnabled ? top : 0;
+			return enabled ? top : 0;
 		}
 
 		float getBottom() {
-			return isEnabled ? bottom : 0;
+			return enabled ? bottom : 0;
 		}
 
 		void setLeft(float left) {
@@ -484,26 +485,26 @@ public abstract class ContentView extends SpatialView {
 		}
 
 		boolean isEnabled() {
-			return isEnabled;
+			return enabled;
 		}
 
-		void setEnabled(boolean isEnabled) {
-			this.isEnabled = isEnabled;
+		void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 
-			if (isEnabled) {
+			if (enabled) {
 				checkCorrectState();
 			}
 		}
 
 		void checkValue(float value) {
 			if (value < 0) {
-				throw new IllegalArgumentException("margin cannot be less than zero");
+				throw new IllegalArgumentException("Margin cannot be less than zero");
 			}
 		}
 
 		void checkCorrectState() {
 			if (isNegativeDimensionsEnabled()) {
-				throw new IllegalStateException("negative dimensions must be disabled for using Margin system");
+				throw new IllegalStateException("Negative dimensions must be disabled for using Margin system");
 			}
 		}
 	}

@@ -38,6 +38,7 @@ public final class Launcher extends PApplet {
 	@Override
 	public void settings() {
 		fullScreen();
+//		fullScreen(P2D,0);
 	}
 
 	@Override
@@ -65,9 +66,7 @@ public final class Launcher extends PApplet {
 
 //		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
-		cm.getByTextId("main").setConstrainDimensionsEnabled(false);
-	
-		
+		cm.getByTextId("main").setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 	}
 
 	@Override

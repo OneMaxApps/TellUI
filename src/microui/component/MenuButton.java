@@ -80,7 +80,6 @@ public final class MenuButton extends Button implements Scrollable {
 		} else {
 			items.mouseWheel(mouseEvent);
 		}
-
 	}
 
 	public boolean isEmpty() {

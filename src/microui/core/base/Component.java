@@ -13,7 +13,8 @@ import microui.feedback.TooltipContent;
 import microui.feedback.TooltipTextViewContent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 17.10.2025
+//Last Reviewed: 29.10.2025
+
 public abstract class Component extends ContentView {
 	private final Event event;
 	private final InteractionHandler interactionHandler;
@@ -125,8 +126,8 @@ public abstract class Component extends ContentView {
 		return interactionHandler.isEnabled();
 	}
 	
-	public final Component setInteractionHandlerEnabled(boolean isEnabled) {
-		interactionHandler.setEnabled(isEnabled);
+	public final Component setInteractionHandlerEnabled(boolean enabled) {
+		interactionHandler.setEnabled(enabled);
 		
 		return this;
 	}
@@ -245,9 +246,7 @@ public abstract class Component extends ContentView {
 			return content.getText();
 		}
 
-		throw new IllegalStateException("tooltip not instance of TooltipTextViewContent");
+		throw new ClassCastException("Tooltip not instance of TooltipTextViewContent");
 	}
-
-	////////////////////////////////////////////////////
 
 }
