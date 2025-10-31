@@ -2,8 +2,8 @@ package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
-import static microui.Render.getMode;
-import static microui.Render.Mode.STRICT;
+import static microui.RendererConfig.getMode;
+import static microui.RendererConfig.Mode.STRICT;
 import static microui.core.base.ContainerManager.canDraw;
 import static microui.core.base.ContainerManager.isInitialized;
 

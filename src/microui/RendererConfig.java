@@ -1,10 +1,10 @@
 package microui;
 
 import static java.util.Objects.requireNonNull;
-import static microui.Render.Mode.STRICT;
+import static microui.RendererConfig.Mode.STRICT;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 28.10.2025
+//Last Reviewed: 30.10.2025
 
 /**
  *  Provides modes for render control
@@ -13,14 +13,14 @@ import static microui.Render.Mode.STRICT;
  *  </p>
  *  
  */
-public final class Render {
+public final class RendererConfig {
 	private static Mode mode;
 	
 	static {
 		setMode(STRICT);
 	}
 	
-	private Render() {
+	private RendererConfig() {
 		
 	}
 	
@@ -29,7 +29,7 @@ public final class Render {
 	}
 
 	public static void setMode(Mode mode) {
-		Render.mode = requireNonNull(mode,"mode");
+		RendererConfig.mode = requireNonNull(mode,"mode");
 	}
 
 	public static enum Mode {

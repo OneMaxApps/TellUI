@@ -1,6 +1,6 @@
 package microui;
 
-import static microui.Render.Mode.FLEXIBLE;
+import static microui.RendererConfig.Mode.FLEXIBLE;
 
 import microui.component.MenuButton;
 import microui.core.base.ContainerManager;
@@ -24,7 +24,7 @@ public class ComponentLauncher extends PApplet {
 
 	@Override
 	public void setup() {
-		Render.setMode(FLEXIBLE);
+		RendererConfig.setMode(FLEXIBLE);
 		MicroUI.setContext(this);
 		ContainerManager.getInstance();
 
@@ -67,8 +67,7 @@ public class ComponentLauncher extends PApplet {
 		    .add("Properties")
 		    .add("Exit");
 		
-		menuFile.setIcon(loadImage("C:\\Users\\002\\Desktop\\icon.png"), "Open File...");
-		
+
 	}
 
 	@Override
