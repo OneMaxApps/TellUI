@@ -555,7 +555,7 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private final boolean isCloseToRightSide() {
-			return positionX > getWidth() * .9f;
+			return positionX > getWidth() * .8f;
 		}
 
 		private final class Blink {
