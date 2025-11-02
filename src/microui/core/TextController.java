@@ -1,5 +1,6 @@
 package microui.core;
 
+import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.constrain;
 
 import microui.constants.Validation;
@@ -23,9 +24,7 @@ public abstract class TextController {
 	}
 
 	public void set(final String text) {
-		if (text == null) {
-			return;
-		}
+		requireNonNull(text,"text");
 
 		inSetting();
 
@@ -87,7 +86,7 @@ public abstract class TextController {
 		if (validation) {
 			if (isValidChar(ch)) {
 				sb.insert(pos, ch);
-				inInserting();
+				onInsert();
 			}
 		} else {
 			sb.insert(pos, ch);
@@ -162,7 +161,7 @@ public abstract class TextController {
 
 	}
 
-	protected void inInserting() {
+	protected void onInsert() {
 	}
 
 	protected void inSetting() {

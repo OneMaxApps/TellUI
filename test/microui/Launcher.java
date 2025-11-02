@@ -48,7 +48,9 @@ public final class Launcher extends PApplet {
 		// ThemeManager.setTheme(new ThemeGray());
 
 		cm = ContainerManager.getInstance();
-
+		
+		cm.setAnimatorEnabled(false);
+		
 		cm.add(getContainerMain(), "main");
 		cm.add(getContainerAllComponents(), "all_components");
 		cm.add(getContainerWith(button = new Button()), "Button");
