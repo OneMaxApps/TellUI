@@ -10,6 +10,7 @@ import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
 import microui.component.TextView;
+import microui.core.TextController.ValidationMode;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
@@ -68,6 +69,9 @@ public final class Launcher extends PApplet {
 		
 		cm.getByTextId("main").setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
+		TextField tf = (TextField) cm.getByTextId("all_components").getByTextId("text_field");
+		
+		tf.setValidationMode(ValidationMode.ONLY_DIGITS);
 	}
 
 	@Override
@@ -151,7 +155,7 @@ public final class Launcher extends PApplet {
 		container.add(new MenuButton().add("one", "two", "three", "four", "five"), new GridLayoutParams(4, 0));
 		container.add(new Scroll(), new GridLayoutParams(0, 1), "scroll");
 		container.add(new Slider(), new GridLayoutParams(1, 1));
-		container.add(new TextField(), new GridLayoutParams(2, 1));
+		container.add((TextField) new TextField().setTextId("text_field"), new GridLayoutParams(2, 1));
 		container.add(new TextView("TextView"), new GridLayoutParams(3, 1));
 		container.add(new Knob(), new GridLayoutParams(4, 1));
 

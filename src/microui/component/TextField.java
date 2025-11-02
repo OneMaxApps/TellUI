@@ -16,6 +16,7 @@ import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 
 import microui.core.TextController;
+import microui.core.TextController.ValidationMode;
 import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
@@ -64,17 +65,25 @@ public final class TextField extends Component implements KeyPressable {
 		setSize(getMaxWidth(), getMaxHeight());
 		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
+	
+	public ValidationMode getValidationMode() {
+		return text.getValidationMode();
+	}
+	
+	public void setValidationMode(ValidationMode validationMode) {
+		text.setValidationMode(validationMode);
+	}
 
 	public void setText(String text) {
 		this.text.set(text);
 	}
 	
 	public boolean isTextConstrainEnabled() {
-		return text.isConstrain();
+		return text.isConstrainEnabled();
 	}
 	
 	public void setTextConstrainEnabled(boolean enabled) {
-		text.setConstrain(enabled);
+		text.setConstrainEnabled(enabled);
 	}
 
 	public int getMaxChars() {

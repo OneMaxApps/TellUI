@@ -3,20 +3,18 @@ package microui.core;
 import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.constrain;
 
-import microui.constants.Validation;
-
 public abstract class TextController {
 	protected final StringBuilder sb;
-	private boolean validation, constrain;
+	private boolean validationEnabled, constrainEnabled;
 	private static final String STANDART_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
 	private int maxChars;
-	private Validation validationMode;
+	private ValidationMode validationMode;
 
 	public TextController(final String text) {
 		sb = new StringBuilder(text);
-		validation = true;
+		validationEnabled = true;
 		maxChars = 10;
-		validationMode = Validation.ALPHANUMERIC;
+		validationMode = ValidationMode.ALPHANUMERIC;
 	}
 
 	public TextController() {
@@ -24,27 +22,32 @@ public abstract class TextController {
 	}
 
 	public void set(final String text) {
-		requireNonNull(text,"text");
+		requireNonNull(text, "text");
 
-		inSetting();
+		onTextSet();
 
 		if (!isEmpty()) {
 			clear();
 		}
+		
 		insert(0, text);
 
 	}
-
-	public final void setValidationMode(Validation validationMode) {
-		this.validationMode = validationMode;
+	
+	public final ValidationMode getValidationMode() {
+		return validationMode;
 	}
 
-	public final boolean isConstrain() {
-		return constrain;
+	public final void setValidationMode(ValidationMode validationMode) {
+		this.validationMode = requireNonNull(validationMode,"validationMode");
 	}
 
-	public final void setConstrain(boolean constrain) {
-		this.constrain = constrain;
+	public final boolean isConstrainEnabled() {
+		return constrainEnabled;
+	}
+
+	public final void setConstrainEnabled(boolean constrainEnabled) {
+		this.constrainEnabled = constrainEnabled;
 	}
 
 	public final int getMaxChars() {
@@ -52,8 +55,8 @@ public abstract class TextController {
 	}
 
 	public final void setMaxChars(int maxChars) {
-		if (maxChars <= 0) {
-			return;
+		if (maxChars < 1) {
+			throw new IllegalArgumentException("Max chars cannot be less than 1");
 		}
 
 		this.maxChars = maxChars;
@@ -71,19 +74,15 @@ public abstract class TextController {
 		return Integer.parseInt(0 + sb.toString());
 	}
 
-	public final StringBuilder getStringBuilder() {
-		return sb;
-	}
-
 	public final void insert(final int pos, final char ch) {
 		if (pos < 0 || pos > length()) {
 			return;
 		}
-		if (constrain && length() >= maxChars) {
+		if (constrainEnabled && length() >= maxChars) {
 			return;
 		}
 
-		if (validation) {
+		if (validationEnabled) {
 			if (isValidChar(ch)) {
 				sb.insert(pos, ch);
 				onInsert();
@@ -94,17 +93,15 @@ public abstract class TextController {
 	}
 
 	public final void insert(final int pos, final String text) {
-		if (pos < 0 || pos > length()) {
-			return;
+		requireNonNull(text,"text");
+		
+		for(int i = 0; i < text.length(); i++) {
+			insert(pos,text.charAt(i));
 		}
-		sb.insert(pos, text);
 	}
 
 	public final void insert(final int pos, final int num) {
-		if (pos < 0 || pos > length()) {
-			return;
-		}
-		sb.insert(pos, num);
+		insert(pos,num);
 	}
 
 	public final void clear() {
@@ -122,6 +119,7 @@ public abstract class TextController {
 		if (isEmpty()) {
 			return;
 		}
+		
 		sb.deleteCharAt(constrain(pos, 0, length() - 1));
 	}
 
@@ -137,16 +135,16 @@ public abstract class TextController {
 		return sb.length();
 	}
 
-	public final boolean isValidation() {
-		return validation;
+	public final boolean isValidationEnabled() {
+		return validationEnabled;
 	}
 
-	public final void setValidation(boolean validation) {
-		this.validation = validation;
+	public final void setValidationEnabled(boolean validation) {
+		this.validationEnabled = validation;
 	}
 
 	public final boolean isValidChar(final char ch) {
-
+		
 		switch (validationMode) {
 		case ALPHANUMERIC:
 			return STANDART_VALIDATION.contains(String.valueOf(ch)) || Character.isLetterOrDigit(ch);
@@ -164,7 +162,10 @@ public abstract class TextController {
 	protected void onInsert() {
 	}
 
-	protected void inSetting() {
+	protected void onTextSet() {
 	}
 
+	public static enum ValidationMode {
+		ALPHANUMERIC, ONLY_DIGITS, ONLY_LETTERS;
+	}
 }
