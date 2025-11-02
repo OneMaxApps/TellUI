@@ -51,6 +51,7 @@ public final class Launcher extends PApplet {
 		
 		cm.setAnimatorEnabled(false);
 		
+		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerMain(), "main");
 		cm.add(getContainerAllComponents(), "all_components");
 		cm.add(getContainerWith(button = new Button()), "Button");
@@ -60,7 +61,6 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new LabeledCheckBox()), "LabeledCheckBox");
 		cm.add(getContainerWith(new Scroll()), "Scroll");
 		cm.add(getContainerWith(new Slider()), "Slider");
-		cm.add(getContainerWith(new TextField()), "TextField");
 		cm.add(getContainerWith(new TextView()), "TextView");
 		cm.add(getContainerWith(new MenuButton()), "MenuButton");
 
