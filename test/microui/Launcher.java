@@ -10,7 +10,6 @@ import microui.component.Scroll;
 import microui.component.Slider;
 import microui.component.TextField;
 import microui.component.TextView;
-import microui.core.TextController.ValidationMode;
 import microui.core.base.Component;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
@@ -69,9 +68,6 @@ public final class Launcher extends PApplet {
 		
 		cm.getByTextId("main").setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
-		TextField tf = (TextField) cm.getByTextId("all_components").getByTextId("text_field");
-		
-		tf.setValidationMode(ValidationMode.ONLY_DIGITS);
 	}
 
 	@Override

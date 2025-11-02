@@ -517,7 +517,8 @@ public final class TextField extends Component implements KeyPressable {
 				
 			}
 			
-			sb.delete(selection.getEffectiveStartColumn(), selection.getEffectiveEndColumn());
+			remove(selection.getEffectiveStartColumn(), selection.getEffectiveEndColumn());
+			
 		}
 
 		private float getWidth() {

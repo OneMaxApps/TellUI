@@ -4,9 +4,9 @@ import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.constrain;
 
 public abstract class TextController {
-	protected final StringBuilder sb;
-	private boolean validationEnabled, constrainEnabled;
 	private static final String STANDART_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
+	private final StringBuilder sb;
+	private boolean validationEnabled, constrainEnabled;
 	private int maxChars;
 	private ValidationMode validationMode;
 
@@ -14,7 +14,7 @@ public abstract class TextController {
 		sb = new StringBuilder(text);
 		validationEnabled = true;
 		maxChars = 10;
-		validationMode = ValidationMode.ALPHANUMERIC;
+		validationMode = ValidationMode.ALL;
 	}
 
 	public TextController() {
@@ -101,7 +101,7 @@ public abstract class TextController {
 	}
 
 	public final void insert(final int pos, final int num) {
-		insert(pos,num);
+		insert(pos,String.valueOf(num));
 	}
 
 	public final void clear() {
@@ -121,6 +121,10 @@ public abstract class TextController {
 		}
 		
 		sb.deleteCharAt(constrain(pos, 0, length() - 1));
+	}
+	
+	public final void remove(int firstChar, int lastChar) {
+		sb.delete(firstChar, lastChar);
 	}
 
 	public final void removeFirstChar() {
@@ -146,7 +150,7 @@ public abstract class TextController {
 	public final boolean isValidChar(final char ch) {
 		
 		switch (validationMode) {
-		case ALPHANUMERIC:
+		case ALL:
 			return STANDART_VALIDATION.contains(String.valueOf(ch)) || Character.isLetterOrDigit(ch);
 		case ONLY_DIGITS:
 			return Character.isDigit(ch);
@@ -166,6 +170,6 @@ public abstract class TextController {
 	}
 
 	public static enum ValidationMode {
-		ALPHANUMERIC, ONLY_DIGITS, ONLY_LETTERS;
+		ALL, ONLY_DIGITS, ONLY_LETTERS;
 	}
 }
