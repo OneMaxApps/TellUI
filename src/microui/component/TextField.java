@@ -23,6 +23,8 @@ import microui.core.TextController.ValidationMode;
 import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
+import microui.core.style.Color;
+import microui.core.style.GradientColor;
 import microui.core.style.Stroke;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
@@ -32,8 +34,15 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 
 public final class TextField extends Component implements KeyPressable {
-	private static final int LEFT_OFFSET = 10;
-
+	private static final int DEFAULT_MIN_WIDTH = 20;
+	private static final int DEFAULT_MIN_HEIGHT = 10;
+	private static final int DEFAULT_MAX_WIDTH = 200;
+	private static final int DEFAULT_MAX_HEIGHT = 40;
+	
+	private static final int DEFAULT_HORIZONTAL_PADDING = 10;
+	private static final int DEFAULT_VERTICAL_PADDING = 5;
+	private static final int DEFAULT_SCROLL_VALUE = 0;
+	
 	private final Stroke stroke;
 
 	private final Text text;
@@ -47,17 +56,22 @@ public final class TextField extends Component implements KeyPressable {
 
 	public TextField(float x, float y, float w, float h) {
 		super(x, y, w, h);
-		setMinSize(20, 10);
-		setMaxSize(200, 40);
-		setBackgroundColor(getTheme().getEditableBackgroundColor());
-
+		setMinSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT);
+		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
+		setPadding(DEFAULT_HORIZONTAL_PADDING,DEFAULT_VERTICAL_PADDING);
+		
+		final AbstractColor tc = getTheme().getEditableBackgroundColor();
+		final Color preFocusedColor = new Color(tc.getRed(),tc.getGreen(),tc.getBlue(),200);
+		final GradientColor gd = new GradientColor(preFocusedColor, tc, () -> isFocused());
+		setBackgroundColor(gd);
+		
 		stroke = new Stroke();
 
 		text = new Text(this);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
 
-		scroll = new BoundedValue(0);
+		scroll = new BoundedValue(DEFAULT_SCROLL_VALUE);
 
 		setTextSize(getMaxHeight());
 
@@ -70,7 +84,6 @@ public final class TextField extends Component implements KeyPressable {
 				selection.selectAll();
 			}
 		});
-		
 	}
 
 	public TextField() {
@@ -273,7 +286,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		ctx.pushStyle();
 		getBackgroundColor().apply();
-		ctx.rect(getX(), getY(), getWidth(), getHeight());
+		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 
 		pg.beginDraw();
 		pg.clear();
@@ -285,11 +298,7 @@ public final class TextField extends Component implements KeyPressable {
 		pg.endDraw();
 
 		ctx.image(pg, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
-
-		if (!focused) {
-			ctx.fill(0, 10);
-			ctx.rect(getX(), getY(), getWidth(), getHeight());
-		}
+		
 		ctx.popStyle();
 
 		ctx.pushStyle();
@@ -577,9 +586,9 @@ public final class TextField extends Component implements KeyPressable {
 
 		private void recalculatePositionX() {
 			if (textField.scroll == null) {
-				x = LEFT_OFFSET;
+				x = 0;
 			} else {
-				x = LEFT_OFFSET - textField.scroll.get();
+				x = -textField.scroll.get();
 			}
 		}
 		
@@ -619,7 +628,7 @@ public final class TextField extends Component implements KeyPressable {
 			try {
 				textWidth = textField.pg.textWidth(getAsString());
 			} catch(NullPointerException e) {
-				// ignore
+				e.printStackTrace();
 			}
 			
 		}
@@ -658,7 +667,7 @@ public final class TextField extends Component implements KeyPressable {
 				pg.pushStyle();
 				color.applyStroke(pg);
 				pg.strokeWeight(getWeight());
-				pg.line(positionX + LEFT_OFFSET, positionY, positionX + LEFT_OFFSET, height);
+				pg.line(positionX, positionY, positionX, height);
 				pg.popStyle();
 			}
 
@@ -843,7 +852,7 @@ public final class TextField extends Component implements KeyPressable {
 			pg.pushStyle();
 			pg.noStroke();
 			color.apply(pg);
-			pg.rect(x + LEFT_OFFSET - tf.scroll.get(), y, startColumn < endColumn ? w : -w, h);
+			pg.rect(x - tf.scroll.get(), y, startColumn < endColumn ? w : -w, h);
 			pg.popStyle();
 		}
 
