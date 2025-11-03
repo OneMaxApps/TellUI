@@ -1,7 +1,7 @@
 package microui.component;
 
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static microui.util.Value.constrain;
+import static microui.util.MathUtils.constrain;
 
 import microui.constants.Orientation;
 import microui.core.LinearRangeControl;

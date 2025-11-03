@@ -160,12 +160,12 @@ public final class Launcher extends PApplet {
 
 	private Container getContainerWith(Component component) {
 		Container container = new Container(new GridLayout(11, 11));
-		//container.setMode(IGNORE_CONSTRAINTS);
+		container.setMode(Container.Mode.IGNORE_CONSTRAINTS);
 
 		if (component instanceof EditText) {
 			container.add(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");
 		} else {
-			container.add(component, new GridLayoutParams(5, 5), "edit_text");
+			container.add(component, new GridLayoutParams(4, 5, 3, 1));
 		}
 
 		return container;

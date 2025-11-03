@@ -4,18 +4,18 @@ import microui.core.base.Component;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
-import microui.util.Value;
+import microui.util.BoundedValue;
 import processing.event.MouseEvent;
 
 public abstract class RangeControl extends Component implements Scrollable {
-	private final Value value;
+	private final BoundedValue value;
 	private final Scrolling scrolling;
 	private final Stroke stroke;
 
 	public RangeControl(float x, float y, float width, float height) {
 		super(x, y, width, height);
 
-		value = new Value(0, 100, 0);
+		value = new BoundedValue(0, 100, 0);
 		scrolling = new Scrolling(this);
 		stroke = new Stroke();
 	}
@@ -84,7 +84,7 @@ public abstract class RangeControl extends Component implements Scrollable {
 		this.value.setSilently(value);
 	}
 
-	protected final Value getMutableValue() {
+	protected final BoundedValue getMutableValue() {
 		return value;
 
 	}
