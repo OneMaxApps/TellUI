@@ -162,11 +162,11 @@ public abstract class AbstractEventSystem {
 
 			int x, y, w, h;
 
-			if (spatialView instanceof Component component) {
-				x = (int) component.getPadX();
-				y = (int) component.getPadY();
-				w = (int) component.getPadWidth();
-				h = (int) component.getPadHeight();
+			if (spatialView instanceof ContentView c) {
+				x = (int) c.getPadX();
+				y = (int) c.getPadY();
+				w = (int) c.getPadWidth();
+				h = (int) c.getPadHeight();
 			} else {
 				x = (int) spatialView.getX();
 				y = (int) spatialView.getY();
