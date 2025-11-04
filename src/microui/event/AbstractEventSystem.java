@@ -3,7 +3,7 @@ package microui.event;
 import static java.util.Objects.requireNonNull;
 
 import microui.MicroUI;
-import microui.core.base.Component;
+import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.util.Metrics;
 

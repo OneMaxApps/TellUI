@@ -75,10 +75,12 @@ public final class TextField extends Component implements KeyPressable {
 		setTextSize(getMaxHeight());
 		
 		onDoubleClick(() -> {
-			if (selection.isSelected()) {
+			selection.selectWord();
+		});
+		
+		onPress(() -> {
+			if(selection.isSelected()) {
 				selection.reset();
-			} else {
-				selection.selectAll();
 			}
 		});
 	}
@@ -139,7 +141,6 @@ public final class TextField extends Component implements KeyPressable {
 
 	public void setCursorColor(AbstractColor color) {
 		cursor.setColor(color);
-		
 	}
 
 	public AbstractColor getSelectionColor() {
@@ -644,6 +645,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private static final class Cursor {
+		private static final int DEFAULT_CURSOR_WEIGHT = 2;
 		private static final int MIN_CURSOR_WEIGHT = 1;
 		private final TextField tf;
 		private AbstractColor color;
@@ -655,7 +657,7 @@ public final class TextField extends Component implements KeyPressable {
 			this.tf = requireNonNull(textField,"textField");
 			
 			color = getTheme().getCursorColor();
-			setWeight(2);
+			setWeight(DEFAULT_CURSOR_WEIGHT);
 			column = new Column();
 			blink = new Blink();
 			updateTransforms();
@@ -814,8 +816,12 @@ public final class TextField extends Component implements KeyPressable {
 					positionX = 0;
 					return;
 				}
-
-				positionX = tf.pg.textWidth(tf.text.getAsString().substring(0, column)) - tf.scroll.get();
+				
+				final String text = tf.text.getAsString();
+				final float scrollValue = tf.scroll.get();
+				final float subTextWidth =  tf.pg.textWidth(text.substring(0, column));
+				
+				positionX = subTextWidth - scrollValue;
 			}
 
 			private float getCurrentCharWidth() {
@@ -950,6 +956,38 @@ public final class TextField extends Component implements KeyPressable {
 		private void selectAll() {
 			startColumn = 0;
 			endColumn = tf.text.length();
+			recalculateBounds();
+		}
+		
+		private void selectWord() {
+			final String str = tf.text.getAsString();
+			final int currentColumn = (int) constrain(tf.cursor.column.get(),0,str.length()-1);
+			
+			if(!Character.isLetterOrDigit(str.charAt(currentColumn))) {
+				selectAll();
+				return;
+			}
+			
+			int start = 0;
+			
+			for(int i = currentColumn; i > 0; i--) {
+				if(str.charAt(i) == ' ') {
+					start = i+1;
+					break;
+				}
+			}
+			
+			int end = str.length();
+			
+			for(int i = currentColumn; i < str.length(); i++) {
+				if(str.charAt(i) == ' ') {
+					end = i;
+					break;
+				}
+			}
+			
+			startColumn = start;
+			endColumn = end;
 			recalculateBounds();
 		}
 
