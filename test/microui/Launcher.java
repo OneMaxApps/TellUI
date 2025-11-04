@@ -51,7 +51,10 @@ public final class Launcher extends PApplet {
 		
 		cm.setAnimatorEnabled(false);
 		
-		cm.add(getContainerWith(new TextField().setFont(createFont("C:\\Windows\\Fonts\\ALGER.TTF",24))), "TextField");
+		TextField tf = new TextField();
+		tf.setFont(createFont("C:\\Windows\\Fonts\\consolai.ttf",24));
+		
+		cm.add(getContainerWith(tf), "TextField");
 		cm.add(getContainerMain(), "main");
 		cm.add(getContainerAllComponents(), "all_components");
 		cm.add(getContainerWith(button = new Button()), "Button");
@@ -65,8 +68,6 @@ public final class Launcher extends PApplet {
 		cm.add(getContainerWith(new MenuButton()), "MenuButton");
 
 //		button.setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
-		
-		cm.getByTextId("main").setImage(loadImage("C:\\Users\\002\\Downloads\\i.jpg"));
 		
 	}
 

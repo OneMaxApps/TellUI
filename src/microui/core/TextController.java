@@ -3,6 +3,8 @@ package microui.core;
 import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.constrain;
 
+import microui.util.Debugger;
+
 public abstract class TextController {
 	private static final String STANDART_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
 	private final StringBuilder sb;
@@ -71,7 +73,15 @@ public abstract class TextController {
 	}
 
 	public final int getDigits() {
-		return Integer.parseInt(0 + sb.toString());
+		try {
+			return Integer.parseInt(sb.toString());
+		} catch(NumberFormatException e) {
+			if(Debugger.isDebugModeEnabled()) {
+				System.err.println("Invalid number format in TextController when validation mode: DIGITS_ONLY.\nInput: "+sb.toString());
+			}
+			
+			return 0;
+		}
 	}
 
 	public final void insert(final int pos, final char ch) {

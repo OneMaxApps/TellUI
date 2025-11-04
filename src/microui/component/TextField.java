@@ -60,10 +60,7 @@ public final class TextField extends Component implements KeyPressable {
 		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
 		setPadding(DEFAULT_HORIZONTAL_PADDING,DEFAULT_VERTICAL_PADDING);
 		
-		final AbstractColor tc = getTheme().getEditableBackgroundColor();
-		final Color preFocusedColor = new Color(tc.getRed(),tc.getGreen(),tc.getBlue(),200);
-		final GradientColor gd = new GradientColor(preFocusedColor, tc, () -> isFocused());
-		setBackgroundColor(gd);
+		prepareBackgroundColor();
 		
 		stroke = new Stroke();
 
@@ -73,9 +70,9 @@ public final class TextField extends Component implements KeyPressable {
 
 		scroll = new BoundedValue(DEFAULT_SCROLL_VALUE);
 
-		setTextSize(getMaxHeight());
-
 		createPGraphics();
+
+		setTextSize(getMaxHeight());
 		
 		onDoubleClick(() -> {
 			if (selection.isSelected()) {
@@ -88,10 +85,10 @@ public final class TextField extends Component implements KeyPressable {
 
 	public TextField() {
 		this(0, 0, 0, 0);
-		setSize(getMaxWidth(), getMaxHeight());
-		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
+		prepareBoundsInCenter();
 	}
 
+	// == Clean API ==
 	public ValidationMode getValidationMode() {
 		return text.getValidationMode();
 	}
@@ -142,7 +139,7 @@ public final class TextField extends Component implements KeyPressable {
 
 	public void setCursorColor(AbstractColor color) {
 		cursor.setColor(color);
-		;
+		
 	}
 
 	public AbstractColor getSelectionColor() {
@@ -202,30 +199,8 @@ public final class TextField extends Component implements KeyPressable {
 	public void setFocused(boolean focused) {
 		this.focused = focused;
 	}
-
-	@Override
-	public void onChangeBounds() {
-		super.onChangeBounds();
-
-		if (text != null) {
-			text.recalculatePosition();
-		}
-
-		if (scroll != null) {
-			updateScrollMax();
-		}
-
-		if (cursor != null) {
-			cursor.updateTransforms();
-		}
-
-		if (selection != null) {
-			selection.recalculateBounds();
-		}
-
-		componentSizeChanged = true;
-	}
-
+	//////////////////////////////////////////
+	
 	@Override
 	public void keyPressed() {
 		if (!focused) {
@@ -279,6 +254,29 @@ public final class TextField extends Component implements KeyPressable {
 		updateScrollMax();
 		cursor.column.updatePositionX();
 	}
+	
+	@Override
+	protected void onChangeBounds() {
+		super.onChangeBounds();
+
+		if (text != null) {
+			text.recalculatePosition();
+		}
+
+		if (scroll != null) {
+			updateScrollMax();
+		}
+
+		if (cursor != null) {
+			cursor.updateTransforms();
+		}
+
+		if (selection != null) {
+			selection.recalculateBounds();
+		}
+
+		componentSizeChanged = true;
+	}
 
 	@Override
 	protected void render() {
@@ -308,6 +306,18 @@ public final class TextField extends Component implements KeyPressable {
 		ctx.popStyle();
 
 		mouseEvents();
+	}
+	
+	private void prepareBackgroundColor() {
+		final AbstractColor tc = getTheme().getEditableBackgroundColor();
+		final Color preFocusedColor = new Color(tc.getRed(),tc.getGreen(),tc.getBlue(),200);
+		final GradientColor gd = new GradientColor(preFocusedColor, tc, () -> isFocused());
+		setBackgroundColor(gd);
+	}
+	
+	private void prepareBoundsInCenter() {
+		setSize(getMaxWidth(), getMaxHeight());
+		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 	
 	private void pasteTextFromClipboard() {
@@ -493,6 +503,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private static final class Text extends TextController {
+		private static final int MIN_TEXT_SIZE = 1;
 		private final TextField textField;
 		private AbstractColor color;
 		private PFont font;
@@ -534,8 +545,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public final void setTextSize(float textSize) {
-			if(textSize < 1) {
-				throw new IllegalArgumentException("Text size must be >= 1");
+			if(textSize < MIN_TEXT_SIZE) {
+				throw new IllegalArgumentException("Text size must be >= " + MIN_TEXT_SIZE);
 			}
 			if(this.textSize == textSize) {
 				return;
@@ -621,16 +632,9 @@ public final class TextField extends Component implements KeyPressable {
 		}
 		
 		private void recalculateTextWidth() {
-			if(textField.pg == null) {
-				return;
-			}
-			
-			try {
+			if (textField.pg != null && textField.pg.textFont != null) {
 				textWidth = textField.pg.textWidth(getAsString());
-			} catch(NullPointerException e) {
-				e.printStackTrace();
 			}
-			
 		}
 		
 		private float getWidth() {
@@ -640,6 +644,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private static final class Cursor {
+		private static final int MIN_CURSOR_WEIGHT = 1;
 		private final TextField tf;
 		private AbstractColor color;
 		private final Blink blink;
@@ -686,8 +691,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void setWeight(float weight) {
-			if(weight < 1) {
-				throw new IllegalArgumentException("Weight of cursor cannot be less than 1");
+			if(weight < MIN_CURSOR_WEIGHT) {
+				throw new IllegalArgumentException("Weight of cursor cannot be less than " + MIN_CURSOR_WEIGHT);
 			}
 			
 			this.weight = weight;
@@ -724,6 +729,10 @@ public final class TextField extends Component implements KeyPressable {
 
 		private static final class Blink {
 			private static final byte MAX_DURATION = 60;
+			private static final byte MIN_BLINK_RATE = 1;
+			private static final byte MAX_BLINK_RATE = MAX_DURATION/2;
+			
+			
 			private byte duration, rate;
 
 			private Blink() {
@@ -735,8 +744,8 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			public void setRate(final float rate) {
-				if (rate < 1 || rate >= MAX_DURATION / 2) {
-					throw new IllegalArgumentException("Rate for blink must be between 1 and " + MAX_DURATION / 2);
+				if (rate < MIN_BLINK_RATE || rate > MAX_BLINK_RATE) {
+					throw new IllegalArgumentException("Rate for blink must be between "+ MIN_BLINK_RATE + " and " + MAX_BLINK_RATE);
 				}
 				this.rate = (byte) rate;
 			}
