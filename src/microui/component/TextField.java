@@ -8,7 +8,7 @@ import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static microui.event.KeyboardManager.checkKey;
+import static microui.event.KeyboardManager.checkKeyPressed;
 import static microui.util.MathUtils.constrain;
 import static microui.util.MathUtils.convert;
 import static processing.core.PConstants.BACKSPACE;
@@ -25,6 +25,7 @@ import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.GradientColor;
+import microui.event.Listener;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
 import microui.util.MathUtils;
@@ -48,6 +49,7 @@ public final class TextField extends Component implements KeyPressable {
 
 	private final BoundedValue scroll;
 	private PGraphics pg;
+	private Listener onTypeListener;
 
 	private boolean focused, componentSizeChanged;
 
@@ -85,7 +87,10 @@ public final class TextField extends Component implements KeyPressable {
 		prepareBoundsInCenter();
 	}
 
-	// == Clean API ==
+	public final void setOnTypeListener(Listener onTypeListener) {
+		this.onTypeListener = requireNonNull(onTypeListener,"onTypeListener");
+	}
+
 	public ValidationMode getValidationMode() {
 		return text.getValidationMode();
 	}
@@ -195,8 +200,7 @@ public final class TextField extends Component implements KeyPressable {
 	public void setFocused(boolean focused) {
 		this.focused = focused;
 	}
-	//////////////////////////////////////////
-
+	
 	@Override
 	public void keyPressed() {
 		if (!focused) {
@@ -205,17 +209,17 @@ public final class TextField extends Component implements KeyPressable {
 
 		cursor.blink.reset();
 
-		if (checkKey(CONTROL)) {
-			if (checkKey(VK_C)) {
+		if (checkKeyPressed(CONTROL)) {
+			if (checkKeyPressed(VK_C)) {
 				Clipboard.set(selection.getText());
 			}
-			if (checkKey(VK_V)) {
+			if (checkKeyPressed(VK_V)) {
 				pasteTextFromClipboard();
 			}
-			if (checkKey(VK_X)) {
+			if (checkKeyPressed(VK_X)) {
 				cutTextToClipboard();
 			}
-			if (checkKey(VK_A)) {
+			if (checkKeyPressed(VK_A)) {
 				selection.selectAll();
 			}
 
@@ -350,7 +354,7 @@ public final class TextField extends Component implements KeyPressable {
 
 	private void onKeyLeftPressed() {
 		cursor.column.back();
-		if (cursor.isInStart()) {
+		if (cursor.isAtStart()) {
 			return;
 		}
 		if (cursor.isCloseToLeftSide()) {
@@ -360,7 +364,7 @@ public final class TextField extends Component implements KeyPressable {
 
 	private void onKeyRightPressed() {
 		cursor.column.next();
-		if (cursor.isInEnd()) {
+		if (cursor.isAtEnd()) {
 			return;
 		}
 		if (cursor.isCloseToRightSide()) {
@@ -382,7 +386,7 @@ public final class TextField extends Component implements KeyPressable {
 			return;
 		}
 
-		if (cursor.isInStart()) {
+		if (cursor.isAtStart()) {
 			return;
 		}
 
@@ -410,6 +414,10 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		text.insert(cursor.column.get(), ctx.key);
+		
+		if (onTypeListener != null) {
+			onTypeListener.action();
+		}
 	}
 
 	private void mouseEventsUpdateState() {
@@ -644,11 +652,13 @@ public final class TextField extends Component implements KeyPressable {
 		private static final int DEFAULT_CURSOR_WEIGHT = 2;
 		private static final int MIN_CURSOR_WEIGHT = 1;
 		private static final int MAX_CURSOR_WEIGHT = 10;
+		private static final float CLOSE_TO_LEFT_SIDE_OF_WIDTH_RATIO = .1f;
+		private static final float CLOSE_TO_RIGHT_SIDE_OF_WIDTH_RATIO = .9f;
 		
 		private final TextField tf;
-		private AbstractColor color;
 		private final Blink blink;
 		private final Column column;
+		private AbstractColor color;
 		private float positionX, positionY, weight, height;
 
 		private Cursor(TextField textField) {
@@ -715,20 +725,20 @@ public final class TextField extends Component implements KeyPressable {
 			height = tf.getHeight() * .9f;
 		}
 
-		private boolean isInStart() {
+		private boolean isAtStart() {
 			return column.get() == 0;
 		}
 
-		private boolean isInEnd() {
+		private boolean isAtEnd() {
 			return column.get() == tf.text.length();
 		}
 
 		private boolean isCloseToLeftSide() {
-			return positionX < tf.getWidth() * .1f;
+			return positionX < tf.getWidth() * CLOSE_TO_LEFT_SIDE_OF_WIDTH_RATIO;
 		}
 
 		private boolean isCloseToRightSide() {
-			return positionX > tf.getWidth() * .8f;
+			return positionX > tf.getWidth() * CLOSE_TO_RIGHT_SIDE_OF_WIDTH_RATIO;
 		}
 
 		private static final class Blink {
@@ -960,6 +970,11 @@ public final class TextField extends Component implements KeyPressable {
 
 		private void selectWord() {
 			final String str = tf.text.getAsString();
+			
+			if (str.isEmpty()) {
+				return;
+			}
+			
 			final int currentColumn = (int) constrain(tf.cursor.column.get(), 0, str.length() - 1);
 
 			if (!Character.isLetterOrDigit(str.charAt(currentColumn))) {

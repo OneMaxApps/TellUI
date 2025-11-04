@@ -136,7 +136,7 @@ public class EditText extends Component implements Scrollable, KeyPressable {
 	@Override
 	public final void mouseWheel(MouseEvent e) {
 		if (isFocused) {
-			if (KeyboardManager.checkKey(CONTROL)) {
+			if (KeyboardManager.checkKeyPressed(CONTROL)) {
 				items.setTextSize(items.getTextSize() + e.getCount());
 				return;
 			}
@@ -161,17 +161,17 @@ public class EditText extends Component implements Scrollable, KeyPressable {
 
 		cursor.resetTimer();
 
-		if (KeyboardManager.checkKey(CONTROL)) {
-			if (KeyboardManager.checkKey(VK_C)) {
+		if (KeyboardManager.checkKeyPressed(CONTROL)) {
+			if (KeyboardManager.checkKeyPressed(VK_C)) {
 				Clipboard.set(selection.getText());
 			}
-			if (KeyboardManager.checkKey(VK_V)) {
+			if (KeyboardManager.checkKeyPressed(VK_V)) {
 				ctrlV();
 			}
-			if (KeyboardManager.checkKey(VK_X)) {
+			if (KeyboardManager.checkKeyPressed(VK_X)) {
 				ctrlX();
 			}
-			if (KeyboardManager.checkKey(VK_A)) {
+			if (KeyboardManager.checkKeyPressed(VK_A)) {
 				items.selectAllText();
 				selection.setSelectedAllText(true);
 			}

@@ -14,7 +14,7 @@ public class KeyboardManager {
 		keys[MicroUI.getContext().keyCode] = true;
 	}
 
-	public static final boolean checkKey(int ch) {
+	public static final boolean checkKeyPressed(int ch) {
 		return keys[ch];
 	}
 
