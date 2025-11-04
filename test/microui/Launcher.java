@@ -52,7 +52,8 @@ public final class Launcher extends PApplet {
 		cm.setAnimatorEnabled(false);
 		
 		TextField tf = new TextField();
-		tf.setFont(createFont("C:\\Windows\\Fonts\\consolai.ttf",24));
+		//tf.setFont(createFont("C:\\Windows\\Fonts\\consolai.ttf",24));
+
 		
 		cm.add(getContainerWith(tf), "TextField");
 		cm.add(getContainerMain(), "main");

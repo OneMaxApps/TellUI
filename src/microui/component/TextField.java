@@ -25,7 +25,6 @@ import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.GradientColor;
-import microui.core.style.Stroke;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
 import microui.util.MathUtils;
@@ -38,12 +37,10 @@ public final class TextField extends Component implements KeyPressable {
 	private static final int DEFAULT_MIN_HEIGHT = 10;
 	private static final int DEFAULT_MAX_WIDTH = 200;
 	private static final int DEFAULT_MAX_HEIGHT = 40;
-	
+
 	private static final int DEFAULT_HORIZONTAL_PADDING = 10;
 	private static final int DEFAULT_VERTICAL_PADDING = 5;
 	private static final int DEFAULT_SCROLL_VALUE = 0;
-	
-	private final Stroke stroke;
 
 	private final Text text;
 	private final Cursor cursor;
@@ -58,12 +55,10 @@ public final class TextField extends Component implements KeyPressable {
 		super(x, y, w, h);
 		setMinSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT);
 		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
-		setPadding(DEFAULT_HORIZONTAL_PADDING,DEFAULT_VERTICAL_PADDING);
-		
+		setPadding(DEFAULT_HORIZONTAL_PADDING, DEFAULT_VERTICAL_PADDING);
+
 		prepareBackgroundColor();
 		
-		stroke = new Stroke();
-
 		text = new Text(this);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
@@ -73,13 +68,13 @@ public final class TextField extends Component implements KeyPressable {
 		createPGraphics();
 
 		setTextSize(getMaxHeight());
-		
+
 		onDoubleClick(() -> {
 			selection.selectWord();
 		});
-		
+
 		onPress(() -> {
-			if(selection.isSelected()) {
+			if (selection.isSelected()) {
 				selection.reset();
 			}
 		});
@@ -181,7 +176,7 @@ public final class TextField extends Component implements KeyPressable {
 
 	public TextField setFont(PFont font) {
 		text.setFont(font);
-		
+
 		return this;
 	}
 
@@ -192,7 +187,7 @@ public final class TextField extends Component implements KeyPressable {
 	public void setHint(String hint) {
 		text.setHint(hint);
 	}
-	
+
 	public boolean isFocused() {
 		return focused;
 	}
@@ -201,13 +196,13 @@ public final class TextField extends Component implements KeyPressable {
 		this.focused = focused;
 	}
 	//////////////////////////////////////////
-	
+
 	@Override
 	public void keyPressed() {
 		if (!focused) {
 			return;
 		}
-		
+
 		cursor.blink.reset();
 
 		if (checkKey(CONTROL)) {
@@ -223,7 +218,7 @@ public final class TextField extends Component implements KeyPressable {
 			if (checkKey(VK_A)) {
 				selection.selectAll();
 			}
-			
+
 			return;
 		}
 
@@ -255,7 +250,7 @@ public final class TextField extends Component implements KeyPressable {
 		updateScrollMax();
 		cursor.column.updatePositionX();
 	}
-	
+
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();
@@ -286,7 +281,15 @@ public final class TextField extends Component implements KeyPressable {
 		ctx.pushStyle();
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
+		
+		screenOffBufferOnDraw();
+		
+		ctx.popStyle();
 
+		mouseEventsUpdateState();
+	}
+
+	private void screenOffBufferOnDraw() {
 		pg.beginDraw();
 		pg.clear();
 		text.draw(pg);
@@ -297,33 +300,28 @@ public final class TextField extends Component implements KeyPressable {
 		pg.endDraw();
 
 		ctx.image(pg, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
-		
-		ctx.popStyle();
-
-		ctx.pushStyle();
-		stroke.apply();
-		ctx.noFill();
-		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
-		ctx.popStyle();
-
-		mouseEvents();
 	}
 	
 	private void prepareBackgroundColor() {
 		final AbstractColor tc = getTheme().getEditableBackgroundColor();
-		final Color preFocusedColor = new Color(tc.getRed(),tc.getGreen(),tc.getBlue(),200);
+		final Color preFocusedColor = new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), 200);
 		final GradientColor gd = new GradientColor(preFocusedColor, tc, () -> isFocused());
 		setBackgroundColor(gd);
 	}
-	
+
 	private void prepareBoundsInCenter() {
 		setSize(getMaxWidth(), getMaxHeight());
 		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
-	
+
 	private void pasteTextFromClipboard() {
 		if (Clipboard.isEmpty()) {
 			return;
+		}
+
+		if (selection.isSelected()) {
+			text.deleteSelectedArea();
+			selection.reset();
 		}
 
 		for (char ch : Clipboard.get().toCharArray()) {
@@ -347,7 +345,7 @@ public final class TextField extends Component implements KeyPressable {
 			text.deleteSelectedArea();
 			selection.reset();
 		}
-		
+
 	}
 
 	private void onKeyLeftPressed() {
@@ -414,25 +412,25 @@ public final class TextField extends Component implements KeyPressable {
 		text.insert(cursor.column.get(), ctx.key);
 	}
 
-	private void mouseEvents() {
+	private void mouseEventsUpdateState() {
 
 		if (isDragging() || isPressed()) {
 			setFocused(true);
-			
+
 			cursor.blink.reset();
-			
+
 			if (text.isEmpty()) {
 				return;
 			}
-			
+
 			final float value = ctx.mouseX - getX();
 			final float start = text.getX();
 			final float end = text.getX() + text.getWidth();
 			final int start1 = 0;
 			final int end1 = text.length();
-			
+
 			final int newColumn = (int) convert(value, start, end, start1, end1);
-			
+
 			cursor.column.set(newColumn);
 		}
 
@@ -453,20 +451,18 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 	}
-	
+
 	private void onDragging() {
-		if (ctx.frameCount % 2 == 0) {
-			if (cursor.isCloseToLeftSide()) {
-				scroll.append(-cursor.column.getCurrentCharWidth());
-			}
-			if (cursor.isCloseToRightSide()) {
-				scroll.append(cursor.column.getCurrentCharWidth());
-			}
-		}
+		final float maxSpeed = constrain(cursor.column.getCurrentCharWidth() / 4, 1,
+				cursor.column.getCurrentCharWidth() / 4);
+		final float distFromMouseToCenterOfTextField = MathUtils.convert(ctx.mouseX, getPadX(),
+				getPadX() + getPadWidth(), -maxSpeed, maxSpeed);
+
+		scroll.append(distFromMouseToCenterOfTextField);
 
 		if (!selection.isStarted()) {
-			selection.setStartColumn(cursor.column.get());
 			selection.setStarted(true);
+			selection.setStartColumn(cursor.column.get());
 		} else {
 			selection.setEndColumn(cursor.column.get());
 		}
@@ -510,12 +506,12 @@ public final class TextField extends Component implements KeyPressable {
 		private PFont font;
 		private String hint;
 		private float x, y, textWidth, textSize;
-		
+
 		private Text(TextField textField) {
 			super();
-			this.textField = requireNonNull(textField,"textField");
+			this.textField = requireNonNull(textField, "textField");
 			color = getTheme().getEditableTextColor();
-			
+
 			recalculatePosition();
 			setTextSize(textField.getHeight() * .8f);
 		}
@@ -524,11 +520,11 @@ public final class TextField extends Component implements KeyPressable {
 			pg.pushStyle();
 
 			color.apply(pg);
-			
-			if(font != null) {
+
+			if (font != null) {
 				pg.textFont(font);
 			}
-			
+
 			pg.textSize(textSize);
 			pg.textAlign(CORNER, CENTER);
 			if (isEmpty() && hint != null) {
@@ -540,21 +536,21 @@ public final class TextField extends Component implements KeyPressable {
 
 			recalculatePositionX();
 		}
-		
+
 		public final float getTextSize() {
 			return textSize;
 		}
 
 		public final void setTextSize(float textSize) {
-			if(textSize < MIN_TEXT_SIZE) {
+			if (textSize < MIN_TEXT_SIZE) {
 				throw new IllegalArgumentException("Text size must be >= " + MIN_TEXT_SIZE);
 			}
-			if(this.textSize == textSize) {
+			if (this.textSize == textSize) {
 				return;
 			}
-			
+
 			this.textSize = textSize;
-			
+
 			recalculateTextWidth();
 		}
 
@@ -573,7 +569,7 @@ public final class TextField extends Component implements KeyPressable {
 		public void setHint(String hint) {
 			this.hint = requireNonNull(hint, "hint");
 		}
-		
+
 		public PFont getFont() {
 			return font;
 		}
@@ -582,9 +578,9 @@ public final class TextField extends Component implements KeyPressable {
 			if (this.font == font) {
 				return;
 			}
-			
-			this.font = requireNonNull(font,"font");
-			
+
+			this.font = requireNonNull(font, "font");
+
 			recalculateTextWidth();
 		}
 
@@ -603,7 +599,7 @@ public final class TextField extends Component implements KeyPressable {
 				x = -textField.scroll.get();
 			}
 		}
-		
+
 		private void recalculatePosition() {
 			recalculatePositionX();
 			y = textField.getHeight() * .5f;
@@ -631,22 +627,24 @@ public final class TextField extends Component implements KeyPressable {
 
 			recalculateTextWidth();
 		}
-		
+
 		private void recalculateTextWidth() {
 			if (textField.pg != null && textField.pg.textFont != null) {
 				textWidth = textField.pg.textWidth(getAsString());
 			}
 		}
-		
+
 		private float getWidth() {
 			return textWidth;
 		}
-		
+
 	}
 
 	private static final class Cursor {
 		private static final int DEFAULT_CURSOR_WEIGHT = 2;
 		private static final int MIN_CURSOR_WEIGHT = 1;
+		private static final int MAX_CURSOR_WEIGHT = 10;
+		
 		private final TextField tf;
 		private AbstractColor color;
 		private final Blink blink;
@@ -654,8 +652,8 @@ public final class TextField extends Component implements KeyPressable {
 		private float positionX, positionY, weight, height;
 
 		private Cursor(TextField textField) {
-			this.tf = requireNonNull(textField,"textField");
-			
+			this.tf = requireNonNull(textField, "textField");
+
 			color = getTheme().getCursorColor();
 			setWeight(DEFAULT_CURSOR_WEIGHT);
 			column = new Column();
@@ -693,10 +691,14 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void setWeight(float weight) {
-			if(weight < MIN_CURSOR_WEIGHT) {
+			if (weight < MIN_CURSOR_WEIGHT) {
 				throw new IllegalArgumentException("Weight of cursor cannot be less than " + MIN_CURSOR_WEIGHT);
 			}
 			
+			if (weight > MAX_CURSOR_WEIGHT) {
+				throw new IllegalArgumentException("Weight of cursor cannot be greater than " + MAX_CURSOR_WEIGHT);
+			}
+
 			this.weight = weight;
 		}
 
@@ -732,9 +734,8 @@ public final class TextField extends Component implements KeyPressable {
 		private static final class Blink {
 			private static final byte MAX_DURATION = 60;
 			private static final byte MIN_BLINK_RATE = 1;
-			private static final byte MAX_BLINK_RATE = MAX_DURATION/2;
-			
-			
+			private static final byte MAX_BLINK_RATE = MAX_DURATION / 2;
+
 			private byte duration, rate;
 
 			private Blink() {
@@ -747,7 +748,8 @@ public final class TextField extends Component implements KeyPressable {
 
 			public void setRate(final float rate) {
 				if (rate < MIN_BLINK_RATE || rate > MAX_BLINK_RATE) {
-					throw new IllegalArgumentException("Rate for blink must be between "+ MIN_BLINK_RATE + " and " + MAX_BLINK_RATE);
+					throw new IllegalArgumentException(
+							"Rate for blink must be between " + MIN_BLINK_RATE + " and " + MAX_BLINK_RATE);
 				}
 				this.rate = (byte) rate;
 			}
@@ -777,10 +779,7 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			private void set(final int column) {
-				if (column < 0 || column > tf.text.length()) {
-					return;
-				}
-				this.column = column;
+				this.column = (int) constrain(column, 0, tf.text.length());
 				updatePositionX();
 			}
 
@@ -816,11 +815,11 @@ public final class TextField extends Component implements KeyPressable {
 					positionX = 0;
 					return;
 				}
-				
+
 				final String text = tf.text.getAsString();
 				final float scrollValue = tf.scroll.get();
-				final float subTextWidth =  tf.pg.textWidth(text.substring(0, column));
-				
+				final float subTextWidth = tf.pg.textWidth(text.substring(0, column));
+
 				positionX = subTextWidth - scrollValue;
 			}
 
@@ -856,8 +855,8 @@ public final class TextField extends Component implements KeyPressable {
 		private boolean started;
 
 		private Selection(TextField textField) {
-			this.tf = requireNonNull(textField,"textField");
-			
+			this.tf = requireNonNull(textField, "textField");
+
 			color = getTheme().getSelectColor();
 			y = textField.getHeight() * .1f;
 			h = textField.getHeight() * .8f;
@@ -886,12 +885,12 @@ public final class TextField extends Component implements KeyPressable {
 			if (tf.pg == null) {
 				return;
 			}
-			
+
 			if (tf.text.isEmpty()) {
 				x = w = 0;
 				return;
 			}
-			
+
 			x = tf.pg.textWidth(tf.text.getAsString().substring(0, getEffectiveStartColumn()));
 			w = tf.pg.textWidth(tf.text.getAsString().substring(getEffectiveStartColumn(), getEffectiveEndColumn()));
 		}
@@ -924,7 +923,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		private void setEndColumn(int endColumn) {
 			endColumn = (int) constrain(endColumn, 0, tf.text.length());
-			
+
 			if (tf.pg == null) {
 				return;
 			}
@@ -958,34 +957,34 @@ public final class TextField extends Component implements KeyPressable {
 			endColumn = tf.text.length();
 			recalculateBounds();
 		}
-		
+
 		private void selectWord() {
 			final String str = tf.text.getAsString();
-			final int currentColumn = (int) constrain(tf.cursor.column.get(),0,str.length()-1);
-			
-			if(!Character.isLetterOrDigit(str.charAt(currentColumn))) {
+			final int currentColumn = (int) constrain(tf.cursor.column.get(), 0, str.length() - 1);
+
+			if (!Character.isLetterOrDigit(str.charAt(currentColumn))) {
 				selectAll();
 				return;
 			}
-			
+
 			int start = 0;
-			
-			for(int i = currentColumn; i > 0; i--) {
-				if(str.charAt(i) == ' ') {
-					start = i+1;
+
+			for (int i = currentColumn; i > 0; i--) {
+				if (str.charAt(i) == ' ') {
+					start = i + 1;
 					break;
 				}
 			}
-			
+
 			int end = str.length();
-			
-			for(int i = currentColumn; i < str.length(); i++) {
-				if(str.charAt(i) == ' ') {
+
+			for (int i = currentColumn; i < str.length(); i++) {
+				if (str.charAt(i) == ' ') {
 					end = i;
 					break;
 				}
 			}
-			
+
 			startColumn = start;
 			endColumn = end;
 			recalculateBounds();
