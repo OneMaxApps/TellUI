@@ -9,9 +9,9 @@ public abstract class TextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
 	private static final int MIN_CONSTRAIN_VALUE = 1;
 	private static char DEFAULT_PASSWORD_CHAR = '*';
-	
+
 	private final StringBuilder sb;
-	private String cachedText,cachedPasswordText;
+	private String cachedText, cachedPasswordText;
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
 	private char customPasswordChar;
@@ -24,20 +24,26 @@ public abstract class TextController {
 		validationEnabled = true;
 		maxChars = 10;
 		validationMode = ValidationMode.ALL;
-		
+
 		setCustomPasswordChar(DEFAULT_PASSWORD_CHAR);
 	}
 
 	public TextController() {
 		this("");
 	}
-	
+
 	public final char getPasswordChar() {
 		return customPasswordChar;
 	}
 
 	public final void setCustomPasswordChar(char customPasswordChar) {
+		if (this.customPasswordChar == customPasswordChar) {
+			return;
+		}
+
 		this.customPasswordChar = customPasswordChar;
+		
+		updateCachedStrings();
 	}
 
 	public final boolean isPasswordModeEnabled() {
@@ -45,7 +51,13 @@ public abstract class TextController {
 	}
 
 	public final void setPasswordModeEnabled(boolean passwordModeEnabled) {
+		if (this.passwordModeEnabled == passwordModeEnabled) {
+			return;
+		}
+		
 		this.passwordModeEnabled = passwordModeEnabled;
+		
+		updateCachedStrings();
 	}
 
 	public final void set(final String text) {
@@ -206,15 +218,14 @@ public abstract class TextController {
 
 	protected void onTextSet() {
 	}
-	
+
 	private void updateCachedStrings() {
 		cachedText = sb.toString();
-		
-		if(!cachedText.isEmpty()) {
+
+		if (passwordModeEnabled) {
 			cachedPasswordText = String.valueOf(customPasswordChar).repeat(cachedText.length());
-		} else {
-			cachedPasswordText = cachedText;
 		}
+		
 	}
 
 	private void updateConstrainedValue() {
@@ -225,7 +236,7 @@ public abstract class TextController {
 			}
 		}
 	}
-	
+
 	private void insertInternal(int pos, char ch) {
 		if (pos < 0 || pos > length()) {
 			return;
