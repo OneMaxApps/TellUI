@@ -23,7 +23,8 @@ public class TextFieldLauncher extends PApplet {
 	
 	@Override
 	public void settings() {
-		fullScreen();
+//		fullScreen();
+		size(800,400);
 	}
 	
 	@Override
@@ -37,7 +38,7 @@ public class TextFieldLauncher extends PApplet {
 		var container = cm.getByTextId("main_container");
 		
 		container.add(new Container(new GridLayout(3,3)), new RowLayoutParams(.8f), "view_container");
-		container.add(new Container(new GridLayout(1,20)), new RowLayoutParams(.2f), "tools_container");
+		container.add(new Container(new GridLayout(1,30)), new RowLayoutParams(.2f), "tools_container");
 		
 
 		Container viewContainer = (Container) container.getByTextId("view_container");
@@ -104,6 +105,7 @@ public class TextFieldLauncher extends PApplet {
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
 		
+
 		tfX.setOnTypeListener(() -> {
 			tfView.setX(tfX.getDigits());
 		});
@@ -119,5 +121,10 @@ public class TextFieldLauncher extends PApplet {
 		tfH.setOnTypeListener(() -> {
 			tfView.setHeight(tfH.getDigits());
 		});
+		
+		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
+		c.add(new TextView("Background"), new GridLayoutParams(0,6));
+		
+		
 	}
 }

@@ -200,7 +200,7 @@ public final class TextField extends Component implements KeyPressable {
 	public void setFocused(boolean focused) {
 		this.focused = focused;
 	}
-	
+
 	@Override
 	public void keyPressed() {
 		if (!focused) {
@@ -514,7 +514,7 @@ public final class TextField extends Component implements KeyPressable {
 		private PFont font;
 		private String hint;
 		private float x, y, textWidth, textSize;
-
+		
 		private Text(TextField textField) {
 			super();
 			this.textField = requireNonNull(textField, "textField");
