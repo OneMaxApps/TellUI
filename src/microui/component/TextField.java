@@ -34,6 +34,7 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 
 public final class TextField extends Component implements KeyPressable {
+	private static final float WIDTH_RATIO_FOR_SCROLL = .8f;
 	private static final int DEFAULT_MIN_WIDTH = 20;
 	private static final int DEFAULT_MIN_HEIGHT = 10;
 	private static final int DEFAULT_MAX_WIDTH = 200;
@@ -103,9 +104,9 @@ public final class TextField extends Component implements KeyPressable {
 		return text.getAsString();
 	}
 
-	public void setText(String text) {
-		this.text.set(text);
-	}
+//	public void setText(String text) {
+//		this.text.set(text);
+//	}
 
 	public boolean isTextConstrainEnabled() {
 		return text.isConstrainEnabled();
@@ -358,7 +359,7 @@ public final class TextField extends Component implements KeyPressable {
 			return;
 		}
 		if (cursor.isCloseToLeftSide()) {
-			scroll.append(-cursor.column.getBackCharWidth());
+			scroll.append(-cursor.column.getPrevCharWidth());
 		}
 	}
 
@@ -431,7 +432,7 @@ public final class TextField extends Component implements KeyPressable {
 				return;
 			}
 
-			final float value = ctx.mouseX - getX();
+			final float value = ctx.mouseX - getX() + cursor.column.getNextCharWidth()/2;
 			final float start = text.getX();
 			final float end = text.getX() + text.getWidth();
 			final int start1 = 0;
@@ -484,12 +485,12 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void updateScrollMax() {
-		if (text.isEmpty() || text.getWidth() < getWidth() * .8f) {
+		if (text.isEmpty() || text.getWidth() < getWidth() * WIDTH_RATIO_FOR_SCROLL) {
 			scroll.setMax(0);
 			return;
 		}
 
-		scroll.setMax((text.getWidth() - getWidth() * .8f));
+		scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
 	}
 
 	private void checkDimensions() {
@@ -502,6 +503,10 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void createPGraphics() {
+		if (pg != null) {
+			pg.dispose();
+		}
+		
 		pg = ctx.createGraphics((int) Math.max(1, getWidth()), (int) Math.max(1, getHeight()), ctx.sketchRenderer());
 		componentSizeChanged = false;
 		Metrics.register(pg);
@@ -521,7 +526,7 @@ public final class TextField extends Component implements KeyPressable {
 			color = getTheme().getEditableTextColor();
 
 			recalculatePosition();
-			setTextSize(textField.getHeight() * .8f);
+			setTextSize(textField.getHeight());
 		}
 
 		public void draw(final PGraphics pg) {
@@ -542,7 +547,7 @@ public final class TextField extends Component implements KeyPressable {
 			}
 			pg.popStyle();
 
-			recalculatePositionX();
+			recalculateTextPositionX();
 		}
 
 		public final float getTextSize() {
@@ -593,14 +598,17 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		@Override
-		protected void onInsert() {
-			textField.cursor.column.next();
-			recalculatePositionX();
-			textField.scroll.append(textField.cursor.column.getBackCharWidth());
+		protected void onAfterInsert() {
+			final Cursor.Column column = textField.cursor.column;
+			final BoundedValue scroll = textField.scroll;
+			
 			recalculateTextWidth();
+			recalculateTextPositionX();
+			column.next();
+			scroll.append(column.getPrevCharWidth());
 		}
 
-		private void recalculatePositionX() {
+		private void recalculateTextPositionX() {
 			if (textField.scroll == null) {
 				x = 0;
 			} else {
@@ -609,7 +617,7 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private void recalculatePosition() {
-			recalculatePositionX();
+			recalculateTextPositionX();
 			y = textField.getHeight() * .5f;
 		}
 
@@ -621,7 +629,12 @@ public final class TextField extends Component implements KeyPressable {
 			final Selection s = textField.selection;
 			final Cursor c = textField.cursor;
 
-			for (int i = s.getEffectiveStartColumn(); i < s.getEffectiveEndColumn(); i++) {
+			final int esc = s.getEffectiveStartColumn();
+			final int eec = s.getEffectiveEndColumn();
+			
+			final int selectedChars = eec - esc;
+			
+			for (int i = 0; i < selectedChars; i++) {
 				final float nextCharWidth = c.column.getNextCharWidth();
 				textField.scroll.append(-nextCharWidth);
 
@@ -631,7 +644,7 @@ public final class TextField extends Component implements KeyPressable {
 
 			}
 
-			remove(s.getEffectiveStartColumn(), s.getEffectiveEndColumn());
+			remove(esc,eec);
 
 			recalculateTextWidth();
 		}
@@ -666,7 +679,7 @@ public final class TextField extends Component implements KeyPressable {
 
 			color = getTheme().getCursorColor();
 			setWeight(DEFAULT_CURSOR_WEIGHT);
-			column = new Column();
+			column = new Column(tf);
 			blink = new Blink();
 			updateTransforms();
 		}
@@ -782,10 +795,12 @@ public final class TextField extends Component implements KeyPressable {
 
 		}
 
-		private final class Column {
+		private static final class Column {
+			private final TextField tf;
 			private int column;
 
-			private Column() {
+			private Column(TextField textField) {
+				tf = requireNonNull(textField,"textField");
 			}
 
 			private void set(final int column) {
@@ -822,7 +837,7 @@ public final class TextField extends Component implements KeyPressable {
 
 			private void updatePositionX() {
 				if (tf.text.isEmpty()) {
-					positionX = 0;
+					tf.cursor.positionX = 0;
 					return;
 				}
 
@@ -830,7 +845,7 @@ public final class TextField extends Component implements KeyPressable {
 				final float scrollValue = tf.scroll.get();
 				final float subTextWidth = tf.pg.textWidth(text.substring(0, column));
 
-				positionX = subTextWidth - scrollValue;
+				tf.cursor.positionX = subTextWidth - scrollValue;
 			}
 
 			private float getCurrentCharWidth() {
@@ -847,7 +862,7 @@ public final class TextField extends Component implements KeyPressable {
 				return tf.pg.textWidth(tf.text.getAsString().charAt((int) Math.min(column + 1, tf.text.length() - 1)));
 			}
 
-			private float getBackCharWidth() {
+			private float getPrevCharWidth() {
 				if (tf.text.isEmpty()) {
 					return 0;
 				}
@@ -868,8 +883,7 @@ public final class TextField extends Component implements KeyPressable {
 			this.tf = requireNonNull(textField, "textField");
 
 			color = getTheme().getSelectColor();
-			y = textField.getHeight() * .1f;
-			h = textField.getHeight() * .8f;
+			h = textField.getHeight();
 		}
 
 		public void draw(final PGraphics pg) {
@@ -889,8 +903,7 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private void recalculateBounds() {
-			y = tf.getHeight() * .1f;
-			h = tf.getHeight() * .8f;
+			h = tf.getHeight();
 
 			if (tf.pg == null) {
 				return;

@@ -6,15 +6,16 @@ import static processing.core.PApplet.constrain;
 import microui.util.Debugger;
 
 public abstract class TextController {
-	private static final String STANDARD_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
+	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:№?*";
 	private static final int MIN_CONSTRAIN_VALUE = 1;
+	private static final int DEFAULT_MAX_CONSTRAIN_VALUE = 4; 
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
 	private final StringBuilder sb;
 	private String cachedText, cachedPasswordText;
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
-	private char customPasswordChar;
+	private char passwordChar;
 	private ValidationMode validationMode;
 
 	public TextController(final String text) {
@@ -22,10 +23,10 @@ public abstract class TextController {
 		updateCachedStrings();
 
 		validationEnabled = true;
-		maxChars = 10;
+		maxChars = DEFAULT_MAX_CONSTRAIN_VALUE;
 		validationMode = ValidationMode.ALL;
 
-		setCustomPasswordChar(DEFAULT_PASSWORD_CHAR);
+		setPasswordChar(DEFAULT_PASSWORD_CHAR);
 	}
 
 	public TextController() {
@@ -33,16 +34,14 @@ public abstract class TextController {
 	}
 
 	public final char getPasswordChar() {
-		return customPasswordChar;
+		return passwordChar;
 	}
 
-	public final void setCustomPasswordChar(char customPasswordChar) {
-		if (this.customPasswordChar == customPasswordChar) {
+	public final void setPasswordChar(char passwordChar) {
+		if (this.passwordChar == passwordChar) {
 			return;
 		}
-
-		this.customPasswordChar = customPasswordChar;
-		
+		this.passwordChar = passwordChar;
 		updateCachedStrings();
 	}
 
@@ -58,19 +57,6 @@ public abstract class TextController {
 		this.passwordModeEnabled = passwordModeEnabled;
 		
 		updateCachedStrings();
-	}
-
-	public final void set(final String text) {
-		requireNonNull(text, "text");
-
-		onTextSet();
-
-		if (!isEmpty()) {
-			clear();
-		}
-
-		insert(0, text);
-
 	}
 
 	public final ValidationMode getValidationMode() {
@@ -103,10 +89,6 @@ public abstract class TextController {
 		this.maxChars = maxChars;
 
 		updateConstrainedValue();
-	}
-
-	public final void set(final TextController text) {
-		set(text.getAsString());
 	}
 
 	public final String getAsString() {
@@ -164,6 +146,9 @@ public abstract class TextController {
 	}
 
 	public final void remove(int firstChar, int lastChar) {
+		firstChar = constrain(firstChar,0,length());
+		lastChar = constrain(lastChar,0,length());
+		
 		sb.delete(firstChar, lastChar);
 
 		updateCachedStrings();
@@ -213,17 +198,16 @@ public abstract class TextController {
 
 	}
 
-	protected void onInsert() {
-	}
-
-	protected void onTextSet() {
+	protected void onAfterInsert() {
 	}
 
 	private void updateCachedStrings() {
 		cachedText = sb.toString();
 
 		if (passwordModeEnabled) {
-			cachedPasswordText = String.valueOf(customPasswordChar).repeat(cachedText.length());
+			cachedPasswordText = String.valueOf(passwordChar).repeat(cachedText.length());
+		} else {
+			cachedPasswordText = null;
 		}
 		
 	}
@@ -238,23 +222,26 @@ public abstract class TextController {
 	}
 
 	private void insertInternal(int pos, char ch) {
-		if (pos < 0 || pos > length()) {
-			return;
-		}
 		if (constrainEnabled && length() >= maxChars) {
 			return;
 		}
-
-		if (validationEnabled) {
-			if (isValidChar(ch)) {
-				sb.insert(pos, ch);
+		
+		pos = constrain(pos,0,length());
+		
+		if(validationEnabled) {
+			if(isValidChar(ch)) {
+				sb.insert(pos,ch);
+				
 				updateCachedStrings();
-				onInsert();
+				onAfterInsert();
 			}
 		} else {
-			sb.insert(pos, ch);
+			sb.insert(pos,ch);
+			
 			updateCachedStrings();
+			onAfterInsert();
 		}
+		
 	}
 
 	public static enum ValidationMode {

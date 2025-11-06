@@ -105,6 +105,7 @@ public class TextFieldLauncher extends PApplet {
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
 		
+//		tfView.setText("Hello World");
 
 		tfX.setOnTypeListener(() -> {
 			tfView.setX(tfX.getDigits());
