@@ -118,7 +118,7 @@ public abstract class TextController {
 			return Integer.parseInt(cachedText);
 		} catch (NumberFormatException e) {
 			if (Debugger.isDebugModeEnabled()) {
-				System.err.println("Invalid number format in TextController when validation mode: DIGITS_ONLY.\nInput: "
+				System.err.println("Invalid number format in TextController. switch validation mode to DIGITS_ONLY.\nInput: "
 						+ cachedText);
 			}
 
