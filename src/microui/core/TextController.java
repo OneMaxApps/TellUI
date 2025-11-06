@@ -8,7 +8,7 @@ import microui.util.Debugger;
 public abstract class TextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&*()_-+=|\\/[]{}<>,. \'\";:№?*";
 	private static final int MIN_CONSTRAIN_VALUE = 1;
-	private static char DEFAULT_PASSWORD_CHAR = '*';
+	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
 	private final StringBuilder sb;
 	private String cachedText, cachedPasswordText;
