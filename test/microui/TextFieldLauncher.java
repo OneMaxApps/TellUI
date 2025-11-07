@@ -105,25 +105,26 @@ public class TextFieldLauncher extends PApplet {
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
 
-		tfX.setOnTypeListener(() -> {
+		tfX.setOnTextChangedListener(() -> {
 			tfView.setX(tfX.getDigits());
 		});
 		
-		tfY.setOnTypeListener(() -> {
+		tfY.setOnTextChangedListener(() -> {
 			tfView.setY(tfY.getDigits());
 		});
 		
-		tfW.setOnTypeListener(() -> {
+		tfW.setOnTextChangedListener(() -> {
 			tfView.setWidth(tfW.getDigits());
 		});
 		
-		tfH.setOnTypeListener(() -> {
+		tfH.setOnTextChangedListener(() -> {
 			//tfView.setHeight(tfH.getDigits());
-//			tfView.setText(tfH.getText());
+			tfView.setText(tfH.getText());
 		});
 		
-//		tfView.setText("Hello");
-//		
+		
+		tfView.setHint("Hint");
+		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
 		c.add(new TextView("Background"), new GridLayoutParams(0,6));
 		

@@ -155,6 +155,10 @@ public abstract class TextController {
 	}
 
 	public final void remove(int firstChar, int lastChar) {
+		if (isEmpty()) {
+			return;
+		}
+		
 		firstChar = constrain(firstChar, 0, length());
 		lastChar = constrain(lastChar, 0, length());
 
@@ -262,29 +266,25 @@ public abstract class TextController {
 		
 		clear();
 
-		boolean hasChanges = false;
-		
-		for (int i = 0; i < text.length(); i++) {
-			if (constrainEnabled && length() >= maxChars) {
-				return;
-			}
-			
-			if (validationEnabled) {
-				if (isValidChar(text.charAt(i))) {
-					sb.insert(i, text.charAt(i));
-					hasChanges = true;
+		if (validationEnabled) {
+			for (int i = 0; i < text.length(); i++) {
+				if (constrainEnabled && length() == maxChars) {
+					break;
 				}
-			} else {
-				sb.insert(i, text.charAt(i));
-				hasChanges = true;
+				if (isValidChar(text.charAt(i))) {
+					sb.append(text.charAt(i));
+				}
+			}
+		} else {
+			sb.append(text);
+			if (constrainEnabled && length() > maxChars) {
+				sb.setLength(maxChars);
+				sb.trimToSize();
 			}
 		}
 		
-		if(hasChanges) {
-			updateCachedStrings();
-			onAfterInsert();
-		}
-		
+		updateCachedStrings();
+		onAfterInsert();
 	}
 
 	public static enum ValidationMode {
