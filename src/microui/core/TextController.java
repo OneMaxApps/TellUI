@@ -8,7 +8,7 @@ import microui.util.Debugger;
 public abstract class TextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:№?*";
 	private static final int MIN_CONSTRAIN_VALUE = 1;
-	private static final int DEFAULT_MAX_CONSTRAIN_VALUE = 4; 
+	private static final int DEFAULT_MAX_CONSTRAIN_VALUE = 4;
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
 	private final StringBuilder sb;
@@ -53,9 +53,9 @@ public abstract class TextController {
 		if (this.passwordModeEnabled == passwordModeEnabled) {
 			return;
 		}
-		
+
 		this.passwordModeEnabled = passwordModeEnabled;
-		
+
 		updateCachedStrings();
 	}
 
@@ -100,8 +100,9 @@ public abstract class TextController {
 			return Integer.parseInt(cachedText);
 		} catch (NumberFormatException e) {
 			if (Debugger.isDebugModeEnabled()) {
-				System.err.println("Invalid number format in TextController. switch validation mode to DIGITS_ONLY.\nInput: "
-						+ cachedText);
+				System.err.println(
+						"Invalid number format in TextController. switch validation mode to DIGITS_ONLY.\nInput: "
+								+ cachedText);
 			}
 
 			return 0;
@@ -122,6 +123,14 @@ public abstract class TextController {
 
 	public final void insert(int pos, int num) {
 		insert(pos, String.valueOf(num));
+	}
+	
+	public final void set(String text) {
+		setInternal(text);
+	}
+	
+	public final void set(StringBuilder text) {
+		setInternal(text.toString());
 	}
 
 	public final void clear() {
@@ -146,9 +155,9 @@ public abstract class TextController {
 	}
 
 	public final void remove(int firstChar, int lastChar) {
-		firstChar = constrain(firstChar,0,length());
-		lastChar = constrain(lastChar,0,length());
-		
+		firstChar = constrain(firstChar, 0, length());
+		lastChar = constrain(lastChar, 0, length());
+
 		sb.delete(firstChar, lastChar);
 
 		updateCachedStrings();
@@ -209,7 +218,7 @@ public abstract class TextController {
 		} else {
 			cachedPasswordText = null;
 		}
-		
+
 	}
 
 	private void updateConstrainedValue() {
@@ -225,19 +234,53 @@ public abstract class TextController {
 		if (constrainEnabled && length() >= maxChars) {
 			return;
 		}
-		
-		pos = constrain(pos,0,length());
-		
-		if(validationEnabled) {
-			if(isValidChar(ch)) {
-				sb.insert(pos,ch);
-				
+
+		pos = constrain(pos, 0, length());
+
+		if (validationEnabled) {
+			if (isValidChar(ch)) {
+				sb.insert(pos, ch);
+
 				updateCachedStrings();
 				onAfterInsert();
 			}
 		} else {
-			sb.insert(pos,ch);
+			sb.insert(pos, ch);
+
+			updateCachedStrings();
+			onAfterInsert();
+		}
+
+	}
+
+	private void setInternal(String text) {
+		requireNonNull(text, "text");
+
+		if(text.equals(cachedText)) {
+			return;
+		}
+		
+		clear();
+
+		boolean hasChanges = false;
+		
+		for (int i = 0; i < text.length(); i++) {
+			if (constrainEnabled && length() >= maxChars) {
+				return;
+			}
 			
+			if (validationEnabled) {
+				if (isValidChar(text.charAt(i))) {
+					sb.insert(i, text.charAt(i));
+					hasChanges = true;
+				}
+			} else {
+				sb.insert(i, text.charAt(i));
+				hasChanges = true;
+			}
+		}
+		
+		if(hasChanges) {
 			updateCachedStrings();
 			onAfterInsert();
 		}

@@ -104,10 +104,6 @@ public final class TextField extends Component implements KeyPressable {
 		return text.getAsString();
 	}
 
-//	public void setText(String text) {
-//		this.text.set(text);
-//	}
-
 	public boolean isTextConstrainEnabled() {
 		return text.isConstrainEnabled();
 	}
@@ -843,8 +839,8 @@ public final class TextField extends Component implements KeyPressable {
 
 				final String text = tf.text.getAsString();
 				final float scrollValue = tf.scroll.get();
-				final float subTextWidth = tf.pg.textWidth(text.substring(0, column));
-
+				float subTextWidth = tf.pg.textWidth(text.substring(0, column));
+				
 				tf.cursor.positionX = subTextWidth - scrollValue;
 			}
 
@@ -866,8 +862,8 @@ public final class TextField extends Component implements KeyPressable {
 				if (tf.text.isEmpty()) {
 					return 0;
 				}
-				return tf.pg.textWidth(
-						tf.text.getAsString().charAt((int) Math.max(0, Math.min(column - 1, tf.text.length() - 1))));
+				
+				return tf.pg.textWidth(tf.text.getAsString().charAt((int) Math.max(0, Math.min(column - 1, tf.text.length() - 1))));
 			}
 		}
 	}

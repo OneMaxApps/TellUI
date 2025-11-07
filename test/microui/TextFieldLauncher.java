@@ -84,17 +84,17 @@ public class TextFieldLauncher extends PApplet {
 		tfX.setValidationMode(ValidationMode.ONLY_DIGITS);
 		tfY.setValidationMode(ValidationMode.ONLY_DIGITS);
 		tfW.setValidationMode(ValidationMode.ONLY_DIGITS);
-		tfH.setValidationMode(ValidationMode.ONLY_DIGITS);
+		//tfH.setValidationMode(ValidationMode.ONLY_DIGITS);
 		
 		tfX.setTextConstrainEnabled(true);
 		tfY.setTextConstrainEnabled(true);
 		tfW.setTextConstrainEnabled(true);
-		tfH.setTextConstrainEnabled(true);
+		//tfH.setTextConstrainEnabled(true);
 		
 		tfX.setMaxChars(4);
 		tfY.setMaxChars(4);
 		tfW.setMaxChars(4);
-		tfH.setMaxChars(4);
+		//tfH.setMaxChars(4);
 		
 		tfX.setHint("Pos: X");
 		tfY.setHint("Pos: Y");
@@ -104,8 +104,6 @@ public class TextFieldLauncher extends PApplet {
 		Container mc = cm.getByTextId("main_container");
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
-		
-//		tfView.setText("Hello World");
 
 		tfX.setOnTypeListener(() -> {
 			tfView.setX(tfX.getDigits());
@@ -120,9 +118,12 @@ public class TextFieldLauncher extends PApplet {
 		});
 		
 		tfH.setOnTypeListener(() -> {
-			tfView.setHeight(tfH.getDigits());
+			//tfView.setHeight(tfH.getDigits());
+//			tfView.setText(tfH.getText());
 		});
 		
+//		tfView.setText("Hello");
+//		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
 		c.add(new TextView("Background"), new GridLayoutParams(0,6));
 		
