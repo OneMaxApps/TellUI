@@ -262,14 +262,14 @@ public final class TextField extends Component implements KeyPressable {
 				
 			case VK_HOME:
 				cursor.column.goToStart();
-				selection.setEndColumn(0);
 				scroll.set(scroll.getMin());
+				selection.setEndColumn(cursor.column.get());
 				break;
 				
 			case VK_END:
 				cursor.column.goToEnd();
-				selection.setEndColumn(cursor.column.get());
 				scroll.set(scroll.getMax());
+				selection.setEndColumn(cursor.column.get());
 				break;
 			
 			default :
@@ -278,6 +278,8 @@ public final class TextField extends Component implements KeyPressable {
 				
 			}
 			
+			cursor.column.updatePositionX();
+			updateScrollMax();
 			return;
 		}
 		
@@ -299,7 +301,10 @@ public final class TextField extends Component implements KeyPressable {
 				selection.selectAll();
 				break;
 			}
-
+			
+			cursor.column.updatePositionX();
+			updateScrollMax();
+			
 			return;
 		}
 
@@ -414,8 +419,8 @@ public final class TextField extends Component implements KeyPressable {
 		pg.clear();
 		text.draw(pg);
 		if (focused) {
-			cursor.draw(pg);
 			selection.draw(pg);
+			cursor.draw(pg);
 		}
 		pg.endDraw();
 
@@ -1007,22 +1012,15 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			private void back() {
-				if (column > 0) {
-					column--;
-					updatePositionX();
-				}
-
+				set(get()-1);
 			}
 
 			private void next() {
-				if (column < tf.text.length()) {
-					column++;
-					updatePositionX();
-				}
+				set(get()+1);
 			}
 
 			private void updatePositionX() {
-				if (tf.text.isEmpty()) {
+				if (tf.isEmpty()) {
 					tf.cursor.positionX = 0;
 					return;
 				}
@@ -1037,26 +1035,30 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			private float getCurrentCharWidth() {
-				if (tf.text.isEmpty()) {
+				if (tf.isEmpty()) {
 					return 0;
 				}
-				return tf.getTextWidth(tf.text.getAsString().charAt((int) Math.min(column, tf.text.length() - 1)));
+				return tf.getTextWidth(tf.getText().charAt((int) constrain(column,0,tf.getText().length()-1)));
 			}
 
 			private float getNextCharWidth() {
-				if (tf.text.isEmpty()) {
+				if (tf.isEmpty() || column == tf.getText().length()-1) {
 					return 0;
 				}
-				return tf.getTextWidth(tf.text.getAsString().charAt((int) Math.min(column + 1, tf.text.length() - 1)));
+				
+				System.out.println("request for next char width");
+				
+				return tf.getTextWidth(tf.getText().charAt((int) constrain(column + 1,0,tf.getText().length()-1)));
 			}
 
 			private float getPrevCharWidth() {
-				if (tf.text.isEmpty()) {
+				if (tf.isEmpty()  || column == 0) {
 					return 0;
 				}
-
-				return tf.getTextWidth(
-						tf.getText().charAt((int) Math.max(0, Math.min(column - 1, tf.text.length() - 1))));
+				
+				System.out.println("request for prev char width");
+				
+				return tf.getTextWidth(tf.getText().charAt((int) constrain(column - 1,0,tf.getText().length() - 1)));
 			}
 		}
 	}
@@ -1120,6 +1122,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		private void setStartColumn(int startColumn) {
 			this.startColumn  = (int) constrain(startColumn, 0, tf.text.length());
+			
 			x = tf.getTextWidth(tf.getText().substring(0, getEffectiveEndColumn()));
 		}
 
