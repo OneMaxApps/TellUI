@@ -237,37 +237,50 @@ public final class TextField extends Component implements KeyPressable {
 
 		cursor.blink.reset();
 
-//		if (e.isShiftDown()) {
-//		
-//			
-//			switch (e.getKeyCode()) {
-//			case LEFT:
-//				if (!selection.isStarted()) {
-//					selection.setStarted(true);
-//					selection.setStartColumn(cursor.column.get());
-//					selection.recalculateBounds();
-//				}
-//				
-//				cursor.column.back();
-//				selection.setEndColumn(cursor.column.get());
-//				selection.recalculateBounds();
-//				return;
-//
-//			case RIGHT:
-//				if (!selection.isStarted()) {
-//					selection.setStarted(true);
-//					selection.setStartColumn(cursor.column.get());
-//					selection.recalculateBounds();
-//				}
-//				
-//				cursor.column.next();
-//				selection.setEndColumn(cursor.column.get());
-//				selection.recalculateBounds();
-//				return;
-//			}
-//			
-//		}
+		if (e.isShiftDown()) {
+		
+			switch(e.getKeyCode()) {
+				case LEFT , RIGHT, VK_HOME, VK_END:
+					if (!selection.isStarted()) {
+						selection.setStartColumn(cursor.column.get());
+						selection.setEndColumn(cursor.column.get());
+						selection.setStarted(true);
+					}
+					break;
+			}
+			
+			switch (e.getKeyCode()) {
+			case LEFT:
+				cursor.column.back();
+				selection.setEndColumn(cursor.column.get());
+				return;
 
+			case RIGHT:
+				cursor.column.next();
+				selection.setEndColumn(cursor.column.get());
+				return;
+				
+			case VK_HOME:
+				cursor.column.goToStart();
+				selection.setEndColumn(0);
+				scroll.set(scroll.getMin());
+				break;
+				
+			case VK_END:
+				cursor.column.goToEnd();
+				selection.setEndColumn(cursor.column.get());
+				scroll.set(scroll.getMax());
+				break;
+			
+			default :
+				onPrintableKeyPressed();
+				break;
+				
+			}
+			
+			return;
+		}
+		
 		if (e.isControlDown()) {
 			switch (e.getKeyCode()) {
 			case VK_C:
@@ -457,6 +470,9 @@ public final class TextField extends Component implements KeyPressable {
 
 	private void onKeyLeftPressed() {
 		cursor.column.back();
+		
+		selection.reset();
+		
 		if (cursor.isAtStart()) {
 			return;
 		}
@@ -467,9 +483,13 @@ public final class TextField extends Component implements KeyPressable {
 
 	private void onKeyRightPressed() {
 		cursor.column.next();
+		
+		selection.reset();
+		
 		if (cursor.isAtEnd()) {
 			return;
 		}
+		
 		if (cursor.isCloseToRightSide()) {
 			scroll.append(cursor.column.getNextCharWidth());
 		}
@@ -550,11 +570,13 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void onKeyHomePressed() {
+		selection.reset();
 		cursor.column.goToStart();
 		scroll.set(scroll.getMin());
 	}
 
 	private void onKeyEndPressed() {
+		selection.reset();
 		cursor.column.goToEnd();
 		scroll.set(scroll.getMax());
 	}
@@ -581,7 +603,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void mouseEventsUpdateState() {
-
+		
 		if (isDragging() || isPressed()) {
 			setFocused(true);
 
@@ -614,8 +636,6 @@ public final class TextField extends Component implements KeyPressable {
 				return;
 			}
 			onDragging();
-		} else {
-			selection.setStarted(false);
 		}
 
 	}
@@ -1007,7 +1027,7 @@ public final class TextField extends Component implements KeyPressable {
 					return;
 				}
 
-				final String text = tf.text.getAsString();
+				final String text = tf.getText();
 				final float scrollValue = tf.scroll.get();
 				float subTextWidth = 0;
 
@@ -1099,11 +1119,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private void setStartColumn(int startColumn) {
-			startColumn = (int) constrain(startColumn, 0, tf.text.length());
-
-			x = tf.getTextWidth(tf.getText().substring(0, startColumn));
-
-			this.startColumn = startColumn;
+			this.startColumn  = (int) constrain(startColumn, 0, tf.text.length());
+			x = tf.getTextWidth(tf.getText().substring(0, getEffectiveEndColumn()));
 		}
 
 		private int getEffectiveEndColumn() {
@@ -1111,11 +1128,9 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private void setEndColumn(int endColumn) {
-			endColumn = (int) constrain(endColumn, 0, tf.text.length());
+			this.endColumn = (int) constrain(endColumn, 0, tf.text.length());
 
 			w = tf.getTextWidth(tf.getText().substring(getEffectiveStartColumn(), getEffectiveEndColumn()));
-
-			this.endColumn = endColumn;
 		}
 
 		private int getStartColumn() {
