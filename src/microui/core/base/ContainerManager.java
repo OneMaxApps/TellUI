@@ -26,7 +26,7 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 29.10.2025
+//Last Reviewed: 8.11.2025
 
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
@@ -83,6 +83,15 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		currentContainer.keyPressed();
 	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (currentContainer == null) {
+			return;
+		}
+
+		currentContainer.keyPressed(e);
+	}
 
 	public void keyEvent(KeyEvent keyEvent) {
 		requireNonNull(keyEvent,"keyEvent");
@@ -97,6 +106,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 			KeyboardManager.keyPressed();
 			keyPressed();
+			keyPressed(keyEvent);
 		}
 		if (keyEvent.getAction() == KeyEvent.RELEASE) {
 			KeyboardManager.keyReleased();

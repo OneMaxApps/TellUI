@@ -17,10 +17,11 @@ import microui.core.style.Color;
 import microui.layout.LayoutManager;
 import microui.layout.LayoutParams;
 import processing.core.PImage;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 29.10.2025
+//Last Reviewed: 08.11.2025
 
 public final class Container extends Component implements KeyPressable, Scrollable {
 	private final List<Entry> entryList;
@@ -79,6 +80,20 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			}
 		}
 
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (entryList.isEmpty()) {
+			return;
+		}
+
+		for (int i = 0; i < entryList.size(); i++) {
+			ContentView contentView = entryList.get(i).contentView();
+			if (contentView instanceof KeyPressable pressable) {
+				pressable.keyPressed(e);
+			}
+		}
 	}
 
 	/**

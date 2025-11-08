@@ -23,6 +23,7 @@ public class TextFieldLauncher extends PApplet {
 	
 	@Override
 	public void settings() {
+//		fullScreen(P2D,0);
 //		fullScreen();
 		size(800,400);
 	}
@@ -84,27 +85,32 @@ public class TextFieldLauncher extends PApplet {
 		tfX.setValidationMode(ValidationMode.ONLY_DIGITS);
 		tfY.setValidationMode(ValidationMode.ONLY_DIGITS);
 		tfW.setValidationMode(ValidationMode.ONLY_DIGITS);
-		//tfH.setValidationMode(ValidationMode.ONLY_DIGITS);
+		tfH.setValidationMode(ValidationMode.ONLY_DIGITS);
 		
 		tfX.setTextConstrainEnabled(true);
 		tfY.setTextConstrainEnabled(true);
 		tfW.setTextConstrainEnabled(true);
-		//tfH.setTextConstrainEnabled(true);
+		tfH.setTextConstrainEnabled(true);
 		
 		tfX.setMaxChars(4);
 		tfY.setMaxChars(4);
 		tfW.setMaxChars(4);
-		//tfH.setMaxChars(4);
+		tfH.setMaxChars(4);
 		
 		tfX.setHint("Pos: X");
 		tfY.setHint("Pos: Y");
 		tfW.setHint("Width:");
 		tfH.setHint("Height:");
 		
+		tfX.setTooltip("Position X");
+		tfY.setTooltip("Position Y");
+		tfW.setTooltip("Width");
+		tfH.setTooltip("Height");
+		
 		Container mc = cm.getByTextId("main_container");
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
-
+		
 		tfX.setOnTextChangedListener(() -> {
 			tfView.setX(tfX.getDigits());
 		});
@@ -118,12 +124,11 @@ public class TextFieldLauncher extends PApplet {
 		});
 		
 		tfH.setOnTextChangedListener(() -> {
-			//tfView.setHeight(tfH.getDigits());
-			tfView.setText(tfH.getText());
+			tfView.setHeight(tfH.getDigits());
 		});
 		
 		
-		tfView.setHint("Hint");
+		tfView.setHint("Example");
 		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
 		c.add(new TextView("Background"), new GridLayoutParams(0,6));

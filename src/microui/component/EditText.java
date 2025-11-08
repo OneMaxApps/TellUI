@@ -42,6 +42,7 @@ import microui.util.Clipboard;
 import microui.util.Metrics;
 import processing.core.PFont;
 import processing.core.PGraphics;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 public class EditText extends Component implements Scrollable, KeyPressable {
@@ -150,9 +151,9 @@ public class EditText extends Component implements Scrollable, KeyPressable {
 		}
 
 	}
-
+	
 	@Override
-	public final void keyPressed() {
+	public void keyPressed(KeyEvent e) {
 		scrollsValuesUpdate();
 
 		if (!isFocused) {
@@ -245,7 +246,6 @@ public class EditText extends Component implements Scrollable, KeyPressable {
 			}
 			break;
 		}
-
 	}
 
 	public final boolean isFocused() {
