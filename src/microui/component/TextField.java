@@ -6,6 +6,7 @@ import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
+import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static microui.util.MathUtils.constrain;
@@ -66,11 +67,15 @@ public final class TextField extends Component implements KeyPressable {
 		prepareBackgroundColor();
 
 		scroll = new BoundedValue(DEFAULT_SCROLL_VALUE);
-
+		
 		text = new Text(this);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
 
+		scroll.setOnChangeValueListener(() -> {
+			cursor.column.recalculateX();
+		});
+		
 		createPGraphics();
 
 		setTextSize(getMaxHeight());
@@ -95,11 +100,7 @@ public final class TextField extends Component implements KeyPressable {
 		return text.isEmpty();
 	}
 
-	public final Listener getOnEnterPressedListener() {
-		return onEnterPressedListener;
-	}
-
-	public final void setOnEnterPressedListener(Listener onEnterPressedListener) {
+	public void setOnEnterPressedListener(Listener onEnterPressedListener) {
 		this.onEnterPressedListener = requireNonNull(onEnterPressedListener, "onEnterPressedListener");
 	}
 
@@ -253,11 +254,17 @@ public final class TextField extends Component implements KeyPressable {
 			case LEFT:
 				cursor.column.back();
 				selection.setEndColumn(cursor.column.get());
+				if (cursor.isCloseToLeftSide()) {
+					scroll.append(-cursor.column.getPrevCharWidth());
+				}
 				return;
 
 			case RIGHT:
 				cursor.column.next();
 				selection.setEndColumn(cursor.column.get());
+				if (cursor.isCloseToRightSide()) {
+					scroll.append(cursor.column.getNextCharWidth());
+				}
 				return;
 				
 			case VK_HOME:
@@ -273,13 +280,15 @@ public final class TextField extends Component implements KeyPressable {
 				break;
 			
 			default :
+				if(selection.isSelected()) {
+					return;
+				}
+				
 				onPrintableKeyPressed();
 				break;
 				
 			}
 			
-			cursor.column.updatePositionX();
-			updateScrollMax();
 			return;
 		}
 		
@@ -301,9 +310,6 @@ public final class TextField extends Component implements KeyPressable {
 				selection.selectAll();
 				break;
 			}
-			
-			cursor.column.updatePositionX();
-			updateScrollMax();
 			
 			return;
 		}
@@ -346,9 +352,6 @@ public final class TextField extends Component implements KeyPressable {
 			onPrintableKeyPressed();
 			break;
 		}
-
-		updateScrollMax();
-		cursor.column.updatePositionX();
 	}
 
 	@Override
@@ -377,7 +380,7 @@ public final class TextField extends Component implements KeyPressable {
 	@Override
 	protected void render() {
 		checkDimensions();
-
+		
 		ctx.pushStyle();
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
@@ -451,8 +454,6 @@ public final class TextField extends Component implements KeyPressable {
 
 		for (char ch : Clipboard.get().toCharArray()) {
 			text.insert(cursor.column.get(), ch);
-			updateScrollMax();
-			cursor.column.updatePositionX();
 		}
 	}
 
@@ -654,14 +655,13 @@ public final class TextField extends Component implements KeyPressable {
 		scroll.append(distFromMouseToCenterOfTextField);
 
 		if (!selection.isStarted()) {
-			selection.setStarted(true);
 			selection.setStartColumn(cursor.column.get());
+			selection.setEndColumn(cursor.column.get());
+			selection.setStarted(true);
 		} else {
 			selection.setEndColumn(cursor.column.get());
 		}
-
-		updateScrollMax();
-		cursor.column.updatePositionX();
+		
 	}
 
 	private boolean mustNotHaveFocus() {
@@ -691,7 +691,10 @@ public final class TextField extends Component implements KeyPressable {
 			pg.dispose();
 		}
 
-		pg = ctx.createGraphics((int) Math.max(1, getWidth()), (int) Math.max(1, getHeight()), ctx.sketchRenderer());
+		final int newWidth = (int) max(1, getWidth());
+		final int newHeight = (int) max(1, getHeight());
+		pg = ctx.createGraphics(newWidth, newHeight, ctx.sketchRenderer());
+		
 		componentSizeChanged = false;
 		Metrics.register(pg);
 	}
@@ -799,6 +802,9 @@ public final class TextField extends Component implements KeyPressable {
 			recalculateTextPositionX();
 			column.next();
 			scroll.append(column.getPrevCharWidth());
+			
+			tf.updateScrollMax();
+			tf.cursor.column.recalculateX();
 		}
 
 		private boolean mustShowHint() {
@@ -994,9 +1000,9 @@ public final class TextField extends Component implements KeyPressable {
 				tf = requireNonNull(textField, "textField");
 			}
 
-			private void set(final int column) {
+			private void set(int column) {
 				this.column = (int) constrain(column, 0, tf.text.length());
-				updatePositionX();
+				recalculateX();
 			}
 
 			private int get() {
@@ -1019,7 +1025,7 @@ public final class TextField extends Component implements KeyPressable {
 				set(get()+1);
 			}
 
-			private void updatePositionX() {
+			private void recalculateX() {
 				if (tf.isEmpty()) {
 					tf.cursor.positionX = 0;
 					return;
@@ -1045,9 +1051,6 @@ public final class TextField extends Component implements KeyPressable {
 				if (tf.isEmpty() || column == tf.getText().length()-1) {
 					return 0;
 				}
-				
-				System.out.println("request for next char width");
-				
 				return tf.getTextWidth(tf.getText().charAt((int) constrain(column + 1,0,tf.getText().length()-1)));
 			}
 
@@ -1055,9 +1058,6 @@ public final class TextField extends Component implements KeyPressable {
 				if (tf.isEmpty()  || column == 0) {
 					return 0;
 				}
-				
-				System.out.println("request for prev char width");
-				
 				return tf.getTextWidth(tf.getText().charAt((int) constrain(column - 1,0,tf.getText().length() - 1)));
 			}
 		}
@@ -1124,6 +1124,7 @@ public final class TextField extends Component implements KeyPressable {
 			this.startColumn  = (int) constrain(startColumn, 0, tf.text.length());
 			
 			x = tf.getTextWidth(tf.getText().substring(0, getEffectiveEndColumn()));
+			
 		}
 
 		private int getEffectiveEndColumn() {
@@ -1199,6 +1200,10 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private boolean isSelectedAll() {
+			if (tf.isEmpty()) {
+				return false;
+			}
+			
 			return getEffectiveStartColumn() == 0 && getEffectiveEndColumn() == tf.text.length();
 		}
 
