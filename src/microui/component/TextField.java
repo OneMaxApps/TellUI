@@ -452,8 +452,11 @@ public final class TextField extends Component implements KeyPressable {
 			selection.reset();
 		}
 
-		for (char ch : Clipboard.get().toCharArray()) {
-			text.insert(cursor.column.get(), ch);
+		text.insert(cursor.column.get(), Clipboard.get());
+		
+		for (int i = 0; i < Clipboard.get().length(); i++) {
+			cursor.column.next();
+			scroll.append(cursor.column.getCurrentCharWidth());
 		}
 	}
 
@@ -471,7 +474,7 @@ public final class TextField extends Component implements KeyPressable {
 			text.deleteSelectedArea();
 			selection.reset();
 		}
-
+		
 	}
 
 	private void onKeyLeftPressed() {
@@ -798,13 +801,23 @@ public final class TextField extends Component implements KeyPressable {
 			final Cursor.Column column = tf.cursor.column;
 			final BoundedValue scroll = tf.scroll;
 
-			recalculateTextWidth();
-			recalculateTextPositionX();
 			column.next();
 			scroll.append(column.getPrevCharWidth());
+		}
+		
+		@Override
+		protected void onTextChanged() {
+			if (tf == null) {
+				return;
+			}
+			
+			recalculateTextWidth();
+			recalculateTextPositionX();
 			
 			tf.updateScrollMax();
 			tf.cursor.column.recalculateX();
+			
+			System.out.println("Text changed");
 		}
 
 		private boolean mustShowHint() {
@@ -835,9 +848,10 @@ public final class TextField extends Component implements KeyPressable {
 
 			for (int i = 0; i < selectedChars; i++) {
 				final float nextCharWidth = c.column.getNextCharWidth();
-				tf.scroll.append(-nextCharWidth);
+				
 
 				if (s.getStartColumn() < s.getEndColumn()) {
+					tf.scroll.append(-nextCharWidth);
 					c.column.back();
 				}
 

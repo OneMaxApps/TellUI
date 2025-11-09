@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 public final class Debugger {
 	private static String additionalInfo = "";
 	
-	private static boolean isDebugModeEnabled,isHotKeySwitchEnabled;
+	private static boolean enabled,hotKeySwitchEnabled;
 	
 	static {
 		setHotKeySwitchEnabled(true);
@@ -15,12 +15,12 @@ public final class Debugger {
 		
 	}
 	
-	public static boolean isDebugModeEnabled() {
-		return isDebugModeEnabled;
+	public static boolean isEnabled() {
+		return enabled;
 	}
 
-	public static void setDebugModeEnabled(boolean isDebugModeEnabled) {
-		Debugger.isDebugModeEnabled = isDebugModeEnabled;
+	public static void setEnabled(boolean isDebugModeEnabled) {
+		Debugger.enabled = isDebugModeEnabled;
 	}
 
 	public static String getAdditionalInfo() {
@@ -32,11 +32,11 @@ public final class Debugger {
 	}
 
 	public static boolean isHotKeySwitchEnabled() {
-		return isHotKeySwitchEnabled;
+		return hotKeySwitchEnabled;
 	}
 
 	public static void setHotKeySwitchEnabled(boolean isHotKeySwitchEnabled) {
-		Debugger.isHotKeySwitchEnabled = isHotKeySwitchEnabled;
+		Debugger.hotKeySwitchEnabled = isHotKeySwitchEnabled;
 	}
 	
 }

@@ -2,7 +2,6 @@ package microui.component;
 
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
-import static microui.util.Debugger.isDebugModeEnabled;
 import static processing.core.PConstants.LEFT;
 
 import java.util.ArrayList;
@@ -515,7 +514,7 @@ public final class MenuButton extends Button implements Scrollable {
 		indicator.draw();
 		arrow.draw();
 
-		if (isDebugModeEnabled()) {
+		if (Debugger.isEnabled()) {
 
 			if (isActiveSubMenu()) {
 				ctx.fill(0, 200, 0, 100);
@@ -1172,7 +1171,7 @@ public final class MenuButton extends Button implements Scrollable {
 				b.setInteractionHandlerEnabled(shouldReact());
 				b.draw();
 
-				if (Debugger.isDebugModeEnabled()) {
+				if (Debugger.isEnabled()) {
 					if (menu.isActiveSubMenu()) {
 						ctx.pushStyle();
 						ctx.fill(0, 200, 0, 32);

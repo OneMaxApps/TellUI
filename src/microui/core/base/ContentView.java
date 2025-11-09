@@ -339,7 +339,7 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	private void debugOnDraw() {
-		if (Debugger.isDebugModeEnabled()) {
+		if (Debugger.isEnabled()) {
 			ctx.pushStyle();
 			ctx.noFill();
 			ctx.strokeWeight(4);

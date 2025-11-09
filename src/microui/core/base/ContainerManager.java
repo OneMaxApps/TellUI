@@ -5,9 +5,7 @@ import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
 import static microui.util.Debugger.getAdditionalInfo;
-import static microui.util.Debugger.isDebugModeEnabled;
 import static microui.util.Debugger.isHotKeySwitchEnabled;
-import static microui.util.Debugger.setDebugModeEnabled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,7 @@ import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.event.KeyboardManager;
 import microui.service.TooltipManager;
+import microui.util.Debugger;
 import microui.util.MathUtils;
 import processing.core.PImage;
 import processing.event.KeyEvent;
@@ -100,7 +99,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 			if (isHotKeySwitchEnabled()) {
 				if (keyEvent.isAltDown()) {
-					setDebugModeEnabled(!isDebugModeEnabled());
+					Debugger.setEnabled(!Debugger.isEnabled());
 				}
 			}
 
@@ -420,7 +419,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	private void debugOnDraw() {
-		if (isDebugModeEnabled()) {
+		if (Debugger.isEnabled()) {
 			ctx.push();
 			ctx.fill(255);
 			ctx.textSize(24);

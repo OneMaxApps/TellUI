@@ -12,6 +12,7 @@ public abstract class TextController {
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
 	private final StringBuilder sb;
+	private StringBuilder adapterSb;
 	private String cachedText, cachedPasswordText;
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
@@ -64,6 +65,10 @@ public abstract class TextController {
 	}
 
 	public final void setValidationMode(ValidationMode validationMode) {
+		if (this.validationMode == validationMode) {
+			return;
+		}
+
 		this.validationMode = requireNonNull(validationMode, "validationMode");
 	}
 
@@ -72,8 +77,11 @@ public abstract class TextController {
 	}
 
 	public final void setConstrainEnabled(boolean constrainEnabled) {
-		this.constrainEnabled = constrainEnabled;
+		if (this.constrainEnabled == constrainEnabled) {
+			return;
+		}
 
+		this.constrainEnabled = constrainEnabled;
 		updateConstrainedValue();
 	}
 
@@ -84,6 +92,10 @@ public abstract class TextController {
 	public final void setMaxChars(int maxChars) {
 		if (maxChars < MIN_CONSTRAIN_VALUE) {
 			throw new IllegalArgumentException("Max chars cannot be less than " + MIN_CONSTRAIN_VALUE);
+		}
+		
+		if (this.maxChars == maxChars) {
+			return;
 		}
 
 		this.maxChars = maxChars;
@@ -96,16 +108,20 @@ public abstract class TextController {
 	}
 
 	public final int getDigits() {
+		return Integer.parseInt(cachedText);
+	}
+
+	public int getDigitsOrDefault(int defaultValue) {
 		try {
 			return Integer.parseInt(cachedText);
 		} catch (NumberFormatException e) {
-			if (Debugger.isDebugModeEnabled()) {
+			if (Debugger.isEnabled()) {
 				System.err.println(
-						"Invalid number format in TextController. switch validation mode to DIGITS_ONLY.\nInput: "
+						"Invalid number format in TextController. Switch validation mode to DIGITS_ONLY.\nInput: "
 								+ cachedText);
 			}
 
-			return 0;
+			return defaultValue;
 		}
 	}
 
@@ -114,21 +130,17 @@ public abstract class TextController {
 	}
 
 	public final void insert(int pos, String text) {
-		requireNonNull(text, "text");
-
-		for (int i = 0; i < text.length(); i++) {
-			insert(pos, text.charAt(i));
-		}
+		insertInternal(pos,text);
 	}
 
 	public final void insert(int pos, int num) {
 		insert(pos, String.valueOf(num));
 	}
-	
+
 	public final void set(String text) {
 		setInternal(text);
 	}
-	
+
 	public final void set(StringBuilder text) {
 		setInternal(text.toString());
 	}
@@ -158,7 +170,7 @@ public abstract class TextController {
 		if (isEmpty()) {
 			return;
 		}
-		
+
 		firstChar = constrain(firstChar, 0, length());
 		lastChar = constrain(lastChar, 0, length());
 
@@ -211,7 +223,30 @@ public abstract class TextController {
 
 	}
 
+	private String getValidatedString(String src) {
+		if (adapterSb == null) {
+			adapterSb = new StringBuilder();
+		} else {
+			adapterSb.setLength(0);
+		}
+
+		for (int i = 0; i < src.length(); i++) {
+			if (isValidChar(src.charAt(i))) {
+				adapterSb.append(src.charAt(i));
+			}
+		}
+
+		if (src.length() == adapterSb.length()) {
+			return src;
+		}
+
+		return adapterSb.toString();
+	}
+
 	protected void onAfterInsert() {
+	}
+
+	protected void onTextChanged() {
 	}
 
 	private void updateCachedStrings() {
@@ -223,6 +258,7 @@ public abstract class TextController {
 			cachedPasswordText = null;
 		}
 
+		onTextChanged();
 	}
 
 	private void updateConstrainedValue() {
@@ -235,54 +271,60 @@ public abstract class TextController {
 	}
 
 	private void insertInternal(int pos, char ch) {
-		if (constrainEnabled && length() >= maxChars) {
+		if (constrainEnabled && length() == maxChars) {
+			return;
+		}
+
+		if (validationEnabled && !isValidChar(ch)) {
 			return;
 		}
 
 		pos = constrain(pos, 0, length());
 
-		if (validationEnabled) {
-			if (isValidChar(ch)) {
-				sb.insert(pos, ch);
-
-				updateCachedStrings();
-				onAfterInsert();
-			}
-		} else {
-			sb.insert(pos, ch);
-
-			updateCachedStrings();
-			onAfterInsert();
-		}
-
+		sb.insert(pos, ch);
+		updateCachedStrings();
+		onAfterInsert();
 	}
-
-	private void setInternal(String text) {
-		requireNonNull(text, "text");
-
-		if(text.equals(cachedText)) {
+	
+	private void insertInternal(int pos, String str) {
+		System.out.println("inserting to String");
+		requireNonNull(str,"str");
+		
+		if (constrainEnabled && length() == maxChars) {
 			return;
 		}
-		
-		clear();
 
 		if (validationEnabled) {
-			for (int i = 0; i < text.length(); i++) {
-				if (constrainEnabled && length() == maxChars) {
-					break;
-				}
-				if (isValidChar(text.charAt(i))) {
-					sb.append(text.charAt(i));
-				}
-			}
-		} else {
-			sb.append(text);
-			if (constrainEnabled && length() > maxChars) {
-				sb.setLength(maxChars);
-				sb.trimToSize();
-			}
+			str = getValidatedString(str);
+		}
+
+		pos = constrain(pos, 0, length());
+
+		sb.insert(pos, str);
+		
+		if (constrainEnabled) {
+			updateConstrainedValue();
 		}
 		
+		updateCachedStrings();
+		onAfterInsert();
+	}
+	
+	private void setInternal(String text) {
+		requireNonNull(text, "text");
+		
+		if (text.equals(cachedText)) {
+			return;
+		}
+
+		clear();
+
+		sb.append(validationEnabled ? getValidatedString(text) : text);
+
+		if (constrainEnabled) {
+			updateConstrainedValue();
+		}
+
 		updateCachedStrings();
 		onAfterInsert();
 	}
