@@ -399,18 +399,36 @@ public final class TextField extends Component implements KeyPressable {
 
 		requireNonNull(text, "text");
 
-		final float width;
+		float width;
 
-		ctx.pushStyle();
-		if (this.text.font != null) {
-			ctx.textFont(this.text.getFont(), this.text.getTextSize());
+		if(!offScreenBufferIsReady()) {
+			ctx.pushStyle();
+			if (this.text.font != null) {
+				ctx.textFont(this.text.getFont(), this.text.getTextSize());
+			} else {
+				ctx.textSize(this.text.getTextSize());
+			}
+			ctx.textAlign(CORNER, CENTER);
+			width = ctx.textWidth(text);
+			ctx.popStyle();
+			return width;
 		} else {
-			ctx.textSize(this.text.getTextSize());
+			pg.pushStyle();
+			if (this.text.font != null) {
+				pg.textFont(this.text.getFont(), this.text.getTextSize());
+			} else {
+				pg.textSize(this.text.getTextSize());
+			}
+			pg.textAlign(CORNER, CENTER);
+			width = pg.textWidth(text);
+			pg.popStyle();
+			return width;
 		}
-		width = ctx.textWidth(text);
-		ctx.popStyle();
-
-		return width;
+		
+	}
+	
+	private boolean offScreenBufferIsReady() {
+		return ctx.frameCount > 2 && pg != null;
 	}
 
 	private float getTextWidth(char ch) {
@@ -462,9 +480,6 @@ public final class TextField extends Component implements KeyPressable {
 		
 		scroll.append(getTextWidth(Clipboard.get()));
 		
-//		System.out.println("scroll "+ (float) (scroll.getMax()+getWidth()));
-//		System.out.println("text width "+ text.getWidth());
-//		
 	}
 
 	private void cutTextToClipboard() {
@@ -726,7 +741,11 @@ public final class TextField extends Component implements KeyPressable {
 			pg.textSize(textSize);
 			pg.textAlign(CORNER, CENTER);
 			pg.text(mustShowHint() ? hint : getAsString(), x, y);
-
+			
+			if(tf.focused) {
+				System.out.println("pg: "+ pg.textWidth(getAsString()));
+			}
+			
 			pg.popStyle();
 
 			recalculateTextPositionX();
@@ -846,6 +865,7 @@ public final class TextField extends Component implements KeyPressable {
 				
 
 				if (s.getStartColumn() < s.getEndColumn()) {
+					//
 					tf.scroll.append(-nextCharWidth);
 					c.column.back();
 				}
@@ -1046,6 +1066,8 @@ public final class TextField extends Component implements KeyPressable {
 
 				subTextWidth = tf.getTextWidth(text.substring(0, (int) constrain(column, 0, tf.getText().length())));
 
+				System.out.println(subTextWidth);
+				
 				tf.cursor.positionX = subTextWidth - scrollValue;
 			}
 

@@ -30,6 +30,7 @@ public class TextFieldLauncher extends PApplet {
 	
 	@Override
 	public void setup() {
+//		frameRate(2);
 		MicroUI.setContext(this);
 		cm = ContainerManager.getInstance();
 		ThemeManager.setTheme(new ThemeBlack());
@@ -130,6 +131,7 @@ public class TextFieldLauncher extends PApplet {
 		
 		
 		tfView.setHint("Example");
+//		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
 		//tfView.setTextConstrainEnabled(true);
 		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
