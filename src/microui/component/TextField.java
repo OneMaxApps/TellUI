@@ -456,19 +456,18 @@ public final class TextField extends Component implements KeyPressable {
 		
 		for (int i = 0; i < Clipboard.get().length(); i++) {
 			cursor.column.next();
-			scroll.append(cursor.column.getCurrentCharWidth());
 		}
+		
+		updateScrollMax();
+		
+		scroll.append(getTextWidth(Clipboard.get()));
+		
+//		System.out.println("scroll "+ (float) (scroll.getMax()+getWidth()));
+//		System.out.println("text width "+ text.getWidth());
+//		
 	}
 
 	private void cutTextToClipboard() {
-		if (selection.isSelectedAll()) {
-			Clipboard.set(selection.getText());
-			text.clear();
-			scroll.setMax(0);
-			cursor.column.set(0);
-			selection.reset();
-		}
-
 		if (selection.isSelected()) {
 			Clipboard.set(selection.getText());
 			text.deleteSelectedArea();
@@ -591,14 +590,6 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void onPrintableKeyPressed() {
-		if (selection.isSelectedAll()) {
-			text.clear();
-			scroll.setMax(0);
-			cursor.column.set(0);
-			selection.reset();
-
-		}
-
 		if (selection.isSelected()) {
 			text.deleteSelectedArea();
 			selection.reset();
@@ -676,7 +667,7 @@ public final class TextField extends Component implements KeyPressable {
 			scroll.setMax(0);
 			return;
 		}
-
+		
 		scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
 	}
 
@@ -806,6 +797,11 @@ public final class TextField extends Component implements KeyPressable {
 		}
 		
 		@Override
+		protected void onAfterTextSet() {
+			
+		}
+		
+		@Override
 		protected void onTextChanged() {
 			if (tf == null) {
 				return;
@@ -817,7 +813,6 @@ public final class TextField extends Component implements KeyPressable {
 			tf.updateScrollMax();
 			tf.cursor.column.recalculateX();
 			
-			System.out.println("Text changed");
 		}
 
 		private boolean mustShowHint() {

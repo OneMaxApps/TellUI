@@ -208,7 +208,7 @@ public abstract class TextController {
 		switch (validationMode) {
 
 		case ALL:
-			return STANDARD_VALIDATION.contains(String.valueOf(ch)) || Character.isLetterOrDigit(ch);
+			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 
 		case ONLY_DIGITS:
 			return Character.isDigit(ch);
@@ -217,7 +217,7 @@ public abstract class TextController {
 			return Character.isLetter(ch);
 
 		default:
-			return STANDARD_VALIDATION.contains(String.valueOf(ch)) || Character.isLetterOrDigit(ch);
+			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 
 		}
 
@@ -247,6 +247,10 @@ public abstract class TextController {
 	}
 
 	protected void onTextChanged() {
+	}
+	
+	protected void onAfterTextSet() {
+		System.out.println("after set");
 	}
 
 	private void updateCachedStrings() {
@@ -287,7 +291,6 @@ public abstract class TextController {
 	}
 	
 	private void insertInternal(int pos, String str) {
-		System.out.println("inserting to String");
 		requireNonNull(str,"str");
 		
 		if (constrainEnabled && length() == maxChars) {
@@ -307,7 +310,7 @@ public abstract class TextController {
 		}
 		
 		updateCachedStrings();
-		onAfterInsert();
+		onAfterTextSet();
 	}
 	
 	private void setInternal(String text) {
@@ -326,7 +329,7 @@ public abstract class TextController {
 		}
 
 		updateCachedStrings();
-		onAfterInsert();
+		onAfterTextSet();
 	}
 
 	public static enum ValidationMode {

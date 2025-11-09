@@ -40,7 +40,6 @@ public class TextFieldLauncher extends PApplet {
 		
 		container.add(new Container(new GridLayout(3,3)), new RowLayoutParams(.8f), "view_container");
 		container.add(new Container(new GridLayout(1,30)), new RowLayoutParams(.2f), "tools_container");
-		
 
 		Container viewContainer = (Container) container.getByTextId("view_container");
 		Container toolsContainer = (Container) container.getByTextId("tools_container");
