@@ -111,8 +111,6 @@ public class TextFieldLauncher extends PApplet {
 		Container vc = (Container) mc.getByTextId("view_container");
 		TextField tfView = (TextField) vc.getByTextId("text_field");
 		
-		tfView.setText("Hello user");
-		
 		tfX.setOnTextChangedListener(() -> {
 			tfView.setX(tfX.getDigits());
 		});
@@ -130,7 +128,7 @@ public class TextFieldLauncher extends PApplet {
 		});
 		
 		
-		tfView.setHint("Example");
+//		tfView.setHint("Example");
 //		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
 		//tfView.setTextConstrainEnabled(true);
 		

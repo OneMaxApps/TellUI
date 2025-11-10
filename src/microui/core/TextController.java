@@ -248,10 +248,6 @@ public abstract class TextController {
 
 	protected void onTextChanged() {
 	}
-	
-	protected void onAfterTextSet() {
-		System.out.println("after set");
-	}
 
 	private void updateCachedStrings() {
 		cachedText = sb.toString();
@@ -310,7 +306,6 @@ public abstract class TextController {
 		}
 		
 		updateCachedStrings();
-		onAfterTextSet();
 	}
 	
 	private void setInternal(String text) {
@@ -329,7 +324,6 @@ public abstract class TextController {
 		}
 
 		updateCachedStrings();
-		onAfterTextSet();
 	}
 
 	public static enum ValidationMode {
