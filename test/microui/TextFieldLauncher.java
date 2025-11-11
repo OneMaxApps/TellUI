@@ -112,21 +112,20 @@ public class TextFieldLauncher extends PApplet {
 		TextField tfView = (TextField) vc.getByTextId("text_field");
 		
 		tfX.setOnTextChangedListener(() -> {
-			tfView.setX(tfX.getDigits());
+			tfView.setX(tfX.getDigitsOrDefault(0));
 		});
 		
 		tfY.setOnTextChangedListener(() -> {
-			tfView.setY(tfY.getDigits());
+			tfView.setY(tfY.getDigitsOrDefault(0));
 		});
 		
 		tfW.setOnTextChangedListener(() -> {
-			tfView.setWidth(tfW.getDigits());
+			tfView.setWidth(tfW.getDigitsOrDefault(0));
 		});
 		
 		tfH.setOnTextChangedListener(() -> {
-			tfView.setHeight(tfH.getDigits());
+			tfView.setHeight(tfH.getDigitsOrDefault(0));
 		});
-		
 		
 //		tfView.setHint("Example");
 //		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));

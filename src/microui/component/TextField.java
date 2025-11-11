@@ -54,7 +54,7 @@ public final class TextField extends Component implements KeyPressable {
 	private final Selection selection;
 
 	private PGraphics pg;
-	private Listener onTextChangedListener, onEnterPressedListener;
+	private Listener onTextChangedListener, onEnterPressedListener, onFocusChangedListener;
 
 	private boolean focused, componentSizeChanged;
 
@@ -98,6 +98,10 @@ public final class TextField extends Component implements KeyPressable {
 
 	public boolean isEmpty() {
 		return text.isEmpty();
+	}
+
+	public final void setOnFocusChangedListener(Listener onFocusChangedListener) {
+		this.onFocusChangedListener = requireNonNull(onFocusChangedListener,"onFocusChangedListener");
 	}
 
 	public void setOnEnterPressedListener(Listener onEnterPressedListener) {
@@ -146,6 +150,10 @@ public final class TextField extends Component implements KeyPressable {
 
 	public int getDigits() {
 		return text.getDigits();
+	}
+	
+	public int getDigitsOrDefault(int defaultValue) {
+		return text.getDigitsOrDefault(defaultValue);
 	}
 
 	public AbstractColor getTextColor() {
@@ -227,7 +235,15 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	public void setFocused(boolean focused) {
+		if (this.focused == focused) {
+			return;
+		}
+		
 		this.focused = focused;
+		
+		if (onFocusChangedListener != null) {
+			onFocusChangedListener.action();
+		}
 	}
 
 	@Override
@@ -235,56 +251,20 @@ public final class TextField extends Component implements KeyPressable {
 		if (!focused) {
 			return;
 		}
+		
 		cursor.blink.reset();
 
 		if (e.isShiftDown()) {
-			onKeyShiftPressed(e);
+			onShiftDown(e);
 			return;
 		}
 
 		if (e.isControlDown()) {
-			onKeyControlPressed(e);
+			onControlDown(e);
 			return;
 		}
 
-		switch (e.getKeyCode()) {
-		case ENTER:
-			if (onEnterPressedListener != null) {
-				if (isFocused()) {
-					onEnterPressedListener.action();
-					setFocused(false);
-				}
-			}
-			break;
-
-		case LEFT:
-			onKeyLeftPressed();
-			break;
-
-		case RIGHT:
-			onKeyRightPressed();
-			break;
-
-		case BACKSPACE:
-			onKeyBackspacePressed();
-			break;
-
-		case DELETE:
-			onKeyDeletePressed();
-			break;
-
-		case VK_HOME:
-			onKeyHomePressed();
-			break;
-
-		case VK_END:
-			onKeyEndPressed();
-			break;
-
-		default:
-			onPrintableKeyPressed();
-			break;
-		}
+		onRegularKeyPressed(e);
 	}
 
 	@Override
@@ -324,59 +304,99 @@ public final class TextField extends Component implements KeyPressable {
 
 		mouseEventsUpdateState();
 	}
-
-	private void onKeyShiftPressed(KeyEvent e) {
+	
+	private void onRegularKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
-		case LEFT, RIGHT, VK_HOME, VK_END:
-			if (!selection.isStarted()) {
-				selection.setStartColumn(cursor.column.get());
-				selection.setEndColumn(cursor.column.get());
-				selection.setStarted(true);
-			}
+		case ENTER:
+			onEnterPressed();
 			break;
-		}
-
-		switch (e.getKeyCode()) {
 		case LEFT:
-			cursor.column.back();
-			selection.setEndColumn(cursor.column.get());
-			if (cursor.isCloseToLeftSide()) {
-				scroll.append(-cursor.column.getPrevCharWidth());
-			}
+			onKeyLeftPressed();
 			break;
-
 		case RIGHT:
-			cursor.column.next();
-			selection.setEndColumn(cursor.column.get());
-			if (cursor.isCloseToRightSide()) {
-				scroll.append(cursor.column.getNextCharWidth());
-			}
+			onKeyRightPressed();
 			break;
-
+		case BACKSPACE:
+			onKeyBackspacePressed();
+			break;
+		case DELETE:
+			onKeyDeletePressed();
+			break;
 		case VK_HOME:
-			cursor.column.goToStart();
-			scroll.set(scroll.getMin());
-			selection.setEndColumn(cursor.column.get());
+			onKeyHomePressed();
 			break;
-
 		case VK_END:
-			cursor.column.goToEnd();
-			scroll.set(scroll.getMax());
-			selection.setEndColumn(cursor.column.get());
+			onKeyEndPressed();
 			break;
-
 		default:
-			if (selection.isSelected()) {
-				return;
-			}
-
 			onPrintableKeyPressed();
 			break;
+		}
+	}
 
+	private void prepareSelectionOnShiftDown() {
+		if (!selection.isStarted()) {
+			selection.setStartColumn(cursor.column.get());
+			selection.setEndColumn(cursor.column.get());
+			selection.setStarted(true);
 		}
 	}
 	
-	private void onKeyControlPressed(KeyEvent e) {
+	private void onShiftWithLeftPressed() {
+		cursor.column.back();
+		selection.setEndColumn(cursor.column.get());
+		if (cursor.isCloseToLeftSide()) {
+			scroll.append(-cursor.column.getPrevCharWidth());
+		}
+	}
+	
+	private void onShiftWithRightPressed() {
+		cursor.column.next();
+		selection.setEndColumn(cursor.column.get());
+		if (cursor.isCloseToRightSide()) {
+			scroll.append(cursor.column.getNextCharWidth());
+		}
+	}
+	
+	private void onShiftWithHomePressed() {
+		cursor.column.goToStart();
+		scroll.set(scroll.getMin());
+		selection.setEndColumn(cursor.column.get());
+	}
+	
+	private void onShiftWithEndPressed() {
+		cursor.column.goToEnd();
+		scroll.set(scroll.getMax());
+		selection.setEndColumn(cursor.column.get());
+	}
+	
+	private void onShiftDown(KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case LEFT, RIGHT, VK_HOME, VK_END:
+			prepareSelectionOnShiftDown();
+			break;
+		}
+		
+		switch (e.getKeyCode()) {
+		case LEFT:
+			onShiftWithLeftPressed();
+			break;
+		case RIGHT:
+			onShiftWithRightPressed();
+			break;
+		case VK_HOME:
+			onShiftWithHomePressed();
+			break;
+		case VK_END:
+			onShiftWithEndPressed();
+			break;
+		default:
+			onPrintableKeyPressed();
+			break;
+		}
+	}
+	
+	private void onControlDown(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case VK_C:
 			Clipboard.set(selection.getText());
@@ -399,40 +419,54 @@ public final class TextField extends Component implements KeyPressable {
 	private boolean offScreenBufferPrepared() {
 		return ctx.frameCount > 2 && pg != null;
 	}
-
+	
+	private float getTextWidthFromPApplet(String text) {
+		float width = 0;
+		
+		ctx.pushStyle();
+		if (this.text.font != null) {
+			ctx.textFont(this.text.getFont(), this.text.getTextSize());
+		} else {
+			ctx.textSize(this.text.getTextSize());
+		}
+		ctx.textAlign(CORNER, CENTER);
+		width = ctx.textWidth(text);
+		ctx.popStyle();
+		
+		return width;
+	}
+	
+	private float getTextWidthFromPGraphics(String text) {
+		if(pg == null) {
+			return 0;
+		}
+		
+		float width = 0;
+		
+		pg.pushStyle();
+		if (this.text.font != null) {
+			pg.textFont(this.text.getFont(), this.text.getTextSize());
+		} else {
+			pg.textSize(this.text.getTextSize());
+		}
+		pg.textAlign(CORNER, CENTER);
+		width = pg.textWidth(text);
+		pg.popStyle();
+		
+		return width;
+	}
+	
 	private float getTextWidth(String text) {
 		if (this.text == null) {
 			return 0;
 		}
-
 		requireNonNull(text, "text");
-
-		float width;
-
+		
 		if (!offScreenBufferPrepared()) {
-			ctx.pushStyle();
-			if (this.text.font != null) {
-				ctx.textFont(this.text.getFont(), this.text.getTextSize());
-			} else {
-				ctx.textSize(this.text.getTextSize());
-			}
-			ctx.textAlign(CORNER, CENTER);
-			width = ctx.textWidth(text);
-			ctx.popStyle();
-			return width;
+			return getTextWidthFromPApplet(text);
 		} else {
-			pg.pushStyle();
-			if (this.text.font != null) {
-				pg.textFont(this.text.getFont(), this.text.getTextSize());
-			} else {
-				pg.textSize(this.text.getTextSize());
-			}
-			pg.textAlign(CORNER, CENTER);
-			width = pg.textWidth(text);
-			pg.popStyle();
-			return width;
+			return getTextWidthFromPGraphics(text);
 		}
-
 	}
 
 	private float getTextWidth(char ch) {
@@ -494,6 +528,13 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 	}
+	
+	private void onEnterPressed() {
+		if (onEnterPressedListener != null) {
+			onEnterPressedListener.action();
+			setFocused(false);
+		}
+	}
 
 	private void onKeyLeftPressed() {
 		cursor.column.back();
@@ -523,65 +564,25 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void onKeyBackspacePressed() {
-		if (selection.isSelectedAll()) {
-			text.clear();
-			scroll.setMax(0);
-			cursor.column.set(0);
-			selection.reset();
-
-			if (onTextChangedListener != null) {
-				onTextChangedListener.action();
-			}
-
-			return;
-		}
 		if (selection.isSelected()) {
 			text.deleteSelectedArea();
 			selection.reset();
-
-			if (onTextChangedListener != null) {
-				onTextChangedListener.action();
-			}
-
 			return;
 		}
-
+		
 		if (cursor.isAtStart()) {
 			return;
 		}
-
+		
 		scroll.append(-cursor.column.getCurrentCharWidth());
 		text.removeCharAt(cursor.column.get() - 1);
 		cursor.column.back();
-
-		if (onTextChangedListener != null) {
-			onTextChangedListener.action();
-		}
-
 	}
 
 	private void onKeyDeletePressed() {
-		if (selection.isSelectedAll()) {
-			text.clear();
-			scroll.setMax(0);
-			cursor.column.set(0);
-			selection.reset();
-
-			if (onTextChangedListener != null) {
-				onTextChangedListener.action();
-			}
-
-			return;
-		}
-
 		if (selection.isSelected()) {
 			text.deleteSelectedArea();
 			selection.reset();
-
-			if (onTextChangedListener != null) {
-				onTextChangedListener.action();
-			}
-
 			return;
 		}
 
@@ -590,10 +591,6 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		text.removeCharAt(cursor.column.get());
-
-		if (onTextChangedListener != null) {
-			onTextChangedListener.action();
-		}
 	}
 
 	private void onKeyHomePressed() {
@@ -622,44 +619,38 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private void mouseEventsUpdateState() {
-
 		if (isDragging() || isPressed()) {
 			setFocused(true);
-
 			cursor.blink.reset();
-
-			if (text.isEmpty()) {
-				return;
-			}
-
-			final float value = ctx.mouseX - getX() + cursor.column.getNextCharWidth() / 2;
-			final float start = text.getX();
-			final float end = text.getX() + text.getWidth();
-			final int start1 = 0;
-			final int end1 = text.length();
-
-			final int newColumn = (int) convert(value, start, end, start1, end1);
-
-			cursor.column.set(newColumn);
+			
+			cursor.column.set(getRecalculatedColumnPositionFromMouse());
 		}
-
-		if (mustNotHaveFocus()) {
-			if (focused) {
-				focused = false;
-			}
+	
+		if (mustLostFocus()) {
+			setFocused(false);
 			selection.reset();
 		}
-
-		if (isDragging()) {
-			if (text.isEmpty()) {
-				return;
-			}
+		
+		if(isDragging()) {
 			onDragging();
 		}
+	}
+	
+	private int getRecalculatedColumnPositionFromMouse() {
+		final float value = ctx.mouseX - getX() + cursor.column.getNextCharWidth() / 2;
+		final float start = text.getX();
+		final float end = text.getX() + text.getWidth();
+		final int start1 = 0;
+		final int end1 = text.length();
 
+		return (int) convert(value, start, end, start1, end1);
 	}
 
 	private void onDragging() {
+		if (isEmpty()) {
+			return;
+		}
+		
 		final float maxSpeed = constrain(cursor.column.getCurrentCharWidth() / 4, 1,
 				cursor.column.getCurrentCharWidth() / 4);
 		final float distFromMouseToCenterOfTextField = MathUtils.convert(ctx.mouseX, getPadX(),
@@ -674,10 +665,9 @@ public final class TextField extends Component implements KeyPressable {
 		} else {
 			selection.setEndColumn(cursor.column.get());
 		}
-
 	}
 
-	private boolean mustNotHaveFocus() {
+	private boolean mustLostFocus() {
 		return ctx.mousePressed && !isHover() && !isDragging();
 	}
 
@@ -826,7 +816,10 @@ public final class TextField extends Component implements KeyPressable {
 
 			tf.updateScrollMax();
 			tf.cursor.column.recalculateX();
-
+			
+			if(tf.onTextChangedListener != null) {
+				tf.onTextChangedListener.action();
+			}
 		}
 
 		private boolean mustShowHint() {
@@ -1024,6 +1017,10 @@ public final class TextField extends Component implements KeyPressable {
 			}
 
 			private void set(int column) {
+				if (tf.isEmpty()) {
+					this.column = 0;
+				}
+				
 				this.column = (int) constrain(column, 0, tf.text.length());
 				recalculateX();
 			}
@@ -1220,14 +1217,6 @@ public final class TextField extends Component implements KeyPressable {
 			startColumn = start;
 			endColumn = end;
 			recalculateBounds();
-		}
-
-		private boolean isSelectedAll() {
-			if (tf.isEmpty()) {
-				return false;
-			}
-
-			return getEffectiveStartColumn() == 0 && getEffectiveEndColumn() == tf.text.length();
 		}
 
 		private boolean isStarted() {
