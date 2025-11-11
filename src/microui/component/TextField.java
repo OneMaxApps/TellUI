@@ -30,7 +30,6 @@ import microui.core.style.GradientLoopColor;
 import microui.event.Listener;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
-import microui.util.MathUtils;
 import microui.util.Metrics;
 import processing.core.PFont;
 import processing.core.PGraphics;
@@ -510,10 +509,6 @@ public final class TextField extends Component implements KeyPressable {
 
 		text.insert(cursor.column.get(), Clipboard.get());
 
-		for (int i = 0; i < Clipboard.get().length(); i++) {
-			cursor.column.next();
-		}
-
 		updateScrollMax();
 
 		scroll.append(getTextWidth(Clipboard.get()));
@@ -645,18 +640,23 @@ public final class TextField extends Component implements KeyPressable {
 
 		return (int) convert(value, start, end, start1, end1);
 	}
+	
+	private float getSpeedForDragging() {
+		final float charWidth = cursor.column.getCurrentCharWidth();
+		final float minCharWidth = 1;
+		final float maxCharWidth = charWidth / 4;
+ 		final float maxSpeed = max(minCharWidth,maxCharWidth);
+		final float speed = convert(ctx.mouseX, getPadX(),getPadX() + getPadWidth(), -maxSpeed, maxSpeed);
+
+		return speed;
+	}
 
 	private void onDragging() {
 		if (isEmpty()) {
 			return;
 		}
-		
-		final float maxSpeed = constrain(cursor.column.getCurrentCharWidth() / 4, 1,
-				cursor.column.getCurrentCharWidth() / 4);
-		final float distFromMouseToCenterOfTextField = MathUtils.convert(ctx.mouseX, getPadX(),
-				getPadX() + getPadWidth(), -maxSpeed, maxSpeed);
 
-		scroll.append(distFromMouseToCenterOfTextField);
+		scroll.append(getSpeedForDragging());
 
 		if (!selection.isStarted()) {
 			selection.setStartColumn(cursor.column.get());
@@ -797,12 +797,19 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		@Override
-		protected void onAfterInsert() {
+		protected void onAfterCharInsert() {
 			final Cursor.Column column = tf.cursor.column;
 			final BoundedValue scroll = tf.scroll;
 
 			column.next();
 			scroll.append(column.getPrevCharWidth());
+		}
+
+		@Override
+		protected void onAfterStringInsert() {
+			for (int i = 0; i < Clipboard.get().length(); i++) {
+				tf.cursor.column.next();
+			}
 		}
 
 		@Override

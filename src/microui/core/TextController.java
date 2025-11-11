@@ -243,7 +243,10 @@ public abstract class TextController {
 		return adapterSb.toString();
 	}
 
-	protected void onAfterInsert() {
+	protected void onAfterCharInsert() {
+	}
+	
+	protected void onAfterStringInsert() {
 	}
 
 	protected void onTextChanged() {
@@ -283,7 +286,7 @@ public abstract class TextController {
 
 		sb.insert(pos, ch);
 		updateCachedStrings();
-		onAfterInsert();
+		onAfterCharInsert();
 	}
 	
 	private void insertInternal(int pos, String str) {
@@ -306,6 +309,7 @@ public abstract class TextController {
 		}
 		
 		updateCachedStrings();
+		onAfterStringInsert();
 	}
 	
 	private void setInternal(String text) {
