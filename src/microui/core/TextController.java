@@ -1,7 +1,7 @@
 package microui.core;
 
 import static java.util.Objects.requireNonNull;
-import static processing.core.PApplet.constrain;
+import static microui.util.MathUtils.constrain;
 
 import microui.util.Debugger;
 
@@ -161,7 +161,7 @@ public abstract class TextController {
 			return;
 		}
 
-		sb.deleteCharAt(constrain(pos, 0, length() - 1));
+		sb.deleteCharAt((int) constrain(pos, 0, length() - 1));
 
 		updateCachedStrings();
 	}
@@ -171,8 +171,8 @@ public abstract class TextController {
 			return;
 		}
 
-		firstChar = constrain(firstChar, 0, length());
-		lastChar = constrain(lastChar, 0, length());
+		firstChar = (int) constrain(firstChar, 0, length());
+		lastChar = (int) constrain(lastChar, 0, length());
 
 		sb.delete(firstChar, lastChar);
 
@@ -282,7 +282,7 @@ public abstract class TextController {
 			return;
 		}
 
-		pos = constrain(pos, 0, length());
+		pos = (int) constrain(pos, 0, length());
 
 		sb.insert(pos, ch);
 		updateCachedStrings();
@@ -300,7 +300,7 @@ public abstract class TextController {
 			str = getValidatedString(str);
 		}
 
-		pos = constrain(pos, 0, length());
+		pos = (int) constrain(pos, 0, length());
 
 		sb.insert(pos, str);
 		

@@ -607,10 +607,6 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		text.insert(cursor.column.get(), ctx.key);
-
-		if (onTextChangedListener != null) {
-			onTextChangedListener.action();
-		}
 	}
 
 	private void mouseEventsUpdateState() {
@@ -632,7 +628,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 	
 	private int getRecalculatedColumnPositionFromMouse() {
-		final float value = ctx.mouseX - getX() + cursor.column.getNextCharWidth() / 2;
+		final float value = ctx.mouseX - getX() + cursor.column.getCurrentCharWidth()/2;
 		final float start = text.getX();
 		final float end = text.getX() + text.getWidth();
 		final int start1 = 0;
@@ -855,16 +851,16 @@ public final class TextField extends Component implements KeyPressable {
 
 			final int selectedChars = eec - esc;
 
+			float selectedTextWidth = 0;
+			
 			for (int i = 0; i < selectedChars; i++) {
-				final float nextCharWidth = c.column.getNextCharWidth();
-
+				selectedTextWidth += c.column.getNextCharWidth();
 				if (s.getStartColumn() < s.getEndColumn()) {
-					//
-					tf.scroll.append(-nextCharWidth);
 					c.column.back();
 				}
-
 			}
+			
+			tf.scroll.append(-selectedTextWidth);
 
 			remove(esc, eec);
 
@@ -1105,6 +1101,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void draw(final PGraphics pg) {
+			requireNonNull(pg,"pg");
+			
 			pg.pushStyle();
 			pg.noStroke();
 			color.apply(pg);
@@ -1140,11 +1138,16 @@ public final class TextField extends Component implements KeyPressable {
 			if (tf.text.isEmpty()) {
 				return "";
 			}
-			return tf.text.getAsString().substring(getEffectiveStartColumn(), getEffectiveEndColumn());
+			
+			return tf.getText().substring(getEffectiveStartColumn(), getEffectiveEndColumn());
 		}
 
 		private int getEffectiveStartColumn() {
 			return (int) Math.min(startColumn, endColumn);
+		}
+		
+		private int getStartColumn() {
+			return startColumn;
 		}
 
 		private void setStartColumn(int startColumn) {
@@ -1154,6 +1157,11 @@ public final class TextField extends Component implements KeyPressable {
 
 		}
 
+		
+		private int getEndColumn() {
+			return endColumn;
+		}
+		
 		private int getEffectiveEndColumn() {
 			return (int) Math.max(startColumn, endColumn);
 		}
@@ -1164,14 +1172,7 @@ public final class TextField extends Component implements KeyPressable {
 			w = tf.getTextWidth(tf.getText().substring(getEffectiveStartColumn(), getEffectiveEndColumn()));
 		}
 
-		private int getStartColumn() {
-			return startColumn;
-		}
-
-		private int getEndColumn() {
-			return endColumn;
-		}
-
+		
 		private void reset() {
 			startColumn = endColumn = 0;
 			started = false;
@@ -1185,12 +1186,41 @@ public final class TextField extends Component implements KeyPressable {
 
 		private void selectAll() {
 			startColumn = 0;
-			endColumn = tf.text.length();
+			endColumn = tf.getText().length();
 			recalculateBounds();
 		}
 
+		private int findStartIndexOfWord(String word, int currentColumn) {
+			requireNonNull(word,"word");
+			int index = 0;
+			currentColumn = (int) constrain(currentColumn,0,tf.getText().length() - 1);
+			
+			for (int i = currentColumn; i > 0; i--) {
+				if (word.charAt(i) == ' ') {
+					index = i + 1;
+					break;
+				}
+			}
+			
+			return index;
+		}
+		
+		private int findEndIndexOfWord(String word, int currentColumn) {
+			requireNonNull(word,"word");
+			int endIndex = word.length();
+			currentColumn = (int) constrain(currentColumn,0,tf.getText().length() - 1);
+			
+			for (int i = currentColumn; i < word.length(); i++) {
+				if (word.charAt(i) == ' ') {
+					endIndex = i;
+					break;
+				}
+			}
+			
+			return endIndex;
+		}
 		private void selectWord() {
-			final String str = tf.text.getAsString();
+			final String str = tf.getText();
 
 			if (str.isEmpty()) {
 				return;
@@ -1203,26 +1233,8 @@ public final class TextField extends Component implements KeyPressable {
 				return;
 			}
 
-			int start = 0;
-
-			for (int i = currentColumn; i > 0; i--) {
-				if (str.charAt(i) == ' ') {
-					start = i + 1;
-					break;
-				}
-			}
-
-			int end = str.length();
-
-			for (int i = currentColumn; i < str.length(); i++) {
-				if (str.charAt(i) == ' ') {
-					end = i;
-					break;
-				}
-			}
-
-			startColumn = start;
-			endColumn = end;
+			startColumn = findStartIndexOfWord(str,currentColumn);
+			endColumn = findEndIndexOfWord(str,currentColumn);
 			recalculateBounds();
 		}
 
