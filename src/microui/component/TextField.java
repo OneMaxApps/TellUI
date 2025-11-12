@@ -633,17 +633,20 @@ public final class TextField extends Component implements KeyPressable {
 			return;
 		}
 
+		final String txt = Clipboard.get();
+		final Cursor.Column column = cursor.column;
+		
 		if (selection.isSelected()) {
 			deleteSelectedText();
 			selection.reset();
 		}
 
-		text.insert(cursor.column.get(), Clipboard.get());
-
+		text.insert(column.get(), txt);
+		column.set(column.get()+txt.length());
+		
 		updateScrollMax();
 
 		scroll.append(getTextWidth(Clipboard.get()));
-
 	}
 
 	private void cutTextToClipboard() {
@@ -851,9 +854,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		@Override
 		protected void onAfterStringInsert() {
-			for (int i = 0; i < Clipboard.get().length(); i++) {
-				tf.cursor.column.next();
-			}
+			
 		}
 
 		@Override
@@ -1056,6 +1057,8 @@ public final class TextField extends Component implements KeyPressable {
 			private void set(int column) {
 				if (tf.isEmpty()) {
 					this.column = 0;
+					tf.cursor.recalculateX();
+					return;
 				}
 				
 				this.column = (int) constrain(column, 0, tf.text.length());
