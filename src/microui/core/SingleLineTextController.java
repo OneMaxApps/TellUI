@@ -3,6 +3,9 @@ package microui.core;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import microui.util.Debugger;
 
 public abstract class SingleLineTextController {
@@ -12,6 +15,7 @@ public abstract class SingleLineTextController {
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
+	private final UndoRedoManager undoRedoManager;
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText, cachedPasswordText;
@@ -21,6 +25,7 @@ public abstract class SingleLineTextController {
 	private ValidationMode validationMode;
 
 	public SingleLineTextController(final String text) {
+		undoRedoManager = new UndoRedoManager(this);
 		sb = new StringBuilder(requireNonNull(text,"text"));
 		updateCachedStrings();
 
@@ -33,6 +38,14 @@ public abstract class SingleLineTextController {
 
 	public SingleLineTextController() {
 		this("");
+	}
+	
+	public void undo() {
+		undoRedoManager.undo();
+	}
+
+	public void redo() {
+		undoRedoManager.redo();
 	}
 
 	public final char getPasswordChar() {
@@ -263,6 +276,7 @@ public abstract class SingleLineTextController {
 		}
 
 		onTextChanged();
+		undoRedoManager.updateState();
 	}
 
 	private void updateConstrainedValue() {
@@ -333,5 +347,52 @@ public abstract class SingleLineTextController {
 
 	public static enum ValidationMode {
 		ALL, ONLY_DIGITS, ONLY_LETTERS;
+	}
+	
+	private final static class UndoRedoManager {
+		private final SingleLineTextController controller;
+		private final Deque<String> undo,redo;
+		private String currentState;
+		
+		public UndoRedoManager(SingleLineTextController controller) {
+			this.controller = requireNonNull(controller,"controller");
+			undo = new ArrayDeque<String>();
+			redo = new ArrayDeque<String>();
+			currentState = "";
+			undo.push(currentState);
+		}
+		
+		public void undo() {
+			if (canUndo()) {
+				redo.push(currentState);
+				currentState = undo.pop();
+				controller.set(currentState);
+			}
+		}
+		
+		public void redo() {
+			if (canRedo()) {
+				undo.push(currentState);
+				currentState = redo.pop();
+				controller.set(currentState);
+			}
+		}
+		
+		private boolean canUndo() {
+			return !undo.isEmpty();
+		}
+		
+		private boolean canRedo() {
+			return !redo.isEmpty();
+		}
+		
+		private void updateState() {
+			final String newState = controller.getAsString();
+			if (!newState.equals(currentState)) {
+				undo.push(currentState);
+				currentState = newState;
+				redo.clear();
+			}
+		}
 	}
 }

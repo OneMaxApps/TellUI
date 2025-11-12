@@ -6,6 +6,8 @@ import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
+import static java.awt.event.KeyEvent.VK_Z;
+import static java.awt.event.KeyEvent.VK_Y;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
@@ -392,6 +394,10 @@ public final class TextField extends Component implements KeyPressable {
 			onShiftWithEndPressed();
 			break;
 		default:
+			if (selection.isSelected()) {
+				return;
+			}
+			
 			onPrintableKeyPressed();
 			break;
 		}
@@ -410,6 +416,12 @@ public final class TextField extends Component implements KeyPressable {
 			break;
 		case VK_A:
 			selection.selectAll();
+			break;
+		case VK_Z:
+			text.undo();
+			break;
+		case VK_Y:
+			text.redo();
 			break;
 		}
 	}
