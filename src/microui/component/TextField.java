@@ -517,13 +517,17 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private int getRecalculatedColumnPositionFromMouse() {
-		final float mouseX = ctx.mouseX - (getX() - cursor.column.getCurrentCharWidth() / 2);
-		final float start = text.getX();
-		final float end = text.getX() + text.getWidth();
-		final int start1 = 0;
-		final int end1 = text.length();
+		final float mouseX = ctx.mouseX - (getX() + cursor.column.getCurrentCharWidth()/2) + scroll.get();
+		int correctNewIndex = getText().length();
+		
+		for (int i = 0; i <= getText().length(); i++) {
+			if(mouseX < getTextWidth(getText().substring(0,i))) {
+				correctNewIndex = i;
+				break;
+			}
+		}
 
-		return (int) convert(mouseX, start, end, start1, end1);
+		return correctNewIndex;
 	}
 	
 	private float getSpeedForDragging() {
