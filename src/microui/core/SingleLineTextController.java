@@ -5,10 +5,11 @@ import static microui.util.MathUtils.constrain;
 
 import microui.util.Debugger;
 
-public abstract class TextController {
-	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:№?*";
+public abstract class SingleLineTextController {
+	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
+	private static final int DEFAULT_MAX_CHARS = 4;
 	private static final int MIN_CONSTRAIN_VALUE = 1;
-	private static final int DEFAULT_MAX_CONSTRAIN_VALUE = 4;
+	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
 	private final StringBuilder sb;
@@ -19,18 +20,18 @@ public abstract class TextController {
 	private char passwordChar;
 	private ValidationMode validationMode;
 
-	public TextController(final String text) {
-		sb = new StringBuilder(text);
+	public SingleLineTextController(final String text) {
+		sb = new StringBuilder(requireNonNull(text,"text"));
 		updateCachedStrings();
 
 		validationEnabled = true;
-		maxChars = DEFAULT_MAX_CONSTRAIN_VALUE;
+		maxChars = DEFAULT_MAX_CHARS;
 		validationMode = ValidationMode.ALL;
 
 		setPasswordChar(DEFAULT_PASSWORD_CHAR);
 	}
 
-	public TextController() {
+	public SingleLineTextController() {
 		this("");
 	}
 
@@ -54,9 +55,7 @@ public abstract class TextController {
 		if (this.passwordModeEnabled == passwordModeEnabled) {
 			return;
 		}
-
 		this.passwordModeEnabled = passwordModeEnabled;
-
 		updateCachedStrings();
 	}
 
@@ -70,6 +69,8 @@ public abstract class TextController {
 		}
 
 		this.validationMode = requireNonNull(validationMode, "validationMode");
+		
+		setInternal(getValidatedString(cachedText));
 	}
 
 	public final boolean isConstrainEnabled() {
@@ -107,7 +108,7 @@ public abstract class TextController {
 		return passwordModeEnabled ? cachedPasswordText : cachedText;
 	}
 
-	public final int getDigits() {
+	public final int getDigitsStrict() {
 		return Integer.parseInt(cachedText);
 	}
 
@@ -116,9 +117,7 @@ public abstract class TextController {
 			return Integer.parseInt(cachedText);
 		} catch (NumberFormatException e) {
 			if (Debugger.isEnabled()) {
-				System.err.println(
-						"Invalid number format in TextController. Switch validation mode to DIGITS_ONLY.\nInput: "
-								+ cachedText);
+				System.err.println("Invalid number format in TextController. Switch validation mode to DIGITS_ONLY.\nInput: " + cachedText);
 			}
 
 			return defaultValue;
@@ -134,7 +133,7 @@ public abstract class TextController {
 	}
 
 	public final void insert(int pos, int num) {
-		insert(pos, String.valueOf(num));
+		insertInternal(pos, String.valueOf(num));
 	}
 
 	public final void set(String text) {
@@ -151,8 +150,10 @@ public abstract class TextController {
 		}
 
 		sb.setLength(0);
-		sb.trimToSize();
-
+		if(sb.capacity() >= MAX_CAPACITY_FOR_CLEAR) {
+			sb.trimToSize();
+		}
+		
 		updateCachedStrings();
 	}
 
