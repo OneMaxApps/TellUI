@@ -358,13 +358,13 @@ public abstract class SingleLineTextController {
 	
 	private final static class UndoRedoManager {
 		private final SingleLineTextController controller;
-		private final Deque<String> undo,redo;
-		
+		private final Deque<String> undo, redo;
+	
 		public UndoRedoManager(SingleLineTextController controller) {
 			this.controller = requireNonNull(controller,"controller");
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
-			undo.push("");
+			
 		}
 		
 		public void undo() {
@@ -377,7 +377,7 @@ public abstract class SingleLineTextController {
 		public void redo() {
 			if (canRedo()) {
 				undo.push(redo.peek());
-				controller.set(undo.pop());
+				controller.set(redo.pop());
 			}
 		}
 		
@@ -391,10 +391,14 @@ public abstract class SingleLineTextController {
 		
 		private void updateState() {
 			final String newState = controller.getAsString();
-			if (!newState.equals(undo.peek())) {
+			System.out.println("stack state updated");
+			if (undo.isEmpty() || (!newState.equals(undo.peek()) && !newState.equals(redo.peek()))) {
 				undo.push(newState);
 			}
+			
 			redo.clear();
+			
 		}
+		
 	}
 }
