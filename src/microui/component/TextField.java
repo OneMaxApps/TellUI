@@ -50,14 +50,14 @@ public final class TextField extends Component implements KeyPressable {
 	private static final int DEFAULT_VERTICAL_PADDING = 5;
 	private static final int DEFAULT_SCROLL_VALUE = 0;
 	private static final byte COUNT_OF_FRAMES_BEFORE_BUFFER_INITIALIZATION = 2;
-	
+
 	private final BoundedValue scroll;
 
 	private final Text text;
 	private final Cursor cursor;
 	private final Selection selection;
 	private final TextWidthPool textWidthPool;
-	
+
 	private PGraphics pg;
 	private Listener onTextChangedListener, onEnterPressedListener, onFocusChangedListener;
 
@@ -73,12 +73,11 @@ public final class TextField extends Component implements KeyPressable {
 
 		scroll = new BoundedValue(DEFAULT_SCROLL_VALUE);
 
-		
 		text = new Text(this);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
 		textWidthPool = new TextWidthPool(this);
-		
+
 		scroll.setOnChangeValueListener(() -> {
 			cursor.recalculateX();
 			text.setX(-scroll.get());
@@ -103,13 +102,37 @@ public final class TextField extends Component implements KeyPressable {
 		this(0, 0, 0, 0);
 		prepareBoundsInCenter();
 	}
+	
+	public final char getPasswordChar() {
+		return text.getPasswordChar();
+	}
+	
+	public final void setPasswordChar(char passwordChar) {
+		text.setPasswordChar(passwordChar);
+	}
+	
+	public final boolean isPasswordModeEnabled() {
+		return text.isPasswordModeEnabled();
+	}
+	
+	public final void setPasswordModeEnabled(boolean passwordModeEnabled) {
+		text.setPasswordModeEnabled(passwordModeEnabled);
+	}
+	
+	public final boolean isValidationEnabled() {
+		return text.isValidationEnabled();
+	}
+
+	public final void setValidationEnabled(boolean validation) {
+		text.setValidationEnabled(validation);
+	}
 
 	public boolean isEmpty() {
 		return text.isEmpty();
 	}
 
 	public final void setOnFocusChangedListener(Listener onFocusChangedListener) {
-		this.onFocusChangedListener = requireNonNull(onFocusChangedListener,"onFocusChangedListener");
+		this.onFocusChangedListener = requireNonNull(onFocusChangedListener, "onFocusChangedListener");
 	}
 
 	public void setOnEnterPressedListener(Listener onEnterPressedListener) {
@@ -130,6 +153,10 @@ public final class TextField extends Component implements KeyPressable {
 
 	public String getText() {
 		return text.getAsString();
+	}
+	
+	public String getHiddenText() {
+		return text.getHiddenText();
 	}
 
 	public void setText(String text) {
@@ -159,7 +186,7 @@ public final class TextField extends Component implements KeyPressable {
 	public int getDigitsStrict() {
 		return text.getDigitsStrict();
 	}
-	
+
 	public int getDigitsOrDefault(int defaultValue) {
 		return text.getDigitsOrDefault(defaultValue);
 	}
@@ -246,9 +273,9 @@ public final class TextField extends Component implements KeyPressable {
 		if (this.focused == focused) {
 			return;
 		}
-		
+
 		this.focused = focused;
-		
+
 		notifyFocusChanged();
 	}
 
@@ -257,7 +284,7 @@ public final class TextField extends Component implements KeyPressable {
 		if (!focused) {
 			return;
 		}
-		
+
 		cursor.blink.reset();
 
 		if (e.isShiftDown()) {
@@ -310,9 +337,9 @@ public final class TextField extends Component implements KeyPressable {
 
 		mouseEventsUpdateState();
 	}
-	
+
 	// == PRIVATE KEYBOARD CONTROL API ==
-	
+
 	private void onRegularKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case ENTER:
@@ -341,7 +368,7 @@ public final class TextField extends Component implements KeyPressable {
 			break;
 		}
 	}
-	
+
 	private void prepareSelectionOnShiftDown() {
 		if (!selection.isStarted()) {
 			selection.setStartColumn(cursor.column.get());
@@ -357,7 +384,7 @@ public final class TextField extends Component implements KeyPressable {
 			scroll.append(-cursor.column.getPrevCharWidth());
 		}
 	}
-	
+
 	private void onShiftWithRightPressed() {
 		cursor.column.next();
 		selection.setEndColumn(cursor.column.get());
@@ -365,26 +392,26 @@ public final class TextField extends Component implements KeyPressable {
 			scroll.append(cursor.column.getNextCharWidth());
 		}
 	}
-	
+
 	private void onShiftWithHomePressed() {
 		cursor.column.goToStart();
 		scroll.set(scroll.getMin());
 		selection.setEndColumn(cursor.column.get());
 	}
-	
+
 	private void onShiftWithEndPressed() {
 		cursor.column.goToEnd();
 		scroll.set(scroll.getMax());
 		selection.setEndColumn(cursor.column.get());
 	}
-	
+
 	private void onShiftDown(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case LEFT, RIGHT, VK_HOME, VK_END:
 			prepareSelectionOnShiftDown();
 			break;
 		}
-		
+
 		switch (e.getKeyCode()) {
 		case LEFT:
 			onShiftWithLeftPressed();
@@ -402,12 +429,12 @@ public final class TextField extends Component implements KeyPressable {
 			if (selection.isSelected()) {
 				return;
 			}
-			
+
 			onPrintableKeyPressed();
 			break;
 		}
 	}
-	
+
 	private void onControlDown(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case VK_C:
@@ -430,7 +457,7 @@ public final class TextField extends Component implements KeyPressable {
 			break;
 		}
 	}
-	
+
 	private void onEnterPressed() {
 		notifyEnterPressed();
 	}
@@ -468,11 +495,11 @@ public final class TextField extends Component implements KeyPressable {
 			selection.reset();
 			return;
 		}
-		
+
 		if (cursor.isAtStart()) {
 			return;
 		}
-		
+
 		scroll.append(-cursor.column.getCurrentCharWidth());
 		text.removeCharAt(cursor.column.get() - 1);
 		cursor.column.back();
@@ -512,33 +539,33 @@ public final class TextField extends Component implements KeyPressable {
 
 		text.insert(cursor.column.get(), ctx.key);
 	}
-	
+
 	// == PRIVATE MOUSE CONTROL API ==
-	
+
 	private void mouseEventsUpdateState() {
 		if (isDragging() || isPressed()) {
 			setFocused(true);
 			cursor.blink.reset();
-			
+
 			cursor.column.set(getRecalculatedColumnPositionFromMouse());
 		}
-	
+
 		if (mustLostFocus()) {
 			setFocused(false);
 			selection.reset();
 		}
-		
-		if(isDragging()) {
+
+		if (isDragging()) {
 			onDragging();
 		}
 	}
 
 	private int getRecalculatedColumnPositionFromMouse() {
-		final float mouseX = ctx.mouseX - (getX() + cursor.column.getCurrentCharWidth()/2) + scroll.get();
+		final float mouseX = ctx.mouseX - (getX() + cursor.column.getCurrentCharWidth() / 2) + scroll.get();
 		int correctNewIndex = getText().length();
-		
+
 		for (int i = 0; i <= getText().length(); i++) {
-			if(mouseX < textWidthPool.getWidthUntil(i)) {
+			if (mouseX < textWidthPool.getWidthUntil(i)) {
 				correctNewIndex = i;
 				break;
 			}
@@ -546,17 +573,17 @@ public final class TextField extends Component implements KeyPressable {
 
 		return correctNewIndex;
 	}
-	
+
 	private float getSpeedForDragging() {
 		final float charWidth = cursor.column.getCurrentCharWidth();
 		final float minCharWidth = 1;
 		final float maxCharWidth = charWidth / 4;
- 		final float maxSpeed = max(minCharWidth,maxCharWidth);
-		final float speed = convert(ctx.mouseX, getPadX(),getPadX() + getPadWidth(), -maxSpeed, maxSpeed);
+		final float maxSpeed = max(minCharWidth, maxCharWidth);
+		final float speed = convert(ctx.mouseX, getPadX(), getPadX() + getPadWidth(), -maxSpeed, maxSpeed);
 
 		return speed;
 	}
-	
+
 	private void onDragging() {
 		if (isEmpty()) {
 			return;
@@ -573,26 +600,25 @@ public final class TextField extends Component implements KeyPressable {
 		}
 	}
 
-	
 	// == PRIVATE TEXT CONTROL API ==
-	
+
 	private void deleteSelectedText() {
 		final int esc = selection.getEffectiveStartColumn();
 		final int eec = selection.getEffectiveEndColumn();
 
 		if (selection.getStartColumn() < selection.getEndColumn()) {
 			cursor.column.set(esc);
-			
+
 			final float selectedTextWidth = textWidthPool.getWidthBetween(esc, eec);
 			scroll.append(-selectedTextWidth);
 		}
-		
+
 		text.remove(esc, eec);
 	}
-	
+
 	private float getTextWidthFromPApplet(String text) {
 		float width = 0;
-		
+
 		ctx.pushStyle();
 		if (this.text.font != null) {
 			ctx.textFont(this.text.getFont(), this.text.getTextSize());
@@ -602,17 +628,17 @@ public final class TextField extends Component implements KeyPressable {
 		ctx.textAlign(CORNER, CENTER);
 		width = ctx.textWidth(text);
 		ctx.popStyle();
-		
+
 		return width;
 	}
-	
+
 	private float getTextWidthFromPGraphics(String text) {
-		if(pg == null) {
+		if (pg == null) {
 			return 0;
 		}
-		
+
 		float width = 0;
-		
+
 		pg.pushStyle();
 		if (this.text.font != null) {
 			pg.textFont(this.text.getFont(), this.text.getTextSize());
@@ -622,17 +648,17 @@ public final class TextField extends Component implements KeyPressable {
 		pg.textAlign(CORNER, CENTER);
 		width = pg.textWidth(text);
 		pg.popStyle();
-		
+
 		return width;
 	}
-	
+
 	private float getTextWidth(String text) {
 		if (this.text == null) {
 			return 0;
 		}
-		
+
 		requireNonNull(text, "text");
-		
+
 		if (!offScreenBufferPrepared()) {
 			return getTextWidthFromPApplet(text);
 		} else {
@@ -640,12 +666,12 @@ public final class TextField extends Component implements KeyPressable {
 		}
 	}
 
-	private float getTextWidth(char ch) {
+	private float getCharWidth(char ch) {
 		return getTextWidth(String.valueOf(ch));
 	}
 
 	// == PRIVATE CLIPBOARD CONTROL API ==
-	
+
 	private void pasteTextFromClipboard() {
 		if (Clipboard.isEmpty()) {
 			return;
@@ -653,15 +679,15 @@ public final class TextField extends Component implements KeyPressable {
 
 		final String txt = Clipboard.get();
 		final Cursor.Column column = cursor.column;
-		
+
 		if (selection.isSelected()) {
 			deleteSelectedText();
 			selection.reset();
 		}
 
 		text.insert(column.get(), txt);
-		column.set(column.get()+txt.length());
-		
+		column.set(column.get() + txt.length());
+
 		updateScrollMax();
 
 		scroll.append(getTextWidth(Clipboard.get()));
@@ -677,32 +703,32 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	// == PRIVATE EVENT MANAGEMENT API ==
-	
+
 	private void notifyTextChanged() {
-		if(onTextChangedListener != null) {
+		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
 	}
-	
+
 	private void notifyEnterPressed() {
 		if (onEnterPressedListener != null) {
 			onEnterPressedListener.action();
 			setFocused(false);
 		}
 	}
-	
+
 	private void notifyFocusChanged() {
 		if (onFocusChangedListener != null) {
 			onFocusChangedListener.action();
 		}
 	}
-	
+
 	// == PRIVATE BUFFER MANAGEMENT API ==
-	
+
 	private boolean offScreenBufferPrepared() {
 		return ctx.frameCount > COUNT_OF_FRAMES_BEFORE_BUFFER_INITIALIZATION && pg != null;
 	}
-	
+
 	private void screenOffBufferOnDraw() {
 		pg.beginDraw();
 		pg.clear();
@@ -728,7 +754,7 @@ public final class TextField extends Component implements KeyPressable {
 		componentSizeChanged = false;
 		Metrics.register(pg);
 	}
-	
+
 	private void checkDimensions() {
 		if (ctx.mousePressed) {
 			return;
@@ -737,9 +763,9 @@ public final class TextField extends Component implements KeyPressable {
 			createPGraphics();
 		}
 	}
-	
+
 	// == PRIVATE STYLE API ==
-	
+
 	private void prepareBackgroundColor() {
 		final AbstractColor tc = getTheme().getEditableBackgroundColor();
 		final Color preFocusedColor = new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), 200);
@@ -753,7 +779,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	/////////////////////////////////////////
-	
+
 	private boolean mustLostFocus() {
 		return ctx.mousePressed && !isHover() && !isDragging();
 	}
@@ -763,10 +789,9 @@ public final class TextField extends Component implements KeyPressable {
 			scroll.setMax(0);
 			return;
 		}
-		
+
 		scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
 	}
-
 
 	private static final class Text extends SingleLineTextController {
 		private static final int MIN_TEXT_SIZE = 1;
@@ -821,7 +846,7 @@ public final class TextField extends Component implements KeyPressable {
 			if (textSize < MIN_TEXT_SIZE) {
 				throw new IllegalArgumentException("Text size must be >= " + MIN_TEXT_SIZE);
 			}
-			
+
 			if (this.textSize == textSize) {
 				return;
 			}
@@ -872,7 +897,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		@Override
 		protected void onAfterStringInsert() {
-			
+
 		}
 
 		@Override
@@ -885,9 +910,9 @@ public final class TextField extends Component implements KeyPressable {
 
 			tf.updateScrollMax();
 			tf.cursor.recalculateX();
-			
+
 			tf.notifyTextChanged();
-			
+
 			tf.textWidthPool.clear();
 		}
 
@@ -902,7 +927,7 @@ public final class TextField extends Component implements KeyPressable {
 		private float getX() {
 			return x;
 		}
-		
+
 		public void setX(float x) {
 			this.x = x;
 		}
@@ -1021,7 +1046,7 @@ public final class TextField extends Component implements KeyPressable {
 
 			positionX = subTextWidth - scrollValue;
 		}
-		
+
 		private static final class Blink {
 			private static final byte MAX_DURATION = 60;
 			private static final byte MIN_BLINK_RATE = 1;
@@ -1077,7 +1102,7 @@ public final class TextField extends Component implements KeyPressable {
 					tf.cursor.recalculateX();
 					return;
 				}
-				
+
 				this.column = (int) constrain(column, 0, tf.text.length());
 				tf.cursor.recalculateX();
 			}
@@ -1140,8 +1165,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void draw(final PGraphics pg) {
-			requireNonNull(pg,"pg");
-			
+			requireNonNull(pg, "pg");
+
 			pg.pushStyle();
 			pg.noStroke();
 			color.apply(pg);
@@ -1176,16 +1201,16 @@ public final class TextField extends Component implements KeyPressable {
 			if (tf.text.isEmpty()) {
 				return "";
 			}
-			
+
 			return tf.getText().substring(getEffectiveStartColumn(), getEffectiveEndColumn());
 		}
 
 		private int getEffectiveStartColumn() {
 			return (int) Math.min(getStartColumn(), getEndColumn());
 		}
-		
+
 		private int getStartColumn() {
-			return (int) constrain(startColumn,0,tf.getText().length());
+			return (int) constrain(startColumn, 0, tf.getText().length());
 		}
 
 		private void setStartColumn(int startColumn) {
@@ -1195,9 +1220,9 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private int getEndColumn() {
-			return (int) constrain(endColumn,0,tf.getText().length());
+			return (int) constrain(endColumn, 0, tf.getText().length());
 		}
-		
+
 		private int getEffectiveEndColumn() {
 			return (int) Math.max(getStartColumn(), getEndColumn());
 		}
@@ -1207,7 +1232,7 @@ public final class TextField extends Component implements KeyPressable {
 
 			w = tf.textWidthPool.getWidthBetween(getEffectiveStartColumn(), getEffectiveEndColumn());
 		}
-		
+
 		private void reset() {
 			startColumn = endColumn = 0;
 			started = false;
@@ -1226,35 +1251,35 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		private int findStartIndexOfWord(String word, int currentColumn) {
-			requireNonNull(word,"word");
+			requireNonNull(word, "word");
 			int index = 0;
-			currentColumn = (int) constrain(currentColumn,0,tf.getText().length() - 1);
-			
+			currentColumn = (int) constrain(currentColumn, 0, tf.getText().length() - 1);
+
 			for (int i = currentColumn; i > 0; i--) {
 				if (word.charAt(i) == ' ') {
 					index = i + 1;
 					break;
 				}
 			}
-			
+
 			return index;
 		}
-		
+
 		private int findEndIndexOfWord(String word, int currentColumn) {
-			requireNonNull(word,"word");
+			requireNonNull(word, "word");
 			int endIndex = word.length();
-			currentColumn = (int) constrain(currentColumn,0,tf.getText().length() - 1);
-			
+			currentColumn = (int) constrain(currentColumn, 0, tf.getText().length() - 1);
+
 			for (int i = currentColumn; i < word.length(); i++) {
 				if (word.charAt(i) == ' ') {
 					endIndex = i;
 					break;
 				}
 			}
-			
+
 			return endIndex;
 		}
-		
+
 		private void selectWord() {
 			final String str = tf.getText();
 
@@ -1269,8 +1294,8 @@ public final class TextField extends Component implements KeyPressable {
 				return;
 			}
 
-			startColumn = findStartIndexOfWord(str,currentColumn);
-			endColumn = findEndIndexOfWord(str,currentColumn);
+			startColumn = findStartIndexOfWord(str, currentColumn);
+			endColumn = findEndIndexOfWord(str, currentColumn);
 			recalculateBounds();
 		}
 
@@ -1283,18 +1308,18 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 	}
-	
+
 	private static final class TextWidthPool {
-		private final TextField tf; 
-		private HashMap<Integer, Float> untilWidth,charWidth;
-		private HashMap<Integer[], Float> betweenWidth;
-		
+		private final TextField tf;
+		private HashMap<Integer, Float> untilWidth, charWidth;
+		private HashMap<Long, Float> betweenWidth;
+
 		public TextWidthPool(TextField tf) {
 			super();
-			this.tf = requireNonNull(tf,"tf");
+			this.tf = requireNonNull(tf, "tf");
 			untilWidth = new HashMap<Integer, Float>();
 			charWidth = new HashMap<Integer, Float>();
-			betweenWidth = new HashMap<Integer[], Float>();
+			betweenWidth = new HashMap<Long, Float>();
 
 		}
 
@@ -1303,65 +1328,67 @@ public final class TextField extends Component implements KeyPressable {
 			charWidth.clear();
 			betweenWidth.clear();
 		}
-		
+
 		public float getWidthUntil(int index) {
 			final String text = tf.getText();
-			
+
 			if (text.isEmpty()) {
 				return 0;
 			}
-			
-			index = (int) constrain(index,0,text.length());
-			
-			if(!untilWidth.containsKey(index)) {
-				untilWidth.put(index, tf.getTextWidth(text.substring(0,index)));
+
+			index = (int) constrain(index, 0, text.length());
+
+			if (!untilWidth.containsKey(index)) {
+				untilWidth.put(index, tf.getTextWidth(text.substring(0, index)));
 			}
-			
+
 			return untilWidth.get(index);
 		}
-		
+
 		public float getCharWidth(int index) {
 			final String text = tf.getText();
-			
+
 			if (text.isEmpty()) {
 				return 0;
 			}
-			
-			index = (int) constrain(index,0,text.length()-1);
-			
-			if(!charWidth.containsKey(index)) {
-				charWidth.put(index, tf.getTextWidth(text.charAt(index)));
+
+			index = (int) constrain(index, 0, text.length() - 1);
+
+			if (!charWidth.containsKey(index)) {
+				charWidth.put(index, tf.getCharWidth(text.charAt(index)));
 			}
-			
+
 			return charWidth.get(index);
 		}
-		
+
 		public float getWidthBetween(int startIndex, int endIndex) {
 			final String text = tf.getText();
-			
+
 			if (text.isEmpty()) {
 				return 0;
 			}
+
+			startIndex = (int) constrain(startIndex, 0, text.length());
+			endIndex = (int) constrain(endIndex, 0, text.length());
+
+			final long newKey = getRangeKey(startIndex, endIndex);
 			
-			startIndex = (int) constrain(startIndex,0,text.length());
-			endIndex = (int) constrain(endIndex,0,text.length());
+			Float valueInMap = betweenWidth.get(newKey);
 			
-			boolean contains = false;
-			Integer[] keys = null;
-			
-			for(Integer[] keyEntry : betweenWidth.keySet()) {
-				if(keyEntry[0] == startIndex && keyEntry[1] == endIndex) {
-					contains = true;
-					keys = keyEntry;
-					break;
-				}
+			if(valueInMap == null) {
+				float newValue = tf.getTextWidth(text.substring(startIndex, endIndex));
+				betweenWidth.put(newKey, newValue);
+				return newValue;
 			}
 			
-			if(!contains) {
-				betweenWidth.put(keys = new Integer[]{startIndex,endIndex}, tf.getTextWidth(text.substring(startIndex,endIndex)));
-			}
-			
-			return betweenWidth.get(keys);
+			return valueInMap.floatValue();
+		}
+		
+		private long getRangeKey(int startIndex, int endIndex) {
+			// startIndex will take first 32 bits, and endIndex will take last 32 bits 
+			return ((long) startIndex << 32 | (endIndex & 0xFFFFFFFFL));
 		}
 	}
+	
+	
 }

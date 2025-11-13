@@ -120,6 +120,13 @@ public abstract class SingleLineTextController {
 	public final String getAsString() {
 		return passwordModeEnabled ? cachedPasswordText : cachedText;
 	}
+	
+	public final String getHiddenText() {
+		if(!passwordModeEnabled) {
+			throw new IllegalStateException("Password mode disabled. enable password mode for using method \"getHiddenText()\"");
+		}
+		return cachedText;
+	}
 
 	public final int getDigitsStrict() {
 		return Integer.parseInt(cachedText);

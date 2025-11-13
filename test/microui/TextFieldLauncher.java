@@ -2,6 +2,7 @@ package microui;
 
 import microui.component.TextField;
 import microui.component.TextView;
+import microui.core.SingleLineTextController.ValidationMode;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
 import microui.core.style.Color;
@@ -63,7 +64,7 @@ public class TextFieldLauncher extends PApplet {
 		c.setBackgroundColor(new Color(32));
 
 		c.add(new TextView("Bounds"), new GridLayoutParams(0,0));
-		/*
+		
 		TextField tfX,tfY,tfW,tfH;
 		
 		c.add(tfX = new TextField(), new GridLayoutParams(0,1));
@@ -105,13 +106,13 @@ public class TextFieldLauncher extends PApplet {
 		tfY.setTooltip("Position Y");
 		tfW.setTooltip("Width");
 		tfH.setTooltip("Height");
-		*/
 		
-		//Container mc = cm.getByTextId("main_container");
-		//Container vc = (Container) mc.getByTextId("view_container");
-		//TextField tfView = (TextField) vc.getByTextId("text_field");
 		
-		/*
+		Container mc = cm.getByTextId("main_container");
+		Container vc = (Container) mc.getByTextId("view_container");
+		TextField tfView = (TextField) vc.getByTextId("text_field");
+		
+		
 		tfX.setOnTextChangedListener(() -> {
 			tfView.setX(tfX.getDigitsOrDefault(0));
 		});
@@ -128,10 +129,10 @@ public class TextFieldLauncher extends PApplet {
 			tfView.setHeight(tfH.getDigitsOrDefault(0));
 		});
 		
-//		tfView.setHint("Example");
-//		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
+		tfView.setHint("Example");
+		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
 		//tfView.setTextConstrainEnabled(true);
-		*/
+		
 		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
 		c.add(new TextView("Background"), new GridLayoutParams(0,6));
