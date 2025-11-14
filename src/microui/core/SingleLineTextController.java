@@ -6,6 +6,7 @@ import static microui.util.MathUtils.constrain;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import microui.event.Listener;
 import microui.util.Debugger;
 
 public abstract class SingleLineTextController {
@@ -122,9 +123,6 @@ public abstract class SingleLineTextController {
 	}
 	
 	public final String getHiddenText() {
-		if(!passwordModeEnabled) {
-			throw new IllegalStateException("Password mode disabled. enable password mode for using method \"getHiddenText()\"");
-		}
 		return cachedText;
 	}
 
@@ -243,6 +241,10 @@ public abstract class SingleLineTextController {
 		}
 
 	}
+	
+	public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
+		undoRedoManager.setOnHistoryChangedListener(onHistoryChangedListener);
+	}
 
 	private String getValidatedString(String src) {
 		if (adapterSb == null) {
@@ -283,7 +285,9 @@ public abstract class SingleLineTextController {
 		}
 
 		onTextChanged();
+		
 		undoRedoManager.updateState();
+		
 	}
 
 	private void updateConstrainedValue() {
@@ -359,45 +363,57 @@ public abstract class SingleLineTextController {
 	private final static class UndoRedoManager {
 		private final SingleLineTextController controller;
 		private final Deque<String> undo, redo;
-	
+		private boolean operation;
+		private Listener onHistoryChangedListener;
+		
 		public UndoRedoManager(SingleLineTextController controller) {
 			this.controller = requireNonNull(controller,"controller");
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
-			
 		}
-		
+
+		public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
+			this.onHistoryChangedListener = requireNonNull(onHistoryChangedListener,"onHistoryChangedListener");
+		}
+
 		public void undo() {
-			if (canUndo()) {
-				redo.push(undo.peek());
-				controller.set(undo.pop());
+			operation = true;
+			
+			if (!undo.isEmpty()) {
+				redo.push(undo.pop());
+				if(!undo.isEmpty()) {
+					controller.set(undo.peek());
+				} else {
+					controller.set("");
+				}
+				
+				if(onHistoryChangedListener != null) {
+					onHistoryChangedListener.action();
+				}
 			}
+			
+			operation = false;
 		}
 		
 		public void redo() {
-			if (canRedo()) {
+			operation = true;
+			if (!redo.isEmpty()) {
 				undo.push(redo.peek());
 				controller.set(redo.pop());
+				
+				if(onHistoryChangedListener != null) {
+					onHistoryChangedListener.action();
+				}
 			}
-		}
-		
-		private boolean canUndo() {
-			return !undo.isEmpty();
-		}
-		
-		private boolean canRedo() {
-			return !redo.isEmpty();
+			operation = false;
 		}
 		
 		private void updateState() {
-			final String newState = controller.getAsString();
-			System.out.println("stack state updated");
-			if (undo.isEmpty() || (!newState.equals(undo.peek()) && !newState.equals(redo.peek()))) {
-				undo.push(newState);
+			if (operation) {
+				return;
 			}
-			
+			undo.push(controller.getHiddenText());
 			redo.clear();
-			
 		}
 		
 	}

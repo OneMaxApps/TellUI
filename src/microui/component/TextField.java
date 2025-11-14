@@ -808,6 +808,13 @@ public final class TextField extends Component implements KeyPressable {
 			hintColor = new GradientLoopColor(color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 232));
 			recalculateY();
 			setTextSize(textField.getHeight());
+			setOnHistoryChangedListener(() -> {
+				if (tf.selection.isSelected()) {
+					tf.selection.reset();
+				}
+				tf.cursor.column.goToEnd();
+				tf.scroll.set(tf.scroll.getMax());
+			});
 		}
 
 		public void draw(final PGraphics pg) {

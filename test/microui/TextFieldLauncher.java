@@ -131,8 +131,7 @@ public class TextFieldLauncher extends PApplet {
 		
 		tfView.setHint("Example");
 		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
-		//tfView.setTextConstrainEnabled(true);
-		
+
 		
 		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
 		c.add(new TextView("Background"), new GridLayoutParams(0,6));
