@@ -24,13 +24,12 @@ public class TextFieldLauncher extends PApplet {
 	@Override
 	public void settings() {
 //		fullScreen(P2D,0);
-//		fullScreen();
-		size(800,400);
+		fullScreen();
+//		size(800,400);
 	}
 	
 	@Override
 	public void setup() {
-//		frameRate(2);
 		MicroUI.setContext(this);
 		cm = ContainerManager.getInstance();
 		ThemeManager.setTheme(new ThemeBlack());
@@ -61,57 +60,30 @@ public class TextFieldLauncher extends PApplet {
 	}
 	
 	private void prepareToolsContainer(Container c) {
+		Container mc = cm.getByTextId("main_container");
+		Container vc = (Container) mc.getByTextId("view_container");
+		TextField tfView = (TextField) vc.getByTextId("text_field");
+		
 		c.setBackgroundColor(new Color(32));
 
 		c.add(new TextView("Bounds"), new GridLayoutParams(0,0));
 		
 		TextField tfX,tfY,tfW,tfH;
 		
-		c.add(tfX = new TextField(), new GridLayoutParams(0,1));
-		c.add(tfY = new TextField(), new GridLayoutParams(0,2));
-		c.add(tfW = new TextField(), new GridLayoutParams(0,3));
-		c.add(tfH = new TextField(), new GridLayoutParams(0,4));
-		
-		tfX.setMargin(0, 4);
-		tfY.setMargin(0, 4);
-		tfW.setMargin(0, 4);
-		tfH.setMargin(0, 4);
-		
-		tfX.setTextSize(tfX.getHeight()/2);
-		tfY.setTextSize(tfY.getHeight()/2);
-		tfW.setTextSize(tfW.getHeight()/2);
-		tfH.setTextSize(tfH.getHeight()/2);
-		
-		tfX.setValidationMode(ValidationMode.ONLY_DIGITS);
-		tfY.setValidationMode(ValidationMode.ONLY_DIGITS);
-		tfW.setValidationMode(ValidationMode.ONLY_DIGITS);
-		tfH.setValidationMode(ValidationMode.ONLY_DIGITS);
-		
-		tfX.setTextConstrainEnabled(true);
-		tfY.setTextConstrainEnabled(true);
-		tfW.setTextConstrainEnabled(true);
-		tfH.setTextConstrainEnabled(true);
-		
-		tfX.setMaxChars(4);
-		tfY.setMaxChars(4);
-		tfW.setMaxChars(4);
-		tfH.setMaxChars(4);
-		
+		c.add(tfX = getPreparedInBoundsControlStyleTextField(), new GridLayoutParams(0,1));
+		c.add(tfY = getPreparedInBoundsControlStyleTextField(), new GridLayoutParams(0,2));
+		c.add(tfW = getPreparedInBoundsControlStyleTextField(), new GridLayoutParams(0,3));
+		c.add(tfH = getPreparedInBoundsControlStyleTextField(), new GridLayoutParams(0,4));
+
 		tfX.setHint("Pos: X");
 		tfY.setHint("Pos: Y");
 		tfW.setHint("Width:");
 		tfH.setHint("Height:");
 		
-		tfX.setTooltip("Position X");
+		tfY.setTooltip("Position X");
 		tfY.setTooltip("Position Y");
 		tfW.setTooltip("Width");
 		tfH.setTooltip("Height");
-		
-		
-		Container mc = cm.getByTextId("main_container");
-		Container vc = (Container) mc.getByTextId("view_container");
-		TextField tfView = (TextField) vc.getByTextId("text_field");
-		
 		
 		tfX.setOnTextChangedListener(() -> {
 			tfView.setX(tfX.getDigitsOrDefault(0));
@@ -129,13 +101,43 @@ public class TextFieldLauncher extends PApplet {
 			tfView.setHeight(tfH.getDigitsOrDefault(0));
 		});
 		
+		c.add(new TextView("Params"), new GridLayoutParams(0,5));
+		
+		TextField tfHint;
+		c.add(tfHint = getPreparedInGeneralStyleTextField(),  new GridLayoutParams(0,6));
+		
+		tfHint.setHint("Hint:");
+		tfHint.setOnTextChangedListener(() -> {
+			tfView.setHint(tfHint.getText());
+		});
+
 		tfView.setHint("Example");
 		tfView.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",24));
-
+		tfView.setMaxSize(400,100);
 		
-		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
-		c.add(new TextView("Background"), new GridLayoutParams(0,6));
-		
-		
+//		c.add(new TextView("Colors"), new GridLayoutParams(0,5));
+//		c.add(new TextView("Background"), new GridLayoutParams(0,6));
+	
 	}
+	
+	private static TextField getPreparedInGeneralStyleTextField() {
+		final TextField textField = new TextField();
+		textField.setMargin(0, 4);
+		textField.setTextSize(10);
+		
+		return textField;
+	}
+	
+	private static TextField getPreparedInBoundsControlStyleTextField() {
+		final TextField textField = new TextField();
+		textField.setMargin(0, 4);
+		textField.setTextSize(10);
+		textField.setValidationMode(ValidationMode.ONLY_DIGITS);
+		textField.setTextConstrainEnabled(true);
+		textField.setMaxChars(4);
+		
+		return textField;
+	}
+	
+	
 }

@@ -132,7 +132,7 @@ public final class LabeledCheckBox extends Component {
 	}
 
 	public LabeledCheckBox onStateChangedListener(Listener listener) {
-		checkBox.onStateChangedListener(listener);
+		checkBox.setOnStateChangedListener(listener);
 		return this;
 	}
 

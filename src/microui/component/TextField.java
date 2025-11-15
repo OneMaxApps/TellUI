@@ -45,7 +45,7 @@ public final class TextField extends Component implements KeyPressable {
 	private static final int DEFAULT_MIN_HEIGHT = 10;
 	private static final int DEFAULT_MAX_WIDTH = 200;
 	private static final int DEFAULT_MAX_HEIGHT = 40;
-
+	
 	private static final int DEFAULT_HORIZONTAL_PADDING = 10;
 	private static final int DEFAULT_VERTICAL_PADDING = 5;
 	private static final int DEFAULT_SCROLL_VALUE = 0;
@@ -103,52 +103,60 @@ public final class TextField extends Component implements KeyPressable {
 		prepareBoundsInCenter();
 	}
 	
-	public final char getPasswordChar() {
+	public char getPasswordChar() {
 		return text.getPasswordChar();
 	}
 	
-	public final void setPasswordChar(char passwordChar) {
+	public TextField setPasswordChar(char passwordChar) {
 		text.setPasswordChar(passwordChar);
+		
+		return this;
 	}
 	
-	public final boolean isPasswordModeEnabled() {
+	public boolean isPasswordModeEnabled() {
 		return text.isPasswordModeEnabled();
 	}
 	
-	public final void setPasswordModeEnabled(boolean passwordModeEnabled) {
+	public TextField setPasswordModeEnabled(boolean passwordModeEnabled) {
 		text.setPasswordModeEnabled(passwordModeEnabled);
+		return this;
 	}
 	
 	public final boolean isValidationEnabled() {
 		return text.isValidationEnabled();
 	}
 
-	public final void setValidationEnabled(boolean validation) {
+	public TextField setValidationEnabled(boolean validation) {
 		text.setValidationEnabled(validation);
+		return this;
 	}
 
 	public boolean isEmpty() {
 		return text.isEmpty();
 	}
 
-	public final void setOnFocusChangedListener(Listener onFocusChangedListener) {
+	public TextField setOnFocusChangedListener(Listener onFocusChangedListener) {
 		this.onFocusChangedListener = requireNonNull(onFocusChangedListener, "onFocusChangedListener");
+		return this;
 	}
 
-	public void setOnEnterPressedListener(Listener onEnterPressedListener) {
+	public TextField setOnEnterPressedListener(Listener onEnterPressedListener) {
 		this.onEnterPressedListener = requireNonNull(onEnterPressedListener, "onEnterPressedListener");
+		return this;
 	}
 
-	public void setOnTextChangedListener(Listener onTextChangedListener) {
+	public TextField setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
+		return this;
 	}
 
 	public ValidationMode getValidationMode() {
 		return text.getValidationMode();
 	}
 
-	public void setValidationMode(ValidationMode validationMode) {
+	public TextField setValidationMode(ValidationMode validationMode) {
 		text.setValidationMode(validationMode);
+		return this;
 	}
 
 	public String getText() {
@@ -159,28 +167,32 @@ public final class TextField extends Component implements KeyPressable {
 		return text.getHiddenText();
 	}
 
-	public void setText(String text) {
+	public TextField setText(String text) {
 		this.text.set(text);
+		return this;
 	}
 
-	public void setText(StringBuilder text) {
+	public TextField setText(StringBuilder text) {
 		this.text.set(text);
+		return this;
 	}
 
 	public boolean isTextConstrainEnabled() {
 		return text.isConstrainEnabled();
 	}
 
-	public void setTextConstrainEnabled(boolean enabled) {
+	public TextField setTextConstrainEnabled(boolean enabled) {
 		text.setConstrainEnabled(enabled);
+		return this;
 	}
 
 	public int getMaxChars() {
 		return text.getMaxChars();
 	}
 
-	public void setMaxChars(int max) {
+	public TextField setMaxChars(int max) {
 		text.setMaxChars(max);
+		return this;
 	}
 
 	public int getDigitsStrict() {
@@ -195,48 +207,54 @@ public final class TextField extends Component implements KeyPressable {
 		return text.getColor();
 	}
 
-	public void setTextColor(AbstractColor color) {
+	public TextField setTextColor(AbstractColor color) {
 		text.setColor(color);
+		return this;
 	}
 
 	public AbstractColor getCursorColor() {
 		return cursor.getColor();
 	}
 
-	public void setCursorColor(AbstractColor color) {
+	public TextField setCursorColor(AbstractColor color) {
 		cursor.setColor(color);
+		return this;
 	}
 
 	public AbstractColor getSelectionColor() {
 		return selection.getColor();
 	}
 
-	public void setSelectionColor(AbstractColor color) {
+	public TextField setSelectionColor(AbstractColor color) {
 		selection.setColor(color);
+		return this;
 	}
 
 	public float getTextSize() {
 		return text.getTextSize();
 	}
 
-	public void setTextSize(float size) {
+	public TextField setTextSize(float size) {
 		text.setTextSize(size);
+		return this;
 	}
 
 	public float getCursorWeight() {
 		return cursor.getWeight();
 	}
 
-	public void setCursorWeight(float weight) {
+	public TextField setCursorWeight(float weight) {
 		cursor.setWeight(weight);
+		return this;
 	}
 
 	public float getCursorBlinkRate() {
 		return cursor.getBlinkRate();
 	}
 
-	public void setCursorBlinkRate(float rate) {
+	public TextField setCursorBlinkRate(float rate) {
 		cursor.setBlinkRate(rate);
+		return this;
 	}
 
 	public PFont getFont() {
@@ -253,30 +271,34 @@ public final class TextField extends Component implements KeyPressable {
 		return text.getHint();
 	}
 
-	public void setHint(String hint) {
+	public TextField setHint(String hint) {
 		text.setHint(hint);
+		return this;
 	}
 
 	public AbstractColor getHintColor() {
 		return text.getHintColor();
 	}
 
-	public void setHintColor(AbstractColor hintColor) {
+	public TextField setHintColor(AbstractColor hintColor) {
 		text.setHintColor(hintColor);
+		return this;
 	}
 
 	public boolean isFocused() {
 		return focused;
 	}
 
-	public void setFocused(boolean focused) {
+	public TextField setFocused(boolean focused) {
 		if (this.focused == focused) {
-			return;
+			return this;
 		}
 
 		this.focused = focused;
 
 		notifyFocusChanged();
+
+		return this;
 	}
 
 	@Override

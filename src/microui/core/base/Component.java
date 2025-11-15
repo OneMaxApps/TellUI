@@ -224,8 +224,9 @@ public abstract class Component extends ContentView {
 
 	// NEW TOOLTIP API //////////////////////////////////
 
-	public final void setTooltip(TooltipContent tooltipContent) {
+	public final Component setTooltip(TooltipContent tooltipContent) {
 		tooltip.setContent(tooltipContent);
+		return this;
 	}
 
 	public final TooltipContent getTooltipContent() {
@@ -233,12 +234,13 @@ public abstract class Component extends ContentView {
 	}
 
 	// Sugar API
-	public final void setTooltip(String text) {
+	public final Component setTooltip(String text) {
 		if (tooltip.getContent() instanceof TooltipTextViewContent content) {
 			content.setText(text);
 		} else {
 			tooltip.setContent(new TooltipTextViewContent(text));
 		}
+		return this;
 	}
 
 	public final String getTooltipText() {
