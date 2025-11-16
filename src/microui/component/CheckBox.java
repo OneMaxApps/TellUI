@@ -26,7 +26,8 @@ public class CheckBox extends AbstractButton {
 	}
 
 	public CheckBox(boolean checked) {
-		this(ctx.width / 2 - DEFAULT_SIZE / 2, ctx.height / 2 - DEFAULT_SIZE / 2);
+		this(0, 0);
+		setPositionInCenter();
 		setChecked(checked);
 	}
 
@@ -34,12 +35,42 @@ public class CheckBox extends AbstractButton {
 		this(false);
 	}
 
+	// == PUBLIC API ==
+
 	public final CheckStyle getCheckStyle() {
 		return checkStyle;
 	}
 
 	public final void setCheckStyle(CheckStyle checkStyle) {
 		this.checkStyle = requireNonNull(checkStyle, "checkStyle");
+	}
+
+	public final boolean isChecked() {
+		return checked;
+	}
+
+	public final void setChecked(boolean checked) {
+		if (this.checked == checked) {
+			return;
+		}
+		this.checked = checked;
+		notifyOnStateChanged();
+	}
+
+	public final void toggle() {
+		setChecked(!isChecked());
+	}
+
+	public final AbstractColor getMarkColor() {
+		return markColor;
+	}
+
+	public final void setMarkColor(AbstractColor markColor) {
+		this.markColor = requireNonNull(markColor, "markColor");
+	}
+
+	public final void setOnStateChangedListener(Listener onStateChangedListener) {
+		this.onStateChangedListener = requireNonNull(onStateChangedListener, "onStateChangedListener");
 	}
 
 	@Override
@@ -54,35 +85,8 @@ public class CheckBox extends AbstractButton {
 		}
 	}
 
-	public final boolean isChecked() {
-		return checked;
-	}
-
-	public final void setChecked(boolean checked) {
-		if (this.checked == checked) {
-			return;
-		}
-
-		this.checked = checked;
-
-		notifyOnStateChanged();
-	}
-
-	public final void toggle() {
-		checked = !checked;
-		notifyOnStateChanged();
-	}
-
-	public final AbstractColor getMarkColor() {
-		return markColor;
-	}
-
-	public final void setMarkColor(AbstractColor markColor) {
-		this.markColor = requireNonNull(markColor, "markColor");
-	}
-
-	public final void setOnStateChangedListener(Listener onStateChangedListener) {
-		this.onStateChangedListener = requireNonNull(onStateChangedListener, "onStateChangedListener");
+	private void setPositionInCenter() {
+		setPosition(ctx.width / 2 - DEFAULT_SIZE / 2, ctx.height / 2 - DEFAULT_SIZE / 2);
 	}
 
 	private void notifyOnStateChanged() {
@@ -108,16 +112,21 @@ public class CheckBox extends AbstractButton {
 
 	private void styleMarkOnDraw() {
 		ctx.pushStyle();
+
 		ctx.noStroke();
 		markColor.apply();
 		ctx.rect(getX(), getY(), getWidth(), getHeight());
+
 		ctx.stroke(255);
 		ctx.strokeWeight(max(1, getWidth() / 5));
 		ctx.strokeCap(PROJECT);
+
 		ctx.line(getX() + getWidth() * .3f, getY() + getHeight() * .6f, getX() + getWidth() / 2,
 				getY() + getHeight() * .8f);
+
 		ctx.line(getX() + getWidth() * .8f, getY() + getHeight() * .2f, getX() + getWidth() / 2,
 				getY() + getHeight() * .8f);
+
 		ctx.popStyle();
 	}
 
@@ -133,12 +142,12 @@ public class CheckBox extends AbstractButton {
 		ctx.pushStyle();
 		ctx.noFill();
 		markColor.applyStroke();
-		ctx.strokeWeight(Math.min(getWidth()/2, getHeight()/2));
+		ctx.strokeWeight(Math.min(getWidth() / 2, getHeight() / 2));
 		ctx.point(getX() + getWidth() / 2, getY() + getHeight() / 2);
 		ctx.popStyle();
 	}
 
-	public static enum CheckStyle {
+	public enum CheckStyle {
 		MARK, RECT, DOT;
 	}
 }
