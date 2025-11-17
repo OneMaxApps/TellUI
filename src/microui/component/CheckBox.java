@@ -10,6 +10,9 @@ import microui.core.AbstractButton;
 import microui.core.style.AbstractColor;
 import microui.event.Listener;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 17.11.2025
+
 public class CheckBox extends AbstractButton {
 	public static final int DEFAULT_SIZE = 16;
 	private AbstractColor markColor;
@@ -113,11 +116,7 @@ public class CheckBox extends AbstractButton {
 	private void styleMarkOnDraw() {
 		ctx.pushStyle();
 
-		ctx.noStroke();
-		markColor.apply();
-		ctx.rect(getX(), getY(), getWidth(), getHeight());
-
-		ctx.stroke(255);
+		getTheme().getPrimaryColor().applyStroke();
 		ctx.strokeWeight(max(1, getWidth() / 5));
 		ctx.strokeCap(PROJECT);
 

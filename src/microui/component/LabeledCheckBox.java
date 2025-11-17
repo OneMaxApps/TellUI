@@ -66,21 +66,6 @@ public final class LabeledCheckBox extends Component {
 		this("");
 	}
 
-	@Override
-	protected void render() {
-		hover.draw();
-		container.draw();
-	}
-
-	@Override
-	protected void onChangeBounds() {
-		super.onChangeBounds();
-
-		if (container != null) {
-			container.setBoundsFrom(this);
-		}
-	}
-
 	public boolean isHoverEnabled() {
 		return hover.isEnabled();
 	}
@@ -170,5 +155,20 @@ public final class LabeledCheckBox extends Component {
 	public LabeledCheckBox setTextVisible(boolean isVisible) {
 		textView.setVisible(isVisible);
 		return this;
+	}
+	
+	@Override
+	protected void render() {
+		hover.draw();
+		container.draw();
+	}
+
+	@Override
+	protected void onChangeBounds() {
+		super.onChangeBounds();
+
+		if (container != null) {
+			container.setBoundsFrom(this);
+		}
 	}
 }

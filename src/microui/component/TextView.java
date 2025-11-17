@@ -24,7 +24,7 @@ public final class TextView extends Component {
 	private AutoResizeMode autoResizeMode;
 	private float textSize, autoTextSize;
 	private int alignX, alignY;
-	private boolean isAutoResizeModeEnabled, isClipModeEnabled;
+	private boolean autoResizeModeEnabled, clipModeEnabled;
 
 	public TextView(String text, float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -82,11 +82,11 @@ public final class TextView extends Component {
 	}
 
 	public boolean isClipModeEnabled() {
-		return isClipModeEnabled;
+		return clipModeEnabled;
 	}
 
-	public void setClipModeEnabled(boolean isClipModeEnabled) {
-		this.isClipModeEnabled = isClipModeEnabled;
+	public void setClipModeEnabled(boolean clipModeEnabled) {
+		this.clipModeEnabled = clipModeEnabled;
 	}
 
 	public float getTextSize() {
@@ -120,15 +120,15 @@ public final class TextView extends Component {
 	}
 
 	public boolean isAutoResizeModeEnabled() {
-		return isAutoResizeModeEnabled;
+		return autoResizeModeEnabled;
 	}
 
-	public void setAutoResizeModeEnabled(boolean isAutoResizeModeEnabled) {
-		if (isAutoResizeModeEnabled && !this.isAutoResizeModeEnabled) {
+	public void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
+		if (autoResizeModeEnabled && !this.autoResizeModeEnabled) {
 			recalculateAutoTextSize();
 		}
 
-		this.isAutoResizeModeEnabled = isAutoResizeModeEnabled;
+		this.autoResizeModeEnabled = autoResizeModeEnabled;
 
 	}
 
