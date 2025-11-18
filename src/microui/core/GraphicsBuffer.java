@@ -43,7 +43,7 @@ public class GraphicsBuffer extends SpatialView {
 			onDraw(graphics);
 			graphics.endDraw();
 
-			ctx.image(graphics, getX(), getY(), getWidth(), getHeight());
+			ctx.image(graphics, (int) getX(), (int) getY(), (int) getWidth(),(int)  getHeight());
 		}
 	}
 

@@ -1,12 +1,12 @@
 package microui;
 
 import microui.component.Button;
-import microui.component.EditTextOld;
 import microui.component.Knob;
 import microui.component.LabeledCheckBox;
 import microui.component.MenuButton;
 import microui.component.Scroll;
 import microui.component.Slider;
+import microui.component.TextArea;
 import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
@@ -57,7 +57,8 @@ public final class Launcher extends PApplet {
 //		cm.add(getContainerAllComponents(), "all_components");
 //		cm.add(getContainerWith(button = new Button()), "Button");
 //		cm.add(getContainerWith(new CheckBox()), "CheckBox");
-		cm.add(getContainerWith(new EditTextOld()), "EditText");
+//		cm.add(getContainerWith(new EditText()), "EditText");
+		cm.add(getContainerWith(new TextArea()), "Knob");
 		cm.add(getContainerWith(new Knob()), "Knob");
 		cm.add(getContainerWith(new LabeledCheckBox()), "LabeledCheckBox");
 		cm.add(getContainerWith(new Scroll()), "Scroll");
@@ -161,8 +162,8 @@ public final class Launcher extends PApplet {
 		Container container = new Container(new GridLayout(11, 11));
 		container.setMode(Container.Mode.IGNORE_CONSTRAINTS);
 
-		if (component instanceof EditTextOld) {
-			container.add(component, new GridLayoutParams(1, 1, 9, 9), "edit_text");
+		if (component instanceof TextArea) {
+			container.add(component, new GridLayoutParams(1, 1, 9, 9), "text_area");
 		} else {
 			container.add(component, new GridLayoutParams(4, 5, 3, 1));
 		}
