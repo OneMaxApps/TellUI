@@ -800,7 +800,7 @@ public final class TextField extends Component implements KeyPressable {
 		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
 	}
 
-	/////////////////////////////////////////
+	//////////////////////////
 
 	private boolean mustLostFocus() {
 		return ctx.mousePressed && !isHover() && !isDragging();
@@ -822,7 +822,7 @@ public final class TextField extends Component implements KeyPressable {
 		private PFont font;
 		private String hint;
 		private float x, y, textWidth, textSize;
-
+		
 		private Text(TextField textField) {
 			super();
 			this.tf = requireNonNull(textField, "textField");
