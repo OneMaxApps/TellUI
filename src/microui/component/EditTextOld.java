@@ -45,6 +45,7 @@ import processing.core.PGraphics;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
+@Deprecated
 public class EditTextOld extends Component implements Scrollable, KeyPressable {
 	private boolean isFocused;
 
