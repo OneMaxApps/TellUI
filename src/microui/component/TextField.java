@@ -23,8 +23,8 @@ import static processing.core.PConstants.RIGHT;
 
 import java.util.HashMap;
 
-import microui.core.SingleLineTextController;
-import microui.core.SingleLineTextController.ValidationMode;
+import microui.core.FullSingleLineTextController;
+import microui.core.FullSingleLineTextController.ValidationMode;
 import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
@@ -815,7 +815,7 @@ public final class TextField extends Component implements KeyPressable {
 		scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
 	}
 
-	private static final class Text extends SingleLineTextController {
+	private static final class Text extends FullSingleLineTextController {
 		private static final int MIN_TEXT_SIZE = 1;
 		private final TextField tf;
 		private AbstractColor color, hintColor;
