@@ -6,9 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiLineTextController {
-	private static final int MAX_CAPACITY_FOR_CLEAR_ADAPTER = 1000;
+	private static final String EMPTY_TEXT;
 	private final List<SingleLineTextController> list;
 	private StringBuilder adapterSb;
+	private String cachedText;
+	private boolean textChanged;
+	
+	static {
+		EMPTY_TEXT = "";
+	}
+	
+	{
+		cachedText = EMPTY_TEXT;
+	}
 	
 	public MultiLineTextController() {
 		super();
@@ -18,18 +28,14 @@ public class MultiLineTextController {
 	
 	public static void main(String[] args) {
 		var controller = new MultiLineTextController();
-//		controller.addLine("Hello ");
-//		controller.addLine("World");
-//		controller.splitLine(1, 3);
-//		controller.addLine("!");
-//		controller.mergeLines(1);
-//		controller.mergeLines(1);
-//		controller.mergeLines(0);
+		controller.addLine("Hello ");
+		controller.addLine("World");
+		controller.splitLine(1, 3);
+		controller.addLine("!");
 		
-
-		
-		
-		
+		System.out.println(controller.getText());
+		System.out.println(controller.getText());
+		System.out.println(controller.getText());
 		System.out.println(controller.getText());
 	}
 
@@ -42,45 +48,42 @@ public class MultiLineTextController {
 	}
 	
 	public void addLine(String text) {
-		list.add(getLinesCount(), new SingleLineTextController(text));
+		final SingleLineTextController line = new SingleLineTextController(text);
+		list.add(getLinesCount(), line);
+		line.setOnTextChangedListener(this::notifyTextChanged);
+		notifyTextChanged();
 	}
 	
 	public void insertLine(int index, String text) {
 		list.add((int) constrain(index,0,getLinesCount()), new SingleLineTextController(text));
+		notifyTextChanged();
 	}
 	
 	public void removeLine(int index) {
 		list.remove(getClampedIndex(index));
+		notifyTextChanged();
 	}
 	
 	public void insertCharForLine(int row, int column, char ch) {
-		if (isEmpty()) {
-			addLine("");
-		}
+		ensureNotEmpty();
 		
 		list.get(getClampedIndex(row)).insert(column, ch);
 	}
 	
 	public void insertStringForLine(int row, int column, String str) {
-		if (isEmpty()) {
-			addLine("");
-		}
+		ensureNotEmpty();
 		
 		list.get(getClampedIndex(row)).insert(column, str);
 	}
 	
 	public void removeCharForLine(int row, int column) {
-		if (isEmpty()) {
-			addLine("");
-		}
+		ensureNotEmpty();
 		
 		list.get(getClampedIndex(row)).removeCharAt(column);
 	}
 	
 	public void removeStringForLine(int row, int columnStart, int columnEnd) {
-		if (isEmpty()) {
-			addLine("");
-		}
+		ensureNotEmpty();
 		
 		list.get(getClampedIndex(row)).remove(columnStart, columnEnd);
 	}
@@ -97,7 +100,6 @@ public class MultiLineTextController {
 		
 		insertLine(row+1,currentRowText.substring(clampedColumn));
 		getLine(row).remove(clampedColumn,currentRowText.length());
-		
 	}
 	
 	public void mergeLines(int row) {
@@ -112,21 +114,24 @@ public class MultiLineTextController {
 	}
 	
 	public SingleLineTextController getLine(int row) {
-		if (isEmpty()) {
-			addLine("");
-		}
+		ensureNotEmpty();
 		
 		return list.get(getClampedIndex(row));
 	}
 	
 	public String getText() {
+		return getCachedText();
+	}
+	
+	private String getCachedText() {
+		if (!textChanged) {
+			return cachedText;
+		}
+
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
 		} else {
 			adapterSb.setLength(0);
-			if(adapterSb.capacity() > MAX_CAPACITY_FOR_CLEAR_ADAPTER) {
-				adapterSb.trimToSize();
-			}
 		}
 		
 		for (int i = 0; i < list.size(); i++) {
@@ -137,7 +142,9 @@ public class MultiLineTextController {
 			}
 		}
 		
-		return adapterSb.toString();
+		textChanged = false;
+		
+		return cachedText = adapterSb.toString();
 	}
 	
 	private int getClampedIndex(int index) {
@@ -146,5 +153,15 @@ public class MultiLineTextController {
 	
 	private boolean isLastRow(int row) {
 		return getClampedIndex(row) == getLinesCount()-1;
+	}
+	
+	private void ensureNotEmpty() {
+		if (isEmpty()) {
+			addLine("");
+		}
+	}
+	
+	private void notifyTextChanged() {
+		textChanged = true;
 	}
 }
