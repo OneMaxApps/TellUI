@@ -24,6 +24,8 @@ public class MultiLineTextController {
 		controller.mergeLines(1);
 		controller.mergeLines(0);
 		
+		controller.splitLine(0, 3);
+		
 		System.out.println(controller.getText());
 	}
 
@@ -44,55 +46,49 @@ public class MultiLineTextController {
 	}
 	
 	public void removeLine(int index) {
-		list.remove((int) constrain(index, 0, getLinesCount()-1));
+		list.remove(getClampedIndex(index));
 	}
 	
 	public void insertCharForLine(int row, int column, char ch) {
-		row = (int) constrain(row, 0, getLinesCount()-1);
-		list.get(row).insert(column, ch);
+		list.get(getClampedIndex(row)).insert(column, ch);
 	}
 	
 	public void insertStringForLine(int row, int column, String str) {
-		row = (int) constrain(row, 0, getLinesCount()-1);
-		list.get(row).insert(column, str);
+		list.get(getClampedIndex(row)).insert(column, str);
 	}
 	
 	public void removeCharForLine(int row, int column) {
-		row = (int) constrain(row, 0, getLinesCount()-1);
-		list.get(row).removeCharAt(column);
+		list.get(getClampedIndex(row)).removeCharAt(column);
 	}
 	
 	public void removeStringForLine(int row, int columnStart, int columnEnd) {
-		row = (int) constrain(row, 0, getLinesCount()-1);
-		list.get(row).remove(columnStart, columnEnd);
+		list.get(getClampedIndex(row)).remove(columnStart, columnEnd);
 	}
 	
 	public void splitLine(int row, int column) {
-		if (isEmpty()) {
+		row = getClampedIndex(row);
+		
+		if (isEmpty() || getLine(row).isEmpty()) {
 			return;
 		}
-		
-		row = (int) constrain(row, 0, getLinesCount()-1);
 		
 		insertLine(row+1,getLine(row).getAsString().substring(column));
 		getLine(row).remove(column, getLine(row).length());
 	}
 	
 	public void mergeLines(int row) {
-		if (getLinesCount() <= 1) {
+		row = getClampedIndex(row);
+		
+		if (getLinesCount() <= 1 || row == getLinesCount()-1) {
 			return;
 		}
-		
-		row = (int) constrain(row, 0, getLinesCount()-1);
 		
 		getLine(row).insert(getLine(row).length(), getLine(row+1).getAsString());
 		removeLine(row+1);
 	}
 	
 	public SingleLineTextController getLine(int row) {
-		row = (int) constrain(row, 0, getLinesCount()-1);
-		
-		return list.get(row);
+		return list.get(getClampedIndex(row));
 	}
 	
 	public String getText() {
@@ -102,5 +98,9 @@ public class MultiLineTextController {
 		}
 		
 		return sb.toString();
+	}
+	
+	private int getClampedIndex(int index) {
+		return (int) constrain(index, 0, getLinesCount()-1);
 	}
 }
