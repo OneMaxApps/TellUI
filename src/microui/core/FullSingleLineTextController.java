@@ -53,6 +53,10 @@ public class FullSingleLineTextController {
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
 	}
+	
+	public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
+		undoRedoManager.setOnHistoryChangedListener(onHistoryChangedListener);
+	}
 
 	public void undo() {
 		undoRedoManager.undo();
@@ -255,10 +259,6 @@ public class FullSingleLineTextController {
 
 	}
 	
-	public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
-		undoRedoManager.setOnHistoryChangedListener(onHistoryChangedListener);
-	}
-	
 	private void notifyOnAfterCharInsert() {
 		if (onAfterCharInsertListener != null) {
 			onAfterCharInsertListener.action();
@@ -271,7 +271,7 @@ public class FullSingleLineTextController {
 		}
 	}
 	
-	private void notifyOnTextChangedListener() {
+	private void notifyOnTextChanged() {
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
@@ -306,7 +306,7 @@ public class FullSingleLineTextController {
 			cachedPasswordText = null;
 		}
 
-		notifyOnTextChangedListener();
+		notifyOnTextChanged();
 		
 		undoRedoManager.updateState();
 		

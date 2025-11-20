@@ -3,13 +3,16 @@ package microui.core;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
+import microui.event.Listener;
+
 public class SingleLineTextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText;
-
+	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
+	
 	public SingleLineTextController(final String text) {
 		sb = new StringBuilder(requireNonNull(text,"text"));
 		updateCachedString();
@@ -18,32 +21,44 @@ public class SingleLineTextController {
 	public SingleLineTextController() {
 		this("");
 	}
+	
+	public void setOnAfterCharInsertListener(Listener onAfterCharInsertListener) {
+		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener,"onAfterCharInsertListener");
+	}
 
-	public final String getAsString() {
+	public void setOnAfterStringInsertListener(Listener onAfterStringInsertListener) {
+		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener,"onAfterStringInsertListener");
+	}
+
+	public void setOnTextChangedListener(Listener onTextChangedListener) {
+		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
+	}
+	
+	public String getAsString() {
 		return cachedText;
 	}
 
-	public final void insert(int pos, char ch) {
+	public void insert(int pos, char ch) {
 		insertInternal(pos, ch);
 	}
 
-	public final void insert(int pos, String text) {
+	public void insert(int pos, String text) {
 		insertInternal(pos,text);
 	}
 
-	public final void insert(int pos, int num) {
+	public void insert(int pos, int num) {
 		insertInternal(pos, String.valueOf(num));
 	}
 
-	public final void set(String text) {
+	public void set(String text) {
 		setInternal(text);
 	}
 
-	public final void set(StringBuilder text) {
+	public void set(StringBuilder text) {
 		setInternal(text.toString());
 	}
 
-	public final void clear() {
+	public void clear() {
 		if (isEmpty()) {
 			return;
 		}
@@ -56,7 +71,7 @@ public class SingleLineTextController {
 		updateCachedString();
 	}
 
-	public final void removeCharAt(final int pos) {
+	public void removeCharAt(final int pos) {
 		if (isEmpty()) {
 			return;
 		}
@@ -66,7 +81,7 @@ public class SingleLineTextController {
 		updateCachedString();
 	}
 
-	public final void remove(int firstChar, int lastChar) {
+	public void remove(int firstChar, int lastChar) {
 		if (isEmpty()) {
 			return;
 		}
@@ -79,23 +94,23 @@ public class SingleLineTextController {
 		updateCachedString();
 	}
 
-	public final void removeFirstChar() {
+	public void removeFirstChar() {
 		removeCharAt(0);
 	}
 
-	public final void removeLastChar() {
+	public void removeLastChar() {
 		removeCharAt(length() - 1);
 	}
 
-	public final int length() {
+	public int length() {
 		return sb.length();
 	}
 
-	public final boolean isEmpty() {
+	public boolean isEmpty() {
 		return length() == 0;
 	}
 
-	public final boolean isValidChar(final char ch) {
+	public boolean isValidChar(final char ch) {
 		return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 	}
 
@@ -119,19 +134,10 @@ public class SingleLineTextController {
 		return adapterSb.toString();
 	}
 
-	protected void onAfterCharInsert() {
-	}
-	
-	protected void onAfterStringInsert() {
-	}
-
-	protected void onTextChanged() {
-	}
-
 	private void updateCachedString() {
 		cachedText = sb.toString();
 
-		onTextChanged();
+		notifyOnTextChanged();
 	}
 
 	private void insertInternal(int pos, char ch) {
@@ -143,7 +149,7 @@ public class SingleLineTextController {
 
 		sb.insert(pos, ch);
 		updateCachedString();
-		onAfterCharInsert();
+		notifyOnAfterCharInsert();
 	}
 	
 	private void insertInternal(int pos, String str) {
@@ -156,7 +162,7 @@ public class SingleLineTextController {
 		sb.insert(pos, str);
 		
 		updateCachedString();
-		onAfterStringInsert();
+		notifyOnAfterStringInsert();
 	}
 	
 	private void setInternal(String text) {
@@ -171,5 +177,23 @@ public class SingleLineTextController {
 		sb.append(getValidatedString(text));
 
 		updateCachedString();
+	}
+	
+	private void notifyOnAfterCharInsert() {
+		if (onAfterCharInsertListener != null) {
+			onAfterCharInsertListener.action();
+		}
+	}
+	
+	private void notifyOnAfterStringInsert() {
+		if (onAfterStringInsertListener != null) {
+			onAfterStringInsertListener.action();
+		}
+	}
+	
+	private void notifyOnTextChanged() {
+		if (onTextChangedListener != null) {
+			onTextChangedListener.action();
+		}
 	}
 }

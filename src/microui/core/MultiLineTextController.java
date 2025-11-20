@@ -1,32 +1,29 @@
 package microui.core;
 
-import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import microui.util.MathUtils;
-
 public class MultiLineTextController {
 	private final List<SingleLineTextController> list;
-	private final Selection selection;
-	private final Cursor cursor;
 	
 	public MultiLineTextController() {
 		super();
 		list = new ArrayList<SingleLineTextController>();
-		list.add(new SingleLineTextController());
 		
-		selection = new Selection(this);
-		cursor = new Cursor(this);
 	}
 	
 	public static void main(String[] args) {
 		var controller = new MultiLineTextController();
-		controller.addLine("Hello");
-		controller.cursor.setRow(1);
+		controller.addLine("Hello ");
 		controller.addLine("World");
+		controller.splitLine(1, 3);
+		controller.addLine("!");
+		controller.mergeLines(1);
+		controller.mergeLines(1);
+		controller.mergeLines(0);
+		
 		System.out.println(controller.getText());
 	}
 
@@ -39,11 +36,63 @@ public class MultiLineTextController {
 	}
 	
 	public void addLine(String text) {
-		list.add(cursor.getRow(), new SingleLineTextController(text));
+		list.add(getLinesCount(), new SingleLineTextController(text));
+	}
+	
+	public void insertLine(int index, String text) {
+		list.add((int) constrain(index,0,getLinesCount()), new SingleLineTextController(text));
 	}
 	
 	public void removeLine(int index) {
 		list.remove((int) constrain(index, 0, getLinesCount()-1));
+	}
+	
+	public void insertCharForLine(int row, int column, char ch) {
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		list.get(row).insert(column, ch);
+	}
+	
+	public void insertStringForLine(int row, int column, String str) {
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		list.get(row).insert(column, str);
+	}
+	
+	public void removeCharForLine(int row, int column) {
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		list.get(row).removeCharAt(column);
+	}
+	
+	public void removeStringForLine(int row, int columnStart, int columnEnd) {
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		list.get(row).remove(columnStart, columnEnd);
+	}
+	
+	public void splitLine(int row, int column) {
+		if (isEmpty()) {
+			return;
+		}
+		
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		
+		insertLine(row+1,getLine(row).getAsString().substring(column));
+		getLine(row).remove(column, getLine(row).length());
+	}
+	
+	public void mergeLines(int row) {
+		if (getLinesCount() <= 1) {
+			return;
+		}
+		
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		
+		getLine(row).insert(getLine(row).length(), getLine(row+1).getAsString());
+		removeLine(row+1);
+	}
+	
+	public SingleLineTextController getLine(int row) {
+		row = (int) constrain(row, 0, getLinesCount()-1);
+		
+		return list.get(row);
 	}
 	
 	public String getText() {
@@ -53,96 +102,5 @@ public class MultiLineTextController {
 		}
 		
 		return sb.toString();
-	}
-	
-	private static final class Selection {
-		private final MultiLineTextController controller;
-		
-		private int startColumn, endColumn, startRow, endRow;
-
-		public Selection(MultiLineTextController controller) {
-			super();
-			this.controller = requireNonNull(controller,"controller");
-		}
-
-		public int getStartColumn() {
-			return startColumn;
-		}
-
-		public void setStartColumn(int startColumn) {
-			final int maxColumn = controller.list.get(getStartRow()).length();
-			this.startColumn = (int) MathUtils.constrain(startColumn, 0, maxColumn);
-		}
-
-		public int getEndColumn() {
-			return endColumn;
-		}
-
-		public void setEndColumn(int endColumn) {
-			final int maxColumn = controller.list.get(getEndRow()).length();
-			this.endColumn = (int) constrain(endColumn, 0, maxColumn);
-		}
-
-		public int getStartRow() {
-			return (int) constrain(startRow, 0, controller.getLinesCount()-1);
-		}
-
-		public void setStartRow(int startRow) {
-			this.startRow = (int) constrain(startRow, 0, controller.getLinesCount()-1);
-		}
-
-		public int getEndRow() {
-			return (int) constrain(endRow, 0, controller.getLinesCount()-1);
-		}
-
-		public void setEndRow(int endRow) {
-			this.endRow = (int) constrain(endRow, 0, controller.getLinesCount()-1);
-		}
-		
-		public int getEffectiveStartColumn() {
-			return Math.min(startColumn, endColumn);
-		}
-		
-		public int getEffectiveEndColumn() {
-			return Math.max(startColumn, endColumn);
-		}
-		
-		public int getEffectiveStartRow() {
-			return Math.min(startRow, endRow);
-		}
-		
-		public int getEffectiveEndRow() {
-			return Math.max(startRow, endRow);
-		}
-	}
-	
-	private static final class Cursor {
-		private final MultiLineTextController controller;
-		
-		private int column, row;
-
-		public Cursor(MultiLineTextController controller) {
-			super();
-			this.controller = requireNonNull(controller,"controller");
-		}
-
-		public int getColumn() {
-			final int maxColumn = controller.list.get(getRow()).length();
-			return (int) constrain(column, 0, maxColumn);
-		}
-
-		public void setColumn(int column) {
-			final int maxColumn = controller.list.get(getRow()).length();
-			this.column = (int) constrain(column, 0, maxColumn-1);
-		}
-
-		public int getRow() {
-			return (int) constrain(row, 0, controller.getLinesCount()-1);
-		}
-
-		public void setRow(int row) {
-			this.row = (int) constrain(row, 0, controller.getLinesCount()-1);
-		}
-		
 	}
 }
