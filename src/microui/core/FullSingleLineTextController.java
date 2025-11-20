@@ -9,7 +9,7 @@ import java.util.Deque;
 import microui.event.Listener;
 import microui.util.Debugger;
 
-public abstract class FullSingleLineTextController {
+public class FullSingleLineTextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 	private static final int DEFAULT_MAX_CHARS = 4;
 	private static final int MIN_CONSTRAIN_VALUE = 1;
@@ -20,6 +20,7 @@ public abstract class FullSingleLineTextController {
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText, cachedPasswordText;
+	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
 	private char passwordChar;
@@ -41,6 +42,18 @@ public abstract class FullSingleLineTextController {
 		this("");
 	}
 	
+	public void setOnAfterCharInsertListener(Listener onAfterCharInsertListener) {
+		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener,"onAfterCharInsertListener");
+	}
+
+	public void setOnAfterStringInsertListener(Listener onAfterStringInsertListener) {
+		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener,"onAfterStringInsertListener");
+	}
+
+	public void setOnTextChangedListener(Listener onTextChangedListener) {
+		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
+	}
+
 	public void undo() {
 		undoRedoManager.undo();
 	}
@@ -245,7 +258,25 @@ public abstract class FullSingleLineTextController {
 	public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
 		undoRedoManager.setOnHistoryChangedListener(onHistoryChangedListener);
 	}
-
+	
+	private void notifyOnAfterCharInsert() {
+		if (onAfterCharInsertListener != null) {
+			onAfterCharInsertListener.action();
+		}
+	}
+	
+	private void notifyOnAfterStringInsert() {
+		if (onAfterStringInsertListener != null) {
+			onAfterStringInsertListener.action();
+		}
+	}
+	
+	private void notifyOnTextChangedListener() {
+		if (onTextChangedListener != null) {
+			onTextChangedListener.action();
+		}
+	}
+	
 	private String getValidatedString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
@@ -266,15 +297,6 @@ public abstract class FullSingleLineTextController {
 		return adapterSb.toString();
 	}
 
-	protected void onAfterCharInsert() {
-	}
-	
-	protected void onAfterStringInsert() {
-	}
-
-	protected void onTextChanged() {
-	}
-
 	private void updateCachedStrings() {
 		cachedText = sb.toString();
 
@@ -284,7 +306,7 @@ public abstract class FullSingleLineTextController {
 			cachedPasswordText = null;
 		}
 
-		onTextChanged();
+		notifyOnTextChangedListener();
 		
 		undoRedoManager.updateState();
 		
@@ -312,7 +334,7 @@ public abstract class FullSingleLineTextController {
 
 		sb.insert(pos, ch);
 		updateCachedStrings();
-		onAfterCharInsert();
+		notifyOnAfterCharInsert();
 	}
 	
 	private void insertInternal(int pos, String str) {
@@ -335,7 +357,7 @@ public abstract class FullSingleLineTextController {
 		}
 		
 		updateCachedStrings();
-		onAfterStringInsert();
+		notifyOnAfterStringInsert();
 	}
 	
 	private void setInternal(String text) {

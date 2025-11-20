@@ -815,9 +815,10 @@ public final class TextField extends Component implements KeyPressable {
 		scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
 	}
 
-	private static final class Text extends FullSingleLineTextController {
+	private static final class Text {
 		private static final int MIN_TEXT_SIZE = 1;
 		private final TextField tf;
+		private final FullSingleLineTextController controller;
 		private AbstractColor color, hintColor;
 		private PFont font;
 		private String hint;
@@ -826,17 +827,39 @@ public final class TextField extends Component implements KeyPressable {
 		private Text(TextField textField) {
 			super();
 			this.tf = requireNonNull(textField, "textField");
-			color = getTheme().getEditableTextColor();
-			hintColor = new GradientLoopColor(color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 232));
-			recalculateY();
-			setTextSize(textField.getHeight());
-			setOnHistoryChangedListener(() -> {
+			controller = new FullSingleLineTextController();
+			
+			controller.setOnAfterCharInsertListener(() -> {
+				final Cursor.Column column = tf.cursor.column;
+				final BoundedValue scroll = tf.scroll;
+
+				column.next();
+				scroll.append(column.getPrevCharWidth());
+			});
+			
+			controller.setOnTextChangedListener(() -> {
+				recalculateTextWidth();
+
+				tf.updateScrollMax();
+				tf.cursor.recalculateX();
+
+				tf.notifyTextChanged();
+
+				tf.textWidthPool.clear();
+			});
+			
+			controller.setOnHistoryChangedListener(() -> {
 				if (tf.selection.isSelected()) {
 					tf.selection.reset();
 				}
 				tf.cursor.column.goToEnd();
 				tf.scroll.set(tf.scroll.getMax());
 			});
+			
+			color = getTheme().getEditableTextColor();
+			hintColor = new GradientLoopColor(color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 232));
+			recalculateY();
+			setTextSize(textField.getHeight());
 		}
 
 		public void draw(final PGraphics pg) {
@@ -854,24 +877,24 @@ public final class TextField extends Component implements KeyPressable {
 
 			pg.textSize(textSize);
 			pg.textAlign(CORNER, CENTER);
-			pg.text(mustShowHint() ? hint : getAsString(), getX(), y);
+			pg.text(mustShowHint() ? hint : controller.getAsString(), getX(), y);
 
 			pg.popStyle();
 		}
 
-		public final AbstractColor getHintColor() {
+		public AbstractColor getHintColor() {
 			return hintColor;
 		}
 
-		public final void setHintColor(AbstractColor hintColor) {
+		public void setHintColor(AbstractColor hintColor) {
 			this.hintColor = requireNonNull(hintColor, "hintColor");
 		}
 
-		public final float getTextSize() {
+		public float getTextSize() {
 			return textSize;
 		}
 
-		public final void setTextSize(float textSize) {
+		public void setTextSize(float textSize) {
 			if (textSize < MIN_TEXT_SIZE) {
 				throw new IllegalArgumentException("Text size must be >= " + MIN_TEXT_SIZE);
 			}
@@ -914,35 +937,109 @@ public final class TextField extends Component implements KeyPressable {
 
 			recalculateTextWidth();
 		}
-
-		@Override
-		protected void onAfterCharInsert() {
-			final Cursor.Column column = tf.cursor.column;
-			final BoundedValue scroll = tf.scroll;
-
-			column.next();
-			scroll.append(column.getPrevCharWidth());
+		
+		public void undo() {
+			controller.undo();
 		}
 
-		@Override
-		protected void onAfterStringInsert() {
-
+		public void redo() {
+			controller.redo();
 		}
 
-		@Override
-		protected void onTextChanged() {
-			if (tf == null) {
-				return;
-			}
+		public final char getPasswordChar() {
+			return controller.getPasswordChar();
+		}
 
-			recalculateTextWidth();
+		public final void setPasswordChar(char passwordChar) {
+			controller.setPasswordChar(passwordChar);
+		}
 
-			tf.updateScrollMax();
-			tf.cursor.recalculateX();
+		public final boolean isPasswordModeEnabled() {
+			return controller.isPasswordModeEnabled();
+		}
 
-			tf.notifyTextChanged();
+		public final void setPasswordModeEnabled(boolean passwordModeEnabled) {
+			controller.setPasswordModeEnabled(passwordModeEnabled);
+		}
 
-			tf.textWidthPool.clear();
+		public final ValidationMode getValidationMode() {
+			return controller.getValidationMode();
+		}
+
+		public final void setValidationMode(ValidationMode validationMode) {
+			controller.setValidationMode(validationMode);
+		}
+
+		public final boolean isConstrainEnabled() {
+			return controller.isConstrainEnabled();
+		}
+
+		public final void setConstrainEnabled(boolean constrainEnabled) {
+			controller.setConstrainEnabled(constrainEnabled);
+		}
+
+		public final int getMaxChars() {
+			return controller.getMaxChars();
+		}
+
+		public final void setMaxChars(int maxChars) {
+			controller.setMaxChars(maxChars);
+		}
+
+		public final String getAsString() {
+			return controller.getAsString();
+		}
+
+		public final String getHiddenText() {
+			return controller.getHiddenText();
+		}
+
+		public final int getDigitsStrict() {
+			return controller.getDigitsStrict();
+		}
+
+		public int getDigitsOrDefault(int defaultValue) {
+			return controller.getDigitsOrDefault(defaultValue);
+		}
+
+		public void insert(int pos, char ch) {
+			controller.insert(pos, ch);
+		}
+
+		public void insert(int pos, String text) {
+			controller.insert(pos, text);
+		}
+
+		public void set(String text) {
+			controller.set(text);
+		}
+
+		public void set(StringBuilder text) {
+			controller.set(text);
+		}
+
+		public void removeCharAt(int pos) {
+			controller.removeCharAt(pos);
+		}
+
+		public void remove(int firstChar, int lastChar) {
+			controller.remove(firstChar, lastChar);
+		}
+
+		public int length() {
+			return controller.length();
+		}
+
+		public boolean isEmpty() {
+			return controller.isEmpty();
+		}
+
+		public boolean isValidationEnabled() {
+			return controller.isValidationEnabled();
+		}
+
+		public void setValidationEnabled(boolean validation) {
+			controller.setValidationEnabled(validation);
 		}
 
 		private boolean mustShowHint() {
