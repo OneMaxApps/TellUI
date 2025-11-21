@@ -34,7 +34,7 @@ public final class MultiLineTextController {
 
 	// == PUBLIC API ==
 	public boolean isEmpty() {
-		return list.isEmpty();
+		return hasOnlyOneLine() && getLine(0).isEmpty();
 	}
 
 	public int getLinesCount() {
@@ -84,10 +84,6 @@ public final class MultiLineTextController {
 	public void splitLine(int row, int column) {
 		row = getClampedIndex(row);
 
-		if (isEmpty()) {
-			return;
-		}
-
 		final String currentRowText = getLineText(row);
 		final int clampedColumn = (int) constrain(column, 0, currentRowText.length());
 
@@ -115,7 +111,7 @@ public final class MultiLineTextController {
 		return getCachedText();
 	}
 
-	public void setText(String[] lines) {
+	public void setText(String... lines) {
 		requireNonNull(lines, "lines");
 
 		clear();
