@@ -1,4 +1,4 @@
-package microui.core;
+package microui.core.controller;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -1,11 +1,11 @@
-package microui.core;
+package microui.core.controller;
 
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
 import microui.event.Listener;
 
-public class SingleLineTextController {
+public final class SingleLineTextController {
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
 	private final StringBuilder sb;

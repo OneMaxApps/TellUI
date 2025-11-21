@@ -23,9 +23,9 @@ import static processing.core.PConstants.RIGHT;
 
 import java.util.HashMap;
 
-import microui.core.FullSingleLineTextController;
-import microui.core.FullSingleLineTextController.ValidationMode;
 import microui.core.base.Component;
+import microui.core.controller.FullSingleLineTextController;
+import microui.core.controller.FullSingleLineTextController.ValidationMode;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;

@@ -1,4 +1,4 @@
-package microui.core;
+package microui.core.controller;
 
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;

@@ -2,9 +2,9 @@ package microui;
 
 import microui.component.TextField;
 import microui.component.TextView;
-import microui.core.FullSingleLineTextController.ValidationMode;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
+import microui.core.controller.FullSingleLineTextController.ValidationMode;
 import microui.core.style.Color;
 import microui.core.style.theme.ThemeBlack;
 import microui.core.style.theme.ThemeManager;
