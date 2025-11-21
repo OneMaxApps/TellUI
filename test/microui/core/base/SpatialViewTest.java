@@ -122,4 +122,6 @@ class SpatialViewTest {
 		assertEquals(spatialView.getHeight(), -40);
 
 	}
+	
+	
 }
