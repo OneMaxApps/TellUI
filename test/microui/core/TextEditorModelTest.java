@@ -108,7 +108,7 @@ public class TextEditorModelTest {
 		model.setSelect(0, 2, 1, 1);
 		model.removeSelectedText();
 		
-		assertTrue(model.getText().equals("w" + "\n" + "ord 3"));
+		assertTrue(model.getText().equals("w" + "ord 3"));
 		
 	}
 }

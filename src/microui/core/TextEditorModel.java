@@ -249,28 +249,22 @@ public final class TextEditorModel {
 			return;
 		}
 		
+		final int sr = getSelectEffectiveStartRow();
+		final int er = getSelectEffectiveEndRow();
+		final int sc = getSelectEffectiveStartColumn();
+		final int ec = getSelectEffectiveEndColumn();
+		
 		if (!isMultiLineSelected()) {
-			controller.getLine(getSelectStartRow()).remove(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
+			controller.getLine(sr).remove(sc, ec);
 		} else {
-			final int sr = getSelectEffectiveStartRow();
-			final int er = getSelectEffectiveEndRow();
-			final int sc = getSelectEffectiveStartColumn();
-			final int ec = getSelectEffectiveEndColumn();
+			controller.getLine(sr).remove(ec, getLineLength(sr));
+			controller.getLine(er).remove(0, ec);
 			
-			for(int i = sr; i <= er; i++) {
-				if(i == sr) {
-					controller.getLine(sr).remove(sc,controller.getLine(sc).length());
-				}
-				
-				if(i == er) {
-					controller.getLine(er).remove(0,ec);
-				}
-				
-				if(i != sr && i != er) {
-					controller.removeLine(i);
-				}
+			for(int i = er - 1; i > sr; i--) {
+				controller.removeLine(i);
 			}
 			
+			controller.mergeLines(sr);
 		}
 		
 		cursor.moveTo(getSelectEffectiveStartRow(), getSelectEffectiveStartColumn());
@@ -456,7 +450,7 @@ public final class TextEditorModel {
 		}
 		
 		public void selectAll() {
-			set(0,0,model.getLinesCount() - 1, model.getLineLength(model.getLinesCount() - 1));
+			set(0,model.getLinesCount() - 1, 0, model.getLineLength(model.getLinesCount() - 1));
 		}
 		
 		public void setOnSelectingListener(Listener onSelectingListener) {
