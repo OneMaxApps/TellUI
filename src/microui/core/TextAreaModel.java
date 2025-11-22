@@ -1,10 +1,12 @@
 package microui.core;
 
 import static java.util.Objects.requireNonNull;
+import static microui.constants.Direction.LEFT;
+import static microui.constants.Direction.RIGHT;
+import static microui.constants.Direction.UP;
 
 import microui.constants.Direction;
 import microui.core.controller.MultiLineTextController;
-import microui.core.controller.SingleLineTextController;
 import microui.event.Listener;
 import microui.util.MathUtils;
 
@@ -28,49 +30,36 @@ public final class TextAreaModel {
 		model.insertChar('l');
 		model.insertChar('l');
 		model.insertChar('o');
-
-		//model.insertString(" World");
-		
-		//model.addLine("And YOU");
-		
-		model.moveCursorToEnd();
-		
-		for(int i = 0; i < model.getText().length(); i++) {
-			System.out.println("text length: " + model.getText().length());
-			model.removeChar();
-		}
-
-		System.out.println(model.getText()); // "Hello World"
 	}
 
 	// == PUBLIC API ==
 	public void insertChar(char ch) {
 		controller.insertCharForLine(cursor.getRow(), cursor.getColumn(), ch);
-		cursor.moveToNextColumn();
+		cursor.moveTo(RIGHT);
 	}
 
 	public void insertString(String text) {
 		controller.insertStringForLine(cursor.getRow(), cursor.getColumn(), text);
-
-		cursor.moveToNextColumn(text.length());
+		cursor.moveTo(RIGHT, text.length());
 	}
 
 	public void removeChar() {
-		System.out.println("cursor row: " + getCursorRow());
-		System.out.println("cursor column: " + getCursorColumn());
-		
 		if(getText().isEmpty()) {
 			return;
 		}
 		
-		if (getCurrentLine().isEmpty()) {
-			cursor.moveToPrevRow();
-			cursor.moveToCurrentLineEnd();
+		if (cursor.atLineStart()) {
+			cursor.moveTo(UP);
+			cursor.moveToLineEnd();
+			
+			if(!controller.getLine(cursor.getRow() + 1).isEmpty()) {
+				mergeLines();
+			}
 		}
 		
 		controller.removeCharForLine(cursor.getRow(), cursor.getColumn());
-
-		cursor.moveToPrevColumn();
+		
+		cursor.moveTo(LEFT);
 	}
 
 	public void setText(String... text) {
@@ -81,23 +70,11 @@ public final class TextAreaModel {
 	public String getText() {
 		return controller.getText();
 	}
+
+	public void moveCursorTo(Direction direction, int repeat) {
+		cursor.moveTo(direction, repeat);
+	}
 	
-	public int getCursorColumn() {
-		return cursor.getColumn();
-	}
-
-	public void setCursorColumn(int column) {
-		cursor.setColumn(column);
-	}
-
-	public int getCursorRow() {
-		return cursor.getRow();
-	}
-
-	public void setCursorRow(int row) {
-		cursor.setRow(row);
-	}
-
 	public void moveCursorTo(Direction direction) {
 		cursor.moveTo(direction);
 	}
@@ -106,60 +83,12 @@ public final class TextAreaModel {
 		cursor.moveTo(row, column);
 	}
 
-	public void moveCursorToPrevRow() {
-		cursor.moveToPrevRow();
-	}
-
-	public void moveCursorToPrevRow(int repeatCount) {
-		cursor.moveToPrevRow(repeatCount);
-	}
-
-	public void moveCursorToNextRow() {
-		cursor.moveToNextRow();
-	}
-
-	public void moveCursorToNextRow(int repeatCount) {
-		cursor.moveToNextRow(repeatCount);
-	}
-
-	public void moveCursorToPrevColumn() {
-		cursor.moveToPrevColumn();
-	}
-
-	public void moveCursorToPrevColumn(int repeatCount) {
-		cursor.moveToPrevColumn(repeatCount);
-	}
-
-	public void moveCursorToNextColumn() {
-		cursor.moveToNextColumn();
-	}
-
-	public void moveCursorToNextColumn(int repeatCount) {
-		cursor.moveToNextColumn(repeatCount);
-	}
-
-	public void moveCursorToBehind() {
-		cursor.moveToBehind();
-	}
-
-	public void moveCursorToEnd() {
-		cursor.moveToEnd();
-	}
-	
-	public void moveCursorToCurrentLineBehind() {
-		cursor.moveToCurrentLineBehind();
-	}
-
-	public void moveCursorToCurrentLineEnd() {
-		cursor.moveToCurrentLineEnd();
-	}
-
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
 	}
 	
-	public boolean isEmpty() {
-		return controller.isEmpty();
+	public boolean isBlank() {
+		return controller.isBlank();
 	}
 
 	public int getLinesCount() {
@@ -183,20 +112,16 @@ public final class TextAreaModel {
 	}
 	
 	public void splitLine() {
-		controller.splitLine(getCursorRow(), getCursorColumn());
+		controller.splitLine(cursor.getRow(), cursor.getColumn());
 	}
 	
 	public void mergeLines() {
-		controller.mergeLines(getCursorRow());
+		controller.mergeLines(cursor.getRow());
 	}
 
 	// == PRIVATE API ==
 	private MultiLineTextController getController() {
 		return controller;
-	}
-
-	private SingleLineTextController getCurrentLine() {
-		return controller.getLine(cursor.getRow());
 	}
 	
 	private void onTextChanged() {
@@ -238,22 +163,55 @@ public final class TextAreaModel {
 			this.row = getClampedRow(row);
 		}
 
-		public void moveTo(Direction direction) {
-			switch (requireNonNull(direction, "direction")) {
-			case LEFT:
-				setColumn(getColumn() - 1);
-				break;
-			case UP:
-				setRow(getRow() - 1);
-				break;
-			case RIGHT:
-				setColumn(getColumn() + 1);
-				break;
-			case DOWN:
-				setRow(getRow() + 1);
-				break;
+		public void moveTo(Direction direction, int repeat) {
+			requireNonNull(direction, "direction");
+			
+			for (int i = 0; i < repeat; i++) {
+				
+				switch (direction) {
+				case LEFT:
+					if (onFirstLine()) {
+						if (!atLineStart()) {
+							setColumn(getColumn() - 1);
+						}
+					} else {
+						if (atLineStart()) {
+							setRow(getRow() - 1);
+							moveToLineEnd();
+						} else {
+							setColumn(getColumn() - 1);
+						}
+					}
+					
+					break;
+					
+				case UP:
+					setRow(getRow() - 1);
+					break;
+				case RIGHT:
+					if (onLastLine()) {
+						if (!atLineEnd()) {
+							setColumn(getColumn() + 1);
+						}
+					} else {
+						if (atLineEnd()) {
+							setRow(getRow() + 1);
+							moveToLineStart();
+						} else {
+							setColumn(getColumn() + 1);
+						}
+					}
+					break;
+				case DOWN:
+					setRow(getRow() + 1);
+					break;
+				}
+			
 			}
-
+		}
+		
+		public void moveTo(Direction direction) {
+			moveTo(direction,1);
 		}
 
 		public void moveTo(int row, int column) {
@@ -261,62 +219,18 @@ public final class TextAreaModel {
 			setColumn(column);
 		}
 
-		public void moveToPrevRow() {
-			setRow(getRow() - 1);
-		}
-		
-		public void moveToPrevRow(int repeatCount) {
-			for (int i = 0; i < repeatCount; i++) {
-				moveToPrevRow();
-			}
-		}
-
-		public void moveToNextRow() {
-			setRow(getRow() + 1);
-		}
-		
-		public void moveToNextRow(int repeatCount) {
-			for (int i = 0; i < repeatCount; i++) {
-				moveToNextRow();
-			}
-		}
-
-		public void moveToPrevColumn() {
-			setColumn(getColumn() - 1);
-		}
-		
-		public void moveToPrevColumn(int repeatCount) {
-			for (int i = 0; i < repeatCount; i++) {
-				moveToPrevColumn();
-			}
-		}
-
-		public void moveToNextColumn() {
-			setColumn(getColumn() + 1);
-		}
-
-		public void moveToNextColumn(int repeatCount) {
-			for (int i = 0; i < repeatCount; i++) {
-				moveToNextColumn();
-			}
-		}
-
-		public void moveToBehind() {
-			moveTo(0, 0);
-		}
-
 		public void moveToEnd() {
-			moveTo(getRowCount(), getLastLineLength() - 1);
+			moveTo(getRowCount() - 1, getLastLineLength());
 		}
 		
-		public void moveToCurrentLineBehind() {
+		public void moveToLineStart() {
 			setColumn(0);
 		}
 		
-		public void moveToCurrentLineEnd() {
+		public void moveToLineEnd() {
 			setColumn(getCurrentLineLength());
 		}
-
+		
 		private MultiLineTextController getController() {
 			return model.getController();
 		}
@@ -335,11 +249,19 @@ public final class TextAreaModel {
 
 		private int getLastLineLength() {
 			final MultiLineTextController c = getController();
-			return c.getLine(c.getLinesCount()).length();
+			return c.getLine(c.getLinesCount() - 1).length();
 		}
 		
 		private int getCurrentLineLength() {
 			return getController().getLine(getRow()).length();
+		}
+		
+		private boolean onFirstLine() {
+			return getRow() == 0;
+		}
+		
+		private boolean onLastLine() {
+			return getRow() == getRowCount() - 1;
 		}
 	}
 }

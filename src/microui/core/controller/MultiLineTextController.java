@@ -33,7 +33,7 @@ public final class MultiLineTextController {
 	}
 
 	// == PUBLIC API ==
-	public boolean isEmpty() {
+	public boolean isBlank() {
 		return hasOnlyOneLine() && getLine(0).isEmpty();
 	}
 

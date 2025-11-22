@@ -1,5 +1,7 @@
 package microui.core.controller;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
@@ -210,7 +212,10 @@ public class FullSingleLineTextController {
 		firstChar = (int) constrain(firstChar, 0, length());
 		lastChar = (int) constrain(lastChar, 0, length());
 
-		sb.delete(firstChar, lastChar);
+		final int effectiveFirst = min(firstChar, lastChar);
+		final int effectiveLast = max(firstChar, lastChar);
+		
+		sb.delete(effectiveFirst, effectiveLast);
 
 		updateCachedStrings();
 	}
