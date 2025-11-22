@@ -164,7 +164,7 @@ public final class MultiLineTextController {
 		requireNonNull(text,"text");
 		
 		final SingleLineTextController line = new SingleLineTextController(text);
-		list.add(getLinesCount(), line);
+		list.add(line);
 		line.setOnTextChangedListener(this::notifyTextChanged);
 		
 	}
@@ -184,7 +184,7 @@ public final class MultiLineTextController {
 			if (isLastRow(i)) {
 				adapterSb.append(getLineText(i));
 			} else {
-				adapterSb.append(getLineText(i) + "\n");
+				adapterSb.append(getLineText(i)).append('\n');
 			}
 		}
 
