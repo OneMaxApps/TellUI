@@ -257,7 +257,7 @@ public final class TextEditorModel {
 		if (!isMultiLineSelected()) {
 			controller.getLine(sr).remove(sc, ec);
 		} else {
-			controller.getLine(sr).remove(ec, getLineLength(sr));
+			controller.getLine(sr).remove(sc, getLineLength(sr));
 			controller.getLine(er).remove(0, ec);
 			
 			for(int i = er - 1; i > sr; i--) {
