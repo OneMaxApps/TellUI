@@ -2,6 +2,7 @@ package microui.core;
 
 import static microui.constants.Direction.LEFT;
 import static microui.constants.Direction.RIGHT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -110,5 +111,75 @@ public class TextEditorModelTest {
 		
 		assertTrue(model.getText().equals("w" + "ord 3"));
 		
+	}
+	
+	@Test
+	public void undo() {
+		var model = new TextEditorModel();
+		model.insertString("Hello ");
+		model.moveCursorToEndOfLine();
+		model.insertString("World");
+		model.moveCursorToEndOfLine();
+		model.insertString("!");
+		model.moveCursorToEndOfLine();
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello World");
+		
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello ");
+		
+		model.undo();
+		assertEquals(model.getText(),"");
+		
+		model.insertString("Hello");
+		model.addLine("World");
+		
+		assertEquals(model.getText(),"Hello" + "\n" + "World");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello");
+		
+		model.undo();
+		assertEquals(model.getText(),"");
+	}
+	
+	@Test
+	public void redo() {
+		var model = new TextEditorModel();
+		model.insertString("Hello ");
+		model.moveCursorToEndOfLine();
+		model.insertString("World");
+		model.moveCursorToEndOfLine();
+		model.insertString("!");
+		model.moveCursorToEndOfLine();
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello World");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World!");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello World");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello ");
+		
+		model.undo();
+		assertEquals(model.getText(),"");
+		
+		model.undo();
+		assertEquals(model.getText(),"");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello ");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World!");
 	}
 }

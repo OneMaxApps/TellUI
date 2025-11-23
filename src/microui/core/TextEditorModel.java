@@ -22,10 +22,19 @@ public final class TextEditorModel {
 	}
 
 	// == TEXT CONTROL ==
+	
+	public void undo() {
+		controller.undo();
+	}
+
+	public void redo() {
+		controller.redo();
+	}
+	
 	public String getText() {
 		return controller.getText();
 	}
-
+	
 	public void setText(String... text) {
 		controller.setText(text);
 	}

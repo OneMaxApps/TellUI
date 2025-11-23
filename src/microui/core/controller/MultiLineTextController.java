@@ -1,9 +1,12 @@
 package microui.core.controller;
 
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import microui.event.Listener;
@@ -12,6 +15,7 @@ public final class MultiLineTextController {
 	private static final byte MIN_LINES_COUNT;
 	private static final String EMPTY_TEXT;
 	private final List<SingleLineTextController> list;
+	private final UndoRedoManager undoRedoManager;
 	private StringBuilder adapterSb;
 	private String cachedText;
 	private Listener onTextChangedListener;
@@ -29,10 +33,20 @@ public final class MultiLineTextController {
 	public MultiLineTextController() {
 		super();
 		list = new ArrayList<SingleLineTextController>();
+		undoRedoManager = new UndoRedoManager(this);
 		addLine(EMPTY_TEXT);
 	}
 
 	// == PUBLIC API ==
+	
+	public void undo() {
+		undoRedoManager.undo();
+	}
+
+	public void redo() {
+		undoRedoManager.redo();
+	}
+	
 	public boolean isBlank() {
 		return hasOnlyOneLine() && getLine(0).isEmpty();
 	}
@@ -45,7 +59,7 @@ public final class MultiLineTextController {
 		addLineSilently(text);
 		notifyTextChanged();
 	}
-	
+
 	public void insertLine(int index, String text) {
 		index = (int) constrain(index, 0, getLinesCount());
 
@@ -98,7 +112,7 @@ public final class MultiLineTextController {
 			return;
 		}
 
-		getLine(row).insert(getLineLength(row), getLineText(row+1));
+		getLine(row).insert(getLineLength(row), getLineText(row + 1));
 		removeLine(row + 1);
 	}
 
@@ -117,39 +131,39 @@ public final class MultiLineTextController {
 		clear();
 
 		for (int i = 0; i < lines.length; i++) {
-			requireNonNull(lines[i],"lines[" + i + "]");
+			requireNonNull(lines[i], "lines[" + i + "]");
 			if (i == 0) {
 				getLine(0).set(lines[i]);
 			} else {
 				addLineSilently(lines[i]);
 			}
 		}
-		
+
 		notifyTextChanged();
 	}
 
 	public void clear() {
 		if (hasOnlyOneLine()) {
-			if(!getLine(0).isEmpty()) {
+			if (!getLine(0).isEmpty()) {
 				getLine(0).clear();
 			}
 			return;
 		}
-		
+
 		final SingleLineTextController controller = getLine(0);
 		list.clear();
 		list.add(controller);
-		
-		if(!controller.isEmpty()) {
+
+		if (!controller.isEmpty()) {
 			controller.clear();
 		}
 	}
-	
+
 	public String getLineText(int row) {
 		row = getClampedIndex(row);
 		return getLine(row).getAsString();
 	}
-	
+
 	public int getLineLength(int row) {
 		row = getClampedIndex(row);
 		return getLine(row).length();
@@ -161,14 +175,14 @@ public final class MultiLineTextController {
 
 	// == PRIVATE API ==
 	private void addLineSilently(String text) {
-		requireNonNull(text,"text");
-		
+		requireNonNull(text, "text");
+
 		final SingleLineTextController line = new SingleLineTextController(text);
 		list.add(line);
 		line.setOnTextChangedListener(this::notifyTextChanged);
-		
+
 	}
-	
+
 	private String getCachedText() {
 		if (!textChanged) {
 			return cachedText;
@@ -203,7 +217,9 @@ public final class MultiLineTextController {
 
 	private void notifyTextChanged() {
 		textChanged = true;
-
+		
+		undoRedoManager.updateState();
+		
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
@@ -211,5 +227,80 @@ public final class MultiLineTextController {
 
 	private boolean hasOnlyOneLine() {
 		return getLinesCount() == 1;
+	}
+
+	private static final class UndoRedoManager {
+		private static final int MIN_MS_FOR_UPDATE = 500;
+		private final MultiLineTextController controller;
+		private final Deque<String> undo, redo;
+		private long lastUpdateTime;
+		private boolean operation;
+		
+		public UndoRedoManager(MultiLineTextController controller) {
+			super();
+			this.controller = requireNonNull(controller, "controller");
+
+			undo = new ArrayDeque<String>();
+			redo = new ArrayDeque<String>();
+
+			lastUpdateTime = currentTimeMillis();
+		}
+		
+		public void undo() {
+			operation = true;
+			
+			if (!undo.isEmpty()) {
+				redo.push(undo.pop());
+			}
+			
+			if (!undo.isEmpty()) {
+				controller.setText(undo.peek());
+			} else {
+				controller.setText("");
+			}
+					
+			operation = false;
+		}
+		
+		public void redo() {
+			operation = true;
+			
+			if (redo.isEmpty()) {
+				operation = false;
+				return;
+			}
+			
+			undo.push(controller.getText());
+			
+			controller.setText(redo.pop());
+			
+			operation = false;
+		}
+
+		public void updateState() {
+			if (operation) {
+				return;
+			}
+			
+			final long now = currentTimeMillis();
+			final String text = controller.getText();
+			
+//			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
+//				return;
+//			}
+			
+			lastUpdateTime = now;
+			
+			if (undo.isEmpty()) {
+				undo.push(text);
+			} else {
+				if (!undo.peek().equals(text)) {
+					undo.push(text);
+				}
+			}
+			
+			redo.clear();
+		}
+
 	}
 }
