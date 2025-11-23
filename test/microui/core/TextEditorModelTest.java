@@ -170,6 +170,24 @@ public class TextEditorModelTest {
 		model.undo();
 		assertEquals(model.getText(),"");
 		
+		model.redo();
+		assertEquals(model.getText(),"Hello ");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World!");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello World");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello ");
+		
+		model.undo();
+		assertEquals(model.getText(),"");
+		
 		model.undo();
 		assertEquals(model.getText(),"");
 		
@@ -181,5 +199,11 @@ public class TextEditorModelTest {
 		
 		model.redo();
 		assertEquals(model.getText(),"Hello World!");
+		
+		model.redo();
+		assertEquals(model.getText(),"Hello World!");
+		
+		model.undo();
+		assertEquals(model.getText(),"Hello World");
 	}
 }

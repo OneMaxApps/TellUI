@@ -250,7 +250,9 @@ public final class MultiLineTextController {
 			operation = true;
 			
 			if (!undo.isEmpty()) {
-				redo.push(undo.pop());
+				if (!undo.peek().isEmpty()) {
+					redo.push(undo.pop());
+				}
 			}
 			
 			if (!undo.isEmpty()) {
@@ -258,7 +260,7 @@ public final class MultiLineTextController {
 			} else {
 				controller.setText("");
 			}
-					
+			
 			operation = false;
 		}
 		
@@ -270,10 +272,9 @@ public final class MultiLineTextController {
 				return;
 			}
 			
-			undo.push(controller.getText());
-			
+			undo.push(redo.peek());
 			controller.setText(redo.pop());
-			
+
 			operation = false;
 		}
 
@@ -285,9 +286,9 @@ public final class MultiLineTextController {
 			final long now = currentTimeMillis();
 			final String text = controller.getText();
 			
-//			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
-//				return;
-//			}
+			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
+				return;
+			}
 			
 			lastUpdateTime = now;
 			
