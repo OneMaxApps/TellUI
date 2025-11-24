@@ -142,12 +142,24 @@ public final class MultiLineTextController {
 			requireNonNull(lines[i], "lines[" + i + "]");
 			if (i == 0) {
 				getLine(0).set(lines[i]);
+				
 			} else {
 				addLineSilently(lines[i]);
 			}
 		}
 
 		notifyTextChanged();
+	}
+	
+	public void setRawText(String text) {
+		requireNonNull(text,"text");
+		
+		if (text.contains("\n")) {
+			setText(text.split("\n"));
+		} else {
+			setText(text);
+		}
+		
 	}
 
 	public void clear() {
@@ -238,9 +250,10 @@ public final class MultiLineTextController {
 	}
 
 	private static final class UndoRedoManager {
-		private static final int MIN_MS_FOR_UPDATE = 500;
+		private static final int MIN_MS_FOR_UPDATE = 300;
 		private final MultiLineTextController controller;
 		private final Deque<String> undo, redo;
+		private String prevState;
 		private long lastUpdateTime;
 		private boolean operation;
 
@@ -251,22 +264,20 @@ public final class MultiLineTextController {
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
 			
+			prevState = controller.getText();
+			
 			lastUpdateTime = currentTimeMillis();
 		}
 
 		public void undo() {
 			operation = true;
 
-			if (undo.isEmpty()) {
-				controller.setText("");
+			if (canUndo()) {
+				prevState = null;
+				redo.push(controller.getText());
+				controller.setText(undo.pop());
 			} else {
-				redo.push(undo.pop());
-				
-				if (undo.isEmpty()) {
-					controller.setText("");
-				} else {
-					controller.setText(undo.peek());
-				}
+				controller.setText("");
 			}
 			
 			operation = false;
@@ -275,9 +286,9 @@ public final class MultiLineTextController {
 		public void redo() {
 			operation = true;
 			
-			if (!redo.isEmpty()) {
+			if (canRedo()) {
 				undo.push(controller.getText());
-				controller.setText(redo.pop());
+				controller.setRawText(redo.pop());
 			}
 			
 			operation = false;
@@ -297,19 +308,28 @@ public final class MultiLineTextController {
 			}
 
 			final String text = controller.getText();
-//			final long now = currentTimeMillis();
-//			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
-//				return;
-//			}
-//			lastUpdateTime = now;
+			
+			final long now = currentTimeMillis();
+			
+			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
+				return;
+			}
+			
+			lastUpdateTime = now;
+			
+			if (prevState == null) {
+				prevState = text;
+			}
 			
 			if (canUndo()) {
-				if (!undo.peek().equals(text)) {
-					undo.push(text);
+				if (!undo.peek().equals(prevState)) {
+					undo.push(prevState);
 				}
 			} else {
-				undo.push(text);
+				undo.push(prevState);
 			}
+			
+			prevState = text;
 			
 			redo.clear();
 		}
