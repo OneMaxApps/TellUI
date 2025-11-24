@@ -1,8 +1,11 @@
 package microui.core.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+
+import microui.core.TextEditorModel;
 
 public class MultiLineTextControllerTest {
 
@@ -156,5 +159,95 @@ public class MultiLineTextControllerTest {
 		
 		assertTrue(controller.getLinesCount() == 1);
 		assertTrue(controller.getText().equals(""));
+	}
+	
+	@Test
+	public void undo() {
+		var controller = new MultiLineTextController();
+		controller.insertStringForLine(0,0,"Hello ");
+		controller.insertStringForLine(0,6,"World");
+		controller.insertStringForLine(0,11,"!");
+		
+		assertEquals("Hello World!", controller.getText());
+		
+		controller.undo();
+		assertEquals("Hello World", controller.getText());
+		
+		controller.undo();
+		assertEquals("Hello ", controller.getText());
+		
+		controller.undo();
+		assertEquals("", controller.getText());
+		
+		controller.insertStringForLine(0,0,"Hello");
+		controller.addLine("World");
+		
+		assertEquals("Hello" + "\n" + "World", controller.getText());
+
+		controller.undo();
+		assertEquals("Hello", controller.getText());
+		
+		controller.undo();
+		assertEquals("",controller.getText());
+	}
+	
+	@Test
+	public void redo() {
+		var controller = new MultiLineTextController();
+		controller.insertStringForLine(0,0,"Hello ");
+		controller.insertStringForLine(0,6,"World");
+		controller.insertStringForLine(0,11,"!");
+
+		assertEquals("Hello World!", controller.getText());
+		
+		controller.undo();
+		assertEquals("Hello World", controller.getText());
+
+		controller.redo();
+		assertEquals("Hello World!", controller.getText());
+		
+		controller.undo();
+		assertEquals("Hello World", controller.getText());
+		
+		controller.undo();
+		assertEquals("Hello ", controller.getText());
+		
+		controller.redo();
+		assertEquals("Hello World", controller.getText());
+		
+		controller.redo();
+		// FIXME
+		assertEquals("Hello World!", controller.getText());
+		// expected: <Hello World!> but was: <Hello World>
+//		
+//		controller.redo();
+//		assertEquals(controller.getText(),"Hello World!");
+//		
+//		controller.undo();
+//		assertEquals(controller.getText(),"Hello World");
+//		
+//		controller.undo();
+//		assertEquals(controller.getText(),"Hello ");
+//		
+//		controller.undo();
+//		assertEquals(controller.getText(),"");
+//		
+//		controller.undo();
+//		assertEquals(controller.getText(),"");
+//		
+//		controller.redo();
+//		assertEquals(controller.getText(),"Hello ");
+//		
+//		controller.redo();
+//		assertEquals(controller.getText(),"Hello World");
+//		
+//		controller.redo();
+//		assertEquals(controller.getText(),"Hello World!");
+//		
+//		controller.redo();
+//		assertEquals(controller.getText(),"Hello World!");
+//		
+//		controller.undo();
+//		assertEquals(controller.getText(),"Hello World");
 	}
 }

@@ -38,7 +38,7 @@ public final class MultiLineTextController {
 	}
 
 	// == PUBLIC API ==
-	
+
 	public void undo() {
 		undoRedoManager.undo();
 	}
@@ -46,7 +46,15 @@ public final class MultiLineTextController {
 	public void redo() {
 		undoRedoManager.redo();
 	}
-	
+
+	public String getUndoStack() {
+		return undoRedoManager.getUndoStack();
+	}
+
+	public String getRedoStack() {
+		return undoRedoManager.getRedoStack();
+	}
+
 	public boolean isBlank() {
 		return hasOnlyOneLine() && getLine(0).isEmpty();
 	}
@@ -217,9 +225,9 @@ public final class MultiLineTextController {
 
 	private void notifyTextChanged() {
 		textChanged = true;
-		
+
 		undoRedoManager.updateState();
-		
+
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
@@ -235,73 +243,83 @@ public final class MultiLineTextController {
 		private final Deque<String> undo, redo;
 		private long lastUpdateTime;
 		private boolean operation;
-		
+
 		public UndoRedoManager(MultiLineTextController controller) {
 			super();
 			this.controller = requireNonNull(controller, "controller");
 
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
-
+			
 			lastUpdateTime = currentTimeMillis();
 		}
-		
+
 		public void undo() {
 			operation = true;
-			
-			if (!undo.isEmpty()) {
-				if (!undo.peek().isEmpty()) {
-					redo.push(undo.pop());
+
+			if (undo.isEmpty()) {
+				controller.setText("");
+			} else {
+				redo.push(undo.pop());
+				
+				if (undo.isEmpty()) {
+					controller.setText("");
+				} else {
+					controller.setText(undo.peek());
 				}
 			}
 			
-			if (!undo.isEmpty()) {
-				controller.setText(undo.peek());
-			} else {
-				controller.setText("");
+			operation = false;
+		}
+
+		public void redo() {
+			operation = true;
+			
+			if (!redo.isEmpty()) {
+				undo.push(controller.getText());
+				controller.setText(redo.pop());
 			}
 			
 			operation = false;
 		}
-		
-		public void redo() {
-			operation = true;
-			
-			if (redo.isEmpty()) {
-				operation = false;
-				return;
-			}
-			
-			undo.push(redo.peek());
-			controller.setText(redo.pop());
 
-			operation = false;
+		public String getUndoStack() {
+			return undo.toString();
+		}
+
+		public String getRedoStack() {
+			return redo.toString();
 		}
 
 		public void updateState() {
 			if (operation) {
 				return;
 			}
-			
-			final long now = currentTimeMillis();
+
 			final String text = controller.getText();
+//			final long now = currentTimeMillis();
+//			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
+//				return;
+//			}
+//			lastUpdateTime = now;
 			
-			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
-				return;
-			}
-			
-			lastUpdateTime = now;
-			
-			if (undo.isEmpty()) {
-				undo.push(text);
-			} else {
+			if (canUndo()) {
 				if (!undo.peek().equals(text)) {
 					undo.push(text);
 				}
+			} else {
+				undo.push(text);
 			}
 			
 			redo.clear();
 		}
+		
+		private boolean canUndo() {
+			return !undo.isEmpty();
+		}
 
+		private boolean canRedo() {
+			return !redo.isEmpty();
+		}
 	}
 }
