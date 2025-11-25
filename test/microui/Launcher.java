@@ -6,7 +6,7 @@ import microui.component.LabeledCheckBox;
 import microui.component.MenuButton;
 import microui.component.Scroll;
 import microui.component.Slider;
-import microui.component.TextArea;
+import microui.component.TextArea1;
 import microui.component.TextView;
 import microui.core.base.Component;
 import microui.core.base.Container;
@@ -24,7 +24,8 @@ import processing.core.PApplet;
 public final class Launcher extends PApplet {
 	ContainerManager cm;
 	Button button;
-
+	TextArea1 ta;
+	
 	public static void main(String[] args) {
 		PApplet.main("microui.Launcher");
 	}
@@ -58,7 +59,9 @@ public final class Launcher extends PApplet {
 //		cm.add(getContainerWith(button = new Button()), "Button");
 //		cm.add(getContainerWith(new CheckBox()), "CheckBox");
 //		cm.add(getContainerWith(new EditText()), "EditText");
-		cm.add(getContainerWith(new TextArea()), "Knob");
+		ta = new TextArea1();
+		
+		cm.add(getContainerWith(ta), "text_area");
 		cm.add(getContainerWith(new Knob()), "Knob");
 		cm.add(getContainerWith(new LabeledCheckBox()), "LabeledCheckBox");
 		cm.add(getContainerWith(new Scroll()), "Scroll");
@@ -73,7 +76,7 @@ public final class Launcher extends PApplet {
 	@Override
 	public void draw() {
 		background(32);
-
+		ta.setTextSize(constrain(mouseX,4,256));
 		// cm.getContainerByTextId("container_main").getComponentByTextId("edit_text").setSize(mouseX,mouseY);
 		// cm.getByTextId("container_main").getByTextId("edit_text").setSize(mouseX,mouseY);
 		// Metrics.printAll();
@@ -162,7 +165,7 @@ public final class Launcher extends PApplet {
 		Container container = new Container(new GridLayout(11, 11));
 		container.setMode(Container.Mode.IGNORE_CONSTRAINTS);
 
-		if (component instanceof TextArea) {
+		if (component instanceof TextArea1) {
 			container.add(component, new GridLayoutParams(1, 1, 9, 9), "text_area");
 		} else {
 			container.add(component, new GridLayoutParams(4, 5, 3, 1));

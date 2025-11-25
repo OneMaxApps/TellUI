@@ -12,8 +12,8 @@ import java.util.List;
 import microui.event.Listener;
 
 public final class MultiLineTextController {
-	private static final byte MIN_LINES_COUNT;
 	private static final String EMPTY_TEXT;
+	private static final byte MIN_LINES_COUNT;
 	private final List<SingleLineTextController> list;
 	private final UndoRedoManager undoRedoManager;
 	private StringBuilder adapterSb;
@@ -155,7 +155,7 @@ public final class MultiLineTextController {
 		requireNonNull(text,"text");
 		
 		if (text.contains("\n")) {
-			setText(text.split("\n"));
+			setText(text.split("\n", -1));
 		} else {
 			setText(text);
 		}
@@ -275,7 +275,7 @@ public final class MultiLineTextController {
 			if (canUndo()) {
 				prevState = null;
 				redo.push(controller.getText());
-				controller.setText(undo.pop());
+				controller.setRawText(undo.pop());
 			} else {
 				controller.setText("");
 			}
