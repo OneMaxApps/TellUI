@@ -1,8 +1,10 @@
 package microui;
 
 import microui.component.TextArea;
+import microui.component.TextField;
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
+import microui.core.controller.FullSingleLineTextController.ValidationMode;
 import microui.layout.GridLayout;
 import microui.layout.GridLayoutParams;
 import processing.core.PApplet;
@@ -29,8 +31,17 @@ public class TextAreaLauncher extends PApplet {
 		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
 		textArea.setTextSize(24);
 		
-		cm.add(new Container(new GridLayout(10,10)).add(textArea, new GridLayoutParams(1,1,8,8)));
+		var container = new Container(new GridLayout(10,10));
 		
+		cm.add(container.add(textArea, new GridLayoutParams(1,1,8,8)));
+		
+		var tfTextSize = new TextField();
+		tfTextSize.setMargin(10);
+		tfTextSize.setTextSize(12);
+		tfTextSize.setValidationMode(ValidationMode.ONLY_DIGITS);
+		tfTextSize.setOnTextChangedListener(() -> textArea.setTextSize(constrain(tfTextSize.getDigitsOrDefault(4),4,200)));
+		
+		container.add(tfTextSize, new GridLayoutParams(0, 0, 2, 1));
 	}
 	
 	@Override

@@ -56,6 +56,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
 		});
+		
+		onPress(() -> setFocused(true));
 	}
 
 	public TextArea() {
@@ -104,6 +106,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
+		if (!isFocused()) {
+			return;
+		}
+		
 		scrollManager.mouseWheel(mouseEvent);
 	}
 
@@ -118,6 +124,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		backgroundOnDraw();
 		graphics.draw();
 		scrollManager.onDraw();
+		
+		if (mustLoseFocus()) {
+			setFocused(false);
+		}
 	}
 	
 	@Override
@@ -129,6 +139,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.setBoundsFrom(this);
 	}
 
+	private boolean mustLoseFocus() {
+		return !isDragging() && ctx.mousePressed && !isHover();
+	}
+	
 	private void backgroundOnDraw() {
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
@@ -151,8 +165,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 		
 		public void onDraw() {
-			scrollH.draw();
-			scrollV.draw();
+			if (textArea.isFocused()) {
+				scrollH.draw();
+				scrollV.draw();
+			}
 		}
 		
 		public void recalculateBounds() {
@@ -226,9 +242,17 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			if(map.containsKey(key)) {
 				return map.get(key);
 			} else {
-				return map.put(key, getCalculatedTextWidth(row,columnStart,columnEnd));
+				final float newValue = getCalculatedTextWidth(row,columnStart,columnEnd);
+				
+				map.put(key, newValue);
+				
+				return newValue;
 			}
 			
+		}
+		
+		public float getTextWidth(int row) {
+			return getTextWidth(row,0,textArea.textEditorModel.getLineLength(row));
 		}
 		
 		public float getMaxWidth() {
@@ -257,10 +281,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			maxWidth = totalHeight = -1;
 		}
 		
-		public float getCalculatedTextWidth(int row) {
-			return getCalculatedTextWidth(row,0, textArea.textEditorModel.getLineLength(row));
-		}
-		
 		private float getCalculatedTextWidth(int row, int startColumn, int endColumn) {
 			float textWidth = 0;
 			
@@ -281,6 +301,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			graphics.endDraw();
 			
 			return textWidth;
+		}
+		
+		public float getCalculatedTextWidth(int row) {
+			return getCalculatedTextWidth(row,0, textArea.textEditorModel.getLineLength(row));
 		}
 		
 		private static final record Key(int row, int startColumn, int endColumn) {}
