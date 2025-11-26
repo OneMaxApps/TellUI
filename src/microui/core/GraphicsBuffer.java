@@ -102,7 +102,7 @@ public class GraphicsBuffer extends SpatialView {
 			return;
 		}
 		
-		for (int i = viewList.size()-1; i >= 0; i--) {
+		for (int i = 0; i < viewList.size(); i++) {
 			final BufferedView v = viewList.get(i);
 			v.draw(pGraphics);
 		}
