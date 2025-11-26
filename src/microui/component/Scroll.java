@@ -44,7 +44,8 @@ public class Scroll extends LinearRangeControl {
 		});
 
 		thumb.onDragEnd(() -> needRecalculateDistToThumb = true);
-
+		needRecalculateDistToThumb = true;
+		
 		setThumbSizeRatio(.1f);
 
 		updateThumbTransforms();

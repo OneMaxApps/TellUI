@@ -8,7 +8,8 @@ import microui.layout.GridLayoutParams;
 import processing.core.PApplet;
 
 public class TextAreaLauncher extends PApplet {
-
+	private TextArea textArea;
+	
 	public static void main(String[] args) {
 		PApplet.main("microui.TextAreaLauncher");
 
@@ -24,8 +25,9 @@ public class TextAreaLauncher extends PApplet {
 		MicroUI.setContext(this);
 		var cm = ContainerManager.getInstance();
 		
-		TextArea textArea = new TextArea();
-		
+		textArea = new TextArea();
+		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
+
 		cm.add(new Container(new GridLayout(10,10)).add(textArea, new GridLayoutParams(1,1,8,8)));
 		
 	}
@@ -33,5 +35,9 @@ public class TextAreaLauncher extends PApplet {
 	@Override
 	public void draw() {
 		background(128);
+		
+		if (mouseButton == RIGHT) {
+			textArea.setTextSize((int) constrain(map(mouseX,0,width,4,100),4,100));
+		}
 	}
 }

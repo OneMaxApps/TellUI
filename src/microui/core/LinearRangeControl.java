@@ -51,8 +51,8 @@ public abstract class LinearRangeControl extends RangeControl {
 
 	@Override
 	public void mouseWheel(MouseEvent event) {
-		getMutableScrolling().init(event);
 		if (isHover()) {
+			getMutableScrolling().init(event);
 			getMutableValue().append(getMutableScrolling().get());
 		}
 
