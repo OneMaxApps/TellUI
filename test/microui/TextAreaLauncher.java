@@ -27,7 +27,8 @@ public class TextAreaLauncher extends PApplet {
 		
 		textArea = new TextArea();
 		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
-
+		textArea.setTextSize(24);
+		
 		cm.add(new Container(new GridLayout(10,10)).add(textArea, new GridLayoutParams(1,1,8,8)));
 		
 	}

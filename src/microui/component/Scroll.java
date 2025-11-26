@@ -150,6 +150,14 @@ public class Scroll extends LinearRangeControl {
 	public final void setThumbStrokeColor(AbstractColor color) {
 		thumb.setStrokeColor(color);
 	}
+	
+	public final AbstractColor getThumbColor() {
+		return thumb.getBackgroundColor();
+	}
+	
+	public final void setThumbColor(AbstractColor color) {
+		thumb.setBackgroundColor(color);
+	}
 
 	public final float getCalculatedThumbSize() {
 		return getOrientation() == Orientation.HORIZONTAL ? getWidth() * thumbSizeRatio : getHeight() * thumbSizeRatio;

@@ -1,6 +1,5 @@
 package microui.component;
 
-import static java.lang.Math.abs;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.LEFT;
@@ -16,6 +15,7 @@ import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
+import microui.core.style.Color;
 import microui.event.Listener;
 import microui.util.MathUtils;
 import processing.core.PFont;
@@ -32,6 +32,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final TextStyle textStyle;
 	private final GraphicsBuffer graphics;
 	private final ScrollManager scrollManager;
+	private boolean focused;
 	
 	public TextArea(float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -61,6 +62,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		this(0, 0, 1, 1);
 	}
 	
+	public boolean isFocused() {
+		return focused;
+	}
+
+	public void setFocused(boolean focused) {
+		this.focused = focused;
+	}
+
 	public void setText(String... strings) {
 		textEditorModel.setText(strings);
 	}
@@ -113,6 +122,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	
 	@Override
 	protected void onChangeBounds() {
+		textMetricsPool.clearCache();
+		scrollManager.recalculateRanges();
 		scrollManager.recalculateBounds();
 		
 		graphics.setBoundsFrom(this);
@@ -124,8 +135,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 	
 	private static final class ScrollManager {
-		private final TextArea textArea;
 		private static final int WEIGHT = 10;
+		private final TextArea textArea;
 		private final Scroll scrollH, scrollV;
 
 		public ScrollManager(TextArea textArea) {
@@ -156,11 +167,16 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 		
 		public void recalculateRanges() {
-			final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth();
+			final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth() - textArea.getWidth();
 			scrollH.setMaxValue(Math.max(scrollH.getMinValue(), calculatedScrollHMax));
-		
-			final float calculatedScrollVMin = -(textArea.textMetricsPool.getTotalHeight() - textArea.getHeight());
+
+			scrollH.setVisible(calculatedScrollHMax > textArea.getWidth());
+			
+			final float calculatedScrollVMin = textArea.getHeight() - textArea.textMetricsPool.getTotalHeight();
 			scrollV.setMinValue(Math.min(scrollV.getMaxValue(), calculatedScrollVMin));
+			
+			scrollV.setVisible(calculatedScrollVMin < scrollV.getMaxValue());
+			
 		}
 		
 		public void mouseWheel(MouseEvent mouseEvent) {
@@ -176,8 +192,15 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void prepareStyle() {
 			scrollH.setConstrainDimensionsEnabled(false);
 			scrollH.setValue(0);
+			scrollH.setBackgroundColor(Color.TRANSPARENT);
+			scrollH.setStrokeColor(Color.TRANSPARENT);
+			scrollH.setThumbColor(new Color(12,64));
 			
 			scrollV.setConstrainDimensionsEnabled(false);
+			scrollV.setBackgroundColor(Color.TRANSPARENT);
+			scrollV.setStrokeColor(Color.TRANSPARENT);
+			scrollV.setThumbColor(new Color(12,64));
+			
 			scrollV.setValue(0);
 			scrollV.setMaxValue(0);
 			scrollV.swapOrientation();
@@ -242,6 +265,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			float textWidth = 0;
 			
 			final String text = textArea.textEditorModel.getLineText(row);
+			final float textSize = textArea.getTextSize();
 			final int textLength = textArea.textEditorModel.getLineLength(row);
 			startColumn = (int) MathUtils.constrain(startColumn, 0, textLength);
 			endColumn = (int) MathUtils.constrain(endColumn, 0, textLength);
@@ -251,7 +275,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			graphics.beginDraw();
 			graphics.pushStyle();
 			graphics.textAlign(LEFT,TOP);
-			graphics.textSize(24);
+			graphics.textSize(textSize);
 			textWidth = graphics.textWidth(text.substring(effectiveStartColumn,effectiveEndColumn));
 			graphics.popStyle();
 			graphics.endDraw();
@@ -279,14 +303,17 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			
 			final float textSize = textArea.textStyle.getTextSize();
 			
+			final float scrollH = textArea.scrollManager.scrollH.getValue();
+			final float scrollV = textArea.scrollManager.scrollV.getValue();
+			
 			p.pushStyle();
 			textArea.textStyle.getTextColor().apply(p);
 			p.textSize(textSize);
 			p.textAlign(LEFT,TOP);
 			
 			for(int i = 0; i < linesCount; i++) {
-				final float posX = 0 - textArea.scrollManager.scrollH.getValue();
-				final float posY = 0 + textSize * i + textArea.scrollManager.scrollV.getValue();
+				final float posX = 0 - scrollH;
+				final float posY = 0 + textSize * i + scrollV;
 				final String text = textArea.textEditorModel.getLineText(i);
 				
 				p.text(text,posX,posY);
