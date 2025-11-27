@@ -65,6 +65,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.setAutoClearBufferEnabled(true);
 		graphics.addBufferedView(new TextRenderer(this));
 		graphics.addBufferedView(cursorRenderer = new CursorRenderer(this));
+		graphics.addBufferedView(new SelectionRenderer(this));
 		scrollManager = new ScrollManager(this);
 		keyController = new KeyController(this);
 
@@ -579,6 +580,43 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 	}
 
+	private static final class SelectionRenderer extends BufferedView {
+		private final TextArea textArea;
+		private AbstractColor color;
+		
+		public SelectionRenderer(TextArea textArea) {
+			super();
+			setVisible(true);
+			
+			this.textArea = requireNonNull(textArea,"textArea");
+			
+			setColor(getTheme().getSelectColor());
+			
+		}
+
+		public AbstractColor getColor() {
+			return color;
+		}
+
+		public void setColor(AbstractColor color) {
+			this.color = requireNonNull(color,"color");
+		}
+
+		@Override
+		protected void render(PGraphics pGraphics) {
+			final TextEditorModel m = textArea.textEditorModel;
+			
+			// TODO Here must be logic of rendering selections
+			if (m.isMultiLineSelected()) {
+				
+			} else {
+				
+			}
+			
+		}
+		
+	}
+	
 	private static final class TextStyle {
 		private static final int DEFAULT_TEXT_SIZE = 12;
 		private static final int MIN_TEXT_SIZE = 4;
@@ -845,15 +883,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final boolean multiLine = lines.length > 1;
 			
 			if (multiLine) {
-				for(int i = 0; i < lines.length; i++) {
-					if (i == 0) {
-						m.insertString(lines[i]);
-						m.moveCursorTo(Direction.DOWN);
-					} else {
-						m.addLine(lines[i]);
-						m.moveCursorTo(Direction.DOWN);
+				for(int i = lines.length-1; i >= 0; i--) {
+					m.insertString(lines[i]);
+					if(i != 0) {
+						m.splitLine();
 					}
 				}
+				
+				m.moveCursorTo(Direction.DOWN, lines.length - 1);
 				
 				m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
 			} else {

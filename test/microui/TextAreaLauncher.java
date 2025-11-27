@@ -29,7 +29,7 @@ public class TextAreaLauncher extends PApplet {
 		
 		textArea = new TextArea();
 		//textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
-		textArea.setTextSize(54);
+		textArea.setTextSize(24);
 		textArea.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",32));
 		
 		var container = new Container(new GridLayout(10,10));
