@@ -1,13 +1,27 @@
 package microui.component;
 
+import static java.awt.event.KeyEvent.VK_DELETE;
+import static java.awt.event.KeyEvent.VK_END;
+import static java.awt.event.KeyEvent.VK_HOME;
+import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
+import static microui.util.MathUtils.constrain;
+import static processing.core.PConstants.BACKSPACE;
+import static processing.core.PConstants.DOWN;
+import static processing.core.PConstants.ENTER;
 import static processing.core.PConstants.LEFT;
+import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.TOP;
+import static processing.core.PConstants.UP;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import microui.constants.Direction;
 import microui.core.BufferedView;
 import microui.core.GraphicsBuffer;
 import microui.core.TextEditorModel;
@@ -17,7 +31,6 @@ import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.event.Listener;
-import microui.util.MathUtils;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
@@ -31,39 +44,45 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final TextMetricsPool textMetricsPool;
 	private final TextStyle textStyle;
 	private final GraphicsBuffer graphics;
+	private final CursorRenderer cursorRenderer;
 	private final ScrollManager scrollManager;
+	private final KeyController keyController;
 	private boolean focused;
-	
+
 	public TextArea(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setMinMaxSize(MIN_SIZE, MAX_SIZE);
 		setBackgroundColor(getTheme().getEditableBackgroundColor());
-		
+
 		textEditorModel = new TextEditorModel();
 		textMetricsPool = new TextMetricsPool(this);
 		textStyle = new TextStyle(this);
 		graphics = new GraphicsBuffer();
 		graphics.setAutoClearBufferEnabled(true);
 		graphics.addBufferedView(new TextRenderer(this));
+		graphics.addBufferedView(cursorRenderer = new CursorRenderer(this));
 		scrollManager = new ScrollManager(this);
-		
+		keyController = new KeyController(this);
+
 		textEditorModel.setOnTextChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
 		});
-		
+
 		textStyle.setOnStyleChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
 		});
-		
+
 		onPress(() -> setFocused(true));
+
+		onDragging(this::setCursorPositionMappedFromMouse);
 	}
 
 	public TextArea() {
 		this(0, 0, 1, 1);
 	}
-	
+
 	public boolean isFocused() {
 		return focused;
 	}
@@ -75,7 +94,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	public void setText(String... strings) {
 		textEditorModel.setText(strings);
 	}
-	
+
 	public AbstractColor getTextColor() {
 		return textStyle.getTextColor();
 	}
@@ -99,9 +118,25 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	public void setTextSize(int textSize) {
 		textStyle.setTextSize(textSize);
 	}
-	
+
 	public int getLinesCount() {
 		return textEditorModel.getLinesCount();
+	}
+
+	public AbstractColor getCursorColor() {
+		return cursorRenderer.getColor();
+	}
+
+	public void setCursorColor(AbstractColor color) {
+		cursorRenderer.setColor(color);
+	}
+
+	public float getCursorWeight() {
+		return cursorRenderer.getWeight();
+	}
+
+	public void setCursorWeight(float weight) {
+		cursorRenderer.setWeight(weight);
 	}
 
 	@Override
@@ -109,14 +144,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		if (!isFocused()) {
 			return;
 		}
-		
+
 		scrollManager.mouseWheel(mouseEvent);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-//		 TODO Auto-generated method stub
-
+		keyController.keyInput(e);
 	}
 
 	@Override
@@ -124,30 +158,66 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		backgroundOnDraw();
 		graphics.draw();
 		scrollManager.onDraw();
-		
+
 		if (mustLoseFocus()) {
 			setFocused(false);
 		}
+		
 	}
-	
+
 	@Override
 	protected void onChangeBounds() {
 		textMetricsPool.clearCache();
 		scrollManager.recalculateRanges();
 		scrollManager.recalculateBounds();
-		
+
 		graphics.setBoundsFrom(this);
+	}
+	
+	// TODO Make full of this logic
+	private void setCursorPositionMappedFromMouse() {
+		
+		final TextEditorModel m = textEditorModel;
+		
+		final float scrollH = scrollManager.getHorizontalScrollValue();
+		
+		final float mouseX = ctx.mouseX - scrollH - getX();
+		
+		int nearlyColumn = 0;
+		
+		for(int i = 0; i < m.getLineLength(m.getCursorRow()); i++) {
+			if (mouseX > textMetricsPool.getTextWidth(m.getCursorRow(), 0, i)) {
+				nearlyColumn = i;
+			}
+		}
+		
+		m.setCursorColumn(nearlyColumn);
+		
+		if (cursorRenderer.onLeftSide() || cursorRenderer.onRightSide()) {
+			findCursor();
+		}
+	}
+	
+	private void findCursor() {
+		final TextEditorModel m = textEditorModel;
+		final TextMetricsPool tmp = textMetricsPool;
+		
+		final float currentLineTextWidthUntilCursor = tmp.getTextWidth(m.getCursorRow(),0,m.getCursorColumn());
+		
+		scrollManager.scrollH.setValue(currentLineTextWidthUntilCursor - getWidth() / 2);
+		
+		scrollManager.scrollV.setValue(-(m.getCursorRow() * getTextSize() - getHeight() / 2));
 	}
 
 	private boolean mustLoseFocus() {
 		return !isDragging() && ctx.mousePressed && !isHover();
 	}
-	
+
 	private void backgroundOnDraw() {
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 	}
-	
+
 	private static final class ScrollManager {
 		private static final int WEIGHT = 10;
 		private final TextArea textArea;
@@ -155,199 +225,355 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		public ScrollManager(TextArea textArea) {
 			super();
-			this.textArea = requireNonNull(textArea,"textArea");
-			
+			this.textArea = requireNonNull(textArea, "textArea");
+
 			scrollH = new Scroll();
 			scrollV = new Scroll();
-			
+
 			prepareStyle();
 			recalculateBounds();
 		}
-		
+
 		public void onDraw() {
 			if (textArea.isFocused()) {
 				scrollH.draw();
 				scrollV.draw();
 			}
 		}
-		
+
+		public float getHorizontalScrollValue() {
+			return scrollH.getValue();
+		}
+
+		public float getVerticalScrollValue() {
+			return scrollV.getValue();
+		}
+
 		public void recalculateBounds() {
 			final TextArea t = textArea;
-			
+
 			scrollH.setSize(t.getWidth() - WEIGHT, WEIGHT);
 			scrollH.setPosition(t.getX(), t.getY() + t.getHeight() - WEIGHT);
-			
+
 			scrollV.setSize(WEIGHT, t.getHeight() - WEIGHT);
 			scrollV.setPosition(t.getX() + t.getWidth() - WEIGHT, t.getY());
-			
+
 		}
-		
+
 		public void recalculateRanges() {
 			final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth() - textArea.getWidth();
 			scrollH.setMaxValue(Math.max(scrollH.getMinValue(), calculatedScrollHMax));
 
 			scrollH.setVisible(calculatedScrollHMax > textArea.getWidth());
-			
+
 			final float calculatedScrollVMin = textArea.getHeight() - textArea.textMetricsPool.getTotalHeight();
 			scrollV.setMinValue(Math.min(scrollV.getMaxValue(), calculatedScrollVMin));
-			
+
 			scrollV.setVisible(calculatedScrollVMin < scrollV.getMaxValue());
-			
+
 		}
-		
+
 		public void mouseWheel(MouseEvent mouseEvent) {
 			scrollH.mouseWheel(mouseEvent);
 			scrollV.mouseWheel(mouseEvent);
-			
+
 			if (textArea.isHover() && !scrollH.isHover()) {
 				final float speed = -mouseEvent.getCount() * textArea.textStyle.getTextSize();
 				scrollV.appendValue(speed);
 			}
 		}
-		
+
 		private void prepareStyle() {
 			scrollH.setConstrainDimensionsEnabled(false);
 			scrollH.setValue(0);
 			scrollH.setBackgroundColor(Color.TRANSPARENT);
 			scrollH.setStrokeColor(Color.TRANSPARENT);
-			scrollH.setThumbColor(new Color(12,64));
-			
+			scrollH.setThumbColor(new Color(12, 64));
+
 			scrollV.setConstrainDimensionsEnabled(false);
 			scrollV.setBackgroundColor(Color.TRANSPARENT);
 			scrollV.setStrokeColor(Color.TRANSPARENT);
-			scrollV.setThumbColor(new Color(12,64));
-			
+			scrollV.setThumbColor(new Color(12, 64));
+
 			scrollV.setValue(0);
 			scrollV.setMaxValue(0);
 			scrollV.swapOrientation();
 		}
-		
+
 	}
-	
+
 	private static final class TextMetricsPool {
-		private final PGraphics graphics;
+		private static final PGraphics GRAPHICS = ctx.createGraphics(1, 1, ctx.sketchRenderer());
 		private final TextArea textArea;
-		private final Map <Key, Float> map = new HashMap<Key, Float>();
-		private float maxWidth = -1, totalHeight = -1;
-		
+		private final Map<Key, Float> map = new HashMap<Key, Float>();
+		private float maxWidth, totalHeight;
+
 		public TextMetricsPool(TextArea textArea) {
 			super();
-			graphics = ctx.createGraphics(1, 1, ctx.sketchRenderer());
-			this.textArea = requireNonNull(textArea,"textArea");
+			this.textArea = requireNonNull(textArea, "textArea");
+			maxWidth = totalHeight = -1;
 		}
 
 		public float getTextWidth(int row, int columnStart, int columnEnd) {
 			final Key key = new Key(row, columnStart, columnEnd);
-			
-			if(map.containsKey(key)) {
+
+			if (map.containsKey(key)) {
 				return map.get(key);
 			} else {
-				final float newValue = getCalculatedTextWidth(row,columnStart,columnEnd);
-				
+				final float newValue = getCalculatedTextWidth(row, columnStart, columnEnd);
 				map.put(key, newValue);
-				
 				return newValue;
 			}
-			
+
 		}
-		
+
 		public float getTextWidth(int row) {
-			return getTextWidth(row,0,textArea.textEditorModel.getLineLength(row));
+			return getTextWidth(row, 0, textArea.textEditorModel.getLineLength(row));
 		}
-		
+
 		public float getMaxWidth() {
 			if (maxWidth == -1) {
 				final int linesCount = textArea.getLinesCount();
-				
-				for(int i = 0; i < linesCount; i++) {
+
+				for (int i = 0; i < linesCount; i++) {
 					maxWidth = Math.max(maxWidth, getCalculatedTextWidth(i));
 				}
-				
+
 			}
-			
+
 			return maxWidth;
 		}
-		
+
 		public float getTotalHeight() {
 			if (totalHeight == -1) {
 				totalHeight = textArea.getLinesCount() * textArea.getTextSize();
 			}
-			
+
 			return totalHeight;
 		}
-		
+
 		public void clearCache() {
 			map.clear();
 			maxWidth = totalHeight = -1;
 		}
-		
+
 		private float getCalculatedTextWidth(int row, int startColumn, int endColumn) {
+			final TextEditorModel model = textArea.textEditorModel;
+			final String text = model.getLineText(row);
+			final int textLength = model.getLineLength(row);
+
+			startColumn = (int) constrain(startColumn, 0, textLength);
+			endColumn = (int) constrain(endColumn, 0, textLength);
+
+			final int effectiveStartColumn = min(startColumn, endColumn);
+			final int effectiveEndColumn = max(startColumn, endColumn);
+
 			float textWidth = 0;
-			
-			final String text = textArea.textEditorModel.getLineText(row);
-			final float textSize = textArea.getTextSize();
-			final int textLength = textArea.textEditorModel.getLineLength(row);
-			startColumn = (int) MathUtils.constrain(startColumn, 0, textLength);
-			endColumn = (int) MathUtils.constrain(endColumn, 0, textLength);
-			final int effectiveStartColumn = Math.min(startColumn, endColumn);
-			final int effectiveEndColumn = Math.max(startColumn, endColumn);
-			
-			graphics.beginDraw();
-			graphics.pushStyle();
-			graphics.textAlign(LEFT,TOP);
-			graphics.textSize(textSize);
-			textWidth = graphics.textWidth(text.substring(effectiveStartColumn,effectiveEndColumn));
-			graphics.popStyle();
-			graphics.endDraw();
-			
+
+			GRAPHICS.beginDraw();
+			GRAPHICS.pushStyle();
+			textArea.textStyle.apply(GRAPHICS);
+			textWidth = GRAPHICS.textWidth(text.substring(effectiveStartColumn, effectiveEndColumn));
+			GRAPHICS.popStyle();
+			GRAPHICS.endDraw();
+
 			return textWidth;
 		}
-		
+
 		public float getCalculatedTextWidth(int row) {
-			return getCalculatedTextWidth(row,0, textArea.textEditorModel.getLineLength(row));
+			return getCalculatedTextWidth(row, 0, textArea.textEditorModel.getLineLength(row));
 		}
-		
-		private static final record Key(int row, int startColumn, int endColumn) {}
+
+		private static final record Key(int row, int startColumn, int endColumn) {
+		}
 	}
 
 	private static final class TextRenderer extends BufferedView {
 		private final TextArea textArea;
-		
+
 		public TextRenderer(TextArea textArea) {
 			super();
 			setVisible(true);
-			
-			this.textArea = requireNonNull(textArea,"textArea");
+
+			this.textArea = requireNonNull(textArea, "textArea");
 		}
 
 		@Override
 		protected void render(PGraphics p) {
 
 			final int linesCount = textArea.textEditorModel.getLinesCount();
-			
+
 			final float textSize = textArea.textStyle.getTextSize();
-			
+
 			final float scrollH = textArea.scrollManager.scrollH.getValue();
 			final float scrollV = textArea.scrollManager.scrollV.getValue();
-			
+
 			p.pushStyle();
-			textArea.textStyle.getTextColor().apply(p);
-			p.textSize(textSize);
-			p.textAlign(LEFT,TOP);
-			
-			for(int i = 0; i < linesCount; i++) {
+			textArea.textStyle.apply(p);
+
+			for (int i = 0; i < linesCount; i++) {
 				final float posX = 0 - scrollH;
 				final float posY = 0 + textSize * i + scrollV;
 				final String text = textArea.textEditorModel.getLineText(i);
-				
-				p.text(text,posX,posY);
+				if (mustBeRendered(posY)) {
+					p.text(text, posX, posY);
+				}
 			}
-			
+
 			p.popStyle();
 		}
-		
+
+		private boolean mustBeRendered(float positionY) {
+			final float textSize = textArea.getTextSize();
+
+			return positionY > -textSize && positionY < textArea.getHeight();
+		}
 	}
-	
+
+	private static final class CursorRenderer extends BufferedView {
+		private static final byte MIN_WEIGHT = 1;
+		private static final byte DEFAULT_WEIGHT = 2;
+		private final TextArea textArea;
+		private final BlinkTimer blinkTimer;
+		private AbstractColor color;
+		private float weight;
+
+		public CursorRenderer(TextArea textArea) {
+			super();
+			setVisible(true);
+
+			this.textArea = requireNonNull(textArea, "textArea");
+			blinkTimer = new BlinkTimer();
+
+			setColor(Color.BLACK);
+			setWeight(DEFAULT_WEIGHT);
+		}
+
+		public AbstractColor getColor() {
+			return color;
+		}
+
+		public void setColor(AbstractColor color) {
+			this.color = requireNonNull(color, "color");
+		}
+
+		public float getWeight() {
+			return weight;
+		}
+
+		public void setWeight(float weight) {
+			if (weight < MIN_WEIGHT) {
+				throw new IllegalArgumentException("Cursor weight cannot be less than " + MIN_WEIGHT);
+			}
+			this.weight = weight;
+		}
+
+		public boolean onLeftSide() {
+			return getX() < textArea.getWidth() * .2f;
+		}
+
+		public boolean onRightSide() {
+			return getX() > textArea.getWidth() * .8f;
+		}
+
+		public boolean onUpSide() {
+			return getY() < textArea.getHeight() * .2f;
+		}
+
+		public boolean onDownSide() {
+			return getY() > textArea.getHeight() * .8f;
+		}
+
+		@Override
+		protected void render(PGraphics pGraphics) {
+			if (!textArea.isFocused()) {
+				return;
+			}
+
+			if (blinkTimer.isMustBlink()) {
+				return;
+			}
+
+			color.applyStroke(pGraphics);
+			pGraphics.strokeWeight(weight);
+
+			final TextEditorModel model = textArea.textEditorModel;
+			final int cursorRow = model.getCursorRow();
+			final int cursorColumn = model.getCursorColumn();
+			final TextMetricsPool tmp = textArea.textMetricsPool;
+
+			final float textSize = textArea.getTextSize();
+
+			final float scrollH = textArea.scrollManager.getHorizontalScrollValue();
+			final float scrollV = textArea.scrollManager.getVerticalScrollValue();
+
+			final float posX = tmp.getTextWidth(cursorRow, 0, cursorColumn) - scrollH;
+			final float posY = cursorRow * textArea.getTextSize() + scrollV;
+			final float height = textSize;
+
+			pGraphics.line(posX, posY, posX, posY + height);
+		}
+
+		private float getX() {
+			final TextEditorModel model = textArea.textEditorModel;
+
+			final int cursorRow = model.getCursorRow();
+			final int cursorColumn = model.getCursorColumn();
+
+			final TextMetricsPool tmp = textArea.textMetricsPool;
+
+			final float scrollH = textArea.scrollManager.getHorizontalScrollValue();
+
+			final float posX = tmp.getTextWidth(cursorRow, 0, cursorColumn) - scrollH;
+
+			return posX;
+		}
+
+		private float getY() {
+			final TextEditorModel model = textArea.textEditorModel;
+
+			final int cursorRow = model.getCursorRow();
+
+			final float scrollV = textArea.scrollManager.getVerticalScrollValue();
+
+			final float posY = cursorRow * textArea.getTextSize() + scrollV;
+
+			return posY;
+		}
+
+		private final class BlinkTimer {
+			private static short ONE_SECOND_IN_MS = 1000;
+			private static short HALF_SECOND_IN_MS = 500;
+			private long lastBlinkTime, delta;
+
+			public BlinkTimer() {
+				super();
+				lastBlinkTime = System.currentTimeMillis();
+			}
+
+			public boolean isMustBlink() {
+				final long now = System.currentTimeMillis();
+
+				delta = now - lastBlinkTime;
+
+				if (delta > ONE_SECOND_IN_MS) {
+					lastBlinkTime = now;
+				}
+
+				if (textArea.isPressed() || ctx.keyPressed) {
+					delta = 0;
+					lastBlinkTime = now;
+				}
+
+				if (delta > HALF_SECOND_IN_MS && !textArea.isPressed()) {
+					return true;
+				}
+
+				return false;
+			}
+		}
+	}
+
 	private static final class TextStyle {
 		private static final int DEFAULT_TEXT_SIZE = 12;
 		private static final int MIN_TEXT_SIZE = 4;
@@ -355,53 +581,64 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private PFont font;
 		private Listener onTextStyleChangedListener;
 		private int textSize;
-		
+
 		public TextStyle(TextArea textArea) {
 			super();
 			setTextColor(getTheme().getEditableTextColor());
 			setTextSize(DEFAULT_TEXT_SIZE);
 		}
 
+		public void apply(PGraphics pGraphics) {
+			requireNonNull(pGraphics, "pGraphics");
+			textColor.apply(pGraphics);
+			if (font == null) {
+				pGraphics.textSize(textSize);
+			} else {
+				pGraphics.textFont(font, textSize);
+			}
+			pGraphics.textAlign(LEFT, TOP);
+		}
+
 		public AbstractColor getTextColor() {
 			return textColor;
 		}
-		
+
 		public void setTextColor(AbstractColor textColor) {
 			this.textColor = requireNonNull(textColor, "textColor");
 		}
-		
+
 		public PFont getFont() {
 			return font;
 		}
-		
+
 		public void setFont(PFont font) {
 			if (this.font == font) {
 				return;
 			}
-			
+
 			this.font = requireNonNull(font, "font");
-			
+
 			onTextStyleChanged();
 		}
-		
+
 		public int getTextSize() {
 			return textSize;
 		}
-		
+
 		public void setTextSize(int textSize) {
 			if (textSize < MIN_TEXT_SIZE) {
 				throw new IllegalArgumentException("Text size must be greater or equal: " + MIN_TEXT_SIZE);
 			}
-			
+
 			if (this.textSize == textSize) {
 				return;
 			}
-			
+
 			this.textSize = textSize;
-			
+
 			onTextStyleChanged();
 		}
-		
+
 		public void onTextStyleChanged() {
 			if (onTextStyleChangedListener != null) {
 				onTextStyleChangedListener.action();
@@ -411,6 +648,171 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		public void setOnStyleChangedListener(Listener onTextSizeChangedListener) {
 			this.onTextStyleChangedListener = onTextSizeChangedListener;
 		}
+
+	}
+
+	private static final class KeyController {
+		private final TextArea textArea;
+
+		public KeyController(TextArea textArea) {
+			super();
+			this.textArea = requireNonNull(textArea, "textArea");
+		}
+
+		public void keyInput(KeyEvent keyEvent) {
+			
+			switch (keyEvent.getKeyCode()) {
+			case LEFT:
+				onKeyLeftPressed();
+				break;
+
+			case RIGHT:
+				onKeyRightPressed();
+				break;
+
+			case UP:
+				onKeyUpPressed();
+				break;
+
+			case DOWN:
+				onKeyDownPressed();
+				break;
+
+			case ENTER:
+				onKeyEnterPressed();
+				break;
+				
+			case BACKSPACE:
+				onKeyBackspacePressed();
+				break;
+			
+			case VK_PAGE_UP:
+				onKeyPageUpPressed();
+				break;
+				
+			case VK_PAGE_DOWN:
+				onKeyPageDownPressed();
+				break;
+				
+			case VK_HOME:
+				onKeyHomePressed();
+				break;
+			
+			case VK_END:
+				onKeyEndPressed();
+				break;
+				
+			case VK_DELETE:
+				onKeyDeletePressed();
+				break;
+				
+			default:
+				onRegularKey();
+			break;
+			}
+			
+		}
+
+		private void onKeyLeftPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			m.moveCursorTo(Direction.LEFT);
+
+			textArea.findCursor();
+		}
+
+		private void onKeyRightPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			m.moveCursorTo(Direction.RIGHT);
+
+			textArea.findCursor();
+		}
+
+		private void onKeyUpPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			m.moveCursorTo(Direction.UP);
+			
+			textArea.findCursor();
+		}
+
+		private void onKeyDownPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			m.moveCursorTo(Direction.DOWN);
+			
+			textArea.findCursor();
+		}
+
+		private void onKeyEnterPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			m.splitLine();
+			m.moveCursorTo(Direction.DOWN);
+			m.moveCursorToStartOfLine();
+			
+			textArea.findCursor();
+		}
 		
+		private void onKeyBackspacePressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			
+			if (m.getCursorColumn() == 0 && m.getCursorRow() == 0) {
+				return;
+			}
+			
+			if (m.getCursorColumn() == 0 && m.getCursorRow() != 0) {
+				final int charCountOnDownLine = m.getLineLength(m.getCursorRow());
+				
+				m.moveCursorTo(Direction.UP);
+				m.mergeLines();
+				m.moveCursorToEndOfLine();
+				m.moveCursorTo(Direction.LEFT, charCountOnDownLine);
+				
+				textArea.findCursor();
+				
+				return;
+			}
+			
+			m.moveCursorTo(Direction.LEFT);
+			m.removeChar();
+			
+			textArea.findCursor();
+			
+		}
+		
+		private void onKeyPageUpPressed() {
+			textArea.textEditorModel.moveCursorToStart();
+			textArea.findCursor();
+		}
+		
+		private void onKeyPageDownPressed() {
+			textArea.textEditorModel.moveCursorToEnd();
+			textArea.findCursor();
+		}
+		
+		private void onKeyHomePressed() {
+			textArea.textEditorModel.moveCursorToStartOfLine();
+			textArea.findCursor();
+		}
+		
+		private void onKeyEndPressed() {
+			textArea.textEditorModel.moveCursorToEndOfLine();
+			textArea.findCursor();
+		}
+		
+		private void onKeyDeletePressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			
+			if (m.getLineLength(m.getCursorRow()) > m.getCursorColumn()) {
+				m.removeChar();
+			}
+		}
+		
+		private void onRegularKey() {
+			textArea.textEditorModel.insertChar(ctx.key);
+			textArea.textEditorModel.moveCursorTo(Direction.RIGHT);
+			textArea.findCursor();
+		}
 	}
 }

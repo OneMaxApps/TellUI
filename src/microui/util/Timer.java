@@ -5,7 +5,7 @@ public final class Timer {
 	public static final int START = 0;
 	public static final int END = 1;
 	private float currentTime, speed;
-	private boolean isIncrementing;
+	private boolean incrementing;
 
 	public Timer() {
 		super();
@@ -41,11 +41,11 @@ public final class Timer {
 	}
 
 	public boolean isIncrementing() {
-		return isIncrementing;
+		return incrementing;
 	}
 
 	public void setIncrementing(boolean isIncrementing) {
-		this.isIncrementing = isIncrementing;
+		this.incrementing = isIncrementing;
 	}
 
 	public boolean isComplete() {
