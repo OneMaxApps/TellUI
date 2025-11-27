@@ -28,9 +28,9 @@ public class TextAreaLauncher extends PApplet {
 		var cm = ContainerManager.getInstance();
 		
 		textArea = new TextArea();
-		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
+		//textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
 		textArea.setTextSize(54);
-		textArea.setFont(createFont("C:\\Windows\\Fonts\\CHILLER.TTF",32));
+		textArea.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",32));
 		
 		var container = new Container(new GridLayout(10,10));
 		

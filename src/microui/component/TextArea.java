@@ -5,6 +5,7 @@ import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static java.lang.Math.max;
@@ -33,6 +34,7 @@ import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.event.Listener;
+import microui.util.Clipboard;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
@@ -153,6 +155,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (!isFocused()) {
+			return;
+		}
+		
 		keyController.keyInput(e);
 	}
 
@@ -209,6 +215,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 	
 	private void hookOnDragging() {
+		if (scrollManager.isScrolling()) {
+			return;
+		}
+		
 		setCursorPositionMappedFromMouse();
 		findCursor();
 	}
@@ -237,7 +247,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private static final int WEIGHT = 10;
 		private final TextArea textArea;
 		private final Scroll scrollH, scrollV;
-
+		private boolean scrolling;
+		
 		public ScrollManager(TextArea textArea) {
 			super();
 			this.textArea = requireNonNull(textArea, "textArea");
@@ -253,7 +264,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			if (textArea.isFocused()) {
 				scrollH.draw();
 				scrollV.draw();
+				
+				scrolling = scrollH.isDragging() || scrollV.isDragging();
 			}
+		}
+		
+		public boolean isScrolling() {
+			return scrolling;
 		}
 
 		public float getHorizontalScrollValue() {
@@ -415,7 +432,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		@Override
 		protected void render(PGraphics p) {
-
 			final int linesCount = textArea.textEditorModel.getLinesCount();
 
 			final float textSize = textArea.textStyle.getTextSize();
@@ -483,22 +499,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			this.weight = weight;
 		}
 
-		public boolean onLeftSide() {
-			return getX() < textArea.getWidth() * .2f;
-		}
-
-		public boolean onRightSide() {
-			return getX() > textArea.getWidth() * .8f;
-		}
-
-		public boolean onUpSide() {
-			return getY() < textArea.getHeight() * .2f;
-		}
-
-		public boolean onDownSide() {
-			return getY() > textArea.getHeight() * .8f;
-		}
-
 		@Override
 		protected void render(PGraphics pGraphics) {
 			if (!textArea.isFocused()) {
@@ -511,21 +511,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			color.applyStroke(pGraphics);
 			pGraphics.strokeWeight(weight);
-
-			final TextEditorModel model = textArea.textEditorModel;
-			final int cursorRow = model.getCursorRow();
-			final int cursorColumn = model.getCursorColumn();
-			final TextMetricsPool tmp = textArea.textMetricsPool;
-
-			final float textSize = textArea.getTextSize();
-
-			final float scrollH = textArea.scrollManager.getHorizontalScrollValue();
-			final float scrollV = textArea.scrollManager.getVerticalScrollValue();
-
-			final float posX = tmp.getTextWidth(cursorRow, 0, cursorColumn) - scrollH;
-			final float posY = cursorRow * textArea.getTextSize() + scrollV;
-			final float height = textSize;
-
+			
+			final float posX = getX();
+			final float posY = getY();
+			final float height = textArea.getTextSize();
+			
 			pGraphics.line(posX, posY, posX, posY + height);
 		}
 
@@ -686,6 +676,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					textArea.textEditorModel.redo();
 					break;
 
+				case VK_V:
+					onControlDownAndVPressed();
+					break;
 				}
 				
 				return;
@@ -843,6 +836,31 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onRegularKey() {
 			textArea.textEditorModel.insertChar(ctx.key);
 			textArea.textEditorModel.moveCursorTo(Direction.RIGHT);
+			textArea.findCursor();
+		}
+		
+		private void onControlDownAndVPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final String[] lines = Clipboard.getAsArray();
+			final boolean multiLine = lines.length > 1;
+			
+			if (multiLine) {
+				for(int i = 0; i < lines.length; i++) {
+					if (i == 0) {
+						m.insertString(lines[i]);
+						m.moveCursorTo(Direction.DOWN);
+					} else {
+						m.addLine(lines[i]);
+						m.moveCursorTo(Direction.DOWN);
+					}
+				}
+				
+				m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
+			} else {
+				m.insertString(lines[0]);
+				m.moveCursorTo(Direction.RIGHT, lines[0].length());
+			}
+			
 			textArea.findCursor();
 		}
 	}

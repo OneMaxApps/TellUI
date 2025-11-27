@@ -94,6 +94,10 @@ public class GraphicsBuffer extends SpatialView {
 	}
 
 	private void createGraphics() {
+		if (graphics != null) {
+			graphics.dispose();			
+		}
+		
 		graphics = ctx.createGraphics((int) max(1, getWidth()), (int) max(1, getHeight()), ctx.sketchRenderer());
 	}
 
