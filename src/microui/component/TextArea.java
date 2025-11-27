@@ -5,6 +5,8 @@ import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.awt.event.KeyEvent.VK_Y;
+import static java.awt.event.KeyEvent.VK_Z;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
@@ -76,7 +78,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		onPress(() -> setFocused(true));
 
-		onDragging(this::setCursorPositionMappedFromMouse);
+		onDragging(this::hookOnDragging);
+		onPress(this::setCursorPositionMappedFromMouse);
 	}
 
 	public TextArea() {
@@ -174,28 +177,40 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.setBoundsFrom(this);
 	}
 	
-	// TODO Make full of this logic
 	private void setCursorPositionMappedFromMouse() {
-		
 		final TextEditorModel m = textEditorModel;
 		
 		final float scrollH = scrollManager.getHorizontalScrollValue();
-		
-		final float mouseX = ctx.mouseX - scrollH - getX();
-		
+		final float mouseX = (ctx.mouseX + scrollH) - getX();
 		int nearlyColumn = 0;
 		
-		for(int i = 0; i < m.getLineLength(m.getCursorRow()); i++) {
+		for(int i = 0; i <= m.getLineLength(m.getCursorRow()); i++) {
 			if (mouseX > textMetricsPool.getTextWidth(m.getCursorRow(), 0, i)) {
 				nearlyColumn = i;
 			}
 		}
+
+		final float scrollV = scrollManager.getVerticalScrollValue();
+		final float mouseY = (ctx.mouseY - scrollV) - getY();
+		int nearlyRow = 0;
+		
+		for(int i = 0; i < m.getLinesCount(); i++) {
+			if (mouseY > getTextSize() * i) {
+				nearlyRow = i;
+			}
+		}
+		
+		if(m.getCursorRow() == nearlyRow && m.getCursorColumn() == nearlyColumn) {
+			return;
+		}
 		
 		m.setCursorColumn(nearlyColumn);
-		
-		if (cursorRenderer.onLeftSide() || cursorRenderer.onRightSide()) {
-			findCursor();
-		}
+		m.setCursorRow(nearlyRow);
+	}
+	
+	private void hookOnDragging() {
+		setCursorPositionMappedFromMouse();
+		findCursor();
 	}
 	
 	private void findCursor() {
@@ -261,7 +276,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		public void recalculateRanges() {
-			final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth() - textArea.getWidth();
+			final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth() - textArea.getWidth() * .8f;
 			scrollH.setMaxValue(Math.max(scrollH.getMinValue(), calculatedScrollHMax));
 
 			scrollH.setVisible(calculatedScrollHMax > textArea.getWidth());
@@ -660,6 +675,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		public void keyInput(KeyEvent keyEvent) {
+			if (keyEvent.isControlDown()) {
+				
+				switch (keyEvent.getKeyCode()) {
+				case VK_Z:
+					textArea.textEditorModel.undo();
+					break;
+
+				case VK_Y:
+					textArea.textEditorModel.redo();
+					break;
+
+				}
+				
+				return;
+			}
+			
 			
 			switch (keyEvent.getKeyCode()) {
 			case LEFT:
