@@ -169,6 +169,14 @@ public final class TextEditorModel {
 	public void setSelectEndColumn(int endColumn) {
 		selection.setEndColumn(endColumn);
 	}
+	
+	public int getSelectEffectiveStartColumn() {
+		return selection.getEffectiveStartColumn();
+	}
+
+	public int getSelectEffectiveEndColumn() {
+		return selection.getEffectiveEndColumn();
+	}
 
 	public boolean isMultiLineSelected() {
 		return selection.isMultiLineSelected();
@@ -216,26 +224,30 @@ public final class TextEditorModel {
 		}
 		
 		if (!isMultiLineSelected()) {
-			final int effectiveStartColumn = Math.min(getSelectStartColumn(), getSelectEndColumn());
-			final int effectiveEndColumn = Math.max(getSelectStartColumn(), getSelectEndColumn());
+			final int minColumn = Math.min(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
+			final int maxColumn = Math.max(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
 			
-			return controller.getLineText(getSelectStartRow()).substring(effectiveStartColumn, effectiveEndColumn);
+			return controller.getLineText(getSelectStartRow()).substring(minColumn,maxColumn);
 		} else {
 			final StringBuilder sb = new StringBuilder();
 			
 			final int esr = getSelectEffectiveStartRow();
 			final int eer = getSelectEffectiveEndRow();
-			final int sc = getSelectStartColumn();
-			final int ec = getSelectEndColumn();
+			final int esc = getSelectEffectiveStartColumn();
+			final int eec = getSelectEffectiveEndColumn();
+			
+			final int minColumn = Math.min(esc,eec);
+			final int maxColumn = Math.max(esc,eec);
+			
 			
 			for(int i = esr; i <= eer; i++) {
 				if(i == esr) {
-					sb.append(getLineText(esr).substring(sc));
+					sb.append(getLineText(esr).substring(minColumn));
 					sb.append('\n');
 				}
 				
 				if(i == eer) {
-					sb.append(getLineText(eer).substring(0,ec));
+					sb.append(getLineText(eer).substring(0,maxColumn));
 				}
 				
 				if(i != esr && i != eer) {
@@ -395,7 +407,7 @@ public final class TextEditorModel {
 		public int getStartColumn() {
 			return getClampedColumn(getStartRow(), startColumn);
 		}
-
+		
 		public void setStartColumn(int startColumn) {
 			this.startColumn = getClampedColumn(getStartRow(), startColumn);
 			notifyOnSelecting();
@@ -421,6 +433,22 @@ public final class TextEditorModel {
 		public int getEffectiveEndRow() {
 			return Math.max(getStartRow(), getEndRow());
 		}
+		
+		public int getEffectiveStartColumn() {
+			if (getStartRow() <= getEndRow()) {
+				return getStartColumn();
+			} else {
+				return getEndColumn();
+			}
+		}
+		
+		public int getEffectiveEndColumn() {
+			if (getStartRow() > getEndRow()) {
+				return getStartColumn();
+			} else {
+				return getEndColumn();
+			}
+		}
 
 		public void setStart(int row, int column) {
 			setStartRow(row);
@@ -438,7 +466,7 @@ public final class TextEditorModel {
 		}
 		
 		public boolean isEmpty() {
-			return getEffectiveStartRow() == getEffectiveEndRow() && getStartColumn() == getEndColumn();
+			return getStartRow() == getEndRow() && getStartColumn() == getEndColumn();
 		}
 		
 		public void reset() {

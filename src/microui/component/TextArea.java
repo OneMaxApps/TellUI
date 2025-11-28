@@ -96,13 +96,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textEditorModel;
 			final int cr = m.getCursorRow();
 			final int cc = m.getCursorColumn();
-			
-			if (m.getSelectStartRow() <= m.getSelectEndRow()) {
-				m.setSelectEnd(cr,cc);
-			} else {
-				m.setSelectStart(cr,cc);
-			}
-			
+
+			m.setSelectEnd(cr,cc);
 		});
 	}
 
@@ -200,14 +195,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		if (mustLoseFocus()) {
 			setFocused(false);
-		}
-		
-		if (!textEditorModel.isSelectEmpty()) {
-			System.out.println("start row: " + textEditorModel.getSelectStartRow());
-			System.out.println("start column: " + textEditorModel.getSelectStartColumn());
-			System.out.println("end row: " + textEditorModel.getSelectEndRow());
-			System.out.println("end column: " + textEditorModel.getSelectEndColumn());
-			System.out.println();
 		}
 		
 	}
@@ -654,8 +641,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			
 			final int esr = m.getSelectEffectiveStartRow();
 			final int eer = m.getSelectEffectiveEndRow();
-			final int sc = m.getSelectStartColumn();
-			final int ec = m.getSelectEndColumn();
+			final int esc = m.getSelectEffectiveStartColumn();
+			final int eec = m.getSelectEffectiveEndColumn();
 			
 			float posX = 0;
 			float posY = 0;
@@ -673,8 +660,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 						
 						posY = textSize * esr;
 						
-						posX = tmp.getTextWidth(esr, 0, sc);
-						width = tmp.getTextWidth(esr, sc, m.getLineLength(esr));
+						posX = tmp.getTextWidth(esr, 0, esc);
+						width = tmp.getTextWidth(esr, esc, m.getLineLength(esr));
 					}
 					
 					if (i != esr && i != eer) {
@@ -687,7 +674,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 						posY = textSize * eer;
 						
 						posX = 0;
-						width = tmp.getTextWidth(eer, 0, ec);
+						width = tmp.getTextWidth(eer, 0, eec);
 					}
 					
 					posX -= scH;
@@ -698,14 +685,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				
 			} else {
 				
-				if (sc < ec) {
-					posX = tmp.getTextWidth(esr, 0, sc) -scH;
-				} else {
-					posX = tmp.getTextWidth(esr, 0, ec) -scH;
-				}
+				posX = tmp.getTextWidth(esr, 0, min(esc,eec)) -scH;
 				
 				posY = scV + textSize * esr;
-				width = tmp.getTextWidth(esr, sc, ec);
+				width = tmp.getTextWidth(esr, esc, eec);
 				
 				pGraphics.rect(posX,posY,width,height);
 			}
