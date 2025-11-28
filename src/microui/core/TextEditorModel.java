@@ -228,22 +228,22 @@ public final class TextEditorModel {
 		} else {
 			final StringBuilder sb = new StringBuilder();
 			
-			final int sr = getSelectEffectiveStartRow();
-			final int er = getSelectEffectiveEndRow();
-			final int sc = getSelectEffectiveStartColumn();
-			final int ec = getSelectEffectiveEndColumn();
+			final int esr = getSelectEffectiveStartRow();
+			final int eer = getSelectEffectiveEndRow();
+			final int sc = getSelectStartColumn();
+			final int ec = getSelectEndColumn();
 			
-			for(int i = sr; i <= er; i++) {
-				if(i == sr) {
-					sb.append(getLineText(sr).substring(sc));
+			for(int i = esr; i <= eer; i++) {
+				if(i == esr) {
+					sb.append(getLineText(esr).substring(sc));
 					sb.append('\n');
 				}
 				
-				if(i == er) {
-					sb.append(getLineText(er).substring(0,ec));
+				if(i == eer) {
+					sb.append(getLineText(eer).substring(0,ec));
 				}
 				
-				if(i != sr && i != er) {
+				if(i != esr && i != eer) {
 					sb.append(getLineText(i)).append('\n');
 				}
 			}
