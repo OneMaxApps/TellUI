@@ -174,14 +174,6 @@ public final class TextEditorModel {
 		return selection.isMultiLineSelected();
 	}
 
-	public int getSelectEffectiveStartColumn() {
-		return selection.getEffectiveStartColumn();
-	}
-
-	public int getSelectEffectiveEndColumn() {
-		return selection.getEffectiveEndColumn();
-	}
-
 	public int getSelectEffectiveStartRow() {
 		return selection.getEffectiveStartRow();
 	}
@@ -224,7 +216,10 @@ public final class TextEditorModel {
 		}
 		
 		if (!isMultiLineSelected()) {
-			return controller.getLineText(getSelectStartRow()).substring(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
+			final int effectiveStartColumn = Math.min(getSelectStartColumn(), getSelectEndColumn());
+			final int effectiveEndColumn = Math.max(getSelectStartColumn(), getSelectEndColumn());
+			
+			return controller.getLineText(getSelectStartRow()).substring(effectiveStartColumn, effectiveEndColumn);
 		} else {
 			final StringBuilder sb = new StringBuilder();
 			
@@ -258,25 +253,25 @@ public final class TextEditorModel {
 			return;
 		}
 		
-		final int sr = getSelectEffectiveStartRow();
-		final int er = getSelectEffectiveEndRow();
-		final int sc = getSelectEffectiveStartColumn();
-		final int ec = getSelectEffectiveEndColumn();
+		final int esr = getSelectEffectiveStartRow();
+		final int eer = getSelectEffectiveEndRow();
+		final int sc = getSelectStartColumn();
+		final int ec = getSelectEndColumn();
 		
 		if (!isMultiLineSelected()) {
-			controller.getLine(sr).remove(sc, ec);
+			controller.getLine(esr).remove(sc, ec);
 		} else {
-			controller.getLine(sr).remove(sc, getLineLength(sr));
-			controller.getLine(er).remove(0, ec);
+			controller.getLine(esr).remove(sc, getLineLength(esr));
+			controller.getLine(eer).remove(0, ec);
 			
-			for(int i = er - 1; i > sr; i--) {
+			for(int i = eer - 1; i > esr; i--) {
 				controller.removeLine(i);
 			}
 			
-			controller.mergeLines(sr);
+			controller.mergeLines(esr);
 		}
 		
-		cursor.moveTo(getSelectEffectiveStartRow(), getSelectEffectiveStartColumn());
+		cursor.moveTo(getSelectEffectiveStartRow(), getSelectStartColumn());
 		selection.reset();
 	}
 	
@@ -419,14 +414,6 @@ public final class TextEditorModel {
 			return getStartRow() != getEndRow();
 		}
 
-		public int getEffectiveStartColumn() {
-			return Math.min(getStartColumn(), getEndColumn());
-		}
-
-		public int getEffectiveEndColumn() {
-			return Math.max(getStartColumn(), getEndColumn());
-		}
-
 		public int getEffectiveStartRow() {
 			return Math.min(getStartRow(), getEndRow());
 		}
@@ -451,7 +438,7 @@ public final class TextEditorModel {
 		}
 		
 		public boolean isEmpty() {
-			return getEffectiveStartRow() == getEffectiveEndRow() && getEffectiveStartColumn() == getEffectiveEndColumn();
+			return getEffectiveStartRow() == getEffectiveEndRow() && getStartColumn() == getEndColumn();
 		}
 		
 		public void reset() {

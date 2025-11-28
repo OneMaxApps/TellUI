@@ -97,17 +97,12 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final int cr = textEditorModel.getCursorRow();
 			final int cc = textEditorModel.getCursorColumn();
 			
-			if (!m.isMultiLineSelected()) {
-				textEditorModel.setSelectEnd(cr, cc);
-				return;
-			}
-			
-			if (m.getSelectStartRow() < m.getSelectEndRow()) {
+			if (m.getSelectStartRow() <= m.getSelectEndRow()) {
 				textEditorModel.setSelectEnd(cr, cc);
 			} else {
-				textEditorModel.setSelectStart(cr, cc);
+				textEditorModel.setSelectStart(cr,cc);
 			}
-			
+
 		});
 	}
 
@@ -652,9 +647,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			
 			final int esr = m.getSelectEffectiveStartRow();
 			final int eer = m.getSelectEffectiveEndRow();
-			final int esc = m.getSelectEffectiveStartColumn();
-			final int eec = m.getSelectEffectiveEndColumn();
-			
 			final int sc = m.getSelectStartColumn();
 			final int ec = m.getSelectEndColumn();
 			
@@ -698,9 +690,15 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				}
 				
 			} else {
-				posX = tmp.getTextWidth(esr, 0, esc) -scH;
+				
+				if (sc < ec) {
+					posX = tmp.getTextWidth(esr, 0, sc) -scH;
+				} else {
+					posX = tmp.getTextWidth(esr, 0, ec) -scH;
+				}
+				
 				posY = scV + textSize * esr;
-				width = tmp.getTextWidth(esr, esc, eec);
+				width = tmp.getTextWidth(esr, sc, ec);
 				
 				pGraphics.rect(posX,posY,width,height);
 			}
