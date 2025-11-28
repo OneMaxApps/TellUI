@@ -1,5 +1,7 @@
 package microui.core;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
@@ -223,41 +225,41 @@ public final class TextEditorModel {
 			return "";
 		}
 		
-		if (!isMultiLineSelected()) {
-			final int minColumn = Math.min(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
-			final int maxColumn = Math.max(getSelectEffectiveStartColumn(), getSelectEffectiveEndColumn());
-			
-			return controller.getLineText(getSelectStartRow()).substring(minColumn,maxColumn);
-		} else {
-			final StringBuilder sb = new StringBuilder();
+		if (isMultiLineSelected()) {
 			
 			final int esr = getSelectEffectiveStartRow();
 			final int eer = getSelectEffectiveEndRow();
 			final int esc = getSelectEffectiveStartColumn();
 			final int eec = getSelectEffectiveEndColumn();
 			
-			final int minColumn = Math.min(esc,eec);
-			final int maxColumn = Math.max(esc,eec);
+			final StringBuilder sb = new StringBuilder();
 			
-			
-			for(int i = esr; i <= eer; i++) {
-				if(i == esr) {
-					sb.append(getLineText(esr).substring(minColumn));
-					sb.append('\n');
+			for (int i = esr; i <= eer; i++) {
+				if (i == esr) {
+					sb.append(getLineText(esr).substring(esc)).append('\n');
 				}
 				
-				if(i == eer) {
-					sb.append(getLineText(eer).substring(0,maxColumn));
-				}
-				
-				if(i != esr && i != eer) {
+				if (i != esr && i != eer) {
 					sb.append(getLineText(i)).append('\n');
+				}
+				
+				if (i == eer) {
+					sb.append(getLineText(eer).substring(0, eec));
 				}
 			}
 			
 			return sb.toString();
+			
+		} else {
+			final int row = getSelectStartRow();
+			final int esc = getSelectEffectiveStartColumn();
+			final int eec = getSelectEffectiveEndColumn();
+			
+			final int startColumn = min(esc,eec);
+			final int endColumn = max(esc,eec);
+			
+			return getLineText(row).substring(startColumn,endColumn);
 		}
-		
 	}
 	
 	public void removeSelectedText() {
@@ -283,7 +285,6 @@ public final class TextEditorModel {
 			controller.mergeLines(esr);
 		}
 		
-		cursor.moveTo(getSelectEffectiveStartRow(), getSelectStartColumn());
 		selection.reset();
 	}
 	

@@ -4,7 +4,9 @@ import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_C;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_END;
+import static java.awt.event.KeyEvent.VK_EQUALS;
 import static java.awt.event.KeyEvent.VK_HOME;
+import static java.awt.event.KeyEvent.VK_MINUS;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
 import static java.awt.event.KeyEvent.VK_V;
@@ -199,6 +201,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			setFocused(false);
 		}
 		
+		System.out.println(textEditorModel.getSelectedText());
+
 	}
 
 	@Override
@@ -477,7 +481,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					p.text(text, posX, posY);
 				}
 			}
-
+			
+			
 			p.popStyle();
 		}
 
@@ -812,6 +817,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				case VK_X:
 					onControlDownAndXPressed();
 					break;
+				
+				case VK_MINUS:
+					onControlDownAndMinusPressed();
+					break;
+					
+				case VK_EQUALS:
+					onControlDownAndPlusPressed();
+					break;
 				}
 				
 				return;
@@ -937,6 +950,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			
 			if (!m.isSelectEmpty()) {
 				m.removeSelectedText();
+				return;
 			}
 			
 			if (m.getCursorColumn() == 0 && m.getCursorRow() == 0) {
@@ -1071,6 +1085,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final String selectedText = textArea.textEditorModel.getSelectedText();
 			Clipboard.set(selectedText);
 			textArea.textEditorModel.removeSelectedText();
+		}
+		
+		private void onControlDownAndMinusPressed() {
+			textArea.setTextSize(Math.max(TextStyle.MIN_TEXT_SIZE,textArea.getTextSize() - 1));
+		}
+		
+		private void onControlDownAndPlusPressed() {
+			textArea.setTextSize(textArea.getTextSize() + 1);
 		}
 		
 	}
