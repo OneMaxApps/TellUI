@@ -94,15 +94,15 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		
 		onDragging(() -> {
 			final TextEditorModel m = textEditorModel;
-			final int cr = textEditorModel.getCursorRow();
-			final int cc = textEditorModel.getCursorColumn();
+			final int cr = m.getCursorRow();
+			final int cc = m.getCursorColumn();
 			
 			if (m.getSelectStartRow() <= m.getSelectEndRow()) {
-				textEditorModel.setSelectEnd(cr, cc);
+				m.setSelectEnd(cr,cc);
 			} else {
-				textEditorModel.setSelectStart(cr,cc);
+				m.setSelectStart(cr,cc);
 			}
-
+			
 		});
 	}
 
@@ -202,7 +202,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			setFocused(false);
 		}
 		
-		System.out.println(textEditorModel.getSelectedText());
+		if (!textEditorModel.isSelectEmpty()) {
+			System.out.println("start row: " + textEditorModel.getSelectStartRow());
+			System.out.println("start column: " + textEditorModel.getSelectStartColumn());
+			System.out.println("end row: " + textEditorModel.getSelectEndRow());
+			System.out.println("end column: " + textEditorModel.getSelectEndColumn());
+			System.out.println();
+		}
+		
 	}
 
 	@Override

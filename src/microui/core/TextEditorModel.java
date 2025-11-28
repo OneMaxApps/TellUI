@@ -393,20 +393,20 @@ public final class TextEditorModel {
 		}
 
 		public int getStartColumn() {
-			return getClampedColumn(getEffectiveStartRow(), startColumn);
+			return getClampedColumn(getStartRow(), startColumn);
 		}
 
 		public void setStartColumn(int startColumn) {
-			this.startColumn = getClampedColumn(getEffectiveStartRow(), startColumn);
+			this.startColumn = getClampedColumn(getStartRow(), startColumn);
 			notifyOnSelecting();
 		}
 
 		public int getEndColumn() {
-			return getClampedColumn(getEffectiveEndRow(), endColumn);
+			return getClampedColumn(getEndRow(), endColumn);
 		}
 
 		public void setEndColumn(int endColumn) {
-			this.endColumn = getClampedColumn(getEffectiveEndRow(), endColumn);
+			this.endColumn = getClampedColumn(getEndRow(), endColumn);
 			notifyOnSelecting();
 		}
 
