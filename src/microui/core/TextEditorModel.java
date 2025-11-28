@@ -267,14 +267,14 @@ public final class TextEditorModel {
 		
 		final int esr = getSelectEffectiveStartRow();
 		final int eer = getSelectEffectiveEndRow();
-		final int sc = getSelectStartColumn();
-		final int ec = getSelectEndColumn();
+		final int esc = getSelectEffectiveStartColumn();
+		final int eec = getSelectEffectiveEndColumn();
 		
 		if (!isMultiLineSelected()) {
-			controller.getLine(esr).remove(sc, ec);
+			controller.getLine(esr).remove(esc, eec);
 		} else {
-			controller.getLine(esr).remove(sc, getLineLength(esr));
-			controller.getLine(eer).remove(0, ec);
+			controller.getLine(esr).remove(esc, getLineLength(esr));
+			controller.getLine(eer).remove(0, eec);
 			
 			for(int i = eer - 1; i > esr; i--) {
 				controller.removeLine(i);

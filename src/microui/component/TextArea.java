@@ -1,12 +1,14 @@
 package microui.component;
 
 import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_C;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
 import static java.awt.event.KeyEvent.VK_V;
+import static java.awt.event.KeyEvent.VK_X;
 import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static java.lang.Math.max;
@@ -802,6 +804,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				case VK_A:
 					onControlDownAndAPressed();
 					break;
+					
+				case VK_C:
+					onControlDownAndCPressed();
+					break;
+					
+				case VK_X:
+					onControlDownAndXPressed();
+					break;
 				}
 				
 				return;
@@ -863,6 +873,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onKeyLeftPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			m.moveCursorTo(Direction.LEFT);
 
 			textArea.findCursor();
@@ -871,6 +885,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onKeyRightPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			m.moveCursorTo(Direction.RIGHT);
 
 			textArea.findCursor();
@@ -879,6 +897,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onKeyUpPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			m.moveCursorTo(Direction.UP);
 			
 			textArea.findCursor();
@@ -887,6 +909,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onKeyDownPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			m.moveCursorTo(Direction.DOWN);
 			
 			textArea.findCursor();
@@ -894,6 +920,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		private void onKeyEnterPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
+			
+			if (!m.isSelectEmpty()) {
+				m.removeSelectedText();
+			}
+			
 			m.splitLine();
 			m.moveCursorTo(Direction.DOWN);
 			m.moveCursorToStartOfLine();
@@ -903,6 +934,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		
 		private void onKeyBackspacePressed() {
 			final TextEditorModel m = textArea.textEditorModel;
+			
+			if (!m.isSelectEmpty()) {
+				m.removeSelectedText();
+			}
 			
 			if (m.getCursorColumn() == 0 && m.getCursorRow() == 0) {
 				return;
@@ -929,27 +964,55 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 		
 		private void onKeyPageUpPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			textArea.textEditorModel.moveCursorToStart();
 			textArea.findCursor();
 		}
 		
 		private void onKeyPageDownPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			textArea.textEditorModel.moveCursorToEnd();
 			textArea.findCursor();
 		}
 		
 		private void onKeyHomePressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			textArea.textEditorModel.moveCursorToStartOfLine();
 			textArea.findCursor();
 		}
 		
 		private void onKeyEndPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.resetSelection();
+			}
+			
 			textArea.textEditorModel.moveCursorToEndOfLine();
 			textArea.findCursor();
 		}
 		
 		private void onKeyDeletePressed() {
 			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.removeSelectedText();
+			}
 			
 			if (m.getLineLength(m.getCursorRow()) > m.getCursorColumn()) {
 				m.removeChar();
@@ -957,6 +1020,12 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 		
 		private void onRegularKey() {
+			final TextEditorModel m = textArea.textEditorModel;
+
+			if (!m.isSelectEmpty()) {
+				m.removeSelectedText();
+			}
+			
 			textArea.textEditorModel.insertChar(ctx.key);
 			textArea.textEditorModel.moveCursorTo(Direction.RIGHT);
 			textArea.findCursor();
@@ -964,6 +1033,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		
 		private void onControlDownAndVPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
+			
+			if (!m.isSelectEmpty()) {
+				m.removeSelectedText();
+			}
+			
 			final String[] lines = Clipboard.getAsArray();
 			final boolean multiLine = lines.length > 1;
 			
@@ -988,5 +1062,16 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onControlDownAndAPressed() {
 			textArea.textEditorModel.selectAll();
 		}
+		
+		private void onControlDownAndCPressed() {
+			Clipboard.set(textArea.textEditorModel.getSelectedText());
+		}
+		
+		private void onControlDownAndXPressed() {
+			final String selectedText = textArea.textEditorModel.getSelectedText();
+			Clipboard.set(selectedText);
+			textArea.textEditorModel.removeSelectedText();
+		}
+		
 	}
 }
