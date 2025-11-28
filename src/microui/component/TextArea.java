@@ -40,6 +40,7 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.event.Listener;
 import microui.util.Clipboard;
+import microui.util.MathUtils;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
@@ -103,6 +104,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.setSelectEnd(cr,cc);
 		});
+		
+		onDoubleClick(this::selectWordUnderCursor);
+		
 	}
 
 	public TextArea() {
@@ -214,6 +218,47 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.setBoundsFrom(this);
 	}
 	
+	private void selectWordUnderCursor() {
+		final int row = textEditorModel.getCursorRow();
+		final int column = textEditorModel.getCursorColumn();
+		
+		final String word = textEditorModel.getLineText(row);
+		
+		int startOfWord = column;
+		int endOfWord = column;
+		
+		final int clampedColumnFromCursor = (int) MathUtils.constrain(column, 0, word.length()-1);
+		
+		if (word.charAt(clampedColumnFromCursor) == ' ') {
+			textEditorModel.setSelect(row, row, 0, word.length());
+			return;
+		}
+		
+		while (startOfWord > 0) {
+			final int clampedIndex = (int) MathUtils.constrain(startOfWord, 0, word.length()-1);
+			
+			if (word.charAt(clampedIndex) == ' ') {
+				startOfWord++;
+				break;
+			} else {
+				startOfWord--;
+			}
+			
+		}
+		
+		while (endOfWord < word.length()) {
+			final int clampedIndex = (int) MathUtils.constrain(endOfWord, 0, word.length()-1);
+			
+			if (word.charAt(clampedIndex) == ' ') {
+				break;
+			}
+			
+			endOfWord++;
+		}
+		
+		textEditorModel.setSelect(row, row, startOfWord, endOfWord);
+	}
+	
 	private void setCursorPositionMappedFromMouse() {
 		final TextEditorModel m = textEditorModel;
 		
@@ -292,7 +337,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		public void onDraw() {
-			if (textArea.isFocused()) {
+			if (textArea.isFocused() && textArea.textEditorModel.isSelectEmpty()) {
 				scrollH.draw();
 				scrollV.draw();
 				
@@ -1026,6 +1071,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			if (!m.isSelectEmpty()) {
 				m.removeSelectedText();
+				return;
 			}
 			
 			if (m.getLineLength(m.getCursorRow()) > m.getCursorColumn()) {

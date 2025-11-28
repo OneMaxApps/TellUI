@@ -285,6 +285,8 @@ public final class TextEditorModel {
 			controller.mergeLines(esr);
 		}
 		
+		moveCursorTo(esr, esc);
+		
 		selection.reset();
 	}
 	
