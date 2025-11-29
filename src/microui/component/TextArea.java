@@ -323,7 +323,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 		
 		if (cy < getHeight() * .2f) {
-			final float speed = MathUtils.convert(cy, 0, getHeight() * .2f, 0, draggingSpeed);
+			final float speed = MathUtils.convert(cy, 0, getHeight() * .2f, draggingSpeed, 0);
 			sV.appendValue(speed);
 		}
 		
