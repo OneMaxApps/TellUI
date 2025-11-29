@@ -58,6 +58,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final SelectionRenderer selectionRenderer;
 	private final ScrollManager scrollManager;
 	private final KeyController keyController;
+	private final HandleDraggingConfig handleDraggingConfig;
 	private boolean focused;
 
 	public TextArea(float x, float y, float width, float height) {
@@ -75,6 +76,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.addBufferedView(selectionRenderer = new SelectionRenderer(this));
 		scrollManager = new ScrollManager(this);
 		keyController = new KeyController(this);
+		handleDraggingConfig = new HandleDraggingConfig();
 
 		textEditorModel.setOnTextChangedListener(() -> {
 			textMetricsPool.clearCache();
@@ -101,16 +103,24 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textEditorModel;
 			final int cr = m.getCursorRow();
 			final int cc = m.getCursorColumn();
-
+			
 			m.setSelectEnd(cr, cc);
 		});
 
 		onDoubleClick(this::selectWordUnderCursor);
-
+		
 	}
 
 	public TextArea() {
 		this(0, 0, 1, 1);
+	}
+	
+	public float getHandleDraggingSpeed() {
+		return handleDraggingConfig.getDraggingSpeed();
+	}
+
+	public void setHandleDraggingSpeed(float draggingSpeed) {
+		handleDraggingConfig.setDraggingSpeed(draggingSpeed);
 	}
 
 	public boolean isFocused() {
@@ -259,27 +269,23 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	private void setCursorPositionMappedFromMouse() {
 		final TextEditorModel m = textEditorModel;
-
+		
 		final float scrollH = scrollManager.getHorizontalScrollValue();
+		final float scrollV = scrollManager.getVerticalScrollValue();
+		
 		final float mouseX = (ctx.mouseX + scrollH) - getX();
+		final float mouseY = (ctx.mouseY - scrollV) - getY();
+		
+		final int nearlyRow = (int) MathUtils.convert(mouseY, 0, getTextSize() * m.getLinesCount(), 0, m.getLinesCount());
+		
 		int nearlyColumn = 0;
 
-		for (int i = 0; i <= m.getLineLength(m.getCursorRow()); i++) {
-			if (mouseX > textMetricsPool.getTextWidth(m.getCursorRow(), 0, i)) {
+		for (int i = 0; i <= m.getLineLength(nearlyRow); i++) {
+			if (mouseX > textMetricsPool.getTextWidth(nearlyRow, 0, i)) {
 				nearlyColumn = i;
 			}
 		}
-
-		final float scrollV = scrollManager.getVerticalScrollValue();
-		final float mouseY = (ctx.mouseY - scrollV) - getY();
-		int nearlyRow = 0;
-
-		for (int i = 0; i < m.getLinesCount(); i++) {
-			if (mouseY > getTextSize() * i) {
-				nearlyRow = i;
-			}
-		}
-
+		
 		if (m.getCursorRow() == nearlyRow && m.getCursorColumn() == nearlyColumn) {
 			return;
 		}
@@ -294,7 +300,38 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		setCursorPositionMappedFromMouse();
-		findCursor();
+		findCursorSoftly();
+	}
+	
+	private void findCursorSoftly() {
+		final Scroll sH = scrollManager.scrollH;
+		final Scroll sV = scrollManager.scrollV;
+		
+		final float cx = cursorRenderer.getX();
+		final float cy = cursorRenderer.getY();
+		
+		final float draggingSpeed = handleDraggingConfig.getDraggingSpeed();
+		
+		if (cx < getWidth() * .2f) {
+			final float speed = MathUtils.convert(cx, 0, getWidth() * .2f, -draggingSpeed, 0);
+			sH.appendValue(speed);
+		}
+		
+		if (cx > getWidth() * .8f) {
+			final float speed = MathUtils.convert(cx, getWidth() * .8f, getWidth(), 0, draggingSpeed);
+			sH.appendValue(speed);
+		}
+		
+		if (cy < getHeight() * .2f) {
+			final float speed = MathUtils.convert(cy, 0, getHeight() * .2f, 0, draggingSpeed);
+			sV.appendValue(speed);
+		}
+		
+		if (cy > getHeight() * .8f) {
+			final float speed = MathUtils.convert(cy, getHeight() * .8f, getHeight(), 0, -draggingSpeed);
+			sV.appendValue(speed);
+		}
+		
 	}
 
 	private void findCursor() {
@@ -342,6 +379,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				scrolling = scrollH.isDragging() || scrollV.isDragging();
 			}
 		}
+		
+		
 
 		public boolean isScrolling() {
 			return scrolling;
@@ -1177,10 +1216,12 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		private void onControlDownAndMinusPressed() {
 			textArea.setTextSize(Math.max(TextStyle.MIN_TEXT_SIZE, textArea.getTextSize() - 1));
+			textArea.findCursor();
 		}
 
 		private void onControlDownAndPlusPressed() {
 			textArea.setTextSize(textArea.getTextSize() + 1);
+			textArea.findCursor();
 		}
 
 		private void onShiftDownAndLeftPressed() {
@@ -1245,6 +1286,28 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			m.moveCursorToEnd();
 			m.setSelectEnd(m.getCursorRow(),m.getCursorColumn());
 			textArea.findCursor();
+		}
+	}
+
+	private static final class HandleDraggingConfig {
+		private static final int DEFAULT_DRAGGING_SPEED = 10;
+		private static final int MIN_DRAGGING_SPEED = 1;
+		private float draggingSpeed;
+		
+		public HandleDraggingConfig() {
+			super();
+			setDraggingSpeed(DEFAULT_DRAGGING_SPEED);
+		}
+
+		public float getDraggingSpeed() {
+			return draggingSpeed;
+		}
+
+		public void setDraggingSpeed(float draggingSpeed) {
+			if (draggingSpeed < MIN_DRAGGING_SPEED) {
+				throw new IllegalArgumentException("Speed for dragging must be greater than: " + MIN_DRAGGING_SPEED);
+			}
+			this.draggingSpeed = draggingSpeed;
 		}
 	}
 }
