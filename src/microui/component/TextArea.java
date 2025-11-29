@@ -232,7 +232,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		final String word = textEditorModel.getLineText(row);
 
-		if (word.isEmpty()) {
+		if (word.isBlank()) {
+			return;
+		}
+		
+		final boolean cursorColumnOnWhitespace =  Character.isWhitespace(word.charAt((int) constrain(column, 0, word.length() - 1)));
+		
+		if (cursorColumnOnWhitespace) {
 			return;
 		}
 		
@@ -535,7 +541,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		private static long getGeneratedKey(int row, int startColumn, int endColumn) {
-			 return ((long) row << 32 | 0xFFFFFF & startColumn << 16 | 0xFFFFFF & endColumn);
+			return ((long) (row & 0xFFFFF) << 40) |
+				   ((long) (startColumn & 0xFFFFF) << 20) |
+				   (endColumn & 0xFFFFF); 
 		}
 	}
 
