@@ -927,6 +927,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				case VK_PAGE_DOWN:
 					onShiftDownAndPageDownPressed();
 					break;
+					
+				default: 
+					onRegularKeyPressed(keyEvent);
+					break;
 				}
 
 				return;
@@ -1017,7 +1021,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				break;
 
 			default:
-				onRegularKey();
+				onRegularKeyPressed(keyEvent);
 				break;
 			}
 
@@ -1124,7 +1128,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.resetSelection();
 			}
 
-			textArea.textEditorModel.moveCursorToStart();
+			m.moveCursorToStart();
 			textArea.findCursor();
 		}
 
@@ -1135,7 +1139,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.resetSelection();
 			}
 
-			textArea.textEditorModel.moveCursorToEnd();
+			m.moveCursorToEnd();
 			textArea.findCursor();
 		}
 
@@ -1146,7 +1150,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.resetSelection();
 			}
 
-			textArea.textEditorModel.moveCursorToStartOfLine();
+			m.moveCursorToStartOfLine();
 			textArea.findCursor();
 		}
 
@@ -1157,7 +1161,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.resetSelection();
 			}
 
-			textArea.textEditorModel.moveCursorToEndOfLine();
+			m.moveCursorToEndOfLine();
 			textArea.findCursor();
 		}
 
@@ -1174,15 +1178,24 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 		}
 
-		private void onRegularKey() {
+		private void onRegularKeyPressed(KeyEvent keyEvent) {
 			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
+			
+			if (!m.isSelectEmpty() && !keyEvent.isShiftDown()) {
 				m.removeSelectedText();
 			}
-
-			textArea.textEditorModel.insertChar(ctx.key);
-			textArea.textEditorModel.moveCursorTo(Direction.RIGHT);
+				
+			final int lineLengthBefore = m.getLineLength(m.getCursorRow());
+			m.insertChar(ctx.key);
+			final int lineLengthAfter = m.getLineLength(m.getCursorRow());
+			
+			final boolean charInserted = lineLengthBefore != lineLengthAfter;
+			
+			if (!charInserted) {
+				return;
+			}
+			
+			m.moveCursorTo(Direction.RIGHT);
 			textArea.findCursor();
 		}
 
@@ -1301,6 +1314,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			m.setSelectEnd(m.getCursorRow(),m.getCursorColumn());
 			textArea.findCursor();
 		}
+		
 	}
 
 	private static final class HandleDraggingConfig {
