@@ -59,6 +59,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final ScrollManager scrollManager;
 	private final KeyController keyController;
 	private final HandleDraggingConfig handleDraggingConfig;
+	private final CursorSearch cursorSearch;
 	private boolean focused;
 
 	public TextArea(float x, float y, float width, float height) {
@@ -77,7 +78,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		scrollManager = new ScrollManager(this);
 		keyController = new KeyController(this);
 		handleDraggingConfig = new HandleDraggingConfig();
-
+		cursorSearch = new CursorSearch(this);
+		
 		textEditorModel.setOnTextChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
@@ -215,6 +217,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			setFocused(false);
 		}
 
+		cursorSearch.updateState();
 	}
 
 	@Override
@@ -310,51 +313,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		setCursorPositionMappedFromMouse();
-		findCursorSoftly();
+		cursorSearch.findSoftly();
 	}
 	
-	private void findCursorSoftly() {
-		final Scroll sH = scrollManager.scrollH;
-		final Scroll sV = scrollManager.scrollV;
-		
-		final float cx = cursorRenderer.getX();
-		final float cy = cursorRenderer.getY();
-		
-		final float draggingSpeed = handleDraggingConfig.getDraggingSpeed();
-		
-		if (cx < getWidth() * .2f) {
-			final float speed = MathUtils.convert(cx, 0, getWidth() * .2f, -draggingSpeed, 0);
-			sH.appendValue(speed);
-		}
-		
-		if (cx > getWidth() * .8f) {
-			final float speed = MathUtils.convert(cx, getWidth() * .8f, getWidth(), 0, draggingSpeed);
-			sH.appendValue(speed);
-		}
-		
-		if (cy < getHeight() * .2f) {
-			final float speed = MathUtils.convert(cy, 0, getHeight() * .2f, draggingSpeed, 0);
-			sV.appendValue(speed);
-		}
-		
-		if (cy > getHeight() * .8f) {
-			final float speed = MathUtils.convert(cy, getHeight() * .8f, getHeight(), 0, -draggingSpeed);
-			sV.appendValue(speed);
-		}
-		
-	}
-
-	private void findCursor() {
-		final TextEditorModel m = textEditorModel;
-		final TextMetricsPool tmp = textMetricsPool;
-
-		final float currentLineTextWidthUntilCursor = tmp.getTextWidth(m.getCursorRow(), 0, m.getCursorColumn());
-
-		scrollManager.scrollH.setValue(currentLineTextWidthUntilCursor - getWidth() / 2);
-
-		scrollManager.scrollV.setValue(-(m.getCursorRow() * getTextSize() - getHeight() / 2));
-	}
-
 	private boolean mustLoseFocus() {
 		return !isDragging() && ctx.mousePressed && !isHover();
 	}
@@ -377,6 +338,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			scrollH = new Scroll();
 			scrollV = new Scroll();
 
+			
+			
 			prepareStyle();
 			recalculateBounds();
 		}
@@ -387,11 +350,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				scrollV.draw();
 
 				scrolling = scrollH.isDragging() || scrollV.isDragging();
+				
+				if (scrolling) {
+					textArea.cursorSearch.terminateSoftlySearching();
+				}
 			}
 		}
 		
-		
-
 		public boolean isScrolling() {
 			return scrolling;
 		}
@@ -433,6 +398,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			scrollV.mouseWheel(mouseEvent);
 
 			if (textArea.isHover() && !scrollH.isHover()) {
+				
+				textArea.cursorSearch.terminateSoftlySearching();
+				
 				final float speed = -mouseEvent.getCount() * textArea.textStyle.getTextSize();
 				scrollV.appendValue(speed);
 			}
@@ -1036,7 +1004,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.LEFT);
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyRightPressed() {
@@ -1048,7 +1016,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.RIGHT);
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyUpPressed() {
@@ -1060,7 +1028,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.UP);
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyDownPressed() {
@@ -1072,7 +1040,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.DOWN);
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyEnterPressed() {
@@ -1086,7 +1054,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			m.moveCursorTo(Direction.DOWN);
 			m.moveCursorToStartOfLine();
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyBackspacePressed() {
@@ -1109,7 +1077,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.moveCursorToEndOfLine();
 				m.moveCursorTo(Direction.LEFT, charCountOnDownLine);
 
-				textArea.findCursor();
+				textArea.cursorSearch.startSoftlySearching();
 
 				return;
 			}
@@ -1117,7 +1085,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			m.moveCursorTo(Direction.LEFT);
 			m.removeChar();
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 
 		}
 
@@ -1129,7 +1097,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 
 			m.moveCursorToStart();
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyPageDownPressed() {
@@ -1140,7 +1108,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 
 			m.moveCursorToEnd();
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyHomePressed() {
@@ -1151,7 +1119,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 
 			m.moveCursorToStartOfLine();
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyEndPressed() {
@@ -1162,7 +1130,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 
 			m.moveCursorToEndOfLine();
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onKeyDeletePressed() {
@@ -1170,6 +1138,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			if (!m.isSelectEmpty()) {
 				m.removeSelectedText();
+				textArea.cursorSearch.startSoftlySearching();
 				return;
 			}
 
@@ -1196,7 +1165,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 			
 			m.moveCursorTo(Direction.RIGHT);
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onControlDownAndVPressed() {
@@ -1224,7 +1193,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.moveCursorTo(Direction.RIGHT, lines[0].length());
 			}
 
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onControlDownAndAPressed() {
@@ -1243,12 +1212,12 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		private void onControlDownAndMinusPressed() {
 			textArea.setTextSize(Math.max(TextStyle.MIN_TEXT_SIZE, textArea.getTextSize() - 1));
-			textArea.findCursor();
+			textArea.cursorSearch.find();
 		}
 
 		private void onControlDownAndPlusPressed() {
 			textArea.setTextSize(textArea.getTextSize() + 1);
-			textArea.findCursor();
+			textArea.cursorSearch.find();
 		}
 
 		private void onShiftDownAndLeftPressed() {
@@ -1256,7 +1225,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.LEFT);
 			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onShiftDownAndRightPressed() {
@@ -1264,7 +1233,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.RIGHT);
 			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onShiftDownAndUpPressed() {
@@ -1272,7 +1241,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.UP);
 			m.setSelectEndRow(m.getCursorRow());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 
 		private void onShiftDownAndDownPressed() {
@@ -1280,7 +1249,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorTo(Direction.DOWN);
 			m.setSelectEndRow(m.getCursorRow());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 		
 		private void onShiftDownAndHomePressed() {
@@ -1288,7 +1257,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorToStartOfLine();
 			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 		
 		private void onShiftDownAndEndPressed() {
@@ -1296,7 +1265,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorToEndOfLine();
 			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 		
 		private void onShiftDownAndPageUpPressed() {
@@ -1304,7 +1273,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorToStart();
 			m.setSelectEnd(0,0);
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 		
 		private void onShiftDownAndPageDownPressed() {
@@ -1312,7 +1281,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.moveCursorToEnd();
 			m.setSelectEnd(m.getCursorRow(),m.getCursorColumn());
-			textArea.findCursor();
+			textArea.cursorSearch.startSoftlySearching();
 		}
 		
 	}
@@ -1336,6 +1305,74 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				throw new IllegalArgumentException("Speed for dragging must be greater than: " + MIN_DRAGGING_SPEED);
 			}
 			this.draggingSpeed = draggingSpeed;
+		}
+	}
+	
+	private static final class CursorSearch {
+		private final TextArea textArea;
+		private boolean softlySearching;
+		
+		public CursorSearch(TextArea textArea) {
+			super();
+			this.textArea = requireNonNull(textArea,"textArea");
+		}
+		
+		public void startSoftlySearching() {
+			softlySearching = true;
+		}
+		
+		public void terminateSoftlySearching() {
+			softlySearching = false;
+		}
+		
+		public void updateState() {
+			if (softlySearching) {
+				findSoftly();
+			}
+		}
+		
+		private void findSoftly() {
+			final Scroll sH = textArea.scrollManager.scrollH;
+			final Scroll sV = textArea.scrollManager.scrollV;
+			
+			final float cx = textArea.cursorRenderer.getX();
+			final float cy = textArea.cursorRenderer.getY();
+			
+			final float draggingSpeed = textArea.handleDraggingConfig.getDraggingSpeed();
+			
+			if (cx < textArea.getWidth() * .2f) {
+				final float speed = MathUtils.convert(cx, 0, textArea.getWidth() * .2f, -draggingSpeed, 0);
+				sH.appendValue(speed);
+			}
+			
+			if (cx > textArea.getWidth() * .8f) {
+				final float speed = MathUtils.convert(cx, textArea.getWidth() * .8f, textArea.getWidth(), 0, draggingSpeed);
+				sH.appendValue(speed);
+			}
+			
+			if (cy < textArea.getHeight() * .2f) {
+				final float speed = MathUtils.convert(cy, 0, textArea.getHeight() * .2f, draggingSpeed, 0);
+				sV.appendValue(speed);
+			}
+			
+			if (cy > textArea.getHeight() * .8f) {
+				final float speed = MathUtils.convert(cy, textArea.getHeight() * .8f, textArea.getHeight(), 0, -draggingSpeed);
+				sV.appendValue(speed);
+			}
+			
+		}
+
+		private void find() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final TextMetricsPool tmp = textArea.textMetricsPool;
+			final Scroll scH = textArea.scrollManager.scrollH;
+			final Scroll scV = textArea.scrollManager.scrollV;
+
+			final float currentLineTextWidthUntilCursor = tmp.getTextWidth(m.getCursorRow(), 0, m.getCursorColumn());
+
+			scH.setValue(currentLineTextWidthUntilCursor - textArea.getWidth() / 2);
+
+			scV.setValue(-(m.getCursorRow() * textArea.getTextSize() - textArea.getHeight() / 2));
 		}
 	}
 }
