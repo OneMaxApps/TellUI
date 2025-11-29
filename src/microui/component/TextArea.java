@@ -232,6 +232,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		final String word = textEditorModel.getLineText(row);
 
+		if (word.isEmpty()) {
+			return;
+		}
+		
 		int startOfWord = column;
 		int endOfWord = column;
 
@@ -450,7 +454,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private static final class TextMetricsPool {
 		private static final PGraphics GRAPHICS = ctx.createGraphics(1, 1, ctx.sketchRenderer());
 		private final TextArea textArea;
-		private final Map<Key, Float> map = new HashMap<Key, Float>();
+		private final Map<Long, Float> map = new HashMap<Long, Float>();
+		
 		private float maxWidth, totalHeight;
 
 		public TextMetricsPool(TextArea textArea) {
@@ -460,8 +465,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		public float getTextWidth(int row, int columnStart, int columnEnd) {
-			final Key key = new Key(row, columnStart, columnEnd);
-
+			final Long key = getGeneratedKey(row, columnStart, columnEnd);
+			
 			if (map.containsKey(key)) {
 				return map.get(key);
 			} else {
@@ -469,7 +474,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				map.put(key, newValue);
 				return newValue;
 			}
-
+			
 		}
 
 		public float getTextWidth(int row) {
@@ -529,7 +534,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			return getCalculatedTextWidth(row, 0, textArea.textEditorModel.getLineLength(row));
 		}
 
-		private static final record Key(int row, int startColumn, int endColumn) {
+		private static long getGeneratedKey(int row, int startColumn, int endColumn) {
+			 return ((long) row << 32 | 0xFFFFFF & startColumn << 16 | 0xFFFFFF & endColumn);
 		}
 	}
 
