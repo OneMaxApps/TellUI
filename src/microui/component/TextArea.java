@@ -14,6 +14,7 @@ import static java.awt.event.KeyEvent.VK_MINUS;
 import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
 import static java.awt.event.KeyEvent.VK_PAGE_UP;
 import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_TAB;
 import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_X;
@@ -54,6 +55,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final TextEditorModel textEditorModel;
 	private final TextMetricsPool textMetricsPool;
 	private final TextStyle textStyle;
+	private final TabConfig styleConfig;
 	private final GraphicsBuffer graphics;
 	private final CursorRenderer cursorRenderer;
 	private final SelectionRenderer selectionRenderer;
@@ -61,6 +63,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final KeyController keyController;
 	private final HandleDraggingConfig handleDraggingConfig;
 	private final CursorSearch cursorSearch;
+	private Listener onTextChangedListener, onStyleChangedListener;
 	private boolean focused;
 
 	public TextArea(float x, float y, float width, float height) {
@@ -71,6 +74,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		textEditorModel = new TextEditorModel();
 		textMetricsPool = new TextMetricsPool(this);
 		textStyle = new TextStyle(this);
+		styleConfig = new TabConfig();
 		graphics = new GraphicsBuffer();
 		graphics.setAutoClearBufferEnabled(true);
 		graphics.addBufferedView(new TextRenderer(this));
@@ -84,11 +88,19 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		textEditorModel.setOnTextChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
+			
+			if (onTextChangedListener != null) {
+				onTextChangedListener.action();
+			}
 		});
 
 		textStyle.setOnStyleChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
+			
+			if (onStyleChangedListener != null) {
+				onStyleChangedListener.action();
+			}
 		});
 
 		onPress(() -> setFocused(true));
@@ -116,6 +128,37 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	public TextArea() {
 		this(0, 0, 1, 1);
+	}
+	
+	public void setScrollsThumbColor(AbstractColor color) {
+		scrollManager.scrollH.setThumbColor(color);
+		scrollManager.scrollV.setThumbColor(color);
+	}
+	
+	public void setScrollsBackgroundColor(AbstractColor color) {
+		scrollManager.scrollH.setBackgroundColor(color);
+		scrollManager.scrollV.setBackgroundColor(color);
+	}
+	
+	public void setScrollsThumbStrokeColor(AbstractColor color) {
+		scrollManager.scrollH.setThumbStrokeColor(color);
+		scrollManager.scrollV.setThumbStrokeColor(color);
+	}
+	
+	public void setOnTextChangedListener(Listener onTextChangedListener) {
+		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
+	}
+
+	public void setOnStyleChangedListener(Listener onStyleChangedListener) {
+		this.onStyleChangedListener = requireNonNull(onStyleChangedListener,"onStyleChangedListener");
+	}
+
+	public int getTabSize() {
+		return styleConfig.getTabSize();
+	}
+
+	public void setTabSize(int tabSize) {
+		styleConfig.setTabSize(tabSize);
 	}
 
 	public float getHandleDraggingSpeed() {
@@ -845,9 +888,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	private static final class KeyController {
+		
+		
 		private final TextArea textArea;
 		private final ShiftController shiftController;
 		private final ControlController controlController;
+		
+		
 		
 		public KeyController(TextArea textArea) {
 			super();
@@ -855,7 +902,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			shiftController = new ShiftController(textArea);
 			controlController = new ControlController(textArea);
+			
+			
 		}
+		
+		
 
 		public void keyInput(KeyEvent keyEvent) {
 			requireNonNull(keyEvent, "keyEvent");
@@ -903,6 +954,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				break;
 			case VK_ENTER:
 				onKeyEnterPressed();
+				break;
+			case VK_TAB:
+				onKeyTabPressed();
 				break;
 			default:
 				onPrintableKeyPressed(keyEvent);
@@ -1168,6 +1222,18 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			m.insertChar(ch);
 			m.moveCursorTo(Direction.RIGHT);
+			cs.startSoftlySearching();
+		}
+		
+		private void onKeyTabPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+			
+			for (int i = 0; i < textArea.getTabSize(); i++) {
+				m.insertChar(' ');
+				m.moveCursorTo(Direction.RIGHT);
+			}
+			
 			cs.startSoftlySearching();
 		}
 
@@ -1609,5 +1675,30 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		public static boolean isValid(final char ch) {
 			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 		}
+	}
+	
+	private static final class TabConfig {
+		private static final byte MIN_TAB_SIZE = 1;
+		private static final byte MAX_TAB_SIZE = 8;
+		private static final byte DEFAULT_TAB_SIZE = 2;
+		private int tabSize;
+		
+		public TabConfig() {
+			super();
+			setTabSize(DEFAULT_TAB_SIZE);
+		}
+		
+		public int getTabSize() {
+			return tabSize;
+		}
+
+		public void setTabSize(int tabSize) {
+			if (tabSize < MIN_TAB_SIZE || tabSize > MAX_TAB_SIZE) {
+				throw new IllegalArgumentException("Tab size must be between " + MIN_TAB_SIZE + " and " + MAX_TAB_SIZE);
+			}
+			
+			this.tabSize = tabSize;
+		}
+		
 	}
 }
