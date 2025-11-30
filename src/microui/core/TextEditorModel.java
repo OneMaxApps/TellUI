@@ -137,6 +137,30 @@ public final class TextEditorModel {
 	public void setCursorRow(int row) {
 		cursor.setRow(row);
 	}
+	
+	public boolean cursorAtStartOfLines() {
+		return cursor.getRow() == 0;
+	}
+	
+	public boolean cursorAtEndOfLines() {
+		return cursor.getRow() == getLinesCount() - 1;
+	}
+	
+	public boolean cursorAtStartOfLine() {
+		return cursor.getColumn() == 0;
+	}
+	
+	public boolean cursorAtEndOfLine() {
+		return cursor.getColumn() == getLineLength(getCursorRow());
+	}
+	
+	public boolean cursorAtStartOfText() {
+		return cursorAtStartOfLines() && cursorAtStartOfLine();
+	}
+	
+	public boolean cursorAtEndOfText() {
+		return cursorAtEndOfLines() && cursorAtEndOfLine();
+	}
 
 	// == SELECTION API ==
 	

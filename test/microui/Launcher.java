@@ -66,7 +66,6 @@ public final class Launcher extends PApplet {
 	@Override
 	public void draw() {
 		background(32);
-		println(key);
 	}
 
 	@Override
