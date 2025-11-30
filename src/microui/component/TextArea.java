@@ -1,10 +1,12 @@
 package microui.component;
 
 import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
 import static java.awt.event.KeyEvent.VK_C;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_END;
+import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_EQUALS;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_LEFT;
@@ -22,13 +24,8 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 import static microui.util.MathUtils.constrain;
-import static processing.core.PConstants.BACKSPACE;
-import static processing.core.PConstants.DOWN;
-import static processing.core.PConstants.ENTER;
 import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.TOP;
-import static processing.core.PConstants.UP;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +58,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final CursorRenderer cursorRenderer;
 	private final SelectionRenderer selectionRenderer;
 	private final ScrollManager scrollManager;
-	private final KeyControllerOld keyControllerOld;
 	private final KeyController keyController;
 	private final HandleDraggingConfig handleDraggingConfig;
 	private final CursorSearch cursorSearch;
@@ -81,7 +77,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		graphics.addBufferedView(cursorRenderer = new CursorRenderer(this));
 		graphics.addBufferedView(selectionRenderer = new SelectionRenderer(this));
 		scrollManager = new ScrollManager(this);
-		keyControllerOld = new KeyControllerOld(this);
 		keyController = new KeyController(this);
 		handleDraggingConfig = new HandleDraggingConfig();
 		cursorSearch = new CursorSearch(this);
@@ -210,7 +205,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			return;
 		}
 
-		// keyControllerOld.keyInput(e);
 		keyController.keyInput(e);
 	}
 
@@ -850,457 +844,31 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	}
 
-	private static final class KeyControllerOld {
-		private final TextArea textArea;
-
-		public KeyControllerOld(TextArea textArea) {
-			super();
-			this.textArea = requireNonNull(textArea, "textArea");
-		}
-
-		public void keyInput(KeyEvent keyEvent) {
-
-			if (keyEvent.isShiftDown()) {
-				final TextEditorModel m = textArea.textEditorModel;
-
-				if (m.isSelectEmpty()) {
-					m.setSelectStart(m.getCursorRow(), m.getCursorColumn());
-					m.setSelectEnd(m.getCursorRow(), m.getCursorColumn());
-				}
-
-				switch (keyEvent.getKeyCode()) {
-				case LEFT:
-					onShiftDownAndLeftPressed();
-					break;
-
-				case RIGHT:
-					onShiftDownAndRightPressed();
-					break;
-
-				case UP:
-					onShiftDownAndUpPressed();
-					break;
-
-				case DOWN:
-					onShiftDownAndDownPressed();
-					break;
-
-				case VK_HOME:
-					onShiftDownAndHomePressed();
-					break;
-
-				case VK_END:
-					onShiftDownAndEndPressed();
-					break;
-
-				case VK_PAGE_UP:
-					onShiftDownAndPageUpPressed();
-					break;
-
-				case VK_PAGE_DOWN:
-					onShiftDownAndPageDownPressed();
-					break;
-
-				default:
-					onRegularKeyPressed(keyEvent);
-					break;
-				}
-
-				return;
-			}
-
-			if (keyEvent.isControlDown()) {
-
-				switch (keyEvent.getKeyCode()) {
-				case VK_Z:
-					textArea.textEditorModel.undo();
-					break;
-
-				case VK_Y:
-					textArea.textEditorModel.redo();
-					break;
-
-				case VK_V:
-					onControlDownAndVPressed();
-					break;
-
-				case VK_A:
-					onControlDownAndAPressed();
-					break;
-
-				case VK_C:
-					onControlDownAndCPressed();
-					break;
-
-				case VK_X:
-					onControlDownAndXPressed();
-					break;
-
-				case VK_MINUS:
-					onControlDownAndMinusPressed();
-					break;
-
-				case VK_EQUALS:
-					onControlDownAndPlusPressed();
-					break;
-				}
-
-				return;
-			}
-
-			switch (keyEvent.getKeyCode()) {
-			case LEFT:
-				onKeyLeftPressed();
-				break;
-
-			case RIGHT:
-				onKeyRightPressed();
-				break;
-
-			case UP:
-				onKeyUpPressed();
-				break;
-
-			case DOWN:
-				onKeyDownPressed();
-				break;
-
-			case ENTER:
-				onKeyEnterPressed();
-				break;
-
-			case BACKSPACE:
-				onKeyBackspacePressed();
-				break;
-
-			case VK_PAGE_UP:
-				onKeyPageUpPressed();
-				break;
-
-			case VK_PAGE_DOWN:
-				onKeyPageDownPressed();
-				break;
-
-			case VK_HOME:
-				onKeyHomePressed();
-				break;
-
-			case VK_END:
-				onKeyEndPressed();
-				break;
-
-			case VK_DELETE:
-				onKeyDeletePressed();
-				break;
-
-			default:
-				onRegularKeyPressed(keyEvent);
-				break;
-			}
-
-		}
-
-		private void onKeyLeftPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorTo(Direction.LEFT);
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyRightPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorTo(Direction.RIGHT);
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyUpPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorTo(Direction.UP);
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyDownPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorTo(Direction.DOWN);
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyEnterPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.removeSelectedText();
-			}
-
-			m.splitLine();
-			m.moveCursorTo(Direction.DOWN);
-			m.moveCursorToStartOfLine();
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyBackspacePressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.removeSelectedText();
-				return;
-			}
-
-			if (m.getCursorColumn() == 0 && m.getCursorRow() == 0) {
-				return;
-			}
-
-			if (m.getCursorColumn() == 0 && m.getCursorRow() != 0) {
-				final int charCountOnDownLine = m.getLineLength(m.getCursorRow());
-
-				m.moveCursorTo(Direction.UP);
-				m.mergeLines();
-				m.moveCursorToEndOfLine();
-				m.moveCursorTo(Direction.LEFT, charCountOnDownLine);
-
-				textArea.cursorSearch.startSoftlySearching();
-
-				return;
-			}
-
-			m.moveCursorTo(Direction.LEFT);
-			m.removeChar();
-
-			textArea.cursorSearch.startSoftlySearching();
-
-		}
-
-		private void onKeyPageUpPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorToStart();
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyPageDownPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorToEnd();
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyHomePressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorToStartOfLine();
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyEndPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.resetSelection();
-			}
-
-			m.moveCursorToEndOfLine();
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onKeyDeletePressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.removeSelectedText();
-				textArea.cursorSearch.startSoftlySearching();
-				return;
-			}
-
-			if (m.getLineLength(m.getCursorRow()) > m.getCursorColumn()) {
-				m.removeChar();
-			}
-		}
-
-		private void onRegularKeyPressed(KeyEvent keyEvent) {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty() && !keyEvent.isShiftDown()) {
-				m.removeSelectedText();
-			}
-
-			final int lineLengthBefore = m.getLineLength(m.getCursorRow());
-			m.insertChar(ctx.key);
-			final int lineLengthAfter = m.getLineLength(m.getCursorRow());
-
-			final boolean charInserted = lineLengthBefore != lineLengthAfter;
-
-			if (!charInserted) {
-				return;
-			}
-
-			m.moveCursorTo(Direction.RIGHT);
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onControlDownAndVPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			if (!m.isSelectEmpty()) {
-				m.removeSelectedText();
-			}
-
-			final String[] lines = Clipboard.getAsArray();
-			final boolean multiLine = lines.length > 1;
-
-			if (multiLine) {
-				for (int i = lines.length - 1; i >= 0; i--) {
-					m.insertString(lines[i]);
-					if (i != 0) {
-						m.splitLine();
-					}
-				}
-				m.moveCursorTo(Direction.DOWN, lines.length - 1);
-
-				m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
-			} else {
-				m.insertString(lines[0]);
-				m.moveCursorTo(Direction.RIGHT, lines[0].length());
-			}
-
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onControlDownAndAPressed() {
-			textArea.textEditorModel.selectAll();
-		}
-
-		private void onControlDownAndCPressed() {
-			Clipboard.set(textArea.textEditorModel.getSelectedText());
-		}
-
-		private void onControlDownAndXPressed() {
-			final String selectedText = textArea.textEditorModel.getSelectedText();
-			Clipboard.set(selectedText);
-			textArea.textEditorModel.removeSelectedText();
-		}
-
-		private void onControlDownAndMinusPressed() {
-			textArea.setTextSize(Math.max(TextStyle.MIN_TEXT_SIZE, textArea.getTextSize() - 1));
-			textArea.cursorSearch.find();
-		}
-
-		private void onControlDownAndPlusPressed() {
-			textArea.setTextSize(textArea.getTextSize() + 1);
-			textArea.cursorSearch.find();
-		}
-
-		private void onShiftDownAndLeftPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorTo(Direction.LEFT);
-			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndRightPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorTo(Direction.RIGHT);
-			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndUpPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorTo(Direction.UP);
-			m.setSelectEndRow(m.getCursorRow());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndDownPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorTo(Direction.DOWN);
-			m.setSelectEndRow(m.getCursorRow());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndHomePressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorToStartOfLine();
-			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndEndPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorToEndOfLine();
-			m.setSelectEndColumn(m.getCursorColumn());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndPageUpPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorToStart();
-			m.setSelectEnd(0, 0);
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-		private void onShiftDownAndPageDownPressed() {
-			final TextEditorModel m = textArea.textEditorModel;
-
-			m.moveCursorToEnd();
-			m.setSelectEnd(m.getCursorRow(), m.getCursorColumn());
-			textArea.cursorSearch.startSoftlySearching();
-		}
-
-	}
-
 	private static final class KeyController {
 		private final TextArea textArea;
-
+		private final ShiftController shiftController;
+		private final ControlController controlController;
+		
 		public KeyController(TextArea textArea) {
 			super();
 			this.textArea = requireNonNull(textArea, "textArea");
+
+			shiftController = new ShiftController(textArea);
+			controlController = new ControlController(textArea);
 		}
 
 		public void keyInput(KeyEvent keyEvent) {
 			requireNonNull(keyEvent, "keyEvent");
+
+			if (keyEvent.isShiftDown()) {
+				shiftController.keyInput(keyEvent);
+				return;
+			}
+			
+			if (keyEvent.isControlDown()) {
+				controlController.keyInput(keyEvent);
+				return;
+			}
 
 			switch (keyEvent.getKeyCode()) {
 			case VK_LEFT:
@@ -1315,30 +883,46 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			case VK_DOWN:
 				onKeyDownPressed();
 				break;
-				
 			case VK_HOME:
 				onKeyHomePressed();
 				break;
-			
 			case VK_END:
 				onKeyEndPressed();
 				break;
-				
 			case VK_PAGE_UP:
 				onKeyPageUpPressed();
 				break;
-			
 			case VK_PAGE_DOWN:
 				onKeyPageDownPressed();
 				break;
+			case VK_BACK_SPACE:
+				onKeyBackspacePressed();
+				break;
+			case VK_DELETE:
+				onKeyDeletePressed();
+				break;
+			case VK_ENTER:
+				onKeyEnterPressed();
+				break;
+			default:
+				onPrintableKeyPressed(keyEvent);
+				break;
 			}
-			
-			
+
 		}
 
 		private void onKeyLeftPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
 			final boolean mustMoveUp = m.cursorAtStartOfLine() && !m.cursorAtStartOfLines();
 
 			if (mustMoveUp) {
@@ -1356,6 +940,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private void onKeyRightPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
 
 			final boolean mustMoveDown = m.cursorAtEndOfLine() && !m.cursorAtEndOfLines();
 
@@ -1375,6 +967,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
 
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
 			if (!m.cursorAtStartOfLines()) {
 				m.moveCursorTo(Direction.UP);
 				cs.startSoftlySearching();
@@ -1385,46 +985,532 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
 
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
 			if (!m.cursorAtEndOfLines()) {
 				m.moveCursorTo(Direction.DOWN);
 				cs.startSoftlySearching();
 			}
 
 		}
-		
+
 		private void onKeyHomePressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
-			
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
 			if (m.cursorAtStartOfLine()) {
 				return;
 			}
-			
+
 			m.moveCursorToStartOfLine();
 			cs.startSoftlySearching();
 		}
-		
+
 		private void onKeyEndPressed() {
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
-			
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
 			if (m.cursorAtEndOfLine()) {
 				return;
 			}
-			
+
 			m.moveCursorToEndOfLine();
 			cs.startSoftlySearching();
 		}
-		
+
 		private void onKeyPageUpPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
+			if (!m.cursorAtStartOfText()) {
+				m.moveCursorToStartOfText();
+				cs.startSoftlySearching();
+			}
+		}
+
+		private void onKeyPageDownPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.resetSelection();
+			}
+
+			if (!m.cursorAtEndOfText()) {
+				m.moveCursorToEndOfText();
+				cs.startSoftlySearching();
+			}
+		}
+
+		private void onKeyBackspacePressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.removeSelectedText();
+				cs.startSoftlySearching();
+				return;
+			}
+
+			if (m.cursorAtStartOfText()) {
+				return;
+			}
+
+			if (m.cursorAtStartOfLine()) {
+				m.moveCursorTo(Direction.UP);
+				m.moveCursorToEndOfLine();
+				final int prevColumn = m.getCursorColumn();
+				m.mergeLines();
+				m.setCursorColumn(prevColumn);
+
+				cs.startSoftlySearching();
+				return;
+			}
+
+			m.moveCursorTo(Direction.LEFT);
+			m.removeChar();
+			cs.startSoftlySearching();
+		}
+
+		private void onKeyDeletePressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.isBlank()) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.removeSelectedText();
+				cs.startSoftlySearching();
+				return;
+			}
+
+			if (m.cursorAtEndOfText()) {
+				return;
+			}
+
+			if (m.cursorAtEndOfLine()) {
+				m.mergeLines();
+				return;
+			}
+
+			m.removeChar();
+		}
+
+		private void onKeyEnterPressed() {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+
+			if (m.hasSelection()) {
+				m.removeSelectedText();
+			}
+
+			m.splitLine();
+			m.moveCursorTo(Direction.DOWN);
+			m.moveCursorToStartOfLine();
+
+			cs.startSoftlySearching();
+		}
+
+		private void onPrintableKeyPressed(final KeyEvent keyEvent) {
+			final TextEditorModel m = textArea.textEditorModel;
+			final CursorSearch cs = textArea.cursorSearch;
+			requireNonNull(keyEvent, "keyEvent");
+
+			final char ch = keyEvent.getKey();
+
+			if (!CharChecker.isValid(ch)) {
+				return;
+			}
+
+			if (m.hasSelection()) {
+				m.removeSelectedText();
+			}
+
+			m.insertChar(ch);
+			m.moveCursorTo(Direction.RIGHT);
+			cs.startSoftlySearching();
+		}
+
+		private static final class ShiftController {
+			private final TextArea textArea;
+
+			public ShiftController(TextArea textArea) {
+				super();
+				this.textArea = requireNonNull(textArea, "textArea");
+			}
+
+			public void keyInput(KeyEvent keyEvent) {
+				requireNonNull(keyEvent, "keyEvent");
+
+				final TextEditorModel m = textArea.textEditorModel;
+				
+				if (m.isBlank()) {
+					return;
+				}
+				
+				final int cr = m.getCursorRow();
+				final int cc = m.getCursorColumn();
+
+				if (!m.hasSelection()) {
+					m.setSelect(cr, cr, cc, cc);
+				}
+
+				switch (keyEvent.getKeyCode()) {
+				case VK_LEFT:
+					onKeyLeftPressed();
+					break;
+				case VK_RIGHT:
+					onKeyRightPressed();
+					break;
+				case VK_UP:
+					onKeyUpPressed();
+					break;
+				case VK_DOWN:
+					onKeyDownPressed();
+					break;
+				case VK_HOME:
+					onKeyHomePressed();
+					break;
+				case VK_END:
+					onKeyEndPressed();
+					break;
+				case VK_PAGE_UP:
+					onKeyPageUpPressed();
+					break;
+				case VK_PAGE_DOWN:
+					onKeyPageDownPressed();
+					break;
+				case VK_BACK_SPACE:
+					textArea.keyController.onKeyBackspacePressed();
+					break;
+				case VK_DELETE:
+					textArea.keyController.onKeyDeletePressed();
+					break;
+				case VK_ENTER:
+					textArea.keyController.onKeyEnterPressed();
+					break;
+				default:
+					textArea.keyController.onPrintableKeyPressed(keyEvent);
+					break;
+				}
+			}
+
+			private void onKeyLeftPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				final boolean mustMoveUp = m.cursorAtStartOfLine() && !m.cursorAtStartOfLines();
+
+				if (mustMoveUp) {
+					m.moveCursorTo(Direction.UP);
+					m.moveCursorToEndOfLine();
+
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+
+					m.setSelectEnd(cr, cc);
+
+					cs.startSoftlySearching();
+					return;
+				}
+
+				m.moveCursorTo(Direction.LEFT);
+				
+				final int cc = m.getCursorColumn();
+				
+				m.setSelectEndColumn(cc);
+				
+				cs.startSoftlySearching();
+			}
+
+			private void onKeyRightPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				final boolean mustMoveDown = m.cursorAtEndOfLine() && !m.cursorAtEndOfLines();
+
+				if (mustMoveDown) {
+					m.moveCursorTo(Direction.DOWN);
+					m.moveCursorToStartOfLine();
+
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+					m.setSelectEnd(cr, cc);
+					
+					cs.startSoftlySearching();
+					return;
+				}
+
+				m.moveCursorTo(Direction.RIGHT);
+				
+				final int cc = m.getCursorColumn();
+				m.setSelectEndColumn(cc);
+				
+				cs.startSoftlySearching();
+			}
+		
+			private void onKeyUpPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (!m.cursorAtStartOfLines()) {
+					m.moveCursorTo(Direction.UP);
+					
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+
+					m.setSelectEnd(cr, cc);
+					
+					cs.startSoftlySearching();
+				}
+			}
+			
+			private void onKeyDownPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (!m.cursorAtEndOfLines()) {
+					m.moveCursorTo(Direction.DOWN);
+					
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+
+					m.setSelectEnd(cr, cc);
+					
+					cs.startSoftlySearching();
+				}
+			}
+		
+			private void onKeyHomePressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (m.cursorAtStartOfLine()) {
+					return;
+				}
+
+				m.moveCursorToStartOfLine();
+				
+				final int cc = m.getCursorColumn();
+				m.setSelectEndColumn(cc);
+				
+				cs.startSoftlySearching();
+			}
+			
+			private void onKeyEndPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (m.cursorAtEndOfLine()) {
+					return;
+				}
+				
+				m.moveCursorToEndOfLine();
+				
+				final int cc = m.getCursorColumn();
+				m.setSelectEndColumn(cc);
+
+				cs.startSoftlySearching();
+			}
+		
+			private void onKeyPageUpPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (!m.cursorAtStartOfText()) {
+					m.moveCursorToStartOfText();
+					
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+
+					m.setSelectEnd(cr, cc);
+					
+					cs.startSoftlySearching();
+				}
+			}
+		
+			private void onKeyPageDownPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+
+				if (!m.cursorAtEndOfText()) {
+					m.moveCursorToEndOfText();
+					
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+
+					m.setSelectEnd(cr, cc);
+					
+					cs.startSoftlySearching();
+				}
+			}
 			
 		}
 		
-		private void onKeyPageDownPressed() {
+		private static final class ControlController {
+			private final TextArea textArea;
+			
+			public ControlController(TextArea textArea) {
+				super();
+				this.textArea = requireNonNull(textArea, "textArea");
+			}
+			
+			public void keyInput(KeyEvent keyEvent) {
+				requireNonNull(keyEvent, "keyEvent");
+				
+				switch (keyEvent.getKeyCode()) {
+				case VK_A:
+					onKeyAPressed();
+					break;
+				case VK_Z:
+					onKeyZPressed();
+					break;
+				case VK_X:
+					onKeyXPressed();
+					break;
+				case VK_C:
+					onKeyCPressed();
+					break;
+				case VK_V:
+					onKeyVPressed();
+					break;
+				case VK_Y:
+					onKeyYPressed();
+					break;
+				case VK_MINUS:
+					onKeyMinusPressed();
+					break;
+				case VK_EQUALS:
+					onKeyPlusPressed();
+				}
+			}
+			
+			private void onKeyAPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				m.selectAll();
+			}
+			
+			private void onKeyZPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+				
+				m.undo();
+				
+				cs.startSoftlySearching();
+			}
+			
+			private void onKeyXPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				Clipboard.set(m.getSelectedText());
+				m.removeSelectedText();
+			}
+			
+			private void onKeyCPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				Clipboard.set(m.getSelectedText());
+			}
+			
+			private void onKeyVPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
 
+				if (!m.isSelectEmpty()) {
+					m.removeSelectedText();
+				}
+
+				final String[] lines = Clipboard.getAsArray();
+				final boolean multiLine = lines.length > 1;
+
+				if (multiLine) {
+					for (int i = lines.length - 1; i >= 0; i--) {
+						m.insertString(lines[i]);
+						if (i != 0) {
+							m.splitLine();
+						}
+					}
+					m.moveCursorTo(Direction.DOWN, lines.length - 1);
+
+					m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
+				} else {
+					m.insertString(lines[0]);
+					m.moveCursorTo(Direction.RIGHT, lines[0].length());
+				}
+
+				textArea.cursorSearch.startSoftlySearching();
+			}
+			
+			private void onKeyYPressed() {
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+				
+				m.redo();
+				
+				cs.startSoftlySearching();
+			}
+			
+			private void onKeyMinusPressed() {
+				final CursorSearch cs = textArea.cursorSearch;
+				final int textSize = textArea.getTextSize();
+
+				if (textSize == TextStyle.MIN_TEXT_SIZE) {
+					return;
+				}
+				
+				final int newTextSize = max(TextStyle.MIN_TEXT_SIZE, textSize - 1);
+				
+				textArea.setTextSize(newTextSize);
+				cs.find();
+			}
+			
+			private void onKeyPlusPressed() {
+				final CursorSearch cs = textArea.cursorSearch;
+				final int textSize = textArea.getTextSize();
+
+				textArea.setTextSize(textSize + 1);
+				cs.find();
+			}
 		}
 	}
-	
+
 	private static final class HandleDraggingConfig {
 		private static final int DEFAULT_DRAGGING_SPEED = 10;
 		private static final int MIN_DRAGGING_SPEED = 1;
@@ -1514,6 +1600,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			scH.setValue(currentLineTextWidthUntilCursor - textArea.getWidth() / 2);
 
 			scV.setValue(-(m.getCursorRow() * textArea.getTextSize() - textArea.getHeight() / 2));
+		}
+	}
+
+	private static final class CharChecker {
+		private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
+
+		public static boolean isValid(final char ch) {
+			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 		}
 	}
 }

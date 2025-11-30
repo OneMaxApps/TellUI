@@ -61,7 +61,7 @@ public class TextEditorModelTest {
 		var model = new TextEditorModel();
 		
 		model.setText("word 1,word 2".split(","));
-		model.moveCursorToEnd();
+		model.moveCursorToEndOfText();
 		model.removeChar();
 		
 		assertTrue(model.getText().equals("word 1" + "\n" + "word "));
@@ -71,7 +71,7 @@ public class TextEditorModelTest {
 		
 		assertTrue(model.getText().equals("word 1" + "\n" + "word"));
 		
-		model.moveCursorToStart();
+		model.moveCursorToStartOfText();
 		model.removeChar();
 		
 		assertTrue(model.getText().equals("ord 1" + "\n" + "word"));

@@ -106,11 +106,11 @@ public final class TextEditorModel {
 		cursor.moveTo(row, column);
 	}
 
-	public void moveCursorToStart() {
+	public void moveCursorToStartOfText() {
 		cursor.moveTo(0, 0);
 	}
 
-	public void moveCursorToEnd() {
+	public void moveCursorToEndOfText() {
 		cursor.moveTo(getLinesCount() - 1, getLineLength(getLinesCount() - 1));
 	}
 
@@ -230,6 +230,10 @@ public final class TextEditorModel {
 
 	public boolean isSelectEmpty() {
 		return selection.isEmpty();
+	}
+	
+	public boolean hasSelection() {
+		return !selection.isEmpty();
 	}
 
 	public void selectAll() {
