@@ -1,10 +1,9 @@
 package microui;
 
 import microui.component.TextArea;
-import microui.component.TextField;
 import microui.core.base.Container;
+import microui.core.base.Container.Mode;
 import microui.core.base.ContainerManager;
-import microui.core.controller.FullSingleLineTextController.ValidationMode;
 import microui.layout.GridLayout;
 import microui.layout.GridLayoutParams;
 import processing.core.PApplet;
@@ -20,6 +19,7 @@ public class TextAreaLauncher extends PApplet {
 	@Override
 	public void settings() {
 		size(720,480);
+//		fullScreen();
 	}
 	
 	@Override
@@ -29,21 +29,16 @@ public class TextAreaLauncher extends PApplet {
 		
 		textArea = new TextArea();
 		
-		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
+//		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
+//		textArea.setText(loadStrings("C:\\Users\\002\\eclipse-workspace\\MicroUI\\src\\microui\\component\\TextArea.java"));
 		textArea.setTextSize(24);
 		textArea.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",32));
+		textArea.setMargin(10);
+		var container = new Container(new GridLayout(1,1));
+		container.setMode(Mode.IGNORE_CONSTRAINTS);
 		
-		var container = new Container(new GridLayout(10,10));
+		cm.add(container.add(textArea, new GridLayoutParams(0,0)));
 		
-		cm.add(container.add(textArea, new GridLayoutParams(1,1,8,8)));
-		
-		var tfTextSize = new TextField();
-		tfTextSize.setMargin(10);
-		tfTextSize.setTextSize(12);
-		tfTextSize.setValidationMode(ValidationMode.ONLY_DIGITS);
-		tfTextSize.setOnTextChangedListener(() -> textArea.setTextSize(constrain(tfTextSize.getDigitsOrDefault(4),4,200)));
-		
-		container.add(tfTextSize, new GridLayoutParams(0, 0, 2, 1));
 	}
 	
 	@Override

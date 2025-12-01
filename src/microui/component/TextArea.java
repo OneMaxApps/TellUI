@@ -888,13 +888,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	private static final class KeyController {
-		
-		
 		private final TextArea textArea;
 		private final ShiftController shiftController;
 		private final ControlController controlController;
-		
-		
 		
 		public KeyController(TextArea textArea) {
 			super();
@@ -902,12 +898,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			shiftController = new ShiftController(textArea);
 			controlController = new ControlController(textArea);
-			
-			
 		}
 		
-		
-
 		public void keyInput(KeyEvent keyEvent) {
 			requireNonNull(keyEvent, "keyEvent");
 
@@ -1229,6 +1221,30 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textArea.textEditorModel;
 			final CursorSearch cs = textArea.cursorSearch;
 			
+			if (m.hasSelection()) {
+				final int cr = m.getCursorRow();
+				final int cc = m.getCursorColumn();
+				
+				for (int i = m.getSelectEffectiveStartRow(); i <= m.getSelectEffectiveEndRow(); i++) {
+					m.setCursorRow(i);
+					m.setCursorColumn(0);
+					
+					for (int j = 0; j < textArea.getTabSize(); j++) {
+						m.insertChar(' ');
+						m.moveCursorTo(Direction.RIGHT);
+					}
+				}
+				
+				m.setSelectStartColumn(m.getSelectStartColumn() + textArea.getTabSize());
+				m.setSelectEndColumn(m.getSelectEndColumn() + textArea.getTabSize());
+				
+				m.setCursorRow(cr);
+				m.setCursorColumn(cc  + textArea.getTabSize());
+				
+				cs.startSoftlySearching();
+				return;
+			}
+			
 			for (int i = 0; i < textArea.getTabSize(); i++) {
 				m.insertChar(' ');
 				m.moveCursorTo(Direction.RIGHT);
@@ -1285,6 +1301,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					break;
 				case VK_PAGE_DOWN:
 					onKeyPageDownPressed();
+					break;
+				case VK_TAB:
+					onKeyTabPressed();
 					break;
 				case VK_BACK_SPACE:
 					textArea.keyController.onKeyBackspacePressed();
@@ -1451,6 +1470,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				}
 			}
 			
+			// TODO must be realized
+			private void onKeyTabPressed() {
+				
+			}
+			
 		}
 		
 		private static final class ControlController {
@@ -1524,6 +1548,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				}
 
 				final String[] lines = Clipboard.getAsArray();
+								
 				final boolean multiLine = lines.length > 1;
 
 				if (multiLine) {
@@ -1533,8 +1558,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 							m.splitLine();
 						}
 					}
+					
 					m.moveCursorTo(Direction.DOWN, lines.length - 1);
-
 					m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
 				} else {
 					m.insertString(lines[0]);
