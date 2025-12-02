@@ -30,7 +30,7 @@ public class TextAreaLauncher extends PApplet {
 		textArea = new TextArea();
 		
 //		textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
-		textArea.setText(loadStrings("C:\\Users\\002\\eclipse-workspace\\MicroUI\\src\\microui\\component\\TextArea.java"));
+//		textArea.setText(loadStrings("C:\\Users\\002\\eclipse-workspace\\MicroUI\\src\\microui\\component\\TextArea.java"));
 		textArea.setTextSize(24);
 		textArea.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",32));
 		textArea.setMargin(10);

@@ -37,6 +37,55 @@ public final class TextEditorModel {
 		return controller.getText();
 	}
 	
+	public String getTextUntilCursor() {
+		final StringBuilder sb = new StringBuilder();
+		final int startRow = 0;
+		final int endRow = cursor.getRow();
+
+		for (int i = startRow; i <= endRow; i++) {
+			if (i != endRow) {
+				sb.append(getLineText(i)).append('\n');
+			} else {
+				sb.append(getLineText(i).substring(0,min(getLineLength(i), cursor.getColumn())));
+			}
+		}
+		
+		return sb.toString();
+	}
+	
+	public String getTextAfterCursor() {
+		final StringBuilder sb = new StringBuilder();
+		final int startRow = cursor.getRow();
+		final int endRow = getLinesCount();
+		final boolean multiLine = startRow != endRow - 1;
+		
+		for (int i = startRow; i < endRow; i++) {
+			final String text = getLineText(i);
+			
+			if (i == startRow) {
+				if (multiLine) {
+					sb.append(text.substring(cursor.getColumn())).append('\n');
+				} else {
+					sb.append(text.substring(cursor.getColumn()));
+				}
+			}
+			
+			if (i != startRow && i != endRow - 1) {
+				if (multiLine) {
+					sb.append(getLineText(i)).append('\n');
+				} else {
+					sb.append(getLineText(i));
+				}
+			}
+			
+			if (i == endRow - 1 && multiLine) {
+				sb.append(getLineText(i));
+			}
+		}
+		
+		return sb.toString();
+	}
+	
 	public void setText(String... text) {
 		controller.setText(text);
 	}

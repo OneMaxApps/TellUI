@@ -1608,15 +1608,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				final boolean multiLine = lines.length > 1;
 
 				if (multiLine) {
-					for (int i = lines.length - 1; i >= 0; i--) {
-						m.insertString(lines[i]);
-						if (i != 0) {
-							m.splitLine();
-						}
+					final StringBuilder sb = new StringBuilder();
+					
+					sb.append(m.getTextUntilCursor());
+					
+					for (int i = 0; i < lines.length; i++) {
+						sb.append(lines[i]).append('\n');
 					}
 					
-					m.moveCursorTo(Direction.DOWN, lines.length - 1);
-					m.moveCursorTo(Direction.RIGHT, lines[lines.length - 1].length());
+					final int newCursorRow = (m.getTextUntilCursor().length() - 1) + (lines.length - 1) - 1;
+					final int newCursorColumn = lines[lines.length - 1].length();
+					
+					sb.append(m.getTextAfterCursor());
+					
+					m.setText(sb.toString().split("\n"));
+					
+					m.moveCursorTo(newCursorRow, newCursorColumn);
 				} else {
 					m.insertString(lines[0]);
 					m.moveCursorTo(Direction.RIGHT, lines[0].length());

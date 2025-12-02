@@ -2,6 +2,7 @@ package microui.core;
 
 import static microui.constants.Direction.LEFT;
 import static microui.constants.Direction.RIGHT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -110,6 +111,94 @@ public class TextEditorModelTest {
 		
 		assertTrue(model.getText().equals("w" + "ord 3"));
 		
+	}
+	
+	@Test
+	public void getTextUntilCursor() {
+		var model = new TextEditorModel();
+		model.setText("word");
+
+		model.setCursorColumn(0);
+		assertEquals("", model.getTextUntilCursor());
+		
+		model.setCursorColumn(1);
+		assertEquals("w", model.getTextUntilCursor());
+		
+		model.setCursorColumn(2);
+		assertEquals("wo", model.getTextUntilCursor());
+		
+		model.setCursorColumn(3);
+		assertEquals("wor", model.getTextUntilCursor());
+		
+		model.setCursorColumn(4);
+		assertEquals("word", model.getTextUntilCursor());
+		
+		
+		model.setText("Hello 1,Hello 2,Hello 3".split(","));
+		
+		model.setCursorRow(1);
+		model.setCursorColumn(2);
+		
+		assertEquals("Hello 1\nHe", model.getTextUntilCursor());
+		
+		model.setCursorRow(0);
+		model.setCursorColumn(0);
+		
+		assertEquals("", model.getTextUntilCursor());
+		
+		model.setCursorRow(0);
+		model.setCursorColumn(7);
+		
+		assertEquals("Hello 1", model.getTextUntilCursor());
+		
+		model.setCursorRow(1);
+		model.setCursorColumn(0);
+		
+		assertEquals("Hello 1\n", model.getTextUntilCursor());
+		
+		model.setCursorRow(2);
+		model.setCursorColumn(7);
+		
+		assertEquals("Hello 1\nHello 2\nHello 3", model.getTextUntilCursor());
+		
+	}
+	
+	@Test
+	public void getTextAfterCursor() {
+		var model = new TextEditorModel();
+		model.setText("word");
+
+		model.setCursorColumn(0);
+		assertEquals("word", model.getTextAfterCursor());
+		
+		model.setCursorColumn(1);
+		assertEquals("ord", model.getTextAfterCursor());
+		
+		model.setCursorColumn(2);
+		assertEquals("rd", model.getTextAfterCursor());
+		
+		model.setCursorColumn(3);
+		assertEquals("d", model.getTextAfterCursor());
+		
+		model.setCursorColumn(4);
+		assertEquals("", model.getTextAfterCursor());
+		
+		model.setText("Hello 1,Hello 2,Hello 3".split(","));
+		
+		model.setCursorRow(2);
+		model.setCursorColumn(7);
+		
+		assertEquals("", model.getTextAfterCursor());
+		
+		model.setCursorRow(0);
+		model.setCursorColumn(0);
+		
+		assertEquals("Hello 1\nHello 2\nHello 3", model.getTextAfterCursor());
+		
+		model.setCursorRow(1);
+		model.setCursorColumn(0);
+		
+		assertEquals("Hello 2\nHello 3", model.getTextAfterCursor());
 	}
 	
 }
