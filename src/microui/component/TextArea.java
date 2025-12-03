@@ -1570,14 +1570,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 						return;
 					}
 					
-					
-					
-					for (int i = 0; i < ts; i++) {
-
-						for (int j = 0; j < ts; j++) {
-							if (text.charAt(j) != ' ') {
-								return;
-							}
+					for (int j = 0; j < ts; j++) {
+						if (text.charAt(j) != ' ') {
+							return;
 						}
 					}
 					

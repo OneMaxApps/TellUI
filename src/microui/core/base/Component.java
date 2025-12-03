@@ -8,12 +8,12 @@ import microui.event.Event;
 import microui.event.EventType;
 import microui.event.InteractionHandler;
 import microui.event.Listener;
+import microui.feedback.TextTooltipContent;
 import microui.feedback.Tooltip;
 import microui.feedback.TooltipContent;
-import microui.feedback.TooltipTextViewContent;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 29.10.2025
+//Last Reviewed: 04.12.2025
 
 public abstract class Component extends ContentView {
 	private final Event event;
@@ -235,16 +235,16 @@ public abstract class Component extends ContentView {
 
 	// Sugar API
 	public final Component setTooltip(String text) {
-		if (tooltip.getContent() instanceof TooltipTextViewContent content) {
+		if (tooltip.getContent() instanceof TextTooltipContent content) {
 			content.setText(text);
 		} else {
-			tooltip.setContent(new TooltipTextViewContent(text));
+			tooltip.setContent(new TextTooltipContent(text));
 		}
 		return this;
 	}
 
 	public final String getTooltipText() {
-		if (tooltip.getContent() instanceof TooltipTextViewContent content) {
+		if (tooltip.getContent() instanceof TextTooltipContent content) {
 			return content.getText();
 		}
 
