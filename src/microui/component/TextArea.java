@@ -66,7 +66,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final StateConfig stateConfig;
 	private Listener onTextChangedListener, onStyleChangedListener;
 	
-
 	public TextArea(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setMinMaxSize(MIN_SIZE, MAX_SIZE);
@@ -1511,11 +1510,86 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				}
 			}
 			
-			// TODO must be realized
 			private void onKeyTabPressed() {
 				if (!textArea.isEditable()) {
 					return;
 				}
+				
+				final TextEditorModel m = textArea.textEditorModel;
+				final CursorSearch cs = textArea.cursorSearch;
+				final int ts = textArea.getTabSize();
+				
+				if (m.hasSelection()) {
+					boolean canMakeUntab = true;
+					
+					final int sr = m.getSelectEffectiveStartRow();
+					final int er = m.getSelectEffectiveEndRow();
+					
+					for (int i = sr; i <= er; i++) {
+						final String text = m.getLineText(i);
+						
+						if (text.length() < ts) {
+							canMakeUntab = false;
+							break;
+						}
+						
+						for (int j = 0; j < ts; j++) {
+							if (text.charAt(j) != ' ') {
+								canMakeUntab = false;
+								break;
+							}
+						}
+					}
+					
+					if (canMakeUntab) {
+						final int cr = m.getCursorRow();
+						final int cc = m.getCursorColumn();
+						
+						for (int i = sr; i <= er; i++) {
+							m.setCursorRow(i);
+							m.setCursorColumn(0);
+							for (int j = 0; j < ts; j++) {
+								m.removeChar();
+							}
+						}
+						
+						m.moveCursorTo(cr, cc - ts);
+						
+						
+						m.setSelectStartColumn(m.getSelectStartColumn() - ts);
+						m.setSelectEndColumn(m.getSelectEndColumn() - ts);
+						
+					}
+					
+				} else {
+					final int cr = m.getCursorRow();
+					final int cc = m.getCursorColumn();
+					final String text = m.getLineText(cr);
+					
+					if (text.length() < ts) {
+						return;
+					}
+					
+					
+					
+					for (int i = 0; i < ts; i++) {
+
+						for (int j = 0; j < ts; j++) {
+							if (text.charAt(j) != ' ') {
+								return;
+							}
+						}
+					}
+					
+					m.setCursorColumn(0);
+					for (int i = 0; i < ts; i++) {
+						m.removeChar();
+					}
+					m.moveCursorTo(cr, cc - ts);
+					
+				}
+				
+				cs.startSoftlySearching();
 			}
 			
 		}
