@@ -1,5 +1,6 @@
 package microui.core.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -11,16 +12,16 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, '1');
-		assertTrue(controller.getAsString().equals("1"));
+		assertEquals("1", controller.getAsString());
 		
 		controller.insert(1, '2');
-		assertTrue(controller.getAsString().equals("12"));
+		assertEquals("12", controller.getAsString());
 		
 		controller.insert(0, '3');
-		assertTrue(controller.getAsString().equals("312"));
+		assertEquals("312", controller.getAsString());
 		
 		controller.insert(0, '4');
-		assertTrue(controller.getAsString().equals("4312"));
+		assertEquals("4312", controller.getAsString());
 	}
 	
 	@Test
@@ -28,13 +29,13 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, "str");
-		assertTrue(controller.getAsString().equals("str"));
+		assertEquals("str", controller.getAsString());
 		
 		controller.insert(3, "ing");
-		assertTrue(controller.getAsString().equals("string"));
+		assertEquals("string", controller.getAsString());
 		
 		controller.insert(0, "type ");
-		assertTrue(controller.getAsString().equals("type string"));
+		assertEquals("type string", controller.getAsString());
 	}
 	
 	@Test
@@ -42,13 +43,13 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, 1);
-		assertTrue(controller.getAsString().equals("1"));
+		assertEquals("1", controller.getAsString());
 		
 		controller.insert(1, 2);
-		assertTrue(controller.getAsString().equals("12"));
+		assertEquals("12", controller.getAsString());
 		
 		controller.insert(2, 3);
-		assertTrue(controller.getAsString().equals("123"));
+		assertEquals("123", controller.getAsString());
 	}
 	
 	@Test
@@ -56,13 +57,12 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, "string");
-		controller.removeCharAt(2);
 		
-		assertTrue(controller.getAsString().equals("sting"));
+		controller.removeCharAt(2);
+		assertEquals("sting", controller.getAsString());
 		
 		controller.removeCharAt(4);
-		assertTrue(controller.getAsString().equals("stin"));
-		
+		assertEquals("stin", controller.getAsString());
 	}
 	
 	@Test
@@ -70,13 +70,12 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, "string");
-		controller.remove(0,3);
 		
-		assertTrue(controller.getAsString().equals("ing"));
+		controller.remove(0,3);
+		assertEquals("ing", controller.getAsString());
 		
 		controller.remove(0,2);
-		
-		assertTrue(controller.getAsString().equals("g"));
+		assertEquals("g", controller.getAsString());
 	}
 	
 	@Test
@@ -84,8 +83,7 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.insert(0, "string");
-		
-		assertTrue(controller.getAsString().equals("string"));
+		assertEquals("string", controller.getAsString());
 	}
 	
 	@Test
@@ -95,7 +93,7 @@ public class SingleLineTextControllerTest {
 		controller.insert(0, "string");
 		controller.clear();
 		
-		assertTrue(controller.getAsString().isEmpty());
+		assertTrue(controller.isEmpty());
 	}
 	
 	@Test
@@ -103,9 +101,9 @@ public class SingleLineTextControllerTest {
 		var controller = new SingleLineTextController();
 		
 		controller.set("string");
-		assertTrue(controller.getAsString().equals("string"));
+		assertEquals("string", controller.getAsString());
 		
 		controller.set("other string");
-		assertTrue(controller.getAsString().equals("other string"));
+		assertEquals("other string", controller.getAsString());
 	}
 }

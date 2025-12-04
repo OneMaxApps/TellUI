@@ -192,6 +192,14 @@ public final class MultiLineTextController {
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
 	}
+	
+	public int getSpeedForUpdate() {
+		return undoRedoManager.getSpeedForUpdate();
+	}
+
+	public void setSpeedForUpdate(int speedForUpdate) {
+		undoRedoManager.setSpeedForUpdate(speedForUpdate);
+	}
 
 	// == PRIVATE API ==
 	private void addLineSilently(String text) {
@@ -250,11 +258,13 @@ public final class MultiLineTextController {
 	}
 
 	private static final class UndoRedoManager {
-		private static final int MIN_MS_FOR_UPDATE = 300;
+		private static final int MIN_MS_FOR_UPDATE = 0;
+		private static final int DEFAULT_MS_FOR_UPDATE = 300;
 		private final MultiLineTextController controller;
 		private final Deque<String> undo, redo;
 		private String prevState;
 		private long lastUpdateTime;
+		private int speedForUpdate;
 		private boolean operation;
 
 		public UndoRedoManager(MultiLineTextController controller) {
@@ -267,6 +277,20 @@ public final class MultiLineTextController {
 			prevState = controller.getText();
 			
 			lastUpdateTime = currentTimeMillis();
+			
+			setSpeedForUpdate(DEFAULT_MS_FOR_UPDATE);
+		}
+		
+		public int getSpeedForUpdate() {
+			return speedForUpdate;
+		}
+
+		public void setSpeedForUpdate(int speedForUpdate) {
+			if (speedForUpdate < MIN_MS_FOR_UPDATE) {
+				throw new IllegalArgumentException("Speed for update must be equal or greater than: " + MIN_MS_FOR_UPDATE);
+			}
+			
+			this.speedForUpdate = speedForUpdate;
 		}
 
 		public void undo() {
@@ -311,7 +335,7 @@ public final class MultiLineTextController {
 			
 			final long now = currentTimeMillis();
 			
-			if (now - lastUpdateTime < MIN_MS_FOR_UPDATE) {
+			if (now - lastUpdateTime < getSpeedForUpdate()) {
 				return;
 			}
 			

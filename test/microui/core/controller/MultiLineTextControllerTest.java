@@ -11,10 +11,8 @@ public class MultiLineTextControllerTest {
 	public void addLine() {
 		var controller = new MultiLineTextController();
 		controller.addLine("Hello");
-		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("\nHello"));
+
+		assertEquals("\nHello", controller.getText());
 	}
 	
 	@Test
@@ -24,9 +22,7 @@ public class MultiLineTextControllerTest {
 		controller.addLine(" ");
 		controller.addLine("World");
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Hello" + "\n" + " " + "\n" + "World"));
+		assertEquals("Hello\n \nWorld", controller.getText());
 	}
 	
 	@Test
@@ -36,10 +32,8 @@ public class MultiLineTextControllerTest {
 		controller.addLine("World");
 		
 		controller.insertLine(1, " ");
-		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Hello" + "\n" + " " + "\n" + "World"));
+
+		assertEquals("Hello\n \nWorld", controller.getText());
 	}
 	
 	@Test
@@ -49,9 +43,7 @@ public class MultiLineTextControllerTest {
 		controller.addLine("World");
 		controller.removeLine(1);
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Hello"));
+		assertEquals("Hello", controller.getText());
 	}
 	
 	@Test
@@ -61,10 +53,8 @@ public class MultiLineTextControllerTest {
 		controller.addLine("World");
 		controller.insertCharForLine(0, 2, '*');
 		controller.insertCharForLine(0, 6, '*');
-		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("He*llo*" + "\n" + "World"));
+	
+		assertEquals("He*llo*\nWorld", controller.getText());
 	}
 	
 	@Test
@@ -74,10 +64,8 @@ public class MultiLineTextControllerTest {
 		controller.addLine("World");
 		controller.insertStringForLine(0, 5, ", ");
 		controller.insertStringForLine(1, 5, "!");
-		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Hello, " + "\n" + "World!"));
+
+		assertEquals("Hello, \nWorld!", controller.getText());
 	}
 	
 	@Test
@@ -87,9 +75,7 @@ public class MultiLineTextControllerTest {
 		controller.removeCharForLine(0, 0);
 		controller.removeCharForLine(0, 1);
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("elo"));
+		assertEquals("elo", controller.getText());
 	}
 	
 	@Test
@@ -98,9 +84,7 @@ public class MultiLineTextControllerTest {
 		controller.insertStringForLine(0, 0, "Hello");
 		controller.removeStringForLine(0, 1, 4);
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Ho"));
+		assertEquals("Ho", controller.getText());
 	}
 	
 	@Test
@@ -109,9 +93,7 @@ public class MultiLineTextControllerTest {
 		controller.insertStringForLine(0, 0, "Hello");
 		controller.splitLine(0, 2);
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("He" + "\n" + "llo"));
+		assertEquals("He\nllo", controller.getText());
 	}
 	
 	@Test
@@ -122,9 +104,7 @@ public class MultiLineTextControllerTest {
 		
 		controller.mergeLines(0);
 		
-		final String text = controller.getText();
-		
-		assertTrue(text.equals("Hello World"));
+		assertEquals("Hello World", controller.getText());
 	}
 	
 	@Test
@@ -134,9 +114,7 @@ public class MultiLineTextControllerTest {
 		
 		controller.setText(lines);
 		
-		final String expectedText = "1\n22\n333\n4444";
-		
-		assertTrue(controller.getText().equals(expectedText));
+		assertEquals("1\n22\n333\n4444", controller.getText());
 	}
 	
 	@Test
@@ -148,7 +126,7 @@ public class MultiLineTextControllerTest {
 		
 		controller.clear();
 		
-		assertTrue(controller.getText().equals(""));
+		assertTrue(controller.getText().isEmpty());
 	}
 	
 	@Test
@@ -156,20 +134,17 @@ public class MultiLineTextControllerTest {
 		var controller = new MultiLineTextController();
 		
 		assertTrue(controller.getLinesCount() == 1);
-		assertTrue(controller.getText().equals(""));
+		assertTrue(controller.getText().isEmpty());
 	}
 	
 	@Test
-	public void undo() throws InterruptedException {
+	public void undo() {
 		var controller = new MultiLineTextController();
+		controller.setSpeedForUpdate(0);
 		
-		Thread.sleep(300);
 		controller.insertStringForLine(0,0,"Hello ");
-		Thread.sleep(300);
 		controller.insertStringForLine(0,6,"World");
-		Thread.sleep(300);
 		controller.insertStringForLine(0,11,"!");
-		Thread.sleep(300);
 		
 		assertEquals("Hello World!", controller.getText());
 		
@@ -195,16 +170,13 @@ public class MultiLineTextControllerTest {
 	}
 	
 	@Test
-	public void redo() throws InterruptedException {
+	public void redo() {
 		var controller = new MultiLineTextController();
+		controller.setSpeedForUpdate(0);
 		
-		Thread.sleep(300);
 		controller.insertStringForLine(0,0,"Hello ");
-		Thread.sleep(300);
 		controller.insertStringForLine(0,6,"World");
-		Thread.sleep(300);
 		controller.insertStringForLine(0,11,"!");
-		Thread.sleep(300);
 		
 		assertEquals("Hello World!", controller.getText());
 		
@@ -227,56 +199,51 @@ public class MultiLineTextControllerTest {
 		assertEquals("Hello World!", controller.getText());
 		
 		controller.redo();
-		assertEquals(controller.getText(),"Hello World!");
+		assertEquals("Hello World!", controller.getText());
 		
 		controller.undo();
-		assertEquals(controller.getText(),"Hello World");
+		assertEquals("Hello World", controller.getText());
 		
 		controller.undo();
-		assertEquals(controller.getText(),"Hello ");
+		assertEquals("Hello ", controller.getText());
 		
 		controller.undo();
-		assertEquals(controller.getText(),"");
+		assertEquals("", controller.getText());
 		
 		controller.undo();
-		assertEquals(controller.getText(),"");
+		assertEquals("", controller.getText());
 		
 		controller.redo();
-		assertEquals(controller.getText(),"Hello ");
+		assertEquals("Hello ", controller.getText());
 		
 		controller.redo();
-		assertEquals(controller.getText(),"Hello World");
+		assertEquals("Hello World", controller.getText());
 		
 		controller.redo();
-		assertEquals(controller.getText(),"Hello World!");
+		assertEquals("Hello World!", controller.getText());
 		
 		controller.redo();
-		assertEquals(controller.getText(),"Hello World!");
+		assertEquals("Hello World!", controller.getText());
 		
 		controller.undo();
-		assertEquals(controller.getText(),"Hello World");
+		assertEquals("Hello World", controller.getText());
 	}
 	
 	@Test
-	public void complexUndoRedoScenario() throws InterruptedException {
+	public void complexUndoRedoScenario() {
 	    var controller = new MultiLineTextController();
+	    controller.setSpeedForUpdate(0);
 	    
-	    Thread.sleep(300);
 	    controller.insertStringForLine(0, 0, "Start ");
-	    Thread.sleep(300);
 	    controller.addLine("Middle");
-	    Thread.sleep(300);
 	    controller.insertStringForLine(1, 6, " Line");
-	    Thread.sleep(300);
 	    controller.splitLine(0, 3);
-	    Thread.sleep(300);
 	    controller.mergeLines(0);
-	    Thread.sleep(300);
 	    controller.removeLine(1);
-	    Thread.sleep(300);
 	    
 	    final String finalState = controller.getText();
 	    
+	    controller.undo();
 	    controller.undo();
 	    controller.undo();
 	    controller.undo();
@@ -292,6 +259,10 @@ public class MultiLineTextControllerTest {
 	    controller.redo();
 	    controller.redo();
 	    controller.redo();
+	    controller.redo();
+	    controller.redo();
+	    controller.redo();
+	    
 	    assertEquals(finalState, controller.getText());
 	}
 }
