@@ -1,15 +1,15 @@
 package microui;
 
+import static java.awt.event.KeyEvent.VK_F1;
+
 import microui.component.TextArea;
 import microui.core.base.Container;
 import microui.core.base.Container.Mode;
 import microui.core.base.ContainerManager;
-import microui.core.style.Color;
-import microui.core.style.GradientLoopColor;
-import microui.feedback.TextTooltipContent;
 import microui.layout.GridLayout;
 import microui.layout.GridLayoutParams;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
 
 public class TextAreaLauncher extends PApplet {
 	private TextArea textArea;
@@ -21,8 +21,8 @@ public class TextAreaLauncher extends PApplet {
 	
 	@Override
 	public void settings() {
-//		size(720,480);
-		fullScreen();
+		size(720,480);
+//		fullScreen();
 	}
 	
 	@Override
@@ -36,15 +36,8 @@ public class TextAreaLauncher extends PApplet {
 //		textArea.setText(loadStrings("C:\\Users\\002\\eclipse-workspace\\MicroUI\\src\\microui\\component\\TextArea.java"));
 		textArea.setTextSize(24);
 		textArea.setFont(createFont("C:\\Windows\\Fonts\\consola.ttf",32));
-		textArea.setMargin(100);
-		
-//		textArea.setBackgroundColor(Color.BLACK);
-//		textArea.setTextColor(Color.GREEN);
-//		textArea.setSelectionColor(new GradientLoopColor(new Color(0,32,0,128), new Color(0,200,0,128)));
-//		textArea.setCursorColor(Color.WHITE);
-//		
-		
-		textArea.setTooltip("Hello World\nHow are you my love");
+		textArea.setMargin(10);
+
 		var container = new Container(new GridLayout(1,1));
 		container.setMode(Mode.IGNORE_CONSTRAINTS);
 		
@@ -56,5 +49,12 @@ public class TextAreaLauncher extends PApplet {
 	public void draw() {
 		background(128);
 		
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode() == VK_F1) {
+			textArea.setText(loadStrings("C:\\Users\\002\\Desktop\\example_of_text.txt"));
+		}
 	}
 }

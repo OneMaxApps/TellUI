@@ -17,7 +17,7 @@ public class TextEditorModelTest {
 		assertTrue(model.getText().isEmpty());
 		assertTrue(model.getCursorRow() == 0);
 		assertTrue(model.getCursorColumn() == 0);
-		assertTrue(model.getLinesCount() == 1);
+		assertTrue(model.getLineCount() == 1);
 		assertTrue(model.getLineLength(0) == 0);
 		assertTrue(model.getLineText(0).isEmpty());
 		
@@ -28,7 +28,7 @@ public class TextEditorModelTest {
 		var model = new TextEditorModel();
 		
 		model.insertChar('c');
-		assertTrue(model.getText().equals("c"));
+		assertEquals("c", model.getText());
 		
 		model.moveCursorTo(RIGHT);
 		model.insertChar('h');
@@ -37,7 +37,7 @@ public class TextEditorModelTest {
 		model.moveCursorTo(RIGHT);
 		model.insertChar('r');
 		
-		assertTrue(model.getText().equals("char"));
+		assertEquals("char", model.getText());
 	}
 	
 	@Test
@@ -45,7 +45,7 @@ public class TextEditorModelTest {
 		var model = new TextEditorModel();
 		
 		model.insertString("string");
-		assertTrue(model.getText().equals("string"));
+		assertEquals("string", model.getText());
 	}
 	
 	@Test
@@ -53,8 +53,8 @@ public class TextEditorModelTest {
 		var model = new TextEditorModel();
 		
 		model.setText("Hello World,Nice to meet you!".split(","));
-		assertTrue(model.getText().equals("Hello World" + "\n" + "Nice to meet you!"));
 		
+		assertEquals("Hello World\nNice to meet you!", model.getText());
 	}
 	
 	@Test
@@ -65,17 +65,17 @@ public class TextEditorModelTest {
 		model.moveCursorToEndOfText();
 		model.removeChar();
 		
-		assertTrue(model.getText().equals("word 1" + "\n" + "word "));
+		assertEquals("word 1\nword ", model.getText());
 		
 		model.moveCursorTo(LEFT);
 		model.removeChar();
 		
-		assertTrue(model.getText().equals("word 1" + "\n" + "word"));
+		assertEquals("word 1\nword", model.getText());
 		
 		model.moveCursorToStartOfText();
 		model.removeChar();
 		
-		assertTrue(model.getText().equals("ord 1" + "\n" + "word"));
+		assertEquals("ord 1\nword", model.getText());
 	}
 	
 	@Test
@@ -86,12 +86,11 @@ public class TextEditorModelTest {
 		
 		model.setSelect(0, 0, 1, 3);
 		
-		assertTrue(model.getSelectedText().equals("or"));
+		assertEquals("or",model.getSelectedText());
 		
 		model.setSelect(0, 2, 1, 1);
 
-		assertTrue(model.getSelectedText().equals("ord 1" + "\n" + "word 2" + "\n" + "w"));
-		
+		assertEquals("ord 1\nword 2\nw",model.getSelectedText());
 	}
 	
 	@Test
@@ -103,14 +102,13 @@ public class TextEditorModelTest {
 		model.setSelect(0, 0, 1, 3);
 		model.removeSelectedText();
 		
-		assertTrue(model.getText().equals("wd"));
+		assertEquals("wd",model.getText());
 		
 		model.setText("word 1,word 2,word 3".split(","));
 		model.setSelect(0, 2, 1, 1);
 		model.removeSelectedText();
 		
-		assertTrue(model.getText().equals("w" + "ord 3"));
-		
+		assertEquals("word 3", model.getText());
 	}
 	
 	@Test

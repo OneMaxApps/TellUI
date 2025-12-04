@@ -9,6 +9,9 @@ import microui.core.style.AbstractColor;
 
 public final class TextTooltipContent extends TooltipContent {
 	private static final byte DEFAULT_TEXT_SIZE = 12;
+	private static final byte DEFAULT_PADDING = 5;
+	private static final byte DEFAULT_MARGIN_LEFT = 10;
+	
 	private static final byte MIN_TEXT_SIZE = 4;
 	private AbstractColor backgroundColor, textColor;
 	private String text;
@@ -17,6 +20,10 @@ public final class TextTooltipContent extends TooltipContent {
 	public TextTooltipContent(String text) {
 		super();
 		setVisible(true);
+		
+		setPadding(DEFAULT_PADDING);
+		setMarginLeft(DEFAULT_MARGIN_LEFT);
+		
 		setBackgroundColor(getTheme().getTooltipBackgroundColor());
 		setTextColor(getTheme().getTooltipTextColor());
 		setTextSize(DEFAULT_TEXT_SIZE);

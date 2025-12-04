@@ -13,18 +13,20 @@ public final class TextEditorModel {
 	private final MultiLineTextController controller;
 	private final Cursor cursor;
 	private final Selection selection;
+	private final TextFragmentCached textFragmentCached;
 	private Listener onTextChangedListener;
-
+	
 	public TextEditorModel() {
 		super();
 		controller = new MultiLineTextController();
 		controller.setOnTextChangedListener(this::onTextChanged);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
+		textFragmentCached = new TextFragmentCached(this);
 	}
 
 	// == TEXT CONTROL ==
-	
+
 	public void undo() {
 		controller.undo();
 	}
@@ -32,60 +34,19 @@ public final class TextEditorModel {
 	public void redo() {
 		controller.redo();
 	}
-	
+
 	public String getText() {
 		return controller.getText();
 	}
-	
-	public String getTextUntilCursor() {
-		final StringBuilder sb = new StringBuilder();
-		final int startRow = 0;
-		final int endRow = cursor.getRow();
 
-		for (int i = startRow; i <= endRow; i++) {
-			if (i != endRow) {
-				sb.append(getLineText(i)).append('\n');
-			} else {
-				sb.append(getLineText(i).substring(0,min(getLineLength(i), cursor.getColumn())));
-			}
-		}
-		
-		return sb.toString();
+	public String getTextUntilCursor() {
+		return textFragmentCached.getCachedTextUntilCursor();
 	}
-	
+
 	public String getTextAfterCursor() {
-		final StringBuilder sb = new StringBuilder();
-		final int startRow = cursor.getRow();
-		final int endRow = getLinesCount();
-		final boolean multiLine = startRow != endRow - 1;
-		
-		for (int i = startRow; i < endRow; i++) {
-			final String text = getLineText(i);
-			
-			if (i == startRow) {
-				if (multiLine) {
-					sb.append(text.substring(cursor.getColumn())).append('\n');
-				} else {
-					sb.append(text.substring(cursor.getColumn()));
-				}
-			}
-			
-			if (i != startRow && i != endRow - 1) {
-				if (multiLine) {
-					sb.append(getLineText(i)).append('\n');
-				} else {
-					sb.append(getLineText(i));
-				}
-			}
-			
-			if (i == endRow - 1 && multiLine) {
-				sb.append(getLineText(i));
-			}
-		}
-		
-		return sb.toString();
+		return textFragmentCached.getCachedTextAfterCursor();
 	}
-	
+
 	public void setText(String... text) {
 		controller.setText(text);
 	}
@@ -138,7 +99,7 @@ public final class TextEditorModel {
 		return controller.getLineLength(row);
 	}
 
-	public int getLinesCount() {
+	public int getLineCount() {
 		return controller.getLinesCount();
 	}
 
@@ -160,7 +121,7 @@ public final class TextEditorModel {
 	}
 
 	public void moveCursorToEndOfText() {
-		cursor.moveTo(getLinesCount() - 1, getLineLength(getLinesCount() - 1));
+		cursor.moveTo(getLineCount() - 1, getLineLength(getLineCount() - 1));
 	}
 
 	public void moveCursorToStartOfLine() {
@@ -186,33 +147,33 @@ public final class TextEditorModel {
 	public void setCursorRow(int row) {
 		cursor.setRow(row);
 	}
-	
+
 	public boolean cursorAtStartOfLines() {
 		return cursor.getRow() == 0;
 	}
-	
+
 	public boolean cursorAtEndOfLines() {
-		return cursor.getRow() == getLinesCount() - 1;
+		return cursor.getRow() == getLineCount() - 1;
 	}
-	
+
 	public boolean cursorAtStartOfLine() {
 		return cursor.getColumn() == 0;
 	}
-	
+
 	public boolean cursorAtEndOfLine() {
 		return cursor.getColumn() == getLineLength(getCursorRow());
 	}
-	
+
 	public boolean cursorAtStartOfText() {
 		return cursorAtStartOfLines() && cursorAtStartOfLine();
 	}
-	
+
 	public boolean cursorAtEndOfText() {
 		return cursorAtEndOfLines() && cursorAtEndOfLine();
 	}
 
 	// == SELECTION API ==
-	
+
 	public int getSelectStartRow() {
 		return selection.getStartRow();
 	}
@@ -244,7 +205,7 @@ public final class TextEditorModel {
 	public void setSelectEndColumn(int endColumn) {
 		selection.setEndColumn(endColumn);
 	}
-	
+
 	public int getSelectEffectiveStartColumn() {
 		return selection.getEffectiveStartColumn();
 	}
@@ -280,7 +241,7 @@ public final class TextEditorModel {
 	public boolean isSelectEmpty() {
 		return selection.isEmpty();
 	}
-	
+
 	public boolean hasSelection() {
 		return !selection.isEmpty();
 	}
@@ -288,85 +249,85 @@ public final class TextEditorModel {
 	public void selectAll() {
 		selection.selectAll();
 	}
-	
+
 	public void resetSelection() {
 		selection.reset();
 	}
-	
+
 	public void setOnSelectingListener(Listener listener) {
 		selection.setOnSelectingListener(listener);
 	}
-	
+
 	public String getSelectedText() {
 		if (isSelectEmpty()) {
 			return "";
 		}
-		
+
 		if (isMultiLineSelected()) {
-			
+
 			final int esr = getSelectEffectiveStartRow();
 			final int eer = getSelectEffectiveEndRow();
 			final int esc = getSelectEffectiveStartColumn();
 			final int eec = getSelectEffectiveEndColumn();
-			
+
 			final StringBuilder sb = new StringBuilder();
-			
+
 			for (int i = esr; i <= eer; i++) {
 				if (i == esr) {
 					sb.append(getLineText(esr).substring(esc)).append('\n');
 				}
-				
+
 				if (i != esr && i != eer) {
 					sb.append(getLineText(i)).append('\n');
 				}
-				
+
 				if (i == eer) {
 					sb.append(getLineText(eer).substring(0, eec));
 				}
 			}
-			
+
 			return sb.toString();
-			
+
 		} else {
 			final int row = getSelectStartRow();
 			final int esc = getSelectEffectiveStartColumn();
 			final int eec = getSelectEffectiveEndColumn();
-			
-			final int startColumn = min(esc,eec);
-			final int endColumn = max(esc,eec);
-			
-			return getLineText(row).substring(startColumn,endColumn);
+
+			final int startColumn = min(esc, eec);
+			final int endColumn = max(esc, eec);
+
+			return getLineText(row).substring(startColumn, endColumn);
 		}
 	}
-	
+
 	public void removeSelectedText() {
 		if (isSelectEmpty()) {
 			return;
 		}
-		
+
 		final int esr = getSelectEffectiveStartRow();
 		final int eer = getSelectEffectiveEndRow();
 		final int esc = getSelectEffectiveStartColumn();
 		final int eec = getSelectEffectiveEndColumn();
-		
+
 		if (!isMultiLineSelected()) {
 			controller.getLine(esr).remove(esc, eec);
 		} else {
 			controller.getLine(esr).remove(esc, getLineLength(esr));
 			controller.getLine(eer).remove(0, eec);
-			
-			for(int i = eer - 1; i > esr; i--) {
+
+			for (int i = eer - 1; i > esr; i--) {
 				controller.removeLine(i);
 			}
-			
+
 			controller.mergeLines(esr);
 		}
-		
-		moveCursorTo(esr, min(esc,eec));
-		
+
+		moveCursorTo(esr, min(esc, eec));
+
 		selection.reset();
 	}
-	
+
 	// == HOOKS ==
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
@@ -381,6 +342,7 @@ public final class TextEditorModel {
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
+		
 	}
 
 	private static final class Cursor {
@@ -460,7 +422,7 @@ public final class TextEditorModel {
 		private final TextEditorModel model;
 		private int startRow, endRow, startColumn, endColumn;
 		private Listener onSelectingListener;
-		
+
 		public Selection(TextEditorModel model) {
 			super();
 			this.model = requireNonNull(model, "model");
@@ -487,7 +449,7 @@ public final class TextEditorModel {
 		public int getStartColumn() {
 			return getClampedColumn(getStartRow(), startColumn);
 		}
-		
+
 		public void setStartColumn(int startColumn) {
 			this.startColumn = getClampedColumn(getStartRow(), startColumn);
 			notifyOnSelecting();
@@ -513,7 +475,7 @@ public final class TextEditorModel {
 		public int getEffectiveEndRow() {
 			return Math.max(getStartRow(), getEndRow());
 		}
-		
+
 		public int getEffectiveStartColumn() {
 			if (getStartRow() <= getEndRow()) {
 				return getStartColumn();
@@ -521,7 +483,7 @@ public final class TextEditorModel {
 				return getEndColumn();
 			}
 		}
-		
+
 		public int getEffectiveEndColumn() {
 			if (getStartRow() > getEndRow()) {
 				return getStartColumn();
@@ -534,33 +496,33 @@ public final class TextEditorModel {
 			setStartRow(row);
 			setStartColumn(column);
 		}
-		
+
 		public void setEnd(int row, int column) {
 			setEndRow(row);
 			setEndColumn(column);
 		}
-		
+
 		public void set(int startRow, int endRow, int startColumn, int endColumn) {
 			setStart(startRow, startColumn);
 			setEnd(endRow, endColumn);
 		}
-		
+
 		public boolean isEmpty() {
 			return getStartRow() == getEndRow() && getStartColumn() == getEndColumn();
 		}
-		
+
 		public void reset() {
-			set(0,0,0,0);
+			set(0, 0, 0, 0);
 		}
-		
+
 		public void selectAll() {
-			set(0,model.getLinesCount() - 1, 0, model.getLineLength(model.getLinesCount() - 1));
+			set(0, model.getLineCount() - 1, 0, model.getLineLength(model.getLineCount() - 1));
 		}
-		
+
 		public void setOnSelectingListener(Listener onSelectingListener) {
-			this.onSelectingListener = requireNonNull(onSelectingListener,"onSelectingListener");
+			this.onSelectingListener = requireNonNull(onSelectingListener, "onSelectingListener");
 		}
-		
+
 		private void notifyOnSelecting() {
 			if (onSelectingListener != null) {
 				onSelectingListener.action();
@@ -569,11 +531,102 @@ public final class TextEditorModel {
 
 		// == PRIVATE API ==
 		private int getClampedRow(int row) {
-			return (int) constrain(row, 0, model.getLinesCount() - 1);
+			return (int) constrain(row, 0, model.getLineCount() - 1);
 		}
 
 		private int getClampedColumn(int row, int column) {
 			return (int) constrain(column, 0, model.getLineLength(getClampedRow(row)));
+		}
+	}
+	
+	private static final class TextFragmentCached {
+		private final TextEditorModel model;
+		private final StringBuilder sb;
+		private String cachedTextUntilCursor, cachedTextAfterCursor;
+		private int preCursorColumn, preCursorRow;
+		
+		public TextFragmentCached(TextEditorModel textEditorModel) {
+			super();
+			this.model = requireNonNull(textEditorModel,"textEditorModel");
+			
+			sb = new StringBuilder();
+		}
+		
+		public String getCachedTextUntilCursor() {
+			if (!isDirty() && cachedTextUntilCursor != null) {
+				return cachedTextUntilCursor;
+			}
+			
+			if (model.isBlank()) {
+				return "";
+			}
+			
+			sb.setLength(0);
+			final int startRow = 0;
+			final int endRow = model.cursor.getRow();
+
+			for (int i = startRow; i <= endRow; i++) {
+				if (i != endRow) {
+					sb.append(model.getLineText(i)).append('\n');
+				} else {
+					sb.append(model.getLineText(i).substring(0, min(model.getLineLength(i), model.cursor.getColumn())));
+				}
+			}
+
+			preCursorRow = model.getCursorRow();
+			preCursorColumn = model.getCursorColumn();
+			
+			return cachedTextUntilCursor =  sb.toString();
+			
+		}
+
+		public String getCachedTextAfterCursor() {
+			if (!isDirty() && cachedTextAfterCursor != null) {
+				return cachedTextAfterCursor;
+			}
+			
+			if (model.isBlank()) {
+				return "";
+			}
+
+			sb.setLength(0);
+			
+			final int sr = model.getCursorRow();
+			final int er = model.getLineCount();
+			final boolean multiline = sr != er-1;	
+			
+			if (multiline) {
+				for (int i = sr; i < er; i++) {	
+					final boolean onStartLine = i == sr;
+					final boolean onMiddleLine = i != sr && i != er - 1;
+					final boolean onEndLine = i == er - 1;
+					
+					if (onStartLine) {
+						final int cc = model.getCursorColumn();
+						sb.append(model.getLineText(sr).substring(cc)).append("\n");
+					}
+					
+					if (onMiddleLine) {
+						sb.append(model.getLineText(i)).append("\n");
+					}
+					
+					if (onEndLine) {
+						sb.append(model.getLineText(i));
+					}
+				}
+			} else {
+				final int cc = model.getCursorColumn();
+				sb.append(model.getLineText(sr).substring(cc));
+			}
+			
+			preCursorRow = model.getCursorRow();
+			preCursorColumn = model.getCursorColumn();
+			
+			return cachedTextAfterCursor = sb.toString();
+		}
+		
+		private boolean isDirty() {
+			return model.getCursorRow() != preCursorRow || model.getCursorColumn() != preCursorColumn;
 		}
 	}
 }

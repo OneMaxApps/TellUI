@@ -226,7 +226,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	public int getLinesCount() {
-		return textEditorModel.getLinesCount();
+		return textEditorModel.getLineCount();
 	}
 
 	public AbstractColor getCursorColor() {
@@ -354,8 +354,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		final float mouseX = (ctx.mouseX + scrollH) - getX();
 		final float mouseY = (ctx.mouseY - scrollV) - getY();
 
-		final int nearlyRow = (int) MathUtils.convert(mouseY, 0, getTextSize() * m.getLinesCount(), 0,
-				m.getLinesCount());
+		final int nearlyRow = (int) MathUtils.convert(mouseY, 0, getTextSize() * m.getLineCount(), 0,
+				m.getLineCount());
 
 		int nearlyColumn = 0;
 
@@ -589,7 +589,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		@Override
 		protected void render(PGraphics p) {
-			final int linesCount = textArea.textEditorModel.getLinesCount();
+			final int linesCount = textArea.textEditorModel.getLineCount();
 
 			final float textSize = textArea.textStyle.getTextSize();
 
@@ -1663,7 +1663,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			
 			private void onKeyVPressed() {
 				final TextEditorModel m = textArea.textEditorModel;
-
+				final CursorSearch cs = textArea.cursorSearch;
+				
 				if (!textArea.isEditable()) {
 					return;
 				}
@@ -1680,25 +1681,34 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final StringBuilder sb = new StringBuilder();
 					
 					sb.append(m.getTextUntilCursor());
-					
 					for (int i = 0; i < lines.length; i++) {
-						sb.append(lines[i]).append('\n');
+						if (i != lines.length - 1) {
+							sb.append(lines[i]).append('\n');
+						} else {
+							sb.append(lines[i]);
+						}
 					}
-					
-					final int newCursorRow = (m.getTextUntilCursor().length() - 1) + (lines.length - 1) - 1;
-					final int newCursorColumn = lines[lines.length - 1].length();
-					
 					sb.append(m.getTextAfterCursor());
 					
-					m.setText(sb.toString().split("\n"));
+					final String[] preparedText = sb.toString().split("\n");
 					
+					final int untilCursorRows = m.getTextUntilCursor().split("\n").length;
+					final int afterCursorRows = m.getTextAfterCursor().split("\n").length;
+					final int pastingTextRows = lines.length;
+					
+					final int rows = untilCursorRows + pastingTextRows + afterCursorRows - 2;
+					
+					final int newCursorRow = rows - afterCursorRows;
+					final int newCursorColumn = lines[lines.length - 1].length();
+
+					m.setText(preparedText);
 					m.moveCursorTo(newCursorRow, newCursorColumn);
 				} else {
 					m.insertString(lines[0]);
 					m.moveCursorTo(Direction.RIGHT, lines[0].length());
 				}
 
-				textArea.cursorSearch.startSoftlySearching();
+				cs.startSoftlySearching();
 			}
 			
 			private void onKeyYPressed() {
