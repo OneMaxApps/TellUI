@@ -343,6 +343,7 @@ public final class TextEditorModel {
 			onTextChangedListener.action();
 		}
 		
+		textFragmentCached.markTextChanged();
 	}
 
 	private static final class Cursor {
@@ -544,12 +545,17 @@ public final class TextEditorModel {
 		private final StringBuilder sb;
 		private String cachedTextUntilCursor, cachedTextAfterCursor;
 		private int preCursorColumn, preCursorRow;
+		private boolean textChanged;
 		
 		public TextFragmentCached(TextEditorModel textEditorModel) {
 			super();
 			this.model = requireNonNull(textEditorModel,"textEditorModel");
 			
 			sb = new StringBuilder();
+		}
+		
+		public void markTextChanged() {
+			textChanged = true;
 		}
 		
 		public String getCachedTextUntilCursor() {
@@ -573,8 +579,7 @@ public final class TextEditorModel {
 				}
 			}
 
-			preCursorRow = model.getCursorRow();
-			preCursorColumn = model.getCursorColumn();
+			updateMarks();
 			
 			return cachedTextUntilCursor =  sb.toString();
 			
@@ -593,40 +598,36 @@ public final class TextEditorModel {
 			
 			final int sr = model.getCursorRow();
 			final int er = model.getLineCount();
-			final boolean multiline = sr != er-1;	
 			
-			if (multiline) {
-				for (int i = sr; i < er; i++) {	
-					final boolean onStartLine = i == sr;
-					final boolean onMiddleLine = i != sr && i != er - 1;
-					final boolean onEndLine = i == er - 1;
-					
-					if (onStartLine) {
-						final int cc = model.getCursorColumn();
-						sb.append(model.getLineText(sr).substring(cc)).append("\n");
-					}
-					
-					if (onMiddleLine) {
-						sb.append(model.getLineText(i)).append("\n");
-					}
-					
-					if (onEndLine) {
-						sb.append(model.getLineText(i));
-					}
+			for (int i = sr; i < er; i++) {	
+				final boolean onStartLine = i == sr;
+				final boolean onEndLine = i == er - 1;
+				
+				if (onStartLine) {
+					final int cc = model.getCursorColumn();
+					sb.append(model.getLineText(sr).substring(cc));
+				} else {
+					sb.append(model.getLineText(i));
 				}
-			} else {
-				final int cc = model.getCursorColumn();
-				sb.append(model.getLineText(sr).substring(cc));
+				
+				if (!onEndLine) {
+					sb.append('\n');
+				}
 			}
-			
-			preCursorRow = model.getCursorRow();
-			preCursorColumn = model.getCursorColumn();
+
+			updateMarks();
 			
 			return cachedTextAfterCursor = sb.toString();
 		}
 		
 		private boolean isDirty() {
-			return model.getCursorRow() != preCursorRow || model.getCursorColumn() != preCursorColumn;
+			return model.getCursorRow() != preCursorRow || model.getCursorColumn() != preCursorColumn || textChanged;
+		}
+		
+		private void updateMarks() {
+			preCursorRow = model.getCursorRow();
+			preCursorColumn = model.getCursorColumn();
+			textChanged = false;
 		}
 	}
 }
