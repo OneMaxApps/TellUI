@@ -280,7 +280,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		if (mustLoseFocus()) {
 			setFocused(false);
 		}
-
+		
 		cursorSearch.updateState();
 	}
 
@@ -1682,10 +1682,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					
 					sb.append(m.getTextUntilCursor());
 					for (int i = 0; i < lines.length; i++) {
+						sb.append(lines[i]);
 						if (i != lines.length - 1) {
-							sb.append(lines[i]).append('\n');
-						} else {
-							sb.append(lines[i]);
+							sb.append('\n');
 						}
 					}
 					sb.append(m.getTextAfterCursor());

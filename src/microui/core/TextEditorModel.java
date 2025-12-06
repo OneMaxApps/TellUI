@@ -13,16 +13,16 @@ public final class TextEditorModel {
 	private final MultiLineTextController controller;
 	private final Cursor cursor;
 	private final Selection selection;
-	private final TextFragmentCached textFragmentCached;
+	private final TextFragment textFragmentCached;
 	private Listener onTextChangedListener;
-	
+
 	public TextEditorModel() {
 		super();
 		controller = new MultiLineTextController();
 		controller.setOnTextChangedListener(this::onTextChanged);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
-		textFragmentCached = new TextFragmentCached(this);
+		textFragmentCached = new TextFragment(this);
 	}
 
 	// == TEXT CONTROL ==
@@ -40,11 +40,11 @@ public final class TextEditorModel {
 	}
 
 	public String getTextUntilCursor() {
-		return textFragmentCached.getCachedTextUntilCursor();
+		return textFragmentCached.getTextUntilCursor();
 	}
 
 	public String getTextAfterCursor() {
-		return textFragmentCached.getCachedTextAfterCursor();
+		return textFragmentCached.getTextAfterCursor();
 	}
 
 	public void setText(String... text) {
@@ -343,7 +343,6 @@ public final class TextEditorModel {
 			onTextChangedListener.action();
 		}
 		
-		textFragmentCached.markTextChanged();
 	}
 
 	private static final class Cursor {
@@ -539,34 +538,19 @@ public final class TextEditorModel {
 			return (int) constrain(column, 0, model.getLineLength(getClampedRow(row)));
 		}
 	}
-	
-	private static final class TextFragmentCached {
+
+	private static final class TextFragment {
 		private final TextEditorModel model;
 		private final StringBuilder sb;
-		private String cachedTextUntilCursor, cachedTextAfterCursor;
-		private int preCursorColumn, preCursorRow;
-		private boolean textChanged;
-		
-		public TextFragmentCached(TextEditorModel textEditorModel) {
+
+		public TextFragment(TextEditorModel textEditorModel) {
 			super();
-			this.model = requireNonNull(textEditorModel,"textEditorModel");
-			
+			this.model = requireNonNull(textEditorModel, "textEditorModel");
+
 			sb = new StringBuilder();
 		}
-		
-		public void markTextChanged() {
-			textChanged = true;
-		}
-		
-		public String getCachedTextUntilCursor() {
-			if (!isDirty() && cachedTextUntilCursor != null) {
-				return cachedTextUntilCursor;
-			}
-			
-			if (model.isBlank()) {
-				return "";
-			}
-			
+
+		public String getTextUntilCursor() {
 			sb.setLength(0);
 			final int startRow = 0;
 			final int endRow = model.cursor.getRow();
@@ -575,59 +559,38 @@ public final class TextEditorModel {
 				if (i != endRow) {
 					sb.append(model.getLineText(i)).append('\n');
 				} else {
-					sb.append(model.getLineText(i).substring(0, min(model.getLineLength(i), model.cursor.getColumn())));
+					sb.append(model.getLineText(i).substring(0, model.cursor.getColumn()));
 				}
 			}
 
-			updateMarks();
-			
-			return cachedTextUntilCursor =  sb.toString();
-			
+			return sb.toString();
+
 		}
 
-		public String getCachedTextAfterCursor() {
-			if (!isDirty() && cachedTextAfterCursor != null) {
-				return cachedTextAfterCursor;
-			}
-			
-			if (model.isBlank()) {
-				return "";
-			}
-
+		public String getTextAfterCursor() {
 			sb.setLength(0);
-			
+
 			final int sr = model.getCursorRow();
 			final int er = model.getLineCount();
-			
-			for (int i = sr; i < er; i++) {	
+
+			for (int i = sr; i < er; i++) {
 				final boolean onStartLine = i == sr;
 				final boolean onEndLine = i == er - 1;
-				
+
 				if (onStartLine) {
 					final int cc = model.getCursorColumn();
 					sb.append(model.getLineText(sr).substring(cc));
 				} else {
 					sb.append(model.getLineText(i));
 				}
-				
+
 				if (!onEndLine) {
 					sb.append('\n');
 				}
 			}
 
-			updateMarks();
-			
-			return cachedTextAfterCursor = sb.toString();
+			return sb.toString();
 		}
-		
-		private boolean isDirty() {
-			return model.getCursorRow() != preCursorRow || model.getCursorColumn() != preCursorColumn || textChanged;
-		}
-		
-		private void updateMarks() {
-			preCursorRow = model.getCursorRow();
-			preCursorColumn = model.getCursorColumn();
-			textChanged = false;
-		}
+
 	}
 }
