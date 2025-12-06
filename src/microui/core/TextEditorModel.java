@@ -13,7 +13,7 @@ public final class TextEditorModel {
 	private final MultiLineTextController controller;
 	private final Cursor cursor;
 	private final Selection selection;
-	private final TextFragment textFragmentCached;
+	private final TextFragment textFragment;
 	private Listener onTextChangedListener;
 
 	public TextEditorModel() {
@@ -22,7 +22,7 @@ public final class TextEditorModel {
 		controller.setOnTextChangedListener(this::onTextChanged);
 		cursor = new Cursor(this);
 		selection = new Selection(this);
-		textFragmentCached = new TextFragment(this);
+		textFragment = new TextFragment(this);
 	}
 
 	// == TEXT CONTROL ==
@@ -40,11 +40,11 @@ public final class TextEditorModel {
 	}
 
 	public String getTextUntilCursor() {
-		return textFragmentCached.getTextUntilCursor();
+		return textFragment.getTextUntilCursor();
 	}
 
 	public String getTextAfterCursor() {
-		return textFragmentCached.getTextAfterCursor();
+		return textFragment.getTextAfterCursor();
 	}
 
 	public void setText(String... text) {
