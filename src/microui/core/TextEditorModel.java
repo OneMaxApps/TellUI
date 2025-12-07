@@ -300,6 +300,10 @@ public final class TextEditorModel {
 		}
 	}
 
+	// TODO rewrite logic
+	// 1. get text until selected;
+	// 2. get text after selected;
+	// 3. set text until + after selected;
 	public void removeSelectedText() {
 		if (isSelectEmpty()) {
 			return;
@@ -542,7 +546,7 @@ public final class TextEditorModel {
 	private static final class TextFragment {
 		private final TextEditorModel model;
 		private final StringBuilder sb;
-
+		
 		public TextFragment(TextEditorModel textEditorModel) {
 			super();
 			this.model = requireNonNull(textEditorModel, "textEditorModel");
@@ -551,6 +555,7 @@ public final class TextEditorModel {
 		}
 
 		public String getTextUntilCursor() {
+			
 			sb.setLength(0);
 			final int startRow = 0;
 			final int endRow = model.cursor.getRow();
@@ -568,6 +573,7 @@ public final class TextEditorModel {
 		}
 
 		public String getTextAfterCursor() {
+			
 			sb.setLength(0);
 
 			final int sr = model.getCursorRow();
