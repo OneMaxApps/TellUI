@@ -84,11 +84,11 @@ public class TextEditorModelTest {
 		
 		model.setText("word 1,word 2,word 3".split(","));
 		
-		model.setSelect(0, 0, 1, 3);
+		model.setSelection(0, 0, 1, 3);
 		
 		assertEquals("or",model.getSelectedText());
 		
-		model.setSelect(0, 2, 1, 1);
+		model.setSelection(0, 2, 1, 1);
 
 		assertEquals("ord 1\nword 2\nw",model.getSelectedText());
 	}
@@ -99,13 +99,13 @@ public class TextEditorModelTest {
 		
 		model.setText("word");
 		
-		model.setSelect(0, 0, 1, 3);
+		model.setSelection(0, 0, 1, 3);
 		model.removeSelectedText();
 		
 		assertEquals("wd",model.getText());
 		
 		model.setText("word 1,word 2,word 3".split(","));
-		model.setSelect(0, 2, 1, 1);
+		model.setSelection(0, 2, 1, 1);
 		model.removeSelectedText();
 		
 		assertEquals("word 3", model.getText());

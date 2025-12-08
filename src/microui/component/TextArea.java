@@ -113,7 +113,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				final TextEditorModel m = textEditorModel;
 				final int cr = m.getCursorRow();
 				final int cc = m.getCursorColumn();
-				textEditorModel.setSelect(cr,cr,cc,cc);
+				textEditorModel.setSelection(cr,cr,cc,cc);
 				
 			}
 		});
@@ -127,7 +127,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				final int cr = m.getCursorRow();
 				final int cc = m.getCursorColumn();
 	
-				m.setSelectEnd(cr, cc);
+				m.setSelectionEnd(cr, cc);
 			}
 		});
 
@@ -316,7 +316,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		final int clampedColumnFromCursor = (int) MathUtils.constrain(column, 0, word.length() - 1);
 
 		if (word.charAt(clampedColumnFromCursor) == ' ') {
-			textEditorModel.setSelect(row, row, 0, word.length());
+			textEditorModel.setSelection(row, row, 0, word.length());
 			return;
 		}
 
@@ -342,7 +342,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			endOfWord++;
 		}
 
-		textEditorModel.setSelect(row, row, startOfWord, endOfWord);
+		textEditorModel.setSelection(row, row, startOfWord, endOfWord);
 	}
 
 	private void setCursorPositionMappedFromMouse() {
@@ -369,8 +369,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			return;
 		}
 
-		m.setCursorColumn(nearlyColumn);
 		m.setCursorRow(nearlyRow);
+		m.setCursorColumn(nearlyColumn);
 	}
 
 	private void scrollOnDragging() {
@@ -409,7 +409,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		public void onDraw() {
-			if (textArea.isFocused() && textArea.textEditorModel.isSelectEmpty()) {
+			if (textArea.isFocused() && !textArea.textEditorModel.hasSelection()) {
 				scrollH.draw();
 				scrollV.draw();
 
@@ -763,7 +763,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			final TextEditorModel m = textArea.textEditorModel;
 			final TextMetricsPool tmp = textArea.textMetricsPool;
 
-			if (m.isSelectEmpty()) {
+			if (!m.hasSelection()) {
 				return;
 			}
 
@@ -771,10 +771,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			pGraphics.noStroke();
 			color.apply(pGraphics);
 
-			final int esr = m.getSelectEffectiveStartRow();
-			final int eer = m.getSelectEffectiveEndRow();
-			final int esc = m.getSelectEffectiveStartColumn();
-			final int eec = m.getSelectEffectiveEndColumn();
+			final int esr = m.getSelectionEffectiveStartRow();
+			final int eer = m.getSelectionEffectiveEndRow();
+			final int esc = m.getSelectionEffectiveStartColumn();
+			final int eec = m.getSelectionEffectiveEndColumn();
 
 			float posX = 0;
 			float posY = 0;
@@ -1265,7 +1265,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				final int cr = m.getCursorRow();
 				final int cc = m.getCursorColumn();
 				
-				for (int i = m.getSelectEffectiveStartRow(); i <= m.getSelectEffectiveEndRow(); i++) {
+				for (int i = m.getSelectionEffectiveStartRow(); i <= m.getSelectionEffectiveEndRow(); i++) {
 					m.setCursorRow(i);
 					m.setCursorColumn(0);
 					
@@ -1275,8 +1275,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					}
 				}
 				
-				m.setSelectStartColumn(m.getSelectStartColumn() + textArea.getTabSize());
-				m.setSelectEndColumn(m.getSelectEndColumn() + textArea.getTabSize());
+				m.setSelectionStartColumn(m.getSelectionStartColumn() + textArea.getTabSize());
+				m.setSelectionEndColumn(m.getSelectionEndColumn() + textArea.getTabSize());
 				
 				m.setCursorRow(cr);
 				m.setCursorColumn(cc  + textArea.getTabSize());
@@ -1314,7 +1314,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				final int cc = m.getCursorColumn();
 
 				if (!m.hasSelection()) {
-					m.setSelect(cr, cr, cc, cc);
+					m.setSelection(cr, cr, cc, cc);
 				}
 
 				switch (keyEvent.getKeyCode()) {
@@ -1373,7 +1373,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
 
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 
 					cs.startSoftlySearching();
 					return;
@@ -1383,7 +1383,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				
 				final int cc = m.getCursorColumn();
 				
-				m.setSelectEndColumn(cc);
+				m.setSelectionEndColumn(cc);
 				
 				cs.startSoftlySearching();
 			}
@@ -1400,7 +1400,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 					
 					cs.startSoftlySearching();
 					return;
@@ -1409,7 +1409,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.moveCursorTo(Direction.RIGHT);
 				
 				final int cc = m.getCursorColumn();
-				m.setSelectEndColumn(cc);
+				m.setSelectionEndColumn(cc);
 				
 				cs.startSoftlySearching();
 			}
@@ -1424,7 +1424,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
 
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 					
 					cs.startSoftlySearching();
 				}
@@ -1440,7 +1440,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
 
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 					
 					cs.startSoftlySearching();
 				}
@@ -1457,7 +1457,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.moveCursorToStartOfLine();
 				
 				final int cc = m.getCursorColumn();
-				m.setSelectEndColumn(cc);
+				m.setSelectionEndColumn(cc);
 				
 				cs.startSoftlySearching();
 			}
@@ -1473,7 +1473,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				m.moveCursorToEndOfLine();
 				
 				final int cc = m.getCursorColumn();
-				m.setSelectEndColumn(cc);
+				m.setSelectionEndColumn(cc);
 
 				cs.startSoftlySearching();
 			}
@@ -1488,7 +1488,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
 
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 					
 					cs.startSoftlySearching();
 				}
@@ -1504,7 +1504,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int cr = m.getCursorRow();
 					final int cc = m.getCursorColumn();
 
-					m.setSelectEnd(cr, cc);
+					m.setSelectionEnd(cr, cc);
 					
 					cs.startSoftlySearching();
 				}
@@ -1522,8 +1522,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				if (m.hasSelection()) {
 					boolean canMakeUntab = true;
 					
-					final int sr = m.getSelectEffectiveStartRow();
-					final int er = m.getSelectEffectiveEndRow();
+					final int sr = m.getSelectionEffectiveStartRow();
+					final int er = m.getSelectionEffectiveEndRow();
 					
 					for (int i = sr; i <= er; i++) {
 						final String text = m.getLineText(i);
@@ -1556,8 +1556,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 						m.moveCursorTo(cr, cc - ts);
 						
 						
-						m.setSelectStartColumn(m.getSelectStartColumn() - ts);
-						m.setSelectEndColumn(m.getSelectEndColumn() - ts);
+						m.setSelectionStartColumn(m.getSelectionStartColumn() - ts);
+						m.setSelectionEndColumn(m.getSelectionEndColumn() - ts);
 						
 					}
 					
@@ -1642,7 +1642,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				
 				m.undo();
 				
-				cs.startSoftlySearching();
+				cs.find();
 			}
 			
 			private void onKeyXPressed() {
@@ -1669,7 +1669,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					return;
 				}
 				
-				if (!m.isSelectEmpty()) {
+				if (m.hasSelection()) {
 					m.removeSelectedText();
 				}
 
@@ -1720,7 +1720,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				
 				m.redo();
 				
-				cs.startSoftlySearching();
+				cs.find();
 			}
 			
 			private void onKeyMinusPressed() {

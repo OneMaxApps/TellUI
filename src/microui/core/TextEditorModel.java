@@ -174,43 +174,43 @@ public final class TextEditorModel {
 
 	// == SELECTION API ==
 
-	public int getSelectStartRow() {
+	public int getSelectionStartRow() {
 		return selection.getStartRow();
 	}
 
-	public void setSelectStartRow(int startRow) {
+	public void setSelectionStartRow(int startRow) {
 		selection.setStartRow(startRow);
 	}
 
-	public int getSelectEndRow() {
+	public int getSelectionEndRow() {
 		return selection.getEndRow();
 	}
 
-	public void setSelectEndRow(int endRow) {
+	public void setSelectionEndRow(int endRow) {
 		selection.setEndRow(endRow);
 	}
 
-	public int getSelectStartColumn() {
+	public int getSelectionStartColumn() {
 		return selection.getStartColumn();
 	}
 
-	public void setSelectStartColumn(int startColumn) {
+	public void setSelectionStartColumn(int startColumn) {
 		selection.setStartColumn(startColumn);
 	}
 
-	public int getSelectEndColumn() {
+	public int getSelectionEndColumn() {
 		return selection.getEndColumn();
 	}
 
-	public void setSelectEndColumn(int endColumn) {
+	public void setSelectionEndColumn(int endColumn) {
 		selection.setEndColumn(endColumn);
 	}
 
-	public int getSelectEffectiveStartColumn() {
+	public int getSelectionEffectiveStartColumn() {
 		return selection.getEffectiveStartColumn();
 	}
 
-	public int getSelectEffectiveEndColumn() {
+	public int getSelectionEffectiveEndColumn() {
 		return selection.getEffectiveEndColumn();
 	}
 
@@ -218,28 +218,24 @@ public final class TextEditorModel {
 		return selection.isMultiLineSelected();
 	}
 
-	public int getSelectEffectiveStartRow() {
+	public int getSelectionEffectiveStartRow() {
 		return selection.getEffectiveStartRow();
 	}
 
-	public int getSelectEffectiveEndRow() {
+	public int getSelectionEffectiveEndRow() {
 		return selection.getEffectiveEndRow();
 	}
 
-	public void setSelectStart(int row, int column) {
+	public void setSelectionStart(int row, int column) {
 		selection.setStart(row, column);
 	}
 
-	public void setSelectEnd(int row, int column) {
+	public void setSelectionEnd(int row, int column) {
 		selection.setEnd(row, column);
 	}
 
-	public void setSelect(int startRow, int endRow, int startColumn, int endColumn) {
+	public void setSelection(int startRow, int endRow, int startColumn, int endColumn) {
 		selection.set(startRow, endRow, startColumn, endColumn);
-	}
-
-	public boolean isSelectEmpty() {
-		return selection.isEmpty();
 	}
 
 	public boolean hasSelection() {
@@ -259,16 +255,16 @@ public final class TextEditorModel {
 	}
 
 	public String getSelectedText() {
-		if (isSelectEmpty()) {
+		if (!hasSelection()) {
 			return "";
 		}
 
 		if (isMultiLineSelected()) {
 
-			final int esr = getSelectEffectiveStartRow();
-			final int eer = getSelectEffectiveEndRow();
-			final int esc = getSelectEffectiveStartColumn();
-			final int eec = getSelectEffectiveEndColumn();
+			final int esr = getSelectionEffectiveStartRow();
+			final int eer = getSelectionEffectiveEndRow();
+			final int esc = getSelectionEffectiveStartColumn();
+			final int eec = getSelectionEffectiveEndColumn();
 
 			final StringBuilder sb = new StringBuilder();
 
@@ -289,9 +285,9 @@ public final class TextEditorModel {
 			return sb.toString();
 
 		} else {
-			final int row = getSelectStartRow();
-			final int esc = getSelectEffectiveStartColumn();
-			final int eec = getSelectEffectiveEndColumn();
+			final int row = getSelectionStartRow();
+			final int esc = getSelectionEffectiveStartColumn();
+			final int eec = getSelectionEffectiveEndColumn();
 
 			final int startColumn = min(esc, eec);
 			final int endColumn = max(esc, eec);
@@ -301,13 +297,13 @@ public final class TextEditorModel {
 	}
 	
 	public void removeSelectedText() {
-		if (isSelectEmpty()) {
+		if (!hasSelection()) {
 			return;
 		}
 
-		final int esr = getSelectEffectiveStartRow();
-		final int esc = getSelectEffectiveStartColumn();
-		final int eec = getSelectEffectiveEndColumn();
+		final int esr = getSelectionEffectiveStartRow();
+		final int esc = getSelectionEffectiveStartColumn();
+		final int eec = getSelectionEffectiveEndColumn();
 
 		if (!isMultiLineSelected()) {
 			controller.getLine(esr).remove(esc, eec);
@@ -594,14 +590,14 @@ public final class TextEditorModel {
 			
 			sb.setLength(0);
 			
-			final int esr = model.getSelectEffectiveStartRow();
+			final int esr = model.getSelectionEffectiveStartRow();
 			for (int i = 0; i <= esr; i++) {
 				final String text = model.getLineText(i);
 				
 				if (i != esr) {
 					sb.append(text).append('\n');
 				} else {
-					sb.append(text.substring(0, model.getSelectEffectiveStartColumn()));
+					sb.append(text.substring(0, model.getSelectionEffectiveStartColumn()));
 				}
 			}
 			
@@ -615,9 +611,9 @@ public final class TextEditorModel {
 			
 			sb.setLength(0);
 			
-			final int eer =  model.getSelectEffectiveEndRow();
-			final int esc = model.getSelectEffectiveStartColumn();
-			final int eec = model.getSelectEffectiveEndColumn();
+			final int eer =  model.getSelectionEffectiveEndRow();
+			final int esc = model.getSelectionEffectiveStartColumn();
+			final int eec = model.getSelectionEffectiveEndColumn();
 			
 			final int linesCount = model.getLineCount();
 			

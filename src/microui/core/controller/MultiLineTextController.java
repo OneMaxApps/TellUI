@@ -259,7 +259,7 @@ public final class MultiLineTextController {
 
 	private static final class UndoRedoManager {
 		private static final int MIN_MS_FOR_UPDATE = 0;
-		private static final int DEFAULT_MS_FOR_UPDATE = 300;
+		private static final int DEFAULT_MS_FOR_UPDATE = 100;
 		private final MultiLineTextController controller;
 		private final Deque<String> undo, redo;
 		private String prevState;
