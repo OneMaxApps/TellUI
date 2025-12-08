@@ -1306,10 +1306,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 				final TextEditorModel m = textArea.textEditorModel;
 				
-				if (m.isBlank()) {
-					return;
-				}
-				
 				final int cr = m.getCursorRow();
 				final int cc = m.getCursorColumn();
 

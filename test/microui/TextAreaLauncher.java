@@ -23,8 +23,8 @@ public class TextAreaLauncher extends PApplet {
 	
 	@Override
 	public void settings() {
-//		size(720,480);
-		fullScreen(P2D,0);
+		size(720,480);
+//		fullScreen();
 	}
 	
 	@Override

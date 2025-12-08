@@ -1,15 +1,15 @@
 package microui;
 
 import static java.util.Objects.requireNonNull;
-import static microui.RendererConfig.Mode.STRICT;
+import static microui.RendererConfig.Mode.FLEXIBLE;
 
 //Status: STABLE - Do not modify
-//Last Reviewed: 30.10.2025
+//Last Reviewed: 08.12.2025
 
 /**
  *  Provides modes for render control
  *  <p>
- *  Default mode of rendering is STRICT
+ *  Default mode of rendering is FLEXIBLE
  *  </p>
  *  
  */
@@ -17,7 +17,7 @@ public final class RendererConfig {
 	private static Mode mode;
 	
 	static {
-		setMode(STRICT);
+		setMode(FLEXIBLE);
 	}
 	
 	private RendererConfig() {
