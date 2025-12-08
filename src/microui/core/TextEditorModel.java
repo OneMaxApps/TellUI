@@ -299,32 +299,21 @@ public final class TextEditorModel {
 			return getLineText(row).substring(startColumn, endColumn);
 		}
 	}
-
-	// TODO rewrite logic
-	// 1. get text until selected;
-	// 2. get text after selected;
-	// 3. set text until + after selected;
+	
 	public void removeSelectedText() {
 		if (isSelectEmpty()) {
 			return;
 		}
 
 		final int esr = getSelectEffectiveStartRow();
-		final int eer = getSelectEffectiveEndRow();
 		final int esc = getSelectEffectiveStartColumn();
 		final int eec = getSelectEffectiveEndColumn();
 
 		if (!isMultiLineSelected()) {
 			controller.getLine(esr).remove(esc, eec);
 		} else {
-			controller.getLine(esr).remove(esc, getLineLength(esr));
-			controller.getLine(eer).remove(0, eec);
-
-			for (int i = eer - 1; i > esr; i--) {
-				controller.removeLine(i);
-			}
-
-			controller.mergeLines(esr);
+			final String text = textFragment.getTextUntilSelection() + textFragment.getTextAfterSelection();
+			setText(text.split("\n"));
 		}
 
 		moveCursorTo(esr, min(esc, eec));
@@ -595,6 +584,61 @@ public final class TextEditorModel {
 				}
 			}
 
+			return sb.toString();
+		}
+		
+		public String getTextUntilSelection() {
+			if (!model.hasSelection()) {
+				return "";
+			}
+			
+			sb.setLength(0);
+			
+			final int esr = model.getSelectEffectiveStartRow();
+			for (int i = 0; i <= esr; i++) {
+				final String text = model.getLineText(i);
+				
+				if (i != esr) {
+					sb.append(text).append('\n');
+				} else {
+					sb.append(text.substring(0, model.getSelectEffectiveStartColumn()));
+				}
+			}
+			
+			return sb.toString();
+		}
+		
+		public String getTextAfterSelection() {
+			if (!model.hasSelection()) {
+				return "";
+			}
+			
+			sb.setLength(0);
+			
+			final int eer =  model.getSelectEffectiveEndRow();
+			final int esc = model.getSelectEffectiveStartColumn();
+			final int eec = model.getSelectEffectiveEndColumn();
+			
+			final int linesCount = model.getLineCount();
+			
+			for (int i = eer; i < linesCount; i++) {
+				final String text = model.getLineText(i);
+				
+				if (i == eer) {
+					if (model.isMultiLineSelected()) {
+						sb.append(text.substring(eec));
+					} else {
+						sb.append(text.substring(max(esc,eec)));
+					}
+				} else {
+					sb.append(text);
+				}
+				
+				if (i != linesCount - 1) {
+					sb.append('\n');
+				}
+			}
+			
 			return sb.toString();
 		}
 
