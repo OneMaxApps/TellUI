@@ -1692,10 +1692,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 					final int pastingTextRows = lines.length;
 					
 					final int rows = untilCursorRows + pastingTextRows + afterCursorRows - 1;
-					
-					final int newCursorRow = rows - afterCursorRows;
+
+					int newCursorRow = rows - afterCursorRows;
 					final int newCursorColumn = lines[lines.length - 1].length();
 
+					if (!m.getLineText(m.getCursorRow()).isEmpty()) {
+						newCursorRow--;
+					}
+					
 					m.setText(preparedText);
 					m.moveCursorTo(newCursorRow, newCursorColumn);
 				} else {
