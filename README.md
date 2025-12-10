@@ -1,6 +1,6 @@
 ## MicroUI: A Graphical User Interface (GUI) Library for Processing 4
 
-The MicroUI library (version 2.0.0) was developed by Islam Ahmedhanov for creating rich user interfaces in the Processing 4 environment.
+The MicroUI library (version 1.0.0) was developed by Islam Ahmedhanov for creating rich user interfaces in the Processing 4 environment.
 
 ### I. Architectural Overview
 
