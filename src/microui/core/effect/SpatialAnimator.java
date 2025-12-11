@@ -12,16 +12,49 @@ import microui.core.base.SpatialView;
 import microui.util.SpatialState;
 import microui.util.Timer;
 
+/**
+ * Animator for smooth interpolation of spatial properties (position and dimensions) between states.
+ * Provides flexible animation control with configurable reaction modes and conditional triggering.
+ * <p>
+ * The SpatialAnimator animates a target SpatialView between defined start and end states,
+ * with support for both SpatialState objects and ContentView references. It includes
+ * configurable reaction modes (Reactive and Trigger) and separate controls for
+ * position and dimension animations.
+ * </p>
+ * 
+ * @author microui.core
+ * @version 1.0
+ * @see SpatialView
+ * @see ContentView
+ * @see SpatialState
+ * @see Timer
+ */
 public final class SpatialAnimator {
+	/** Start and end spatial states for the animation. */
 	private final SpatialState startSpatialState, endSpatialState;
+	/** Optional ContentView references for dynamic state resolution. */
 	private ContentView startContentView, endContentView;
+	/** Timer for controlling animation progress. */
 	private final Timer timer;
+	/** Condition supplier for controlling animation direction/activation. */
 	private final BooleanSupplier condition;
+	/** Target SpatialView to animate. */
 	private SpatialView targetSpatialView;
+	/** Current reaction mode for animation triggering. */
 	private ReactionMode reactionMode;
+	/** Whether the animator is enabled. */
 	private boolean isEnabled;
+	/** Whether position animation is enabled. */
 	private boolean isPositionEnabled, isDimensionsEnabled;
 
+	/**
+	 * Constructs a SpatialAnimator with SpatialState objects and a condition.
+	 * 
+	 * @param startSpatialState the starting spatial state (cannot be null)
+	 * @param endSpatialState the ending spatial state (cannot be null)
+	 * @param condition the condition supplier for animation control (cannot be null)
+	 * @throws NullPointerException if any parameter is null
+	 */
 	public SpatialAnimator(SpatialState startSpatialState, SpatialState endSpatialState, BooleanSupplier condition) {
 		super();
 		
@@ -38,18 +71,42 @@ public final class SpatialAnimator {
 		setDimensionsEnabled(true);
 	}
 
+	/**
+	 * Constructs a SpatialAnimator with a starting ContentView and ending SpatialState.
+	 * 
+	 * @param start the starting ContentView (cannot be null)
+	 * @param end the ending spatial state (cannot be null)
+	 * @param condition the condition supplier for animation control (cannot be null)
+	 * @throws NullPointerException if any parameter is null
+	 */
 	public SpatialAnimator(ContentView start, SpatialState end, BooleanSupplier condition) {
 		this(new SpatialState(requireNonNull(start, "start").getX(),
 				start.getY(), start.getAbsoluteWidth(), start.getAbsoluteHeight()), end, condition);
 		startContentView = start;
 	}
 
+	/**
+	 * Constructs a SpatialAnimator with a starting SpatialState and ending ContentView.
+	 * 
+	 * @param start the starting spatial state (cannot be null)
+	 * @param end the ending ContentView (cannot be null)
+	 * @param condition the condition supplier for animation control (cannot be null)
+	 * @throws NullPointerException if any parameter is null
+	 */
 	public SpatialAnimator(SpatialState start, ContentView end, BooleanSupplier condition) {
 		this(start, new SpatialState(requireNonNull(end, "end").getX(),
 				end.getY(), end.getAbsoluteWidth(), end.getAbsoluteHeight()), condition);
 		endContentView = end;
 	}
 
+	/**
+	 * Constructs a SpatialAnimator with both starting and ending ContentViews.
+	 * 
+	 * @param start the starting ContentView (cannot be null)
+	 * @param end the ending ContentView (cannot be null)
+	 * @param condition the condition supplier for animation control (cannot be null)
+	 * @throws NullPointerException if any parameter is null
+	 */
 	public SpatialAnimator(ContentView start, ContentView end, BooleanSupplier condition) {
 		this(start, new SpatialState(requireNonNull(end, "end").getX(),
 				end.getY(), end.getAbsoluteWidth(), end.getAbsoluteHeight()), condition);
@@ -57,75 +114,143 @@ public final class SpatialAnimator {
 		endContentView = end;
 	}
 
+	/**
+	 * Returns the current reaction mode.
+	 * 
+	 * @return the current reaction mode
+	 */
 	public ReactionMode getReactionMode() {
 		return reactionMode;
 	}
 
+	/**
+	 * Sets the reaction mode for animation triggering.
+	 * 
+	 * @param reactionMode the reaction mode to set (cannot be null)
+	 * @return this SpatialAnimator for method chaining
+	 * @throws NullPointerException if reactionMode is null
+	 */
 	public SpatialAnimator setReactionMode(ReactionMode reactionMode) {
 		this.reactionMode = requireNonNull(reactionMode,"reactionMode");
 
 		return this;
 	}
 
+	/**
+	 * Checks if position animation is enabled.
+	 * 
+	 * @return true if position animation is enabled, false otherwise
+	 */
 	public boolean isPositionEnabled() {
 		return isPositionEnabled;
 	}
 
+	/**
+	 * Enables or disables position animation.
+	 * 
+	 * @param isPositionEnabled true to enable position animation, false to disable
+	 * @return this SpatialAnimator for method chaining
+	 */
 	public SpatialAnimator setPositionEnabled(boolean isPositionEnabled) {
 		this.isPositionEnabled = isPositionEnabled;
 
 		return this;
 	}
 
+	/**
+	 * Checks if dimension animation is enabled.
+	 * 
+	 * @return true if dimension animation is enabled, false otherwise
+	 */
 	public boolean isDimensionsEnabled() {
 		return isDimensionsEnabled;
 	}
 
+	/**
+	 * Enables or disables dimension animation.
+	 * 
+	 * @param isDimensionsEnabled true to enable dimension animation, false to disable
+	 * @return this SpatialAnimator for method chaining
+	 */
 	public SpatialAnimator setDimensionsEnabled(boolean isDimensionsEnabled) {
 		this.isDimensionsEnabled = isDimensionsEnabled;
 
 		return this;
 	}
 
+	/**
+	 * Returns the target SpatialView being animated.
+	 * 
+	 * @return the target SpatialView, or null if not set
+	 */
 	public SpatialView getTargetSpatialView() {
 		return targetSpatialView;
 	}
 
+	/**
+	 * Sets the target SpatialView to animate.
+	 * 
+	 * @param targetSpatialView the SpatialView to animate (cannot be null)
+	 * @return this SpatialAnimator for method chaining
+	 * @throws NullPointerException if targetSpatialView is null
+	 */
 	public SpatialAnimator setTargetSpatialView(SpatialView targetSpatialView) {
 		this.targetSpatialView = requireNonNull(targetSpatialView,"targetSpatialView");
 
 		return this;
 	}
 
+	/**
+	 * Checks if the animator is enabled.
+	 * 
+	 * @return true if enabled, false if disabled
+	 */
 	public boolean isEnabled() {
 		return isEnabled;
 	}
 
+	/**
+	 * Enables or disables the animator.
+	 * 
+	 * @param isEnabled true to enable the animator, false to disable
+	 * @return this SpatialAnimator for method chaining
+	 */
 	public SpatialAnimator setEnabled(boolean isEnabled) {
 		this.isEnabled = isEnabled;
 
 		return this;
 	}
 
+	/**
+	 * Updates the animation based on current conditions and timer state.
+	 * Interpolates position and dimensions between start and end states.
+	 * Should be called every frame for smooth animation.
+	 */
 	public void update() {
+		// Skip update if disabled or no target set
 		if (!isEnabled() || targetSpatialView == null) {
 			return;
 		}
 
+		// Handle different reaction modes
 		switch (getReactionMode()) {
 		case REACTIVE:
+			// Timer direction changes immediately based on condition
 			timer.setIncrementing(condition.getAsBoolean());
 			break;
 
 		case TRIGGER:
+			// Timer direction only changes when current animation completes
 			if (timer.isComplete()) {
 				timer.setIncrementing(condition.getAsBoolean());
 			}
 			break;
 		}
 
+		// Update timer progress
 		timer.update();
 
+		// Animate position if enabled
 		if (isPositionEnabled()) {
 			final float startX = startContentView != null ? startContentView.getAbsoluteX() : startSpatialState.x();
 			final float endX = endContentView != null ? endContentView.getAbsoluteX() : endSpatialState.x();
@@ -137,6 +262,7 @@ public final class SpatialAnimator {
 			targetSpatialView.setY(lerp(startY, endY));
 		}
 
+		// Animate dimensions if enabled
 		if (isDimensionsEnabled()) {
 
 			final float startWidth = startContentView != null ? startContentView.getAbsoluteWidth() : startSpatialState.width();
@@ -151,10 +277,23 @@ public final class SpatialAnimator {
 
 	}
 
+	/**
+	 * Reaction modes for controlling animation triggering behavior.
+	 */
 	public static enum ReactionMode {
-		REACTIVE, TRIGGER;
+		/** Animation direction changes immediately when condition changes. */
+		REACTIVE, 
+		/** Animation direction only changes when current animation completes. */
+		TRIGGER;
 	}
 
+	/**
+	 * Linear interpolation between start and end values based on timer progress.
+	 * 
+	 * @param start the starting value
+	 * @param end the ending value
+	 * @return the interpolated value between start and end
+	 */
 	private float lerp(float start, float end) {
 		return convert(timer.getCurrent(), START, END, start, end);
 	}

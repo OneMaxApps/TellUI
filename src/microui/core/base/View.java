@@ -12,29 +12,60 @@ import microui.core.interfaces.Visible;
 import microui.util.Metrics;
 import processing.core.PApplet;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 29.10.2025
-
 /**
- * Abstract base class for all visual elements in MicroUI. Provides basic
- * functionality for managing visibility, rendering priority, and element
- * identification.
+ * Abstract base class for all visual elements in MicroUI.
+ * Provides fundamental functionality for managing visibility, rendering priority, 
+ * and element identification within the GUI framework.
  * 
  * <p>
- * All visual components must be inherited from this class and implement the
- * {@link #render()} method to determine the rendering logic.
+ * The View class serves as the foundation for all visual components in MicroUI.
+ * Subclasses must implement the {@link #render()} method to define their specific
+ * drawing logic. This class implements the {@link Visible} interface and provides
+ * built-in support for metrics collection.
  * </p>
+ * 
+ * <p>
+ * Key features include:
+ * - Visibility management (show/hide)
+ * - Rendering priority control (z-order)
+ * - Numeric and text-based identification
+ * - Integration with MicroUI's rendering system
+ * - Automatic style management via push/pop
+ * </p>
+ * 
+ * <p>
+ * Status: STABLE - Do not modify
+ * Last Reviewed: 29.10.2025
+ * </p>
+ * 
+ * @author microui.core
+ * @version 1.0
+ * @see Visible
+ * @see Metrics
  */
 public abstract class View implements Visible {
+	/** Default text identifier for View objects. */
 	public static final String DEFAULT_TEXT_ID = "";
+	/** Default numeric identifier for View objects. */
 	public static final int DEFAULT_ID = 0;
+	/** Minimum allowed priority value. */
 	public static final int MIN_PRIORITY = 0;
+	/** Minimum allowed numeric identifier value. */
 	public static final int MIN_ID = 0;
+	/** Processing context for drawing operations. */
 	protected static final PApplet ctx = getContext();
+	
+	/** Text identifier for this View. */
 	private String textId;
+	/** Rendering priority (z-order) for this View. */
 	private int priority, id;
+	/** Visibility state of this View. */
 	private boolean visible;
 
+	/**
+	 * Constructs a new View with default values.
+	 * Automatically registers the view with the metrics system.
+	 */
 	public View() {
 		Metrics.register(this);
 		id = DEFAULT_ID;
@@ -75,6 +106,7 @@ public abstract class View implements Visible {
 	 * Sets the priority of rendering the element.
 	 *
 	 * @param priority new rendering priority (must be ≥ 0)
+	 * @return this View for method chaining
 	 * @throws IllegalArgumentException if priority is less than 0
 	 */
 	public final View setPriority(int priority) {
@@ -100,6 +132,7 @@ public abstract class View implements Visible {
 	 *
 	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID
 	 *           (Integer.MAX_VALUE))
+	 * @return this View for method chaining
 	 * @throws IllegalArgumentException if the identifier is less than 0
 	 */
 	public final View setId(int id) {
@@ -125,6 +158,9 @@ public abstract class View implements Visible {
 	 * 
 	 * @param textId new text identifier for this View object (cannot be null and
 	 *               (or) empty)
+	 * @return this View for method chaining
+	 * @throws NullPointerException if textId is null
+	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public final View setTextId(final String textId) {
 		requireNonNull(textId, "textId");
@@ -139,16 +175,18 @@ public abstract class View implements Visible {
 	}
 
 	/**
+	 * Checks if this View has a non-default numeric identifier.
 	 * 
-	 * @return true if id is not equal to DEFAULT_ID (0)
+	 * @return true if id is not equal to DEFAULT_ID (0), false otherwise
 	 */
 	public final boolean hasId() {
 		return id != DEFAULT_ID;
 	}
 
 	/**
+	 * Checks if this View has a non-default text identifier.
 	 * 
-	 * @return true if text id is not equal to DEFAULT_TEXT_ID ("")
+	 * @return true if text id is not equal to DEFAULT_TEXT_ID (""), false otherwise
 	 */
 	public final boolean hasTextId() {
 		return !textId.equals(DEFAULT_TEXT_ID);
@@ -159,7 +197,17 @@ public abstract class View implements Visible {
 	 * (push/pop style).
 	 * 
 	 * <p>
+	 * In STRICT render mode, this method validates that drawing is performed within
+	 * the proper context (ContainerManager must be initialized and drawing must
+	 * occur during ContainerManager's draw cycle).
+	 * </p>
+	 * 
+	 * <p>
 	 * Calls the {@link #render() method} only if the element is visible.
+	 * </p>
+	 * 
+	 * @throws RenderException if in STRICT mode and ContainerManager is not initialized
+	 *                         or if drawing occurs outside ContainerManager's draw cycle
 	 */
 	public void draw() {
 		if (getMode() == STRICT) {
@@ -181,7 +229,14 @@ public abstract class View implements Visible {
 	}
 
 	/**
-	 * Abstract method for sub-classes for implementation them drawing logic
+	 * Abstract method for subclasses to implement their specific drawing logic.
+	 * This method is called by {@link #draw()} when the View is visible.
+	 * 
+	 * <p>
+	 * Subclasses should override this method to define how the View is rendered
+	 * to the screen. The Processing context is automatically prepared with
+	 * proper style management (push/pop).
+	 * </p>
 	 */
 	protected abstract void render();
 

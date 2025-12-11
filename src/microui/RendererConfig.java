@@ -6,47 +6,9 @@ import static microui.RendererConfig.Mode.FLEXIBLE;
 // Status: STABLE - Do not modify
 // Last Reviewed: 08.12.2025
 
+
 /**
- * Configuration manager for MicroUI's component rendering behavior.
- * <p>
- * Controls how MicroUI components (such as {@code Button}, {@code Panel}, etc.)
- * handle their internal rendering logic and validation. This setting affects
- * <b>only MicroUI components</b> and has no impact on manual Processing drawing.
- * </p>
- * <p>
- * <b>Default Mode:</b> {@link Mode#FLEXIBLE} - Provides maximum compatibility
- * and ease of use for component rendering.
- * </p>
- * <p>
- * <b>Usage Example - Component Behavior by Mode:</b>
- * <pre>
- * // In setup():
- * RendererConfig.setMode(RendererConfig.Mode.FLEXIBLE);
- * 
- * // Creating a button
- * Button myButton = new Button("Click me");
- * 
- * // In FLEXIBLE mode:
- * // - Button may adjust its rendering based on available space
- * // - May use simplified rendering for performance
- * // - May automatically handle edge cases
- * 
- * // Switching to STRICT mode:
- * RendererConfig.setMode(RendererConfig.Mode.STRICT);
- * 
- * // Now the same button:
- * // - Enforces exact rendering according to specifications
- * // - Performs validation of rendering parameters
- * // - May throw exceptions for invalid rendering states
- * </pre>
- * </p>
- * <p>
- * <b>Important:</b> This configuration does NOT restrict where or how you
- * call MicroUI component rendering methods. You can still mix manual Processing
- * drawing with MicroUI component rendering in both modes.
- * </p>
- * 
- * @see Mode
+ * Provides setting for configuration of rendering mode
  */
 public final class RendererConfig {
 	private static Mode mode;
