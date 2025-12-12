@@ -16,7 +16,6 @@ import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
-import microui.event.KeyboardManager;
 import microui.service.TooltipManager;
 import microui.util.Debugger;
 import microui.util.MathUtils;
@@ -155,12 +154,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				}
 			}
 
-			KeyboardManager.keyPressed();
 			keyPressed();
 			keyPressed(keyEvent);
-		}
-		if (keyEvent.getAction() == KeyEvent.RELEASE) {
-			KeyboardManager.keyReleased();
 		}
 	}
 

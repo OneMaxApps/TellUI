@@ -1,58 +1,128 @@
 package microui.util;
 
+/**
+ * Timer utility for tracking progress between two endpoints over time.
+ * 
+ * <p>Manages a timer value that progresses between START (0) and END (1) at a
+ * configurable speed. Can increment or decrement the timer value and provides
+ * methods to check completion status.</p>
+ */
 public final class Timer {
-	public static final float DEFAULT_SPEED = .05f;
-	public static final int START = 0;
-	public static final int END = 1;
-	private float currentTime, speed;
-	private boolean incrementing;
+    /** Default speed value for the timer. */
+    public static final float DEFAULT_SPEED = .05f;
+    
+    /** Starting value of the timer (0%). */
+    public static final int START = 0;
+    
+    /** Ending value of the timer (100%). */
+    public static final int END = 1;
+    
+    /** Current timer value between START and END. */
+    private float currentTime;
+    
+    /** Speed at which the timer progresses per update. */
+    private float speed;
+    
+    /** Direction flag: true for incrementing (START to END), false for decrementing (END to START). */
+    private boolean incrementing;
 
-	public Timer() {
-		super();
-		setSpeed(DEFAULT_SPEED);
-	}
+    /**
+     * Constructs a Timer with default settings.
+     * 
+     * <p>Initializes with current time at START, default speed, and incrementing direction.</p>
+     */
+    public Timer() {
+        super();
+        setSpeed(DEFAULT_SPEED);
+    }
 
-	public void update() {
-		setCurrentTime(isIncrementing() ? getCurrent() + getSpeed() : getCurrent() - getSpeed());
-	}
+    /**
+     * Updates the timer value based on current speed and direction.
+     * 
+     * <p>Increments or decrements the current time by the speed value,
+     * then constrains the result to the START-END range.</p>
+     */
+    public void update() {
+        setCurrentTime(isIncrementing() ? getCurrent() + getSpeed() : getCurrent() - getSpeed());
+    }
 
-	public float getCurrent() {
-		return currentTime;
-	}
+    /**
+     * Returns the current timer value.
+     * 
+     * @return current time value between START and END (inclusive)
+     */
+    public float getCurrent() {
+        return currentTime;
+    }
 
-	public void reset() {
-		setCurrentTime(START);
-	}
+    /**
+     * Resets the timer to the START value.
+     */
+    public void reset() {
+        setCurrentTime(START);
+    }
 
-	public float getSpeed() {
-		return speed;
-	}
+    /**
+     * Returns the current speed of the timer.
+     * 
+     * @return speed value between 0 and 1
+     */
+    public float getSpeed() {
+        return speed;
+    }
 
-	/**
-	 * this method provides setting speed value
-	 * 
-	 * @param speed must be between 0 and 1
-	 */
-	public void setSpeed(float speed) {
-		if (speed < 0 || speed > 1) {
-			throw new IllegalArgumentException("speed for Timer must be between 0 and 1");
-		}
-		this.speed = speed;
-	}
+    /**
+     * Sets the speed of the timer.
+     * 
+     * <p>The speed determines how much the timer advances or retreats per update call.
+     * Valid values are between 0 and 1 inclusive.</p>
+     * 
+     * @param speed the new speed value, must be between 0 and 1
+     * @throws IllegalArgumentException if speed is outside the range [0, 1]
+     */
+    public void setSpeed(float speed) {
+        if (speed < 0 || speed > 1) {
+            throw new IllegalArgumentException("speed for Timer must be between 0 and 1");
+        }
+        this.speed = speed;
+    }
 
-	public boolean isIncrementing() {
-		return incrementing;
-	}
+    /**
+     * Checks if the timer is currently incrementing.
+     * 
+     * @return true if incrementing (moving from START to END), false if decrementing
+     */
+    public boolean isIncrementing() {
+        return incrementing;
+    }
 
-	public void setIncrementing(boolean isIncrementing) {
-		this.incrementing = isIncrementing;
-	}
+    /**
+     * Sets the direction of the timer.
+     * 
+     * @param isIncrementing true to make the timer increment (START → END),
+     *                       false to make it decrement (END → START)
+     */
+    public void setIncrementing(boolean isIncrementing) {
+        this.incrementing = isIncrementing;
+    }
 
-	public boolean isComplete() {
-		return currentTime == START || currentTime == END;
-	}
+    /**
+     * Checks if the timer has reached either endpoint.
+     * 
+     * @return true if current time equals either START or END, false otherwise
+     */
+    public boolean isComplete() {
+        return currentTime == START || currentTime == END;
+    }
 
-	private void setCurrentTime(float current) {
-		this.currentTime = current < START ? START : current > END ? END : current;
-	}
+    /**
+     * Sets the current time value with range constraint.
+     * 
+     * <p>Constrains the value to stay within the START-END range.</p>
+     * 
+     * @param current the new current time value
+     */
+    private void setCurrentTime(float current) {
+        this.currentTime = current < START ? START : current > END ? END : current;
+    }
 }

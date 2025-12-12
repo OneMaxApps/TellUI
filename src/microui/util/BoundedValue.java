@@ -5,119 +5,258 @@ import static microui.util.MathUtils.constrain;
 
 import microui.event.Listener;
 
-// Status: STABLE - Do not modify
-// Last reviewed: 03.11.2025.
-
+/**
+ * Represents a numeric value bounded between minimum and maximum limits.
+ * 
+ * <p>This class provides a way to store and manipulate values that must stay within
+ * a defined range. It includes change listeners and ensures values remain within
+ * bounds through automatic constraint.</p>
+ * 
+ * <p>Status: STABLE - Do not modify</p>
+ * <p>Last reviewed: 03.11.2025</p>
+ */
 public final class BoundedValue {
-	private float min, max, value;
-	private Listener onChangeValueListener;
+    /** The minimum allowed value (inclusive). */
+    private float min;
+    
+    /** The maximum allowed value (inclusive). */
+    private float max;
+    
+    /** The current value, constrained between min and max. */
+    private float value;
+    
+    /** Listener to be notified when the value changes. */
+    private Listener onChangeValueListener;
 
-	public BoundedValue(float min, float max, float value) {
-		set(min, max, value);
-	}
+    /**
+     * Constructs a BoundedValue with specified minimum, maximum, and initial value.
+     * 
+     * @param min the minimum allowed value (inclusive)
+     * @param max the maximum allowed value (inclusive)
+     * @param value the initial value (will be constrained to min-max range)
+     * 
+     * @throws IllegalArgumentException if min is greater than max
+     */
+    public BoundedValue(float min, float max, float value) {
+        set(min, max, value);
+    }
 
-	public BoundedValue(float max) {
-		this(0, max, 0);
-	}
+    /**
+     * Constructs a BoundedValue with minimum of 0, specified maximum, and initial value of 0.
+     * 
+     * @param max the maximum allowed value (inclusive)
+     */
+    public BoundedValue(float max) {
+        this(0, max, 0);
+    }
 
-	public BoundedValue() {
-		this(0, 100, 0);
-	}
+    /**
+     * Constructs a BoundedValue with default range 0-100 and initial value of 0.
+     */
+    public BoundedValue() {
+        this(0, 100, 0);
+    }
 
-	public float getMin() {
-		return min;
-	}
+    /**
+     * Returns the minimum allowed value.
+     * 
+     * @return the minimum value
+     */
+    public float getMin() {
+        return min;
+    }
 
-	public BoundedValue setMin(float min) {
-		if (min > max) {
-			throw new IllegalArgumentException("Min value cannot be greater than max value");
-		}
+    /**
+     * Sets the minimum allowed value.
+     * 
+     * <p>If the new minimum is greater than the current maximum, an exception is thrown.
+     * If the new minimum is greater than the current value, the value is adjusted to
+     * the new minimum and change listeners are notified.</p>
+     * 
+     * @param min the new minimum value
+     * @return this BoundedValue for method chaining
+     * 
+     * @throws IllegalArgumentException if min is greater than current max
+     */
+    public BoundedValue setMin(float min) {
+        if (min > max) {
+            throw new IllegalArgumentException("Min value cannot be greater than max value");
+        }
 
-		this.min = min;
+        this.min = min;
 
-		if (min > value) {
-			value = min;
-			onChangeValueListener();
-		}
+        if (min > value) {
+            value = min;
+            onChangeValueListener();
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	public float getMax() {
-		return max;
-	}
+    /**
+     * Returns the maximum allowed value.
+     * 
+     * @return the maximum value
+     */
+    public float getMax() {
+        return max;
+    }
 
-	public BoundedValue setMax(float max) {
-		if (max < min) {
-			throw new IllegalArgumentException("Max value cannot be lower than min value");
-		}
+    /**
+     * Sets the maximum allowed value.
+     * 
+     * <p>If the new maximum is less than the current minimum, an exception is thrown.
+     * If the new maximum is less than the current value, the value is adjusted to
+     * the new maximum and change listeners are notified.</p>
+     * 
+     * @param max the new maximum value
+     * @return this BoundedValue for method chaining
+     * 
+     * @throws IllegalArgumentException if max is less than current min
+     */
+    public BoundedValue setMax(float max) {
+        if (max < min) {
+            throw new IllegalArgumentException("Max value cannot be lower than min value");
+        }
 
-		this.max = max;
+        this.max = max;
 
-		if (max < value) {
-			value = max;
-			onChangeValueListener();
-		}
+        if (max < value) {
+            value = max;
+            onChangeValueListener();
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	public float get() {
-		return value;
-	}
+    /**
+     * Returns the current value.
+     * 
+     * @return the current value (guaranteed to be between min and max inclusive)
+     */
+    public float get() {
+        return value;
+    }
 
-	public BoundedValue set(float value) {
-		if (this.value == value) {
-			return this;
-		}
-		
-		this.value = constrain(value, getMin(), getMax());
-		
-		onChangeValueListener();
+    /**
+     * Sets the current value.
+     * 
+     * <p>The value is constrained to the current min-max range. If the value actually
+     * changes (after constraint), change listeners are notified.</p>
+     * 
+     * @param value the new value
+     * @return this BoundedValue for method chaining
+     */
+    public BoundedValue set(float value) {
+        if (this.value == value) {
+            return this;
+        }
+        
+        this.value = constrain(value, getMin(), getMax());
+        
+        onChangeValueListener();
 
-		return this;
-	}
+        return this;
+    }
 
-	public BoundedValue set(float min, float max, float value) {
-		setMin(min);
-		setMax(max);
-		set(value);
+    /**
+     * Sets all parameters (min, max, and value) at once.
+     * 
+     * <p>This is more efficient than setting each parameter individually as it
+     * only triggers change listeners once if needed.</p>
+     * 
+     * @param min the new minimum value
+     * @param max the new maximum value
+     * @param value the new value
+     * @return this BoundedValue for method chaining
+     * 
+     * @throws IllegalArgumentException if min is greater than max
+     */
+    public BoundedValue set(float min, float max, float value) {
+        setMin(min);
+        setMax(max);
+        set(value);
 
-		return this;
-	}
+        return this;
+    }
 
-	public BoundedValue setMinMax(float min, float max) {
-		setMin(min);
-		setMax(max);
+    /**
+     * Sets only the minimum and maximum values, preserving the current value
+     * (adjusted if it falls outside the new range).
+     * 
+     * @param min the new minimum value
+     * @param max the new maximum value
+     * @return this BoundedValue for method chaining
+     * 
+     * @throws IllegalArgumentException if min is greater than max
+     */
+    public BoundedValue setMinMax(float min, float max) {
+        setMin(min);
+        setMax(max);
 
-		return this;
-	}
+        return this;
+    }
 
-	public BoundedValue append(float append) {
-		set(get() + append);
+    /**
+     * Appends a value to the current value.
+     * 
+     * <p>Equivalent to {@code set(get() + append)}.</p>
+     * 
+     * @param append the value to add to the current value
+     * @return this BoundedValue for method chaining
+     */
+    public BoundedValue append(float append) {
+        set(get() + append);
 
-		return this;
-	}
+        return this;
+    }
 
-	public BoundedValue setSilently(float value) {
-		this.value = value;
+    /**
+     * Sets the value without triggering change listeners or constraints.
+     * 
+     * <p>Warning: This method bypasses the min-max constraint and does not notify
+     * change listeners. Use with caution.</p>
+     * 
+     * @param value the new value
+     * @return this BoundedValue for method chaining
+     */
+    public BoundedValue setSilently(float value) {
+        this.value = value;
 
-		return this;
-	}
+        return this;
+    }
 
-	public boolean hasEqualMinMax() {
-		return min == max;
-	}
+    /**
+     * Checks if the minimum and maximum values are equal.
+     * 
+     * @return true if min == max, false otherwise
+     */
+    public boolean hasEqualMinMax() {
+        return min == max;
+    }
 
-	public BoundedValue setOnChangeValueListener(Listener onChangeValueListener) {
-		this.onChangeValueListener = requireNonNull(onChangeValueListener,"onChangeValueListener");
+    /**
+     * Sets the listener to be notified when the value changes.
+     * 
+     * @param onChangeValueListener the listener to notify on value changes, cannot be null
+     * @return this BoundedValue for method chaining
+     * 
+     * @throws NullPointerException if the listener is null
+     */
+    public BoundedValue setOnChangeValueListener(Listener onChangeValueListener) {
+        this.onChangeValueListener = requireNonNull(onChangeValueListener, "onChangeValueListener");
 
-		return this;
-	}
-	
-	private void onChangeValueListener() {
-		if (onChangeValueListener != null) {
-			onChangeValueListener.action();
-		}
-	}
+        return this;
+    }
+    
+    /**
+     * Notifies the change listener if one is set.
+     * 
+     * <p>This method is called internally whenever the value changes.</p>
+     */
+    private void onChangeValueListener() {
+        if (onChangeValueListener != null) {
+            onChangeValueListener.action();
+        }
+    }
 }

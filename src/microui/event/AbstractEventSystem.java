@@ -7,10 +7,34 @@ import microui.core.base.ContentView;
 import microui.core.base.SpatialView;
 import microui.util.Metrics;
 
+/**
+ * Abstract base class for event detection systems in MicroUI.
+ * Provides comprehensive mouse event detection for SpatialView components,
+ * including hover, press, click, drag, and timing-based events.
+ * <p>
+ * This class implements a sophisticated event detection system that can track
+ * various mouse interactions with configurable thresholds. It supports both
+ * ContentView (with padding/margin) and basic SpatialView components.
+ * </p>
+ * 
+ * @author microui.core
+ * @version 1.0
+ * @see SpatialView
+ * @see ContentView
+ * @see EventDetector
+ */
 public abstract class AbstractEventSystem {
+	/** The SpatialView this event system is monitoring. */
 	private SpatialView spatialView;
+	/** The main event detector instance. */
 	private final EventDetector detector;
-
+ 
+	/**
+	 * Constructs an AbstractEventSystem for the specified SpatialView.
+	 * 
+	 * @param spatialView the SpatialView to monitor for events (cannot be null)
+	 * @throws NullPointerException if spatialView is null
+	 */
 	public AbstractEventSystem(SpatialView spatialView) {
 		this.spatialView = requireNonNull(spatialView,"spatialView");
 
@@ -19,51 +43,112 @@ public abstract class AbstractEventSystem {
 		Metrics.register(this);
 	}
 
+	/**
+	 * Updates event detection state.
+	 * Should be called every frame to ensure accurate event detection.
+	 */
 	public void listen() {
 		detector.update();
 	}
 
+	/**
+	 * Returns the main event detector instance.
+	 * 
+	 * @return the EventDetector for this event system
+	 */
 	public final EventDetector getDetector() {
 		return detector;
 	}
 
+	/**
+	 * Returns the threshold for enter-long events (hover duration before trigger).
+	 * 
+	 * @return the enter-long threshold in milliseconds
+	 */
 	public final long getEnterLongThreshold() {
 		return detector.enterLongDetector.getEnterLongThreshold();
 	}
 
+	/**
+	 * Sets the threshold for enter-long events.
+	 * 
+	 * @param enterLongThreshold the threshold in milliseconds (must be ≥ 0)
+	 * @throws IllegalArgumentException if threshold is less than 0
+	 */
 	public final void setEnterLongThreshold(long enterLongThreshold) {
 		detector.enterLongDetector.setEnterLongThreshold(enterLongThreshold);
 	}
 
+	/**
+	 * Returns the threshold for long-press events.
+	 * 
+	 * @return the long-press threshold in milliseconds
+	 */
 	public final long getLongPressThreshold() {
 		return detector.longPressDetector.getLongPressThreshold();
 	}
 
+	/**
+	 * Sets the threshold for long-press events.
+	 * 
+	 * @param longPressThreshold the threshold in milliseconds (must be ≥ 0)
+	 * @throws IllegalArgumentException if threshold is less than 0
+	 */
 	public final void setLongPressThreshold(long longPressThreshold) {
 		detector.longPressDetector.setLongPressThreshold(longPressThreshold);
 	}
 
+	/**
+	 * Returns the threshold for leave-long events (time after leaving before trigger).
+	 * 
+	 * @return the leave-long threshold in milliseconds
+	 */
 	public final long getLeaveLongThreshold() {
 		return detector.leaveLongDetector.getLeaveLongThreshold();
 	}
 
+	/**
+	 * Sets the threshold for leave-long events.
+	 * 
+	 * @param leaveLongThreshold the threshold in milliseconds (must be ≥ 0)
+	 * @throws IllegalArgumentException if threshold is less than 0
+	 */
 	public final void setLeaveLongThreshold(long leaveLongThreshold) {
 		detector.leaveLongDetector.setLeaveLongThreshold(leaveLongThreshold);
 	}
 
+	/**
+	 * Returns the threshold for double-click detection.
+	 * 
+	 * @return the double-click threshold in milliseconds
+	 */
 	public final long getDoubleClickThreshold() {
 		return detector.doubleClickDetector.getThreshold();
 	}
 
+	/**
+	 * Sets the threshold for double-click detection.
+	 * 
+	 * @param threshold the threshold in milliseconds (must be ≥ 0)
+	 * @throws IllegalArgumentException if threshold is less than 0
+	 */
 	public final void setDoubleClickThreshold(long threshold) {
 		detector.doubleClickDetector.setThreshold(threshold);
 	}
 
+	/**
+	 * Internal class containing all event detection logic and sub-detectors.
+	 */
 	protected final class EventDetector {
+		/** Default threshold for timing-based events. */
 		private static final long DEFAULT_THRESHOLD = 1000;
+		/** Default threshold for double-click detection. */
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
+		
+		/** Current hover state. */
 		private boolean isHover, isPressed;
 
+		// Sub-detectors for specific event types
 		private final PressDetector pressDetector;
 		private final ReleaseDetector releaseDetector;
 		private final LongPressDetector longPressDetector;
@@ -77,6 +162,9 @@ public abstract class AbstractEventSystem {
 		private final DraggingDetector draggingDetector;
 		private final DragEndDetector dragEndDetector;
 
+		/**
+		 * Constructs an EventDetector with all sub-detectors initialized.
+		 */
 		public EventDetector() {
 			super();
 
@@ -94,67 +182,146 @@ public abstract class AbstractEventSystem {
 			dragEndDetector = new DragEndDetector();
 		}
 
+		/**
+		 * Updates all detector states based on current input.
+		 */
 		public void update() {
 			isHover = isHover();
 			isPressed = isPressed();
 		}
 
+		/**
+		 * Checks if a press event was detected in the current frame.
+		 * 
+		 * @return true if press detected, false otherwise
+		 */
 		public boolean isPress() {
 			return pressDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a release event was detected in the current frame.
+		 * 
+		 * @return true if release detected, false otherwise
+		 */
 		public boolean isRelease() {
 			return releaseDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a long-press event was detected.
+		 * 
+		 * @return true if long-press detected, false otherwise
+		 */
 		public boolean isLongPress() {
 			return longPressDetector.isDetected();
 		}
 
+		/**
+		 * Checks if an enter (mouse enter) event was detected.
+		 * 
+		 * @return true if enter detected, false otherwise
+		 */
 		public boolean isEnter() {
 			return enterDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a leave (mouse leave) event was detected.
+		 * 
+		 * @return true if leave detected, false otherwise
+		 */
 		public boolean isLeave() {
 			return leaveDetector.isDetected();
 		}
 
+		/**
+		 * Checks if an enter-long (hover for extended time) event was detected.
+		 * 
+		 * @return true if enter-long detected, false otherwise
+		 */
 		public boolean isEnterLong() {
 			return enterLongDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a leave-long (left for extended time) event was detected.
+		 * 
+		 * @return true if leave-long detected, false otherwise
+		 */
 		public boolean isLeaveLong() {
 			return leaveLongDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a click event was detected.
+		 * 
+		 * @return true if click detected, false otherwise
+		 */
 		public boolean isClick() {
 			return clickDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a double-click event was detected.
+		 * 
+		 * @return true if double-click detected, false otherwise
+		 */
 		public boolean isDoubleClick() {
 			return doubleClickDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a drag start event was detected.
+		 * 
+		 * @return true if drag start detected, false otherwise
+		 */
 		public boolean isDragStart() {
 			return dragStartDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a dragging event is currently active.
+		 * 
+		 * @return true if currently dragging, false otherwise
+		 */
 		public boolean isDragging() {
 			return draggingDetector.isDetected();
 		}
 
+		/**
+		 * Checks if a drag end event was detected.
+		 * 
+		 * @return true if drag end detected, false otherwise
+		 */
 		public boolean isDragEnd() {
 			return dragEndDetector.isDetected();
 		}
 
+		/**
+		 * Checks if the mouse is currently pressed on this component.
+		 * 
+		 * @return true if pressed, false otherwise
+		 */
 		public boolean isPressed() {
 			return isHover && MicroUI.getContext().mousePressed;
 		}
 
+		/**
+		 * Checks if the mouse is currently released (not pressed) on this component.
+		 * 
+		 * @return true if released, false otherwise
+		 */
 		public boolean isReleased() {
 			return !isPressed;
 		}
 
+		/**
+		 * Checks if the mouse is currently hovering over this component.
+		 * Handles both ContentView (with padding) and basic SpatialView bounds.
+		 * 
+		 * @return true if hovering, false otherwise
+		 */
 		public boolean isHover() {
 
 			int mx = MicroUI.getContext().mouseX;
@@ -163,11 +330,13 @@ public abstract class AbstractEventSystem {
 			int x, y, w, h;
 
 			if (spatialView instanceof ContentView c) {
+				// Use padded bounds for ContentView (includes padding)
 				x = (int) c.getPadX();
 				y = (int) c.getPadY();
 				w = (int) c.getPadWidth();
 				h = (int) c.getPadHeight();
 			} else {
+				// Use basic bounds for SpatialView
 				x = (int) spatialView.getX();
 				y = (int) spatialView.getY();
 				w = (int) spatialView.getWidth();
@@ -179,6 +348,9 @@ public abstract class AbstractEventSystem {
 			return isHover;
 		}
 
+		/**
+		 * Detects mouse press events (initial mouse down while hovering).
+		 */
 		private final class PressDetector {
 			private boolean isPressHookCalled;
 			private long pressTime;
@@ -207,6 +379,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects mouse release events (mouse up after being pressed).
+		 */
 		private final class ReleaseDetector {
 			private boolean isReleaseHookCalled;
 			private long releaseTime;
@@ -236,6 +411,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects long-press events (mouse held down for extended duration).
+		 */
 		private final class LongPressDetector {
 			private final PressDetector pressDetectorInternal;
 			private boolean isLongPressHookCalled;
@@ -277,6 +455,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects mouse enter events (mouse moves into component bounds).
+		 */
 		private final class EnterDetector {
 			private boolean isEnterHookCalled;
 			private long enterTime;
@@ -303,6 +484,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects mouse leave events (mouse moves out of component bounds).
+		 */
 		private final class LeaveDetector {
 			private boolean isLeaveHookCalled;
 			private long leaveTime;
@@ -334,6 +518,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects enter-long events (mouse hovers over component for extended duration).
+		 */
 		private final class EnterLongDetector {
 			private final EnterDetector enterDetectorInternal;
 			private boolean isEnterLongHookCalled;
@@ -377,6 +564,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects leave-long events (mouse stays out of component bounds for extended duration).
+		 */
 		private final class LeaveLongDetector {
 			private final LeaveDetector leaveDetectorInternal;
 			private boolean isLeaveLongHookCalled;
@@ -421,6 +611,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects click events (press and release while hovering).
+		 */
 		private final class ClickDetector {
 			private boolean isCanCallHook;
 
@@ -443,6 +636,9 @@ public abstract class AbstractEventSystem {
 			}
 		}
 
+		/**
+		 * Detects double-click events (two clicks within time threshold).
+		 */
 		private final class DoubleClickDetector {
 			private final ClickDetector clickDetectorInternal;
 			private final ReleaseDetector releaseDetectorInternal;
@@ -489,6 +685,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects drag start events (mouse moved while pressed).
+		 */
 		private final class DragStartDetector {
 			private boolean isHookCalled;
 
@@ -515,6 +714,9 @@ public abstract class AbstractEventSystem {
 			}
 		}
 
+		/**
+		 * Detects ongoing dragging state.
+		 */
 		private final class DraggingDetector {
 			private final DragStartDetector dragStartDetector;
 
@@ -539,6 +741,9 @@ public abstract class AbstractEventSystem {
 
 		}
 
+		/**
+		 * Detects drag end events (mouse released after dragging).
+		 */
 		private final class DragEndDetector {
 			private final DragStartDetector dragStartDetector;
 			private boolean isDragEnd;
