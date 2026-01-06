@@ -2,7 +2,7 @@ package microui.core.style.theme;
 
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.core.style.GradientLoopColor;
+import microui.core.style.LerpedLoopColor;
 
 /**
  * Glass/transparent theme implementation with subtle animations and translucent effects.
@@ -18,7 +18,7 @@ import microui.core.style.GradientLoopColor;
  * @version 1.0
  * @see AbstractTheme
  * @see Color
- * @see GradientLoopColor
+ * @see LerpedLoopColor
  */
 public class ThemeGlass extends AbstractTheme {
 
@@ -30,7 +30,7 @@ public class ThemeGlass extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getBackgroundColor() {
-		return new GradientLoopColor(new Color(200, 200, 255, 32), new Color(255, 32));
+		return new LerpedLoopColor(new Color(200, 200, 255, 32), new Color(255, 32));
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class ThemeGlass extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getPrimaryColor() {
-		return new GradientLoopColor(new Color(100, 200, 232, 100), new Color(164, 164, 232, 32));
+		return new LerpedLoopColor(new Color(100, 200, 232, 100), new Color(164, 164, 232, 32));
 	}
 
 	/**

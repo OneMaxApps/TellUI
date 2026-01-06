@@ -2,8 +2,8 @@ package microui.core.style.theme;
 
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.core.style.GradientColor;
-import microui.core.style.GradientLoopColor;
+import microui.core.style.LerpedColor;
+import microui.core.style.LerpedLoopColor;
 
 /**
  * Light theme implementation with a white/gray color scheme and gradient effects.
@@ -19,8 +19,8 @@ import microui.core.style.GradientLoopColor;
  * @version 1.0
  * @see AbstractTheme
  * @see Color
- * @see GradientColor
- * @see GradientLoopColor
+ * @see LerpedColor
+ * @see LerpedLoopColor
  */
 public class ThemeWhite extends AbstractTheme {
 
@@ -142,7 +142,7 @@ public class ThemeWhite extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new GradientColor(new Color(232, 0), Color.GRAY_232L, () -> true);
+		return new LerpedColor(new Color(232, 0), Color.GRAY_232L, () -> true);
 
 	}
 
@@ -154,7 +154,7 @@ public class ThemeWhite extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.BLACK, new Color(0, 154)), () -> true);
+		return new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.BLACK, new Color(0, 154)), () -> true);
 	}
 	
 	/**

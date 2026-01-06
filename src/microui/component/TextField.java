@@ -16,8 +16,8 @@ import microui.core.controller.FullSingleLineTextController.ValidationMode;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.core.style.GradientColor;
-import microui.core.style.GradientLoopColor;
+import microui.core.style.LerpedColor;
+import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
@@ -1211,7 +1211,7 @@ public final class TextField extends Component implements KeyPressable {
     private void prepareBackgroundColor() {
         final AbstractColor tc = getTheme().getEditableBackgroundColor();
         final Color preFocusedColor = new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), 200);
-        final GradientColor gd = new GradientColor(preFocusedColor, tc, () -> isFocused());
+        final LerpedColor gd = new LerpedColor(preFocusedColor, tc, () -> isFocused());
         setBackgroundColor(gd);
     }
 
@@ -1295,7 +1295,7 @@ public final class TextField extends Component implements KeyPressable {
             });
             
             color = getTheme().getEditableTextColor();
-            hintColor = new GradientLoopColor(color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 232));
+            hintColor = new LerpedLoopColor(color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 232));
             recalculateY();
             setTextSize(textField.getHeight());
         }

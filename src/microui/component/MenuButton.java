@@ -20,8 +20,8 @@ import microui.core.exception.DuplicateItemException;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.core.style.GradientColor;
-import microui.core.style.GradientLoopColor;
+import microui.core.style.LerpedColor;
+import microui.core.style.LerpedLoopColor;
 import microui.core.style.Stroke;
 import microui.event.Listener;
 import microui.util.Debugger;
@@ -1739,7 +1739,7 @@ public final class MenuButton extends Button implements Scrollable {
 
             final AbstractColor c = getTheme().getMenuButtonItemTextColor();
             final AbstractColor c1 = new Color(c.getRed(), c.getGreen(), c.getBlue(), 200);
-            menuButton.setTextColor(new GradientLoopColor(c, c1).setSpeed(.05f));
+            menuButton.setTextColor(new LerpedLoopColor(c, c1).setSpeed(.05f));
         }
 
         /**
@@ -1971,8 +1971,8 @@ public final class MenuButton extends Button implements Scrollable {
             stroke = new Stroke();
             stroke.setWeight(2);
 
-            setColor(new GradientColor(Color.TRANSPARENT,
-                    new GradientLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
+            setColor(new LerpedColor(Color.TRANSPARENT,
+                    new LerpedLoopColor(Color.GRAY_232L, new Color(0, 0, 232, 64)).setSpeed(.01f),
                     () -> menu.isOpen() && !menu.isRoot()));
 
             setSpatialAnimator(new SpatialAnimator(new SpatialState(0, 0, 0, 0), menu, () -> menu.isOpen())

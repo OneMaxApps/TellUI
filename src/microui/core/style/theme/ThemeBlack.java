@@ -2,8 +2,8 @@ package microui.core.style.theme;
 
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.core.style.GradientColor;
-import microui.core.style.GradientLoopColor;
+import microui.core.style.LerpedColor;
+import microui.core.style.LerpedLoopColor;
 
 /**
  * Dark theme implementation with black/dark gray color scheme and gradient effects.
@@ -18,8 +18,8 @@ import microui.core.style.GradientLoopColor;
  * @version 1.0
  * @see AbstractTheme
  * @see Color
- * @see GradientColor
- * @see GradientLoopColor
+ * @see LerpedColor
+ * @see LerpedLoopColor
  */
 public class ThemeBlack extends AbstractTheme {
 
@@ -141,7 +141,7 @@ public class ThemeBlack extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new GradientColor(Color.TRANSPARENT, new Color(0, 200), () -> true);
+		return new LerpedColor(Color.TRANSPARENT, new Color(0, 200), () -> true);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class ThemeBlack extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new GradientColor(Color.TRANSPARENT, new GradientLoopColor(Color.WHITE, new Color(255, 154)),
+		return new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.WHITE, new Color(255, 154)),
 				() -> true);
 	}
 
