@@ -44,7 +44,6 @@ public class Scroll extends LinearRangeControl {
         thumb.setTextVisible(false);
         thumb.setBackgroundColor(getTheme().getPrimaryColor());
 
-        // Handle thumb dragging
         thumb.onDragging(() -> {
             calcDistFromMouseToThumb();
 
@@ -83,38 +82,6 @@ public class Scroll extends LinearRangeControl {
         this(0, 0, 0, 0);
         setSize(getMaxWidth(), getMaxHeight());
         setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
-    }
-
-    /**
-     * Renders the scrollbar and its thumb.
-     * The rendering includes the track (from parent class) and the draggable thumb.
-     */
-    @Override
-    protected void render() {
-        super.render();
-        thumb.draw();
-    }
-
-    /**
-     * Calculates the distance from the mouse cursor to the thumb's origin.
-     * This is used to maintain the relative mouse position when dragging the thumb.
-     */
-    private final void calcDistFromMouseToThumb() {
-        if (!needRecalculateDistToThumb) {
-            return;
-        }
-
-        switch (getOrientation()) {
-        case HORIZONTAL:
-            distToThumb = thumb.getX() - ctx.mouseX;
-            break;
-
-        case VERTICAL:
-            distToThumb = thumb.getY() - ctx.mouseY;
-            break;
-        }
-
-        needRecalculateDistToThumb = false;
     }
 
     /**
@@ -306,6 +273,16 @@ public class Scroll extends LinearRangeControl {
     }
 
     /**
+     * Renders the scrollbar and its thumb.
+     * The rendering includes the track (from parent class) and the draggable thumb.
+     */
+    @Override
+    protected void render() {
+        super.render();
+        thumb.draw();
+    }
+    
+    /**
      * Called when the scrollbar's bounds change.
      * Updates the thumb's position and dimensions to match the new bounds.
      */
@@ -318,12 +295,25 @@ public class Scroll extends LinearRangeControl {
         }
         updateThumbTransforms();
     }
+    
+    private final void calcDistFromMouseToThumb() {
+        if (!needRecalculateDistToThumb) {
+            return;
+        }
 
-    /**
-     * Updates the thumb's position and dimensions based on the current scrollbar state.
-     * The thumb is positioned according to the current value and sized according to
-     * the thumbSizeRatio and orientation.
-     */
+        switch (getOrientation()) {
+        case HORIZONTAL:
+            distToThumb = thumb.getX() - ctx.mouseX;
+            break;
+
+        case VERTICAL:
+            distToThumb = thumb.getY() - ctx.mouseY;
+            break;
+        }
+
+        needRecalculateDistToThumb = false;
+    }
+
     private final void updateThumbTransforms() {
         thumb.setBounds(getX(), getY(), getWidth(), getHeight());
 

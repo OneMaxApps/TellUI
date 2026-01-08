@@ -1,6 +1,25 @@
 package microui.component;
 
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_C;
+import static java.awt.event.KeyEvent.VK_DELETE;
+import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_END;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_EQUALS;
+import static java.awt.event.KeyEvent.VK_HOME;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_MINUS;
+import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_TAB;
+import static java.awt.event.KeyEvent.VK_UP;
+import static java.awt.event.KeyEvent.VK_V;
+import static java.awt.event.KeyEvent.VK_X;
+import static java.awt.event.KeyEvent.VK_Y;
+import static java.awt.event.KeyEvent.VK_Z;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
@@ -12,10 +31,10 @@ import static processing.core.PConstants.TOP;
 import java.util.HashMap;
 import java.util.Map;
 
-import microui.constants.Direction;
 import microui.core.BufferedView;
 import microui.core.GraphicsBuffer;
 import microui.core.TextEditorModel;
+import microui.core.TextEditorModel.Direction;
 import microui.core.base.Component;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
@@ -50,10 +69,7 @@ import processing.event.MouseEvent;
  * and includes sophisticated cursor positioning and scrolling behavior.</p>
  */
 public final class TextArea extends Component implements KeyPressable, Scrollable {
-    /** Minimum size for the text area. */
     private static final int MIN_SIZE = 100;
-    
-    /** Maximum size for the text area. */
     private static final int MAX_SIZE = 1000;
     
     private final TextEditorModel textEditorModel;
@@ -99,8 +115,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         cursorSearch = new CursorSearch(this);
         stateConfig = new StateConfig();
         
-        // Set up text change listener
-        textEditorModel.setOnTextChangedListener(() -> {
+       textEditorModel.setOnTextChangedListener(() -> {
             textMetricsPool.clearCache();
             scrollManager.recalculateRanges();
             
@@ -109,7 +124,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         });
 
-        // Set up style change listener
         textStyle.setOnStyleChangedListener(() -> {
             textMetricsPool.clearCache();
             scrollManager.recalculateRanges();
@@ -119,7 +133,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         });
         
-        // Mouse press handler
         onPress(() -> {
             if (ctx.mouseButton == LEFT) {
                 setFocused(true);
@@ -132,7 +145,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         });
 
-        // Mouse dragging handler
         onDragging(() -> {
             if (ctx.mouseButton == LEFT) {
                 scrollOnDragging();
@@ -144,8 +156,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         });
 
-        // Double-click handler
-        onDoubleClick(() -> {
+       onDoubleClick(() -> {
             if (ctx.mouseButton == LEFT) {
                 selectWordUnderCursor();
             }
@@ -478,10 +489,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         graphics.setBoundsFrom(this);
     }
 
-    /**
-     * Selects the word under the current cursor position.
-     * Used for double-click selection behavior.
-     */
     private void selectWordUnderCursor() {
         final int row = textEditorModel.getCursorRow();
         final int column = textEditorModel.getCursorColumn();
@@ -533,10 +540,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         textEditorModel.setSelection(row, row, startOfWord, endOfWord);
     }
 
-    /**
-     * Sets the cursor position based on current mouse coordinates.
-     * Maps mouse position to the nearest character position in the text.
-     */
     private void setCursorPositionMappedFromMouse() {
         final TextEditorModel m = textEditorModel;
 
@@ -565,10 +568,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         m.setCursorColumn(nearlyColumn);
     }
 
-    /**
-     * Handles scrolling behavior during mouse dragging.
-     * Updates cursor position and performs soft cursor search.
-     */
     private void scrollOnDragging() {
         if (scrollManager.isScrolling()) {
             return;
@@ -578,41 +577,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         cursorSearch.findSoftly();
     }
 
-    /**
-     * Determines if the text area should lose focus.
-     * Loses focus when mouse is pressed outside the component while not dragging.
-     *
-     * @return true if focus should be lost, false otherwise
-     */
     private boolean mustLoseFocus() {
         return !isDragging() && ctx.mousePressed && !isHover();
     }
 
-    /**
-     * Draws the text area background.
-     */
     private void backgroundOnDraw() {
         getBackgroundColor().apply();
         ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
     }
 
-    /**
-     * Internal class for managing horizontal and vertical scrolling.
-     */
     private static final class ScrollManager {
-        /** Scrollbar thickness. */
         private static final int WEIGHT = 10;
         
         private final TextArea textArea;
         private final Scroll scrollH, scrollV;
         private boolean scrolling;
 
-        /**
-         * Constructs a ScrollManager for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public ScrollManager(TextArea textArea) {
             super();
             this.textArea = requireNonNull(textArea, "textArea");
@@ -624,10 +604,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             recalculateBounds();
         }
 
-        /**
-         * Draws the scrollbars if they are visible and text area is focused.
-         * Terminates soft cursor searching while scrolling.
-         */
         public void onDraw() {
             if (textArea.isFocused() && !textArea.textEditorModel.hasSelection()) {
                 scrollH.draw();
@@ -641,36 +617,18 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Checks if scrolling is currently active.
-         *
-         * @return true if either scrollbar is being dragged, false otherwise
-         */
         public boolean isScrolling() {
             return scrolling;
         }
 
-        /**
-         * Gets the current horizontal scroll value.
-         *
-         * @return the horizontal scroll position
-         */
         public float getHorizontalScrollValue() {
             return scrollH.getValue();
         }
 
-        /**
-         * Gets the current vertical scroll value.
-         *
-         * @return the vertical scroll position
-         */
         public float getVerticalScrollValue() {
             return scrollV.getValue();
         }
 
-        /**
-         * Recalculates scrollbar bounds based on text area dimensions.
-         */
         public void recalculateBounds() {
             final TextArea t = textArea;
 
@@ -681,10 +639,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             scrollV.setPosition(t.getX() + t.getWidth() - WEIGHT, t.getY());
         }
 
-        /**
-         * Recalculates scrollbar ranges based on text content dimensions.
-         * Hides scrollbars when they are not needed.
-         */
         public void recalculateRanges() {
             final float calculatedScrollHMax = textArea.textMetricsPool.getMaxWidth() - textArea.getWidth() * .8f;
             scrollH.setMaxValue(Math.max(scrollH.getMinValue(), calculatedScrollHMax));
@@ -697,12 +651,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             scrollV.setVisible(calculatedScrollVMin < scrollV.getMaxValue());
         }
 
-        /**
-         * Handles mouse wheel events for scrolling.
-         * Scrolls vertically when text area is hovered, scrolls scrollbars when they are hovered.
-         *
-         * @param mouseEvent the mouse wheel event
-         */
         public void mouseWheel(MouseEvent mouseEvent) {
             scrollH.mouseWheel(mouseEvent);
             scrollV.mouseWheel(mouseEvent);
@@ -715,9 +663,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Prepares default scrollbar styling.
-         */
         private void prepareStyle() {
             scrollH.setConstrainDimensionsEnabled(false);
             scrollH.setValue(0);
@@ -736,11 +681,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal cache for text width measurements to improve performance.
-     */
     private static final class TextMetricsPool {
-        /** Graphics context for text measurement. */
         private static final PGraphics GRAPHICS = ctx.createGraphics(1, 1, ctx.sketchRenderer());
         
         private final TextArea textArea;
@@ -748,27 +689,12 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
         private float maxWidth, totalHeight;
 
-        /**
-         * Constructs a TextMetricsPool for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public TextMetricsPool(TextArea textArea) {
             super();
             this.textArea = requireNonNull(textArea, "textArea");
             maxWidth = totalHeight = -1;
         }
 
-        /**
-         * Gets the width of a text segment within a line.
-         * Results are cached for performance.
-         *
-         * @param row the line index
-         * @param columnStart the starting column
-         * @param columnEnd the ending column
-         * @return the width of the text segment in pixels
-         */
         public float getTextWidth(int row, int columnStart, int columnEnd) {
             final Long key = getGeneratedKey(row, columnStart, columnEnd);
 
@@ -781,21 +707,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Gets the width of an entire line.
-         *
-         * @param row the line index
-         * @return the width of the entire line in pixels
-         */
         public float getTextWidth(int row) {
             return getTextWidth(row, 0, textArea.textEditorModel.getLineLength(row));
         }
 
-        /**
-         * Gets the maximum width among all lines.
-         *
-         * @return the maximum line width in pixels
-         */
         public float getMaxWidth() {
             if (maxWidth == -1) {
                 final int linesCount = textArea.getLinesCount();
@@ -808,11 +723,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             return maxWidth;
         }
 
-        /**
-         * Gets the total height of all lines.
-         *
-         * @return the total height in pixels
-         */
         public float getTotalHeight() {
             if (totalHeight == -1) {
                 totalHeight = textArea.getLinesCount() * textArea.getTextSize();
@@ -821,23 +731,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             return totalHeight;
         }
 
-        /**
-         * Clears the text measurement cache.
-         * Called when text content or styling changes.
-         */
         public void clearCache() {
             map.clear();
             maxWidth = totalHeight = -1;
         }
 
-        /**
-         * Calculates the width of a text segment.
-         *
-         * @param row the line index
-         * @param startColumn the starting column
-         * @param endColumn the ending column
-         * @return the calculated width in pixels
-         */
         private float getCalculatedTextWidth(int row, int startColumn, int endColumn) {
             final TextEditorModel model = textArea.textEditorModel;
             final String text = model.getLineText(row);
@@ -861,54 +759,24 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             return textWidth;
         }
 
-        /**
-         * Calculates the width of an entire line.
-         *
-         * @param row the line index
-         * @return the calculated line width in pixels
-         */
         public float getCalculatedTextWidth(int row) {
             return getCalculatedTextWidth(row, 0, textArea.textEditorModel.getLineLength(row));
         }
 
-        /**
-         * Generates a cache key from row and column indices.
-         * Uses bit packing to combine three integers into one long.
-         *
-         * @param row the line index
-         * @param startColumn the starting column
-         * @param endColumn the ending column
-         * @return a unique key for the cache
-         */
         private static long getGeneratedKey(int row, int startColumn, int endColumn) {
             return ((long) (row & 0xFFFFF) << 40) | ((long) (startColumn & 0xFFFFF) << 20) | (endColumn & 0xFFFFF);
         }
     }
 
-    /**
-     * Internal class for rendering text content.
-     */
     private static final class TextRenderer extends BufferedView {
         private final TextArea textArea;
 
-        /**
-         * Constructs a TextRenderer for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public TextRenderer(TextArea textArea) {
             super();
             setVisible(true);
             this.textArea = requireNonNull(textArea, "textArea");
         }
 
-        /**
-         * Renders text lines with proper positioning and scrolling.
-         * Only renders lines that are visible in the current viewport.
-         *
-         * @param p the graphics context to render to
-         */
         @Override
         protected void render(PGraphics p) {
             final int linesCount = textArea.textEditorModel.getLineCount();
@@ -933,27 +801,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             p.popStyle();
         }
 
-        /**
-         * Checks if a line at the given Y position should be rendered.
-         * Optimizes rendering by only drawing lines within the visible area.
-         *
-         * @param positionY the Y position of the line
-         * @return true if the line should be rendered, false otherwise
-         */
         private boolean mustBeRendered(float positionY) {
             final float textSize = textArea.getTextSize();
             return positionY > -textSize && positionY < textArea.getHeight();
         }
     }
 
-    /**
-     * Internal class for rendering the text cursor.
-     */
     private static final class CursorRenderer extends BufferedView {
-        /** Minimum cursor weight. */
         private static final byte MIN_WEIGHT = 1;
-        
-        /** Default cursor weight. */
         private static final byte DEFAULT_WEIGHT = 2;
         
         private final TextArea textArea;
@@ -961,12 +816,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         private AbstractColor color;
         private float weight;
 
-        /**
-         * Constructs a CursorRenderer for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public CursorRenderer(TextArea textArea) {
             super();
             setVisible(true);
@@ -977,41 +826,19 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             setColor(Color.BLACK);
             setWeight(DEFAULT_WEIGHT);
         }
-
-        /**
-         * Gets the cursor color.
-         *
-         * @return the current cursor color
-         */
+        
         public AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the cursor color.
-         *
-         * @param color the cursor color
-         * @throws NullPointerException if color is null
-         */
         public void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }
 
-        /**
-         * Gets the cursor stroke weight.
-         *
-         * @return the current cursor weight
-         */
         public float getWeight() {
             return weight;
         }
 
-        /**
-         * Sets the cursor stroke weight.
-         *
-         * @param weight the cursor weight
-         * @throws IllegalArgumentException if weight is less than MIN_WEIGHT
-         */
         public void setWeight(float weight) {
             if (weight < MIN_WEIGHT) {
                 throw new IllegalArgumentException("Cursor weight cannot be less than " + MIN_WEIGHT);
@@ -1019,12 +846,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             this.weight = weight;
         }
 
-        /**
-         * Renders the cursor if it should be visible.
-         * The cursor blinks when inactive and becomes solid during interaction.
-         *
-         * @param pGraphics the graphics context to render to
-         */
         @Override
         protected void render(PGraphics pGraphics) {
             if (!textArea.isFocused()) {
@@ -1045,12 +866,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             pGraphics.line(posX, posY, posX, posY + height);
         }
 
-        /**
-         * Calculates the X position of the cursor.
-         * Accounts for horizontal scrolling and text width up to the cursor.
-         *
-         * @return the X coordinate for cursor rendering
-         */
         private float getX() {
             final TextEditorModel model = textArea.textEditorModel;
 
@@ -1066,12 +881,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             return posX;
         }
 
-        /**
-         * Calculates the Y position of the cursor.
-         * Accounts for vertical scrolling and line height.
-         *
-         * @return the Y coordinate for cursor rendering
-         */
         private float getY() {
             final TextEditorModel model = textArea.textEditorModel;
 
@@ -1084,32 +893,17 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             return posY;
         }
 
-        /**
-         * Internal timer for cursor blinking behavior.
-         */
         private final class BlinkTimer {
-            /** Blink cycle duration in milliseconds. */
             private static short ONE_SECOND_IN_MS = 1000;
-            
-            /** Time cursor stays visible/invisible during blink cycle. */
             private static short HALF_SECOND_IN_MS = 500;
             
             private long lastBlinkTime, delta;
 
-            /**
-             * Constructs a BlinkTimer.
-             */
             public BlinkTimer() {
                 super();
                 lastBlinkTime = System.currentTimeMillis();
             }
 
-            /**
-             * Determines if the cursor should blink (be invisible).
-             * Resets the timer during user interaction.
-             *
-             * @return true if the cursor should be invisible, false if visible
-             */
             public boolean isMustBlink() {
                 final long now = System.currentTimeMillis();
 
@@ -1133,19 +927,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal class for rendering text selection highlights.
-     */
     private static final class SelectionRenderer extends BufferedView {
         private final TextArea textArea;
         private AbstractColor color;
 
-        /**
-         * Constructs a SelectionRenderer for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public SelectionRenderer(TextArea textArea) {
             super();
             setVisible(true);
@@ -1155,31 +940,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             setColor(getTheme().getSelectColor());
         }
 
-        /**
-         * Gets the selection highlight color.
-         *
-         * @return the current selection color
-         */
         public AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the selection highlight color.
-         *
-         * @param color the selection color
-         * @throws NullPointerException if color is null
-         */
         public void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }
 
-        /**
-         * Renders text selection highlights.
-         * Handles both single-line and multi-line selections.
-         *
-         * @param pGraphics the graphics context to render to
-         */
         @Override
         protected void render(PGraphics pGraphics) {
             final TextEditorModel m = textArea.textEditorModel;
@@ -1245,36 +1013,21 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal class for managing text styling properties.
-     */
     private static final class TextStyle {
-        /** Default text size. */
         private static final int DEFAULT_TEXT_SIZE = 12;
-        
-        /** Minimum text size. */
         private static final int MIN_TEXT_SIZE = 4;
         
         private AbstractColor textColor;
         private PFont font;
         private Listener onTextStyleChangedListener;
         private int textSize;
-
-        /**
-         * Constructs a TextStyle with default values.
-         */
+        
         public TextStyle(TextArea textArea) {
             super();
             setTextColor(getTheme().getEditableTextColor());
             setTextSize(DEFAULT_TEXT_SIZE);
         }
 
-        /**
-         * Applies text style properties to a graphics context.
-         *
-         * @param pGraphics the graphics context to style
-         * @throws NullPointerException if pGraphics is null
-         */
         public void apply(PGraphics pGraphics) {
             requireNonNull(pGraphics, "pGraphics");
             textColor.apply(pGraphics);
@@ -1286,40 +1039,18 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             pGraphics.textAlign(LEFT, TOP);
         }
 
-        /**
-         * Gets the text color.
-         *
-         * @return the current text color
-         */
         public AbstractColor getTextColor() {
             return textColor;
         }
 
-        /**
-         * Sets the text color.
-         *
-         * @param textColor the text color
-         * @throws NullPointerException if textColor is null
-         */
         public void setTextColor(AbstractColor textColor) {
             this.textColor = requireNonNull(textColor, "textColor");
         }
 
-        /**
-         * Gets the current font.
-         *
-         * @return the current font, or null if using default
-         */
         public PFont getFont() {
             return font;
         }
 
-        /**
-         * Sets the font for text rendering.
-         *
-         * @param font the font to use
-         * @throws NullPointerException if font is null
-         */
         public void setFont(PFont font) {
             if (this.font == font) {
                 return;
@@ -1329,21 +1060,10 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             onTextStyleChanged();
         }
 
-        /**
-         * Gets the text size in pixels.
-         *
-         * @return the current text size
-         */
         public int getTextSize() {
             return textSize;
         }
 
-        /**
-         * Sets the text size in pixels.
-         *
-         * @param textSize the text size
-         * @throws IllegalArgumentException if textSize is less than MIN_TEXT_SIZE
-         */
         public void setTextSize(int textSize) {
             if (textSize < MIN_TEXT_SIZE) {
                 throw new IllegalArgumentException("Text size must be greater or equal: " + MIN_TEXT_SIZE);
@@ -1357,39 +1077,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             onTextStyleChanged();
         }
 
-        /**
-         * Notifies listeners when text style changes.
-         */
         public void onTextStyleChanged() {
             if (onTextStyleChangedListener != null) {
                 onTextStyleChangedListener.action();
             }
         }
 
-        /**
-         * Sets the listener for style changes.
-         *
-         * @param onTextSizeChangedListener the style change listener
-         */
         public void setOnStyleChangedListener(Listener onTextSizeChangedListener) {
             this.onTextStyleChangedListener = onTextSizeChangedListener;
         }
     }
 
-    /**
-     * Internal class for handling keyboard input and navigation.
-     */
     private static final class KeyController {
         private final TextArea textArea;
         private final ShiftController shiftController;
         private final ControlController controlController;
         
-        /**
-         * Constructs a KeyController for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public KeyController(TextArea textArea) {
             super();
             this.textArea = requireNonNull(textArea, "textArea");
@@ -1398,12 +1101,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             controlController = new ControlController(textArea);
         }
         
-        /**
-         * Routes key input to appropriate handlers based on modifier keys.
-         *
-         * @param keyEvent the key event
-         * @throws NullPointerException if keyEvent is null
-         */
         public void keyInput(KeyEvent keyEvent) {
             requireNonNull(keyEvent, "keyEvent");
 
@@ -1460,9 +1157,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Handles left arrow key press (move cursor left).
-         */
         private void onKeyLeftPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1488,9 +1182,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles right arrow key press (move cursor right).
-         */
         private void onKeyRightPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1516,9 +1207,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles up arrow key press (move cursor up).
-         */
         private void onKeyUpPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1537,9 +1225,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Handles down arrow key press (move cursor down).
-         */
         private void onKeyDownPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1558,9 +1243,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Handles home key press (move cursor to start of line).
-         */
         private void onKeyHomePressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1581,9 +1263,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles end key press (move cursor to end of line).
-         */
         private void onKeyEndPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1604,9 +1283,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles page up key press (move cursor to start of text).
-         */
         private void onKeyPageUpPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1625,9 +1301,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Handles page down key press (move cursor to end of text).
-         */
         private void onKeyPageDownPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1646,9 +1319,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Handles backspace key press (delete character before cursor).
-         */
         private void onKeyBackspacePressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1686,9 +1356,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles delete key press (delete character after cursor).
-         */
         private void onKeyDeletePressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1719,9 +1386,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             m.removeChar();
         }
 
-        /**
-         * Handles enter key press (insert new line).
-         */
         private void onKeyEnterPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1740,11 +1404,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Handles printable character key presses.
-         *
-         * @param keyEvent the key event containing the character
-         */
         private void onPrintableKeyPressed(final KeyEvent keyEvent) {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1769,9 +1428,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
         
-        /**
-         * Handles tab key press (insert spaces or manage indentation).
-         */
         private void onKeyTabPressed() {
             final TextEditorModel m = textArea.textEditorModel;
             final CursorSearch cs = textArea.cursorSearch;
@@ -1784,7 +1440,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 final int cr = m.getCursorRow();
                 final int cc = m.getCursorColumn();
                 
-                // Indent all selected lines
                 for (int i = m.getSelectionEffectiveStartRow(); i <= m.getSelectionEffectiveEndRow(); i++) {
                     m.setCursorRow(i);
                     m.setCursorColumn(0);
@@ -1805,7 +1460,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 return;
             }
             
-            // Insert spaces for tab
             for (int i = 0; i < textArea.getTabSize(); i++) {
                 m.insertChar(' ');
                 m.moveCursorTo(Direction.RIGHT);
@@ -1814,29 +1468,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             cs.startSoftlySearching();
         }
 
-        /**
-         * Internal controller for shift-modified key operations (selection).
-         */
         private static final class ShiftController {
             private final TextArea textArea;
 
-            /**
-             * Constructs a ShiftController for the text area.
-             *
-             * @param textArea the parent text area
-             * @throws NullPointerException if textArea is null
-             */
             public ShiftController(TextArea textArea) {
                 super();
                 this.textArea = requireNonNull(textArea, "textArea");
             }
 
-            /**
-             * Handles shift-modified key input for text selection.
-             *
-             * @param keyEvent the key event
-             * @throws NullPointerException if keyEvent is null
-             */
             public void keyInput(KeyEvent keyEvent) {
                 requireNonNull(keyEvent, "keyEvent");
 
@@ -1891,10 +1530,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                     break;
                 }
             }
-
-            /**
-             * Handles shift+left arrow (extend selection left).
-             */
+            
             private void onKeyLeftPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -1918,9 +1554,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.startSoftlySearching();
             }
 
-            /**
-             * Handles shift+right arrow (extend selection right).
-             */
             private void onKeyRightPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -1944,9 +1577,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.startSoftlySearching();
             }
         
-            /**
-             * Handles shift+up arrow (extend selection up).
-             */
             private void onKeyUpPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -1960,9 +1590,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 }
             }
             
-            /**
-             * Handles shift+down arrow (extend selection down).
-             */
             private void onKeyDownPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -1975,10 +1602,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                     cs.startSoftlySearching();
                 }
             }
-        
-            /**
-             * Handles shift+home (extend selection to line start).
-             */
+
             private void onKeyHomePressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -1993,9 +1617,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.startSoftlySearching();
             }
             
-            /**
-             * Handles shift+end (extend selection to line end).
-             */
             private void onKeyEndPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2010,9 +1631,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.startSoftlySearching();
             }
         
-            /**
-             * Handles shift+page up (extend selection to text start).
-             */
             private void onKeyPageUpPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2026,9 +1644,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 }
             }
         
-            /**
-             * Handles shift+page down (extend selection to text end).
-             */
             private void onKeyPageDownPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2042,9 +1657,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 }
             }
             
-            /**
-             * Handles shift+tab (outdent/remove indentation).
-             */
             private void onKeyTabPressed() {
                 if (!textArea.isEditable()) {
                     return;
@@ -2060,7 +1672,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                     final int sr = m.getSelectionEffectiveStartRow();
                     final int er = m.getSelectionEffectiveEndRow();
                     
-                    // Check if all selected lines have enough leading spaces
                     for (int i = sr; i <= er; i++) {
                         final String text = m.getLineText(i);
                         
@@ -2081,8 +1692,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                         final int cr = m.getCursorRow();
                         final int cc = m.getCursorColumn();
                         
-                        // Remove leading spaces from all selected lines
-                        for (int i = sr; i <= er; i++) {
+                         for (int i = sr; i <= er; i++) {
                             m.setCursorRow(i);
                             m.setCursorColumn(0);
                             for (int j = 0; j < ts; j++) {
@@ -2121,29 +1731,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
         
-        /**
-         * Internal controller for control-modified key operations (commands).
-         */
         private static final class ControlController {
             private final TextArea textArea;
             
-            /**
-             * Constructs a ControlController for the text area.
-             *
-             * @param textArea the parent text area
-             * @throws NullPointerException if textArea is null
-             */
             public ControlController(TextArea textArea) {
                 super();
                 this.textArea = requireNonNull(textArea, "textArea");
             }
-            
-            /**
-             * Handles control-modified key input for commands.
-             *
-             * @param keyEvent the key event
-             * @throws NullPointerException if keyEvent is null
-             */
+
             public void keyInput(KeyEvent keyEvent) {
                 requireNonNull(keyEvent, "keyEvent");
                 
@@ -2174,17 +1769,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 }
             }
             
-            /**
-             * Handles Ctrl+A (select all).
-             */
             private void onKeyAPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 m.selectAll();
             }
             
-            /**
-             * Handles Ctrl+Z (undo).
-             */
             private void onKeyZPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2197,9 +1786,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.find();
             }
             
-            /**
-             * Handles Ctrl+X (cut).
-             */
             private void onKeyXPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 
@@ -2211,17 +1797,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 m.removeSelectedText();
             }
             
-            /**
-             * Handles Ctrl+C (copy).
-             */
             private void onKeyCPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 Clipboard.set(m.getSelectedText());
             }
             
-            /**
-             * Handles Ctrl+V (paste).
-             */
             private void onKeyVPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2275,9 +1855,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.startSoftlySearching();
             }
             
-            /**
-             * Handles Ctrl+Y (redo).
-             */
             private void onKeyYPressed() {
                 final TextEditorModel m = textArea.textEditorModel;
                 final CursorSearch cs = textArea.cursorSearch;
@@ -2290,9 +1867,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.find();
             }
             
-            /**
-             * Handles Ctrl+- (decrease text size).
-             */
             private void onKeyMinusPressed() {
                 final CursorSearch cs = textArea.cursorSearch;
                 final int textSize = textArea.getTextSize();
@@ -2306,9 +1880,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
                 cs.find();
             }
             
-            /**
-             * Handles Ctrl+= (increase text size).
-             */
             private void onKeyPlusPressed() {
                 final CursorSearch cs = textArea.cursorSearch;
                 final int textSize = textArea.getTextSize();
@@ -2319,41 +1890,21 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal configuration for dragging/scrolling speed.
-     */
     private static final class HandleDraggingConfig {
-        /** Default dragging speed. */
         private static final int DEFAULT_DRAGGING_SPEED = 10;
-        
-        /** Minimum dragging speed. */
         private static final int MIN_DRAGGING_SPEED = 1;
         
         private float draggingSpeed;
 
-        /**
-         * Constructs a HandleDraggingConfig with default speed.
-         */
         public HandleDraggingConfig() {
             super();
             setDraggingSpeed(DEFAULT_DRAGGING_SPEED);
         }
 
-        /**
-         * Gets the dragging speed.
-         *
-         * @return the current dragging speed
-         */
         public float getDraggingSpeed() {
             return draggingSpeed;
         }
 
-        /**
-         * Sets the dragging speed.
-         *
-         * @param draggingSpeed the dragging speed to set
-         * @throws IllegalArgumentException if draggingSpeed is less than MIN_DRAGGING_SPEED
-         */
         public void setDraggingSpeed(float draggingSpeed) {
             if (draggingSpeed < MIN_DRAGGING_SPEED) {
                 throw new IllegalArgumentException("Speed for dragging must be greater than: " + MIN_DRAGGING_SPEED);
@@ -2362,50 +1913,29 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal class for managing cursor positioning and scrolling during interaction.
-     */
     private static final class CursorSearch {
         private final TextArea textArea;
         private boolean softlySearching;
 
-        /**
-         * Constructs a CursorSearch for the text area.
-         *
-         * @param textArea the parent text area
-         * @throws NullPointerException if textArea is null
-         */
         public CursorSearch(TextArea textArea) {
             super();
             this.textArea = requireNonNull(textArea, "textArea");
         }
 
-        /**
-         * Starts soft cursor searching (automatic scrolling when cursor is near edges).
-         */
         public void startSoftlySearching() {
             softlySearching = true;
         }
 
-        /**
-         * Stops soft cursor searching.
-         */
         public void terminateSoftlySearching() {
             softlySearching = false;
         }
 
-        /**
-         * Updates cursor search state, performing soft search if active.
-         */
         public void updateState() {
             if (softlySearching) {
                 findSoftly();
             }
         }
 
-        /**
-         * Performs soft cursor search - automatically scrolls when cursor is near edges.
-         */
         private void findSoftly() {
             final Scroll sH = textArea.scrollManager.scrollH;
             final Scroll sV = textArea.scrollManager.scrollV;
@@ -2415,26 +1945,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
             final float draggingSpeed = textArea.handleDraggingConfig.getDraggingSpeed();
 
-            // Scroll left if cursor is in left 20% of visible area
             if (cx < textArea.getWidth() * .2f) {
                 final float speed = MathUtils.convert(cx, 0, textArea.getWidth() * .2f, -draggingSpeed, 0);
                 sH.appendValue(speed);
             }
 
-            // Scroll right if cursor is in right 20% of visible area
             if (cx > textArea.getWidth() * .8f) {
                 final float speed = MathUtils.convert(cx, textArea.getWidth() * .8f, textArea.getWidth(), 0,
                         draggingSpeed);
                 sH.appendValue(speed);
             }
 
-            // Scroll up if cursor is in top 20% of visible area
             if (cy < textArea.getHeight() * .2f) {
                 final float speed = MathUtils.convert(cy, 0, textArea.getHeight() * .2f, draggingSpeed, 0);
                 sV.appendValue(speed);
             }
 
-            // Scroll down if cursor is in bottom 20% of visible area
             if (cy > textArea.getHeight() * .8f) {
                 final float speed = MathUtils.convert(cy, textArea.getHeight() * .8f, textArea.getHeight(), 0,
                         -draggingSpeed);
@@ -2442,9 +1968,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
             }
         }
 
-        /**
-         * Centers the viewport on the current cursor position.
-         */
         private void find() {
             final TextEditorModel m = textArea.textEditorModel;
             final TextMetricsPool tmp = textArea.textMetricsPool;
@@ -2458,62 +1981,30 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
 
-    /**
-     * Internal utility for validating printable characters.
-     */
     private static final class CharChecker {
-        /** String containing all valid special characters. */
         private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 
-        /**
-         * Checks if a character is valid for text input.
-         *
-         * @param ch the character to check
-         * @return true if the character is valid, false otherwise
-         */
         public static boolean isValid(final char ch) {
             return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
         }
     }
-    
-    /**
-     * Internal configuration for tab behavior.
-     */
+
     private static final class TabConfig {
-        /** Minimum tab size. */
         private static final byte MIN_TAB_SIZE = 1;
-        
-        /** Maximum tab size. */
         private static final byte MAX_TAB_SIZE = 8;
-        
-        /** Default tab size. */
         private static final byte DEFAULT_TAB_SIZE = 2;
         
         private int tabSize;
         
-        /**
-         * Constructs a TabConfig with default tab size.
-         */
         public TabConfig() {
             super();
             setTabSize(DEFAULT_TAB_SIZE);
         }
-        
-        /**
-         * Gets the current tab size.
-         *
-         * @return the tab size
-         */
+
         public int getTabSize() {
             return tabSize;
         }
 
-        /**
-         * Sets the tab size.
-         *
-         * @param tabSize the tab size to set
-         * @throws IllegalArgumentException if tabSize is not between MIN_TAB_SIZE and MAX_TAB_SIZE
-         */
         public void setTabSize(int tabSize) {
             if (tabSize < MIN_TAB_SIZE || tabSize > MAX_TAB_SIZE) {
                 throw new IllegalArgumentException("Tab size must be between " + MIN_TAB_SIZE + " and " + MAX_TAB_SIZE);
@@ -2523,53 +2014,27 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
         }
     }
     
-    /**
-     * Internal configuration for text area state.
-     */
     private static final class StateConfig {
         private boolean focused, editable;
 
-        /**
-         * Constructs a StateConfig with default values.
-         */
         public StateConfig() {
             super();
             setFocused(false);
             setEditable(true);
         }
 
-        /**
-         * Gets the focus state.
-         *
-         * @return true if focused, false otherwise
-         */
         public boolean isFocused() {
             return focused;
         }
 
-        /**
-         * Sets the focus state.
-         *
-         * @param focused the focus state to set
-         */
         public void setFocused(boolean focused) {
             this.focused = focused;
         }
 
-        /**
-         * Gets the editable state.
-         *
-         * @return true if editable, false otherwise
-         */
         public boolean isEditable() {
             return editable;
         }
 
-        /**
-         * Sets the editable state.
-         *
-         * @param editable the editable state to set
-         */
         public void setEditable(boolean editable) {
             this.editable = editable;
         }

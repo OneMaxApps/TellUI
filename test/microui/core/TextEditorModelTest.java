@@ -1,11 +1,11 @@
 package microui.core;
 
-import static microui.constants.Direction.LEFT;
-import static microui.constants.Direction.RIGHT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+
+import microui.core.TextEditorModel.Direction;
 
 public class TextEditorModelTest {
 	
@@ -30,11 +30,11 @@ public class TextEditorModelTest {
 		model.insertChar('c');
 		assertEquals("c", model.getText());
 		
-		model.moveCursorTo(RIGHT);
+		model.moveCursorTo(Direction.RIGHT);
 		model.insertChar('h');
-		model.moveCursorTo(RIGHT);
+		model.moveCursorTo(Direction.RIGHT);
 		model.insertChar('a');
-		model.moveCursorTo(RIGHT);
+		model.moveCursorTo(Direction.RIGHT);
 		model.insertChar('r');
 		
 		assertEquals("char", model.getText());
@@ -67,7 +67,7 @@ public class TextEditorModelTest {
 		
 		assertEquals("word 1\nword ", model.getText());
 		
-		model.moveCursorTo(LEFT);
+		model.moveCursorTo(Direction.LEFT);
 		model.removeChar();
 		
 		assertEquals("word 1\nword", model.getText());

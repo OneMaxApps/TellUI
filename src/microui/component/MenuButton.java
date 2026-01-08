@@ -45,16 +45,9 @@ import processing.event.MouseEvent;
  * @see Scrollable
  */
 public final class MenuButton extends Button implements Scrollable {
-    /** Default maximum width for menu buttons. */
     private static final int DEFAULT_MAX_WIDTH = 100;
-    
-    /** Default maximum height for menu buttons. */
     private static final int DEFAULT_MAX_HEIGHT = 24;
-    
-    /** Default width for menu items. */
     private static final int DEFAULT_ITEM_WIDTH = 200;
-    
-    /** Default height for menu items. */
     private static final int DEFAULT_ITEM_HEIGHT = 22;
     
     private final Items items;
@@ -972,11 +965,6 @@ public final class MenuButton extends Button implements Scrollable {
         arrow.setSize(getPaddingRight(), getAbsoluteHeight());
     }
 
-    /**
-     * Gets the render order list for sub-menus.
-     *
-     * @return the list of sub-menus in render order
-     */
     private List<MenuButton> getRenderOrderList() {
         if (getRoot().renderOrderList == null) {
             getRoot().renderOrderList = new ArrayList<MenuButton>();
@@ -984,94 +972,42 @@ public final class MenuButton extends Button implements Scrollable {
         return getRoot().renderOrderList;
     }
 
-    /**
-     * Determines if the menu should be closed based on user interaction.
-     *
-     * @return true if the menu should be closed, false otherwise
-     */
     private boolean mustBeClosed() {
         return ctx.mousePressed && isOpen() && !isHover() && !items.isHoverDeep() && !getRoot().isHover();
     }
 
-    /**
-     * Gets the root menu of the hierarchy.
-     *
-     * @return the root menu
-     */
     private MenuButton getRoot() {
         return root;
     }
 
-    /**
-     * Sets the root menu of the hierarchy.
-     *
-     * @param root the root menu
-     * @throws NullPointerException if root is null
-     */
     private void setRoot(MenuButton root) {
         this.root = requireNonNull(root, "root");
     }
 
-    /**
-     * Checks if this menu is the root of the hierarchy.
-     *
-     * @return true if this is the root menu, false otherwise
-     */
     private boolean isRoot() {
         return rootMode;
     }
 
-    /**
-     * Sets whether this menu is the root of the hierarchy.
-     *
-     * @param rootMode true to set as root, false otherwise
-     */
     private void setRootMode(boolean rootMode) {
         this.rootMode = rootMode;
     }
 
-    /**
-     * Gets the parent menu of this menu.
-     *
-     * @return the parent menu, or null if this is the root
-     */
     private MenuButton getParent() {
         return parent;
     }
 
-    /**
-     * Sets the parent menu of this menu.
-     * Can be null for the root menu.
-     *
-     * @param parent the parent menu
-     */
     private void setParent(MenuButton parent) {
         this.parent = parent;
     }
 
-    /**
-     * Gets the currently active sub-menu in the hierarchy.
-     *
-     * @return the active sub-menu, or null if none
-     */
     private MenuButton getActiveSubMenu() {
         return getRoot().activeSubMenu;
     }
 
-    /**
-     * Sets the currently active sub-menu in the hierarchy.
-     *
-     * @param activeSubMenu the active sub-menu
-     */
     private void setActiveSubMenu(MenuButton activeSubMenu) {
         getRoot().activeSubMenu = activeSubMenu;
     }
 
-    /**
-     * Checks if this menu is the currently active sub-menu.
-     *
-     * @return true if this is the active sub-menu, false otherwise
-     */
     private boolean isActiveSubMenu() {
         return this == getActiveSubMenu();
     }
@@ -1090,22 +1026,10 @@ public final class MenuButton extends Button implements Scrollable {
         RIGHT;
     }
 
-    /**
-     * Internal class for managing item dimensions.
-     */
     private static final class ItemDimensions {
         private final Items items;
         private float width, height;
 
-        /**
-         * Constructs ItemDimensions with specified items and dimensions.
-         *
-         * @param items the items container
-         * @param width the initial width
-         * @param height the initial height
-         * @throws NullPointerException if items is null
-         * @throws IllegalArgumentException if width or height is less than 1
-         */
         public ItemDimensions(Items items, float width, float height) {
             super();
             this.items = requireNonNull(items, "items");
@@ -1120,21 +1044,10 @@ public final class MenuButton extends Button implements Scrollable {
             items.recalculateAllRecursive();
         }
 
-        /**
-         * Gets the current item width.
-         *
-         * @return the item width
-         */
         public float getWidth() {
             return width;
         }
 
-        /**
-         * Sets the item width and updates all items recursively.
-         *
-         * @param width the new width
-         * @throws IllegalArgumentException if width is less than 1
-         */
         public void setWidth(float width) {
             if (this.width == width) {
                 return;
@@ -1148,21 +1061,10 @@ public final class MenuButton extends Button implements Scrollable {
             items.recalculateAllRecursive();
         }
 
-        /**
-         * Gets the current item height.
-         *
-         * @return the item height
-         */
         public float getHeight() {
             return height;
         }
 
-        /**
-         * Sets the item height and updates all items recursively.
-         *
-         * @param height the new height
-         * @throws IllegalArgumentException if height is less than 1
-         */
         public void setHeight(float height) {
             if (this.height == height) {
                 return;
@@ -1176,13 +1078,6 @@ public final class MenuButton extends Button implements Scrollable {
             items.recalculateAllRecursive();
         }
 
-        /**
-         * Sets both item dimensions and updates all items recursively.
-         *
-         * @param width the new width
-         * @param height the new height
-         * @throws IllegalArgumentException if width or height is less than 1
-         */
         public void setSize(float width, float height) {
             if (this.width == width && this.height == height) {
                 return;
@@ -1198,20 +1093,12 @@ public final class MenuButton extends Button implements Scrollable {
         }
     }
 
-    /**
-     * Internal class for managing menu items.
-     */
     private static final class Items extends View implements Scrollable {
         private final MenuButton menu;
         private final List<Button> list;
         private final List<ImageBuffer> iconList;
         private final ShadowWrapper shadow;
 
-        /**
-         * Constructs an Items container for a menu.
-         *
-         * @param menu the parent menu
-         */
         public Items(MenuButton menu) {
             super();
             setVisible(true);
@@ -1221,12 +1108,7 @@ public final class MenuButton extends Button implements Scrollable {
             shadow = new ShadowWrapper(menu);
         }
 
-        /**
-         * Handles mouse wheel scrolling for the items.
-         * Rotates items when scrolling while hovered.
-         *
-         * @param mouseEvent the mouse wheel event
-         */
+
         @Override
         public void mouseWheel(MouseEvent mouseEvent) {
             requireNonNull(mouseEvent, "mouseEvent");
@@ -1271,29 +1153,14 @@ public final class MenuButton extends Button implements Scrollable {
             recalculateIconsPositions();
         }
 
-        /**
-         * Sets an icon for a specific item.
-         *
-         * @param icon the icon to set
-         * @param title the title of the item
-         */
         public void setIcon(PImage icon, String title) {
             iconList.get(list.indexOf(menu.get(title, false))).set(icon);
         }
 
-        /**
-         * Gets the icon buffer for a specific item.
-         *
-         * @param title the title of the item
-         * @return the ImageBuffer containing the icon
-         */
         public ImageBuffer getIcon(String title) {
             return iconList.get(list.indexOf(menu.get(title, false)));
         }
 
-        /**
-         * Closes all sub-menus within these items.
-         */
         public void close() {
             for (int i = 0; i < list.size(); i++) {
                 final Button b = list.get(i);
@@ -1303,9 +1170,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Recalculates the positions of all items.
-         */
         public void recalculatePosition() {
             float totalHeight = 0;
             for (int i = 0; i < list.size(); i++) {
@@ -1347,9 +1211,6 @@ public final class MenuButton extends Button implements Scrollable {
             recalculateIconsPositions();
         }
 
-        /**
-         * Recursively recalculates positions for all items and sub-items.
-         */
         public void recalculatePositionAllRecursive() {
             recalculatePosition();
 
@@ -1361,9 +1222,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Recalculates the dimensions of all items.
-         */
         public void recalculateDimensions() {
             if (list.isEmpty()) {
                 return;
@@ -1380,9 +1238,6 @@ public final class MenuButton extends Button implements Scrollable {
             recalculateIconsDimensions();
         }
 
-        /**
-         * Recursively recalculates dimensions for all items and sub-items.
-         */
         public void recalculateAllRecursive() {
             recalculateDimensions();
             recalculatePosition();
@@ -1395,13 +1250,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Adds plain items with string titles.
-         *
-         * @param title the titles of the items to add
-         * @throws NullPointerException if title array or any element is null
-         * @throws IllegalArgumentException if any title is blank
-         */
         public void addPlainItemInternal(String... title) {
             checkTitle(title);
 
@@ -1410,12 +1258,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Adds plain items with numeric titles.
-         *
-         * @param numbers the numeric titles of the items to add
-         * @throws NullPointerException if numbers array is null
-         */
         public void addPlainItemInternal(int... numbers) {
             requireNonNull(numbers, "numbers");
 
@@ -1424,13 +1266,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Adds menu items with string titles.
-         *
-         * @param title the titles of the menu items to add
-         * @throws NullPointerException if title array or any element is null
-         * @throws IllegalArgumentException if any title is blank
-         */
         public void addMenuItemInternal(String... title) {
             checkTitle(title);
 
@@ -1439,13 +1274,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Finds a button by title within these items.
-         *
-         * @param title the title to search for
-         * @param recursive true to search in sub-menus
-         * @return the found button, or null if not found
-         */
         public Button findInternal(String title, boolean recursive) {
             checkTitle(title);
 
@@ -1474,13 +1302,6 @@ public final class MenuButton extends Button implements Scrollable {
             return null;
         }
 
-        /**
-         * Finds a button by ID within these items.
-         *
-         * @param id the ID to search for
-         * @param recursive true to search in sub-menus
-         * @return the found button, or null if not found
-         */
         public Button findByIdInternal(int id, boolean recursive) {
             for (int i = 0; i < list.size(); i++) {
                 final Button b = list.get(i);
@@ -1507,14 +1328,6 @@ public final class MenuButton extends Button implements Scrollable {
             return null;
         }
 
-        /**
-         * Finds a button by text ID within these items.
-         *
-         * @param textId the text ID to search for
-         * @param recursive true to search in sub-menus
-         * @return the found button, or null if not found
-         * @throws NullPointerException if textId is null
-         */
         public Button findByTextIdInternal(String textId, boolean recursive) {
             requireNonNull(textId, "textId");
 
@@ -1543,12 +1356,6 @@ public final class MenuButton extends Button implements Scrollable {
             return null;
         }
 
-        /**
-         * Removes items by their titles.
-         *
-         * @param titles the titles of the items to remove
-         * @throws NullPointerException if titles array is null
-         */
         public void removeInternal(String... titles) {
             requireNonNull(titles, "titles");
 
@@ -1557,12 +1364,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Removes items by their IDs.
-         *
-         * @param ids the IDs of the items to remove
-         * @throws NullPointerException if ids array is null
-         */
         public void removeByIdInternal(int... ids) {
             requireNonNull(ids, "ids");
 
@@ -1571,12 +1372,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Removes items by their text IDs.
-         *
-         * @param textIds the text IDs of the items to remove
-         * @throws NullPointerException if textIds array is null
-         */
         public void removeByTextIdInternal(String... textIds) {
             requireNonNull(textIds, "textIds");
 
@@ -1585,20 +1380,12 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Renders the items and their icons.
-         */
         @Override
         protected void render() {
             shadow.draw();
             itemsOnDraw();
         }
 
-        /**
-         * Safely removes a button from the menu hierarchy.
-         *
-         * @param button the button to remove
-         */
         private void removeSafe(Button button) {
             final MenuButton m = findMenuWhichContains(button);
             final List<Button> l = m.items.list;
@@ -1614,12 +1401,7 @@ public final class MenuButton extends Button implements Scrollable {
             shadow.recalculateDimensions();
             shadow.recalculatePosition();
         }
-
-        /**
-         * Removes a menu button from the render order list recursively.
-         *
-         * @param menuButton the menu button to remove
-         */
+        
         private void removeMenuFromRenderOrderList(MenuButton menuButton) {
             menu.getRenderOrderList().remove(menuButton);
 
@@ -1631,13 +1413,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Adds a button to the items list with proper initialization.
-         *
-         * @param button the button to add
-         * @throws NullPointerException if button is null
-         * @throws DuplicateItemException if a button with the same title already exists
-         */
         private void addInternal(Button button) {
             requireNonNull(button, "button");
 
@@ -1664,19 +1439,13 @@ public final class MenuButton extends Button implements Scrollable {
             recalculatePosition();
         }
 
-        /**
-         * Recalculates the positions of all icons.
-         */
         private void recalculateIconsPositions() {
             for (int i = 0; i < list.size(); i++) {
                 final Button b = list.get(i);
                 iconList.get(i).setPosition(b.getPadX(), b.getPadY());
             }
         }
-
-        /**
-         * Recalculates the dimensions of all icons.
-         */
+        
         private void recalculateIconsDimensions() {
             for (int i = 0; i < list.size(); i++) {
                 final Button b = list.get(i);
@@ -1684,13 +1453,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Validates an array of titles.
-         *
-         * @param titles the titles to validate
-         * @throws NullPointerException if titles array or any element is null
-         * @throws IllegalArgumentException if any title is blank
-         */
         private void checkTitle(String... titles) {
             requireNonNull(titles, "titles");
 
@@ -1704,11 +1466,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Prepares general styling for a menu item.
-         *
-         * @param button the button to style
-         */
         private static void prepareGeneralItemStyle(Button button) {
             button.setTextAlignX(LEFT);
             button.setPadding(20, 10, 0, 0);
@@ -1716,21 +1473,11 @@ public final class MenuButton extends Button implements Scrollable {
             button.setBackgroundColor(getTheme().getMenuButtonItemColor());
         }
 
-        /**
-         * Prepares a plain (non-menu) item with click behavior.
-         *
-         * @param button the plain button to prepare
-         */
         private void preparePlainItem(Button button) {
             button.onClick(() -> menu.getRoot().setOpen(false));
             button.setTextColor(getTheme().getMenuButtonItemTextColor());
         }
 
-        /**
-         * Prepares a menu item with hierarchical properties.
-         *
-         * @param menuButton the menu button to prepare
-         */
         private void prepareMenuItem(MenuButton menuButton) {
             menuButton.setRootMode(false);
             menuButton.setRoot(menu.getRoot());
@@ -1742,12 +1489,6 @@ public final class MenuButton extends Button implements Scrollable {
             menuButton.setTextColor(new LerpedLoopColor(c, c1).setSpeed(.05f));
         }
 
-        /**
-         * Finds the menu that contains a specific button.
-         *
-         * @param button the button to find
-         * @return the menu containing the button, or null if not found
-         */
         private MenuButton findMenuWhichContains(Button button) {
             if (list.contains(button)) {
                 return menu;
@@ -1769,11 +1510,6 @@ public final class MenuButton extends Button implements Scrollable {
             return null;
         }
 
-        /**
-         * Checks if any item in this list is being hovered.
-         *
-         * @return true if any item is hovered, false otherwise
-         */
         private boolean isHover() {
             if (list.isEmpty()) {
                 return false;
@@ -1789,11 +1525,6 @@ public final class MenuButton extends Button implements Scrollable {
             return false;
         }
 
-        /**
-         * Checks if any item or sub-item in this list is being hovered.
-         *
-         * @return true if any item or sub-item is hovered, false otherwise
-         */
         private boolean isHoverDeep() {
             if (isHover()) {
                 return true;
@@ -1811,11 +1542,6 @@ public final class MenuButton extends Button implements Scrollable {
             return false;
         }
 
-        /**
-         * Checks if there is enough space on the right side for sub-menu placement.
-         *
-         * @return true if there is enough space, false otherwise
-         */
         private boolean isRightSideHasEnoughPlace() {
             for (int i = 0; i < list.size(); i++) {
                 final Button b = list.get(i);
@@ -1827,11 +1553,6 @@ public final class MenuButton extends Button implements Scrollable {
             return true;
         }
 
-        /**
-         * Gets the maximum width among all items.
-         *
-         * @return the maximum item width
-         */
         private float getMaxItemWidth() {
             float max = 0;
             for (int i = 0; i < list.size(); i++) {
@@ -1841,9 +1562,6 @@ public final class MenuButton extends Button implements Scrollable {
             return max;
         }
 
-        /**
-         * Renders all items and their icons.
-         */
         private void itemsOnDraw() {
             if (list.isEmpty()) {
                 return;
@@ -1870,11 +1588,6 @@ public final class MenuButton extends Button implements Scrollable {
             }
         }
 
-        /**
-         * Determines if items should react to user interaction.
-         *
-         * @return true if items should react, false otherwise
-         */
         private boolean shouldReact() {
             final MenuButton active = menu.getActiveSubMenu();
             final boolean isHasActive = active != null;
@@ -1898,17 +1611,9 @@ public final class MenuButton extends Button implements Scrollable {
             return false;
         }
 
-        /**
-         * Internal wrapper class for managing item shadows.
-         */
         private static final class ShadowWrapper extends ContentView {
             private final MenuButton menu;
 
-            /**
-             * Constructs a ShadowWrapper for a menu.
-             *
-             * @param menu the parent menu
-             */
             public ShadowWrapper(MenuButton menu) {
                 super();
                 setVisible(true);
@@ -1923,9 +1628,6 @@ public final class MenuButton extends Button implements Scrollable {
                 setShadow(new ReactiveShadow());
             }
 
-            /**
-             * Recalculates the shadow position based on item positions.
-             */
             public void recalculatePosition() {
                 if (menu.isEmpty()) {
                     return;
@@ -1934,9 +1636,6 @@ public final class MenuButton extends Button implements Scrollable {
                 setPosition(menu.items.list.get(0).getAbsoluteX(), menu.items.list.get(0).getAbsoluteY());
             }
 
-            /**
-             * Recalculates the shadow dimensions based on item sizes.
-             */
             public void recalculateDimensions() {
                 if (menu.isEmpty()) {
                     return;
@@ -1945,9 +1644,7 @@ public final class MenuButton extends Button implements Scrollable {
                 setSize(menu.items.list.get(0).getAbsoluteWidth(), menu.getItemHeight() * menu.items.list.size());
             }
 
-            /**
-             * Renders the shadow with conditional visibility.
-             */
+            
             @Override
             protected void render() {
                 getShadow().setVisible(menu.isActiveSubMenu() || (menu.isRoot() && menu.getActiveSubMenu() == null));
@@ -1955,17 +1652,9 @@ public final class MenuButton extends Button implements Scrollable {
         }
     }
 
-    /**
-     * Internal class for rendering the open state indicator.
-     */
     private static class OpenStateIndicator extends SpatialView {
         private final Stroke stroke;
 
-        /**
-         * Constructs an OpenStateIndicator for a menu.
-         *
-         * @param menu the parent menu
-         */
         public OpenStateIndicator(MenuButton menu) {
             setVisible(true);
             stroke = new Stroke();
@@ -1979,27 +1668,14 @@ public final class MenuButton extends Button implements Scrollable {
                     .setPositionEnabled(false));
         }
 
-        /**
-         * Gets the indicator color.
-         *
-         * @return the current color
-         */
         public AbstractColor getColor() {
             return stroke.getColor();
         }
 
-        /**
-         * Sets the indicator color.
-         *
-         * @param color the color to set
-         */
         public void setColor(AbstractColor color) {
             stroke.setColor(color);
         }
 
-        /**
-         * Renders the open state indicator.
-         */
         @Override
         protected void render() {
             ctx.noFill();
@@ -2007,26 +1683,14 @@ public final class MenuButton extends Button implements Scrollable {
             ctx.rect(getX(), getY(), getWidth(), getHeight());
         }
     }
-
-    /**
-     * Internal class for rendering the arrow indicator for sub-menus.
-     */
+    
     private static final class Arrow extends SpatialView {
-        /** Symbol for closed state (right-pointing triangle). */
         private static final String CLOSE_SYMBOL = "▶";
-        
-        /** Symbol for open state (down-pointing triangle). */
         private static final String OPEN_SYMBOL = "▼";
         
         private final MenuButton menu;
         private AbstractColor color;
 
-        /**
-         * Constructs an Arrow indicator for a menu.
-         *
-         * @param menu the parent menu
-         * @throws NullPointerException if menu is null
-         */
         public Arrow(MenuButton menu) {
             super();
             setVisible(true);
@@ -2034,10 +1698,6 @@ public final class MenuButton extends Button implements Scrollable {
             setColor(getTheme().getPrimaryColor());
         }
 
-        /**
-         * Renders the arrow indicator.
-         * Shows different symbols based on the menu's open state.
-         */
         @Override
         protected void render() {
             if (menu.isRoot()) {
@@ -2050,21 +1710,10 @@ public final class MenuButton extends Button implements Scrollable {
             ctx.text(menu.isOpen() ? OPEN_SYMBOL : CLOSE_SYMBOL, getX(), getY(), getWidth(), getHeight());
         }
 
-        /**
-         * Gets the arrow color.
-         *
-         * @return the current color
-         */
         public AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the arrow color.
-         *
-         * @param color the color to set
-         * @throws NullPointerException if color is null
-         */
         public void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }

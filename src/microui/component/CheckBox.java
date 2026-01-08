@@ -161,25 +161,16 @@ public class CheckBox extends AbstractButton {
         }
     }
 
-    /**
-     * Positions the checkbox at the center of the current drawing context.
-     */
     private void setPositionInCenter() {
         setPosition(ctx.width / 2 - DEFAULT_SIZE / 2, ctx.height / 2 - DEFAULT_SIZE / 2);
     }
 
-    /**
-     * Notifies the state change listener if one is registered.
-     */
     private void notifyOnStateChanged() {
         if (onStateChangedListener != null) {
             onStateChangedListener.action();
         }
     }
 
-    /**
-     * Draws the check mark based on the current check style.
-     */
     private void markOnDraw() {
         switch (checkStyle) {
             case MARK:
@@ -194,9 +185,6 @@ public class CheckBox extends AbstractButton {
         }
     }
 
-    /**
-     * Draws a check mark (✓) style indicator.
-     */
     private void styleMarkOnDraw() {
         ctx.pushStyle();
 
@@ -213,9 +201,6 @@ public class CheckBox extends AbstractButton {
         ctx.popStyle();
     }
 
-    /**
-     * Draws a filled rectangle style indicator.
-     */
     private void styleRectOnDraw() {
         ctx.pushStyle();
         ctx.noStroke();
@@ -224,9 +209,6 @@ public class CheckBox extends AbstractButton {
         ctx.popStyle();
     }
 
-    /**
-     * Draws a dot style indicator.
-     */
     private void styleDotOnDraw() {
         ctx.pushStyle();
         ctx.noFill();

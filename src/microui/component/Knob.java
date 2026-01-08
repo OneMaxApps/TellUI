@@ -24,10 +24,8 @@ import processing.event.MouseEvent;
  * @see RangeControl
  */
 public final class Knob extends RangeControl {
-    /** Starting angle for the indicator arc (0 radians). */
     private static final float START = 0;
     
-    /** Ending angle for the indicator arc (2π radians). */
     private static final float END = (float) (PI * 2);
     
     private AbstractColor indicatorColor;
@@ -79,25 +77,20 @@ public final class Knob extends RangeControl {
      */
     @Override
     protected void render() {
-        // Draw circular background
         getMutableStroke().apply();
         getBackgroundColor().apply();
         ctx.ellipse(centerX, centerY, diameter, diameter);
 
-        // Draw the value indicator
         indicatorOnDraw();
 
-        // Reset drag state when mouse is released
         if (!ctx.mousePressed) {
             isCanDrag = false;
         }
 
-        // Update value based on vertical dragging
         if (isCanDrag) {
             getMutableValue().append(ctx.pmouseY - ctx.mouseY);
         }
 
-        // Update value based on mouse wheel scrolling
         getMutableValue().append(getMutableScrolling().get());
     }
 
@@ -144,54 +137,31 @@ public final class Knob extends RangeControl {
         this.indicatorColor = requireNonNull(indicatorColor, "indicatorColor");
     }
 
-    /**
-     * Recalculates the center coordinates based on current bounds.
-     */
     private void recalculateCenter() {
         centerX = getX() + getWidth() / 2;
         centerY = getY() + getHeight() / 2;
     }
 
-    /**
-     * Recalculates the diameter based on current bounds.
-     * The diameter is the smaller of the width and height.
-     */
     private void recalculateDiameter() {
         diameter = min(getWidth(), getHeight());
     }
 
-    /**
-     * Checks if the mouse cursor is within the knob's circular area.
-     *
-     * @return true if the mouse is within the knob's diameter, false otherwise
-     */
     private boolean isMouseInDiameter() {
         return dist(centerX, centerY, ctx.mouseX, ctx.mouseY) < diameter / 2;
     }
 
-    /**
-     * Draws the arc indicator showing the current value.
-     * The indicator consists of:
-     * <ul>
-     *   <li>A full circle outline (grayed out)</li>
-     *   <li>A filled arc representing the current value</li>
-     *   <li>A small circle at the center when at maximum value</li>
-     * </ul>
-     */
+
     private void indicatorOnDraw() {
         ctx.push();
 
-        // Move to knob center and rotate for proper arc drawing
         ctx.translate(centerX, centerY);
         ctx.rotate((float) PI / 2);
         ctx.noFill();
         ctx.strokeWeight(getIndicatorWeight());
 
-        // Draw full circle outline (potential range)
         indicatorColor.apply();
         ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, END);
 
-        // Draw filled arc representing current value
         indicatorColor.applyStroke();
         ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, 
                 MathUtils.convert(getMutableValue().get(),
@@ -199,7 +169,6 @@ public final class Knob extends RangeControl {
                                   getMutableValue().getMax(), 
                                   START, END));
 
-        // Draw center dot when at maximum value
         if (getMutableValue().get() == getMutableValue().getMax()) {
             ctx.ellipse(0, 0, diameter / 4, diameter / 4);
         }
@@ -207,12 +176,6 @@ public final class Knob extends RangeControl {
         ctx.pop();
     }
 
-    /**
-     * Calculates the stroke weight for the indicator arc.
-     * The weight increases when scrolling is active for visual feedback.
-     *
-     * @return the stroke weight for the indicator
-     */
     private float getIndicatorWeight() {
         return diameter * .1f + abs(getMutableScrolling().get() * 2);
     }

@@ -14,26 +14,6 @@ import processing.core.PApplet;
  * by establishing a connection to the Processing sketch context. <b>Must be initialized</b>
  * before using any MicroUI functionality.
  * </p>
- * <p>
- * <b>Typical Usage:</b>
- * <pre>
- * import microui.MicroUI;
- * 
- * public class MySketch extends PApplet {
- *   public void setup() {
- *     // Initialize MicroUI with the current sketch context
- *     MicroUI.setContext(this);
- *     
- *     // Now MicroUI components can be used
- *     // ...
- *   }
- *   
- *   public void draw() {
- *     // Drawing code using MicroUI
- *   }
- * }
- * </pre>
- * </p>
  * 
  * @see #setContext(PApplet)
  * @see #getContext()
@@ -47,12 +27,6 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	/**
-	 * Private constructor to prevent instantiation.
-	 * <p>
-	 * This is a utility class with only static methods and should not be instantiated.
-	 * </p>
-	 */
 	private MicroUI() {
 	}
 
@@ -63,16 +37,10 @@ public final class MicroUI {
 	 * components are used. Subsequent calls are silently ignored (idempotent operation).
 	 * The context is typically the main sketch instance ({@code this}).
 	 * </p>
-	 * <p>
-	 * <b>Best Practice:</b> Call this in your sketch's {@code setup()} method,
-	 * immediately after {@code size()} if applicable.
-	 * </p>
-	 * 
 	 * @param context the main PApplet instance (typically {@code this} from the sketch)
 	 * @throws NullPointerException if {@code context} is {@code null}
 	 * 
 	 * @see #getContext()
-	 * @see processing.core.PApplet#setup()
 	 */
 	public static void setContext(PApplet context) {
 		requireNonNull(context,"context");
@@ -87,10 +55,6 @@ public final class MicroUI {
 	 * <p>
 	 * This method provides access to the initialized PApplet instance, which is
 	 * required by MicroUI components for rendering and Processing API access.
-	 * </p>
-	 * <p>
-	 * <b>Note:</b> This is primarily for internal use by MicroUI components.
-	 * Most users will not need to call this directly.
 	 * </p>
 	 * 
 	 * @return the initialized PApplet instance

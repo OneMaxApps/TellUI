@@ -5,7 +5,6 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
-import microui.constants.Direction;
 import microui.core.controller.MultiLineTextController;
 import microui.event.Listener;
 
@@ -775,6 +774,23 @@ public final class TextEditorModel {
         }
     }
 
+    /**
+     * Provides constants for cursor direction
+     */
+    public enum Direction {
+        /** Left direction, typically used for moving cursor left or scrolling left. */
+        LEFT,
+        
+        /** Up direction, typically used for moving cursor up or scrolling up. */
+        UP,
+        
+        /** Right direction, typically used for moving cursor right or scrolling right. */
+        RIGHT,
+        
+        /** Down direction, typically used for moving cursor down or scrolling down. */
+        DOWN;
+    }
+    
     /**
      * Internal class for managing text selection within the document.
      */

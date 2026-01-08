@@ -48,31 +48,14 @@ import processing.event.KeyEvent;
  * includes sophisticated text width caching for performance.</p>
  */
 public final class TextField extends Component implements KeyPressable {
-    /** Width ratio threshold for enabling horizontal scrolling. */
     private static final float WIDTH_RATIO_FOR_SCROLL = .8f;
-    
-    /** Default minimum width. */
     private static final int DEFAULT_MIN_WIDTH = 20;
-    
-    /** Default minimum height. */
     private static final int DEFAULT_MIN_HEIGHT = 10;
-    
-    /** Default maximum width. */
     private static final int DEFAULT_MAX_WIDTH = 200;
-    
-    /** Default maximum height. */
     private static final int DEFAULT_MAX_HEIGHT = 40;
-    
-    /** Default horizontal padding. */
     private static final int DEFAULT_HORIZONTAL_PADDING = 10;
-    
-    /** Default vertical padding. */
     private static final int DEFAULT_VERTICAL_PADDING = 5;
-    
-    /** Default scroll value. */
     private static final int DEFAULT_SCROLL_VALUE = 0;
-    
-    /** Frames to wait before initializing off-screen buffer. */
     private static final byte COUNT_OF_FRAMES_BEFORE_BUFFER_INITIALIZATION = 2;
 
     private final BoundedValue scroll;
@@ -656,11 +639,6 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE KEYBOARD CONTROL API ==
 
-    /**
-     * Handles regular (non-modified) key presses.
-     *
-     * @param e the key event
-     */
     private void onRegularKeyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
         case ENTER:
@@ -690,9 +668,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Prepares selection when shift key is first pressed.
-     */
     private void prepareSelectionOnShiftDown() {
         if (!selection.isStarted()) {
             selection.setStartColumn(cursor.column.get());
@@ -701,9 +676,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles shift+left arrow (extend selection left).
-     */
     private void onShiftWithLeftPressed() {
         cursor.column.back();
         selection.setEndColumn(cursor.column.get());
@@ -712,9 +684,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles shift+right arrow (extend selection right).
-     */
     private void onShiftWithRightPressed() {
         cursor.column.next();
         selection.setEndColumn(cursor.column.get());
@@ -723,29 +692,18 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles shift+home (extend selection to start).
-     */
     private void onShiftWithHomePressed() {
         cursor.column.goToStart();
         scroll.set(scroll.getMin());
         selection.setEndColumn(cursor.column.get());
     }
 
-    /**
-     * Handles shift+end (extend selection to end).
-     */
     private void onShiftWithEndPressed() {
         cursor.column.goToEnd();
         scroll.set(scroll.getMax());
         selection.setEndColumn(cursor.column.get());
     }
 
-    /**
-     * Handles shift-modified key presses.
-     *
-     * @param e the key event
-     */
     private void onShiftDown(KeyEvent e) {
         switch (e.getKeyCode()) {
         case LEFT:
@@ -778,11 +736,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles control-modified key presses (commands).
-     *
-     * @param e the key event
-     */
     private void onControlDown(KeyEvent e) {
         switch (e.getKeyCode()) {
         case VK_C:
@@ -806,16 +759,10 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles Enter key press.
-     */
     private void onEnterPressed() {
         notifyEnterPressed();
     }
 
-    /**
-     * Handles left arrow key press (move cursor left).
-     */
     private void onKeyLeftPressed() {
         cursor.column.back();
         selection.reset();
@@ -828,9 +775,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles right arrow key press (move cursor right).
-     */
     private void onKeyRightPressed() {
         cursor.column.next();
         selection.reset();
@@ -844,9 +788,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Handles backspace key press (delete character before cursor).
-     */
     private void onKeyBackspacePressed() {
         if (selection.isSelected()) {
             deleteSelectedText();
@@ -863,9 +804,6 @@ public final class TextField extends Component implements KeyPressable {
         cursor.column.back();
     }
 
-    /**
-     * Handles delete key press (delete character after cursor).
-     */
     private void onKeyDeletePressed() {
         if (selection.isSelected()) {
             deleteSelectedText();
@@ -880,27 +818,18 @@ public final class TextField extends Component implements KeyPressable {
         text.removeCharAt(cursor.column.get());
     }
 
-    /**
-     * Handles home key press (move cursor to start).
-     */
     private void onKeyHomePressed() {
         selection.reset();
         cursor.column.goToStart();
         scroll.set(scroll.getMin());
     }
 
-    /**
-     * Handles end key press (move cursor to end).
-     */
     private void onKeyEndPressed() {
         selection.reset();
         cursor.column.goToEnd();
         scroll.set(scroll.getMax());
     }
 
-    /**
-     * Handles printable character key presses.
-     */
     private void onPrintableKeyPressed() {
         if (selection.isSelected()) {
             deleteSelectedText();
@@ -912,9 +841,6 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE MOUSE CONTROL API ==
 
-    /**
-     * Updates state based on mouse events (clicking, dragging, focus).
-     */
     private void mouseEventsUpdateState() {
         if (isDragging() || isPressed()) {
             setFocused(true);
@@ -932,11 +858,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Calculates the text column position from current mouse X coordinate.
-     *
-     * @return the column index at the mouse position
-     */
     private int getRecalculatedColumnPositionFromMouse() {
         final float mouseX = ctx.mouseX - (getX() + cursor.column.getCurrentCharWidth() / 2) + scroll.get();
         int correctNewIndex = getText().length();
@@ -951,11 +872,6 @@ public final class TextField extends Component implements KeyPressable {
         return correctNewIndex;
     }
 
-    /**
-     * Calculates scrolling speed based on mouse position relative to field edges.
-     *
-     * @return the scrolling speed (positive for right, negative for left)
-     */
     private float getSpeedForDragging() {
         final float charWidth = cursor.column.getCurrentCharWidth();
         final float minCharWidth = 1;
@@ -966,9 +882,6 @@ public final class TextField extends Component implements KeyPressable {
         return speed;
     }
 
-    /**
-     * Handles mouse dragging for text selection and scrolling.
-     */
     private void onDragging() {
         if (isEmpty()) {
             return;
@@ -987,9 +900,6 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE TEXT CONTROL API ==
 
-    /**
-     * Deletes the currently selected text.
-     */
     private void deleteSelectedText() {
         final int esc = selection.getEffectiveStartColumn();
         final int eec = selection.getEffectiveEndColumn();
@@ -1003,12 +913,6 @@ public final class TextField extends Component implements KeyPressable {
         text.remove(esc, eec);
     }
 
-    /**
-     * Gets text width using Processing's main rendering context.
-     *
-     * @param text the text to measure
-     * @return the width of the text in pixels
-     */
     private float getTextWidthFromPApplet(String text) {
         float width = 0;
 
@@ -1025,12 +929,6 @@ public final class TextField extends Component implements KeyPressable {
         return width;
     }
 
-    /**
-     * Gets text width using the off-screen graphics buffer.
-     *
-     * @param text the text to measure
-     * @return the width of the text in pixels
-     */
     private float getTextWidthFromPGraphics(String text) {
         if (pg == null) {
             return 0;
@@ -1051,13 +949,6 @@ public final class TextField extends Component implements KeyPressable {
         return width;
     }
 
-    /**
-     * Gets the width of text using appropriate rendering context.
-     *
-     * @param text the text to measure
-     * @return the width of the text in pixels
-     * @throws NullPointerException if text is null
-     */
     private float getTextWidth(String text) {
         if (this.text == null) {
             return 0;
@@ -1072,21 +963,12 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Gets the width of a single character.
-     *
-     * @param ch the character to measure
-     * @return the width of the character in pixels
-     */
     private float getCharWidth(char ch) {
         return getTextWidth(String.valueOf(ch));
     }
 
     // == PRIVATE CLIPBOARD CONTROL API ==
 
-    /**
-     * Pastes text from clipboard at current cursor position.
-     */
     private void pasteTextFromClipboard() {
         if (Clipboard.isEmpty()) {
             return;
@@ -1107,9 +989,6 @@ public final class TextField extends Component implements KeyPressable {
         scroll.append(getTextWidth(Clipboard.get()));
     }
 
-    /**
-     * Cuts selected text to clipboard.
-     */
     private void cutTextToClipboard() {
         if (selection.isSelected()) {
             Clipboard.set(selection.getText());
@@ -1120,18 +999,12 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE EVENT MANAGEMENT API ==
 
-    /**
-     * Notifies text change listener.
-     */
     private void notifyTextChanged() {
         if (onTextChangedListener != null) {
             onTextChangedListener.action();
         }
     }
 
-    /**
-     * Notifies Enter key press listener.
-     */
     private void notifyEnterPressed() {
         if (onEnterPressedListener != null) {
             onEnterPressedListener.action();
@@ -1139,9 +1012,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Notifies focus change listener.
-     */
     private void notifyFocusChanged() {
         if (onFocusChangedListener != null) {
             onFocusChangedListener.action();
@@ -1150,18 +1020,10 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE BUFFER MANAGEMENT API ==
 
-    /**
-     * Checks if off-screen buffer is ready for use.
-     *
-     * @return true if buffer is ready, false otherwise
-     */
     private boolean offScreenBufferPrepared() {
         return ctx.frameCount > COUNT_OF_FRAMES_BEFORE_BUFFER_INITIALIZATION && pg != null;
     }
 
-    /**
-     * Draws to off-screen buffer and then renders to screen.
-     */
     private void screenOffBufferOnDraw() {
         pg.beginDraw();
         pg.clear();
@@ -1175,9 +1037,6 @@ public final class TextField extends Component implements KeyPressable {
         ctx.image(pg, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 
-    /**
-     * Creates or recreates the off-screen graphics buffer.
-     */
     private void createPGraphics() {
         if (pg != null) {
             pg.dispose();
@@ -1191,9 +1050,6 @@ public final class TextField extends Component implements KeyPressable {
         Metrics.register(pg);
     }
 
-    /**
-     * Checks if dimensions changed and recreates buffer if needed.
-     */
     private void checkDimensions() {
         if (ctx.mousePressed) {
             return;
@@ -1205,9 +1061,6 @@ public final class TextField extends Component implements KeyPressable {
 
     // == PRIVATE STYLE API ==
 
-    /**
-     * Prepares background color with focus transition effect.
-     */
     private void prepareBackgroundColor() {
         final AbstractColor tc = getTheme().getEditableBackgroundColor();
         final Color preFocusedColor = new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), 200);
@@ -1215,26 +1068,15 @@ public final class TextField extends Component implements KeyPressable {
         setBackgroundColor(gd);
     }
 
-    /**
-     * Positions the text field at the center of the screen.
-     */
     private void prepareBoundsInCenter() {
         setSize(getMaxWidth(), getMaxHeight());
         setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
     }
 
-    /**
-     * Determines if focus should be lost.
-     *
-     * @return true if focus should be lost, false otherwise
-     */
     private boolean mustLostFocus() {
         return ctx.mousePressed && !isHover() && !isDragging();
     }
 
-    /**
-     * Updates maximum scroll value based on text width.
-     */
     private void updateScrollMax() {
         if (text.isEmpty() || text.getWidth() < getWidth() * WIDTH_RATIO_FOR_SCROLL) {
             scroll.setMax(0);
@@ -1243,12 +1085,8 @@ public final class TextField extends Component implements KeyPressable {
 
         scroll.setMax((text.getWidth() - getWidth() * WIDTH_RATIO_FOR_SCROLL));
     }
-
-    /**
-     * Internal class for managing text content and styling.
-     */
+    
     private static final class Text {
-        /** Minimum text size. */
         private static final int MIN_TEXT_SIZE = 1;
         
         private final TextField tf;
@@ -1258,18 +1096,11 @@ public final class TextField extends Component implements KeyPressable {
         private String hint;
         private float x, y, textWidth, textSize;
         
-        /**
-         * Constructs a Text manager for the text field.
-         *
-         * @param textField the parent text field
-         * @throws NullPointerException if textField is null
-         */
         private Text(TextField textField) {
             super();
             this.tf = requireNonNull(textField, "textField");
             controller = new FullSingleLineTextController();
             
-            // Set up controller listeners
             controller.setOnAfterCharInsertListener(() -> {
                 final Cursor.Column column = tf.cursor.column;
                 final BoundedValue scroll = tf.scroll;
@@ -1300,11 +1131,6 @@ public final class TextField extends Component implements KeyPressable {
             setTextSize(textField.getHeight());
         }
 
-        /**
-         * Draws text to the graphics buffer.
-         *
-         * @param pg the graphics buffer to draw to
-         */
         public void draw(final PGraphics pg) {
             pg.pushStyle();
 
@@ -1325,40 +1151,18 @@ public final class TextField extends Component implements KeyPressable {
             pg.popStyle();
         }
 
-        /**
-         * Gets the hint text color.
-         *
-         * @return the current hint color
-         */
         public AbstractColor getHintColor() {
             return hintColor;
         }
 
-        /**
-         * Sets the hint text color.
-         *
-         * @param hintColor the hint color
-         * @throws NullPointerException if hintColor is null
-         */
         public void setHintColor(AbstractColor hintColor) {
             this.hintColor = requireNonNull(hintColor, "hintColor");
         }
 
-        /**
-         * Gets the text size in pixels.
-         *
-         * @return the current text size
-         */
         public float getTextSize() {
             return textSize;
         }
 
-        /**
-         * Sets the text size in pixels.
-         *
-         * @param textSize the text size to set
-         * @throws IllegalArgumentException if textSize is less than MIN_TEXT_SIZE
-         */
         public void setTextSize(float textSize) {
             if (textSize < MIN_TEXT_SIZE) {
                 throw new IllegalArgumentException("Text size must be >= " + MIN_TEXT_SIZE);
@@ -1372,59 +1176,26 @@ public final class TextField extends Component implements KeyPressable {
             recalculateTextWidth();
         }
 
-        /**
-         * Gets the text color.
-         *
-         * @return the current text color
-         */
         public AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the text color.
-         *
-         * @param color the text color
-         * @throws NullPointerException if color is null
-         */
         public void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }
 
-        /**
-         * Gets the hint text.
-         *
-         * @return the current hint text
-         */
         public String getHint() {
             return hint;
         }
 
-        /**
-         * Sets the hint text.
-         *
-         * @param hint the hint text
-         * @throws NullPointerException if hint is null
-         */
         public void setHint(String hint) {
             this.hint = requireNonNull(hint, "hint");
         }
 
-        /**
-         * Gets the current font.
-         *
-         * @return the current font, or null if using default
-         */
         public PFont getFont() {
             return font;
         }
 
-        /**
-         * Sets the font for text rendering.
-         *
-         * @param font the font to use
-         * @throws NullPointerException if font is null
-         */
         public void setFont(PFont font) {
             if (this.font == font) {
                 return;
@@ -1434,308 +1205,140 @@ public final class TextField extends Component implements KeyPressable {
             recalculateTextWidth();
         }
         
-        /**
-         * Undoes the last text change.
-         */
         public void undo() {
             controller.undo();
         }
 
-        /**
-         * Redoes the last undone text change.
-         */
         public void redo() {
             controller.redo();
         }
 
-        /**
-         * Gets the password mask character.
-         *
-         * @return the current password mask character
-         */
         public final char getPasswordChar() {
             return controller.getPasswordChar();
         }
 
-        /**
-         * Sets the password mask character.
-         *
-         * @param passwordChar the character to use for masking
-         */
         public final void setPasswordChar(char passwordChar) {
             controller.setPasswordChar(passwordChar);
         }
 
-        /**
-         * Checks if password mode is enabled.
-         *
-         * @return true if password mode is enabled, false otherwise
-         */
         public final boolean isPasswordModeEnabled() {
             return controller.isPasswordModeEnabled();
         }
 
-        /**
-         * Enables or disables password mode.
-         *
-         * @param passwordModeEnabled true to enable password masking
-         */
         public final void setPasswordModeEnabled(boolean passwordModeEnabled) {
             controller.setPasswordModeEnabled(passwordModeEnabled);
         }
 
-        /**
-         * Gets the validation mode.
-         *
-         * @return the current validation mode
-         */
         public final ValidationMode getValidationMode() {
             return controller.getValidationMode();
         }
 
-        /**
-         * Sets the validation mode.
-         *
-         * @param validationMode the validation mode to use
-         */
         public final void setValidationMode(ValidationMode validationMode) {
             controller.setValidationMode(validationMode);
         }
 
-        /**
-         * Checks if text length constraint is enabled.
-         *
-         * @return true if constraint is enabled, false otherwise
-         */
         public final boolean isConstrainEnabled() {
             return controller.isConstrainEnabled();
         }
 
-        /**
-         * Enables or disables text length constraint.
-         *
-         * @param constrainEnabled true to enable length constraint
-         */
         public final void setConstrainEnabled(boolean constrainEnabled) {
             controller.setConstrainEnabled(constrainEnabled);
         }
 
-        /**
-         * Gets the maximum character limit.
-         *
-         * @return the maximum allowed characters
-         */
         public final int getMaxChars() {
             return controller.getMaxChars();
         }
 
-        /**
-         * Sets the maximum character limit.
-         *
-         * @param maxChars the maximum allowed characters
-         */
         public final void setMaxChars(int maxChars) {
             controller.setMaxChars(maxChars);
         }
 
-        /**
-         * Gets the displayed text (masked in password mode).
-         *
-         * @return the displayed text content
-         */
         public final String getAsString() {
             return controller.getAsString();
         }
 
-        /**
-         * Gets the actual text (unmasked).
-         *
-         * @return the actual text content
-         */
         public final String getHiddenText() {
             return controller.getHiddenText();
         }
 
-        /**
-         * Gets the digit count for digit-only validation.
-         *
-         * @return the number of digits, or -1 if not in digit mode
-         */
         public final int getDigitsStrict() {
             return controller.getDigitsStrict();
         }
 
-        /**
-         * Gets the digit count or a default value.
-         *
-         * @param defaultValue the default value to return if not in digit mode
-         * @return the number of digits, or defaultValue
-         */
         public int getDigitsOrDefault(int defaultValue) {
             return controller.getDigitsOrDefault(defaultValue);
         }
 
-        /**
-         * Inserts a character at the specified position.
-         *
-         * @param pos the insertion position
-         * @param ch the character to insert
-         */
         public void insert(int pos, char ch) {
             controller.insert(pos, ch);
         }
 
-        /**
-         * Inserts a string at the specified position.
-         *
-         * @param pos the insertion position
-         * @param text the string to insert
-         */
         public void insert(int pos, String text) {
             controller.insert(pos, text);
         }
 
-        /**
-         * Sets the text content.
-         *
-         * @param text the text to set
-         */
         public void set(String text) {
             controller.set(text);
         }
-
-        /**
-         * Sets the text content from a StringBuilder.
-         *
-         * @param text the StringBuilder containing text
-         */
+        
         public void set(StringBuilder text) {
             controller.set(text);
         }
 
-        /**
-         * Removes a character at the specified position.
-         *
-         * @param pos the position of the character to remove
-         */
         public void removeCharAt(int pos) {
             controller.removeCharAt(pos);
         }
 
-        /**
-         * Removes characters between two positions.
-         *
-         * @param firstChar the starting position (inclusive)
-         * @param lastChar the ending position (exclusive)
-         */
         public void remove(int firstChar, int lastChar) {
             controller.remove(firstChar, lastChar);
         }
 
-        /**
-         * Gets the text length.
-         *
-         * @return the number of characters
-         */
         public int length() {
             return controller.length();
         }
 
-        /**
-         * Checks if the text is empty.
-         *
-         * @return true if empty, false otherwise
-         */
         public boolean isEmpty() {
             return controller.isEmpty();
         }
 
-        /**
-         * Checks if validation is enabled.
-         *
-         * @return true if validation is enabled, false otherwise
-         */
         public boolean isValidationEnabled() {
             return controller.isValidationEnabled();
         }
 
-        /**
-         * Enables or disables validation.
-         *
-         * @param validation true to enable validation
-         */
         public void setValidationEnabled(boolean validation) {
             controller.setValidationEnabled(validation);
         }
 
-        /**
-         * Determines if hint text should be shown.
-         *
-         * @return true if hint should be shown, false otherwise
-         */
         private boolean mustShowHint() {
             return !tf.isFocused() && isEmpty() && hint != null;
         }
 
-        /**
-         * Recalculates Y position for vertical centering.
-         */
         private void recalculateY() {
             y = tf.getHeight() / 2;
         }
 
-        /**
-         * Gets the X position.
-         *
-         * @return the X coordinate
-         */
         private float getX() {
             return x;
         }
 
-        /**
-         * Sets the X position.
-         *
-         * @param x the X coordinate
-         */
         public void setX(float x) {
             this.x = x;
         }
 
-        /**
-         * Recalculates the text width.
-         */
         private void recalculateTextWidth() {
             textWidth = tf.getTextWidth(getAsString());
         }
 
-        /**
-         * Gets the text width.
-         *
-         * @return the text width in pixels
-         */
         private float getWidth() {
             return textWidth;
         }
     }
 
-    /**
-     * Internal class for managing the text cursor.
-     */
     private static final class Cursor {
-        /** Default cursor weight. */
         private static final int DEFAULT_CURSOR_WEIGHT = 2;
-        
-        /** Minimum cursor weight. */
         private static final int MIN_CURSOR_WEIGHT = 1;
-        
-        /** Maximum cursor weight. */
         private static final int MAX_CURSOR_WEIGHT = 10;
-        
-        /** Ratio for left-side proximity detection. */
         private static final float CLOSE_TO_LEFT_SIDE_OF_WIDTH_RATIO = .1f;
-        
-        /** Ratio for right-side proximity detection. */
         private static final float CLOSE_TO_RIGHT_SIDE_OF_WIDTH_RATIO = .9f;
 
         private final TextField tf;
@@ -1744,12 +1347,6 @@ public final class TextField extends Component implements KeyPressable {
         private AbstractColor color;
         private float positionX, positionY, weight, height;
 
-        /**
-         * Constructs a Cursor for the text field.
-         *
-         * @param textField the parent text field
-         * @throws NullPointerException if textField is null
-         */
         private Cursor(TextField textField) {
             this.tf = requireNonNull(textField, "textField");
 
@@ -1760,11 +1357,6 @@ public final class TextField extends Component implements KeyPressable {
             updateTransforms();
         }
 
-        /**
-         * Draws the cursor to the graphics buffer.
-         *
-         * @param pg the graphics buffer to draw to
-         */
         public void draw(final PGraphics pg) {
             if (pg == null) {
                 return;
@@ -1781,40 +1373,18 @@ public final class TextField extends Component implements KeyPressable {
             }
         }
 
-        /**
-         * Gets the cursor color.
-         *
-         * @return the current cursor color
-         */
         public AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the cursor color.
-         *
-         * @param color the cursor color
-         * @throws NullPointerException if color is null
-         */
         public void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }
 
-        /**
-         * Gets the cursor stroke weight.
-         *
-         * @return the current cursor weight
-         */
         public float getWeight() {
             return weight;
         }
 
-        /**
-         * Sets the cursor stroke weight.
-         *
-         * @param weight the cursor weight
-         * @throws IllegalArgumentException if weight is outside valid range
-         */
         public void setWeight(float weight) {
             if (weight < MIN_CURSOR_WEIGHT) {
                 throw new IllegalArgumentException("Weight of cursor cannot be less than " + MIN_CURSOR_WEIGHT);
@@ -1827,72 +1397,35 @@ public final class TextField extends Component implements KeyPressable {
             this.weight = weight;
         }
 
-        /**
-         * Gets the cursor blink rate.
-         *
-         * @return the current blink rate
-         */
         public float getBlinkRate() {
             return blink.getRate();
         }
 
-        /**
-         * Sets the cursor blink rate.
-         *
-         * @param rate the blink rate
-         * @throws IllegalArgumentException if rate is outside valid range
-         */
         public void setBlinkRate(float rate) {
             blink.setRate(rate);
         }
 
-        /**
-         * Updates cursor transforms based on text field dimensions.
-         */
         private void updateTransforms() {
             positionY = tf.getHeight() * .1f;
             height = tf.getHeight() * .9f;
         }
 
-        /**
-         * Checks if cursor is at text start.
-         *
-         * @return true if at start, false otherwise
-         */
         private boolean isAtStart() {
             return column.get() == 0;
         }
 
-        /**
-         * Checks if cursor is at text end.
-         *
-         * @return true if at end, false otherwise
-         */
         private boolean isAtEnd() {
             return column.get() == tf.text.length();
         }
 
-        /**
-         * Checks if cursor is close to left side of visible area.
-         *
-         * @return true if close to left side, false otherwise
-         */
         private boolean isCloseToLeftSide() {
             return positionX < tf.getWidth() * CLOSE_TO_LEFT_SIDE_OF_WIDTH_RATIO;
         }
 
-        /**
-         * Checks if cursor is close to right side of visible area.
-         *
-         * @return true if close to right side, false otherwise
-         */
         private boolean isCloseToRightSide() {
             return positionX > tf.getWidth() * CLOSE_TO_RIGHT_SIDE_OF_WIDTH_RATIO;
         }
 
-        /**
-         * Recalculates cursor X position based on current column and scroll.
-         */
         private void recalculateX() {
             if (tf.isEmpty()) {
                 positionX = 0;
@@ -1905,43 +1438,21 @@ public final class TextField extends Component implements KeyPressable {
             positionX = subTextWidth - scrollValue;
         }
 
-        /**
-         * Internal class for cursor blinking behavior.
-         */
         private static final class Blink {
-            /** Maximum blink cycle duration. */
             private static final byte MAX_DURATION = 60;
-            
-            /** Minimum blink rate. */
             private static final byte MIN_BLINK_RATE = 1;
-            
-            /** Maximum blink rate. */
             private static final byte MAX_BLINK_RATE = MAX_DURATION / 2;
 
             private byte duration, rate;
 
-            /**
-             * Constructs a Blink timer.
-             */
             private Blink() {
                 rate = 1;
             }
-
-            /**
-             * Gets the blink rate.
-             *
-             * @return the current blink rate
-             */
+            
             public byte getRate() {
                 return rate;
             }
 
-            /**
-             * Sets the blink rate.
-             *
-             * @param rate the blink rate to set
-             * @throws IllegalArgumentException if rate is outside valid range
-             */
             public void setRate(final float rate) {
                 if (rate < MIN_BLINK_RATE || rate > MAX_BLINK_RATE) {
                     throw new IllegalArgumentException(
@@ -1950,18 +1461,10 @@ public final class TextField extends Component implements KeyPressable {
                 this.rate = (byte) rate;
             }
 
-            /**
-             * Checks if cursor should be visible (blinking state).
-             *
-             * @return true if cursor should be visible, false if hidden
-             */
             private boolean isBlinking() {
                 return duration < MAX_DURATION / 2;
             }
 
-            /**
-             * Updates blink state.
-             */
             private void updateState() {
                 if (duration < MAX_DURATION) {
                     duration += rate;
@@ -1970,36 +1473,19 @@ public final class TextField extends Component implements KeyPressable {
                 }
             }
 
-            /**
-             * Resets blink timer (makes cursor visible).
-             */
             private void reset() {
                 duration = 0;
             }
         }
 
-        /**
-         * Internal class for managing cursor column position.
-         */
         private static final class Column {
             private final TextField tf;
             private int column;
 
-            /**
-             * Constructs a Column position manager.
-             *
-             * @param textField the parent text field
-             * @throws NullPointerException if textField is null
-             */
             private Column(TextField textField) {
                 tf = requireNonNull(textField, "textField");
             }
 
-            /**
-             * Sets the column position.
-             *
-             * @param column the column index to set
-             */
             private void set(int column) {
                 if (tf.isEmpty()) {
                     this.column = 0;
@@ -2011,48 +1497,26 @@ public final class TextField extends Component implements KeyPressable {
                 tf.cursor.recalculateX();
             }
 
-            /**
-             * Gets the current column position.
-             *
-             * @return the current column index
-             */
             private int get() {
                 return column;
             }
 
-            /**
-             * Moves cursor to text start.
-             */
             private void goToStart() {
                 set(0);
             }
 
-            /**
-             * Moves cursor to text end.
-             */
             private void goToEnd() {
                 set(tf.text.length());
             }
 
-            /**
-             * Moves cursor one column back.
-             */
             private void back() {
                 set(get() - 1);
             }
 
-            /**
-             * Moves cursor one column forward.
-             */
             private void next() {
                 set(get() + 1);
             }
 
-            /**
-             * Gets width of character at current column.
-             *
-             * @return the character width in pixels
-             */
             private float getCurrentCharWidth() {
                 if (tf.isEmpty()) {
                     return 0;
@@ -2060,11 +1524,6 @@ public final class TextField extends Component implements KeyPressable {
                 return tf.textWidthPool.getCharWidth(column);
             }
 
-            /**
-             * Gets width of character at next column.
-             *
-             * @return the character width in pixels
-             */
             private float getNextCharWidth() {
                 if (tf.isEmpty() || column == tf.getText().length() - 1) {
                     return 0;
@@ -2072,11 +1531,6 @@ public final class TextField extends Component implements KeyPressable {
                 return tf.textWidthPool.getCharWidth(column + 1);
             }
 
-            /**
-             * Gets width of character at previous column.
-             *
-             * @return the character width in pixels
-             */
             private float getPrevCharWidth() {
                 if (tf.isEmpty() || column == 0) {
                     return 0;
@@ -2086,9 +1540,6 @@ public final class TextField extends Component implements KeyPressable {
         }
     }
 
-    /**
-     * Internal class for managing text selection.
-     */
     private static final class Selection {
         private final TextField tf;
         private AbstractColor color;
@@ -2096,24 +1547,12 @@ public final class TextField extends Component implements KeyPressable {
         private int startColumn, endColumn;
         private boolean started;
 
-        /**
-         * Constructs a Selection manager for the text field.
-         *
-         * @param textField the parent text field
-         * @throws NullPointerException if textField is null
-         */
         private Selection(TextField textField) {
             this.tf = requireNonNull(textField, "textField");
             color = getTheme().getSelectColor();
             h = textField.getHeight();
         }
 
-        /**
-         * Draws selection highlight to the graphics buffer.
-         *
-         * @param pg the graphics buffer to draw to
-         * @throws NullPointerException if pg is null
-         */
         public void draw(final PGraphics pg) {
             requireNonNull(pg, "pg");
 
@@ -2124,28 +1563,14 @@ public final class TextField extends Component implements KeyPressable {
             pg.popStyle();
         }
 
-        /**
-         * Gets the selection highlight color.
-         *
-         * @return the current selection color
-         */
         public final AbstractColor getColor() {
             return color;
         }
 
-        /**
-         * Sets the selection highlight color.
-         *
-         * @param color the selection color
-         * @throws NullPointerException if color is null
-         */
         public final void setColor(AbstractColor color) {
             this.color = requireNonNull(color, "color");
         }
 
-        /**
-         * Recalculates selection bounds based on current column positions.
-         */
         private void recalculateBounds() {
             h = tf.getHeight();
 
@@ -2161,11 +1586,6 @@ public final class TextField extends Component implements KeyPressable {
             w = tf.textWidthPool.getWidthBetween(sc, ec);
         }
 
-        /**
-         * Gets the selected text.
-         *
-         * @return the selected text substring
-         */
         private String getText() {
             if (tf.text.isEmpty()) {
                 return "";
@@ -2174,97 +1594,48 @@ public final class TextField extends Component implements KeyPressable {
             return tf.getText().substring(getEffectiveStartColumn(), getEffectiveEndColumn());
         }
 
-        /**
-         * Gets the effective start column (minimum of start and end).
-         *
-         * @return the effective start column
-         */
         private int getEffectiveStartColumn() {
             return (int) Math.min(getStartColumn(), getEndColumn());
         }
 
-        /**
-         * Gets the start column (constrained to valid range).
-         *
-         * @return the start column
-         */
         private int getStartColumn() {
             return (int) constrain(startColumn, 0, tf.getText().length());
         }
 
-        /**
-         * Sets the start column.
-         *
-         * @param startColumn the start column to set
-         */
         private void setStartColumn(int startColumn) {
             this.startColumn = (int) constrain(startColumn, 0, tf.text.length());
             x = tf.textWidthPool.getWidthUntil(getEffectiveEndColumn());
         }
 
-        /**
-         * Gets the end column (constrained to valid range).
-         *
-         * @return the end column
-         */
         private int getEndColumn() {
             return (int) constrain(endColumn, 0, tf.getText().length());
         }
 
-        /**
-         * Gets the effective end column (maximum of start and end).
-         *
-         * @return the effective end column
-         */
         private int getEffectiveEndColumn() {
             return (int) Math.max(getStartColumn(), getEndColumn());
         }
 
-        /**
-         * Sets the end column.
-         *
-         * @param endColumn the end column to set
-         */
         private void setEndColumn(int endColumn) {
             this.endColumn = (int) constrain(endColumn, 0, tf.text.length());
             w = tf.textWidthPool.getWidthBetween(getEffectiveStartColumn(), getEffectiveEndColumn());
         }
 
-        /**
-         * Resets selection (clears start and end columns).
-         */
         private void reset() {
             startColumn = endColumn = 0;
             started = false;
             recalculateBounds();
         }
 
-        /**
-         * Checks if any text is selected.
-         *
-         * @return true if text is selected, false otherwise
-         */
         private boolean isSelected() {
             return startColumn != endColumn;
         }
 
-        /**
-         * Selects all text.
-         */
         private void selectAll() {
             startColumn = 0;
             endColumn = tf.getText().length();
             recalculateBounds();
         }
 
-        /**
-         * Finds the start index of the word containing the given column.
-         *
-         * @param word the text to search in
-         * @param currentColumn the current column position
-         * @return the start index of the word
-         * @throws NullPointerException if word is null
-         */
         private int findStartIndexOfWord(String word, int currentColumn) {
             requireNonNull(word, "word");
             int index = 0;
@@ -2280,14 +1651,6 @@ public final class TextField extends Component implements KeyPressable {
             return index;
         }
 
-        /**
-         * Finds the end index of the word containing the given column.
-         *
-         * @param word the text to search in
-         * @param currentColumn the current column position
-         * @return the end index of the word
-         * @throws NullPointerException if word is null
-         */
         private int findEndIndexOfWord(String word, int currentColumn) {
             requireNonNull(word, "word");
             int endIndex = word.length();
@@ -2303,9 +1666,6 @@ public final class TextField extends Component implements KeyPressable {
             return endIndex;
         }
 
-        /**
-         * Selects the word at the current cursor position.
-         */
         private void selectWord() {
             final String str = tf.getText();
 
@@ -2325,39 +1685,20 @@ public final class TextField extends Component implements KeyPressable {
             recalculateBounds();
         }
 
-        /**
-         * Checks if selection has been started.
-         *
-         * @return true if selection started, false otherwise
-         */
         private boolean isStarted() {
             return started;
         }
 
-        /**
-         * Sets the selection started flag.
-         *
-         * @param started true to mark selection as started
-         */
         private void setStarted(boolean started) {
             this.started = started;
         }
     }
 
-    /**
-     * Internal cache for text width measurements to improve performance.
-     */
     private static final class TextWidthPool {
         private final TextField tf;
         private HashMap<Integer, Float> untilWidth, charWidth;
         private HashMap<Long, Float> betweenWidth;
 
-        /**
-         * Constructs a TextWidthPool for the text field.
-         *
-         * @param tf the parent text field
-         * @throws NullPointerException if tf is null
-         */
         public TextWidthPool(TextField tf) {
             super();
             this.tf = requireNonNull(tf, "tf");
@@ -2366,21 +1707,12 @@ public final class TextField extends Component implements KeyPressable {
             betweenWidth = new HashMap<Long, Float>();
         }
 
-        /**
-         * Clears all cached width measurements.
-         */
         public void clear() {
             untilWidth.clear();
             charWidth.clear();
             betweenWidth.clear();
         }
 
-        /**
-         * Gets the width of text from start to the specified index.
-         *
-         * @param index the ending index (exclusive)
-         * @return the cumulative width in pixels
-         */
         public float getWidthUntil(int index) {
             final String text = tf.getText();
 
@@ -2397,12 +1729,6 @@ public final class TextField extends Component implements KeyPressable {
             return untilWidth.get(index);
         }
 
-        /**
-         * Gets the width of a character at the specified index.
-         *
-         * @param index the character index
-         * @return the character width in pixels
-         */
         public float getCharWidth(int index) {
             final String text = tf.getText();
 
@@ -2419,13 +1745,6 @@ public final class TextField extends Component implements KeyPressable {
             return charWidth.get(index);
         }
 
-        /**
-         * Gets the width of text between two indices.
-         *
-         * @param startIndex the starting index (inclusive)
-         * @param endIndex the ending index (exclusive)
-         * @return the width of the substring in pixels
-         */
         public float getWidthBetween(int startIndex, int endIndex) {
             final String text = tf.getText();
 
@@ -2449,16 +1768,7 @@ public final class TextField extends Component implements KeyPressable {
             return valueInMap.floatValue();
         }
         
-        /**
-         * Generates a cache key from start and end indices.
-         * Uses bit packing to combine two integers into one long.
-         *
-         * @param startIndex the starting index
-         * @param endIndex the ending index
-         * @return a unique key for the cache
-         */
         private long getRangeKey(int startIndex, int endIndex) {
-            // startIndex takes first 32 bits, endIndex takes last 32 bits
             return ((long) startIndex << 32) | (endIndex & 0xFFFFFFFFL);
         }
     }

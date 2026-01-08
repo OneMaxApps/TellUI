@@ -40,11 +40,8 @@ public enum AutoResizeMode {
      * Scaling factor: 5 (text size = min(width, height) / 5)
      */
     TINY(5);
-
-    /** The scaling factor divisor for automatic text size calculation. */
-    private final int value;
-
-    /**
+	
+	 /**
      * Constructs an AutoResizeMode with the specified scaling factor.
      *
      * @param value the scaling factor divisor (must be positive)
@@ -53,6 +50,9 @@ public enum AutoResizeMode {
         this.value = value;
     }
 
+	 /** The scaling factor divisor for automatic text size calculation. */
+    private final int value;
+    
     /**
      * Gets the scaling factor divisor for this resize mode.
      * The divisor is used to calculate automatic text size:
@@ -63,4 +63,5 @@ public enum AutoResizeMode {
     public final int getValue() {
         return value;
     }
+
 }

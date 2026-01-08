@@ -20,7 +20,6 @@ import microui.util.MathUtils;
  * with the progress indicator updating in real-time.</p>
  */
 public class Slider extends LinearRangeControl {
-    /** Visual representation of the progress/current value. */
     private final Rect progress;
 
     /**
@@ -38,12 +37,10 @@ public class Slider extends LinearRangeControl {
 
         setValue(0, 100, 0);
 
-        // Update progress when dragging
         onDragging(() -> {
             recalculateProgressBounds();
         });
 
-        // Update progress when clicking
         onPress(() -> {
             recalculateProgressBounds();
         });
@@ -58,27 +55,6 @@ public class Slider extends LinearRangeControl {
         setSize(getMaxWidth(), getMaxHeight());
         setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
     }
-
-    /**
-     * Renders the slider and its progress indicator.
-     * The rendering includes the track (from parent class) and the progress rectangle.
-     */
-    @Override
-    protected void render() {
-        super.render();
-        progress.draw();
-    }
-
-    /**
-     * Called when the slider's bounds change.
-     * Updates the progress indicator to match the new bounds.
-     */
-    @Override
-    protected void onChangeBounds() {
-        super.onChangeBounds();
-        updateProgressBounds();
-    }
-
     /**
      * Swaps the orientation of the slider (horizontal to vertical or vice versa).
      * Updates the progress indicator accordingly.
@@ -142,11 +118,27 @@ public class Slider extends LinearRangeControl {
     public final void setProgressColor(AbstractColor color) {
         progress.color = color;
     }
+    
+    /**
+     * Renders the slider and its progress indicator.
+     * The rendering includes the track (from parent class) and the progress rectangle.
+     */
+    @Override
+    protected void render() {
+        super.render();
+        progress.draw();
+    }
 
     /**
-     * Recalculates the progress bounds based on current mouse position.
-     * Called during dragging or clicking to update the slider value and visual progress.
+     * Called when the slider's bounds change.
+     * Updates the progress indicator to match the new bounds.
      */
+    @Override
+    protected void onChangeBounds() {
+        super.onChangeBounds();
+        updateProgressBounds();
+    }
+
     private void recalculateProgressBounds() {
         switch (getOrientation()) {
         case HORIZONTAL:
@@ -162,24 +154,11 @@ public class Slider extends LinearRangeControl {
         onChangeValue();
     }
 
-    /**
-     * Internal class representing the visual progress indicator rectangle.
-     */
     private final class Rect extends SpatialView {
-        /** Stroke for the progress indicator border. */
         public final Stroke stroke;
         
-        /** Fill color for the progress indicator. */
         public AbstractColor color;
 
-        /**
-         * Constructs a progress rectangle with specified bounds.
-         *
-         * @param x the x-coordinate of the rectangle's top-left corner
-         * @param y the y-coordinate of the rectangle's top-left corner
-         * @param w the width of the rectangle
-         * @param h the height of the rectangle
-         */
         private Rect(float x, float y, float w, float h) {
             super(x, y, w, h);
             setVisible(true);
@@ -190,9 +169,6 @@ public class Slider extends LinearRangeControl {
             color = getTheme().getPrimaryColor();
         }
 
-        /**
-         * Renders the progress rectangle with stroke and fill.
-         */
         @Override
         public void render() {
             ctx.pushStyle();
@@ -203,11 +179,6 @@ public class Slider extends LinearRangeControl {
         }
     }
 
-    /**
-     * Updates the progress indicator bounds based on the current slider value.
-     * For horizontal sliders, the width represents progress.
-     * For vertical sliders, the height represents progress (from bottom to top).
-     */
     private void updateProgressBounds() {
         if (progress == null) {
             return;

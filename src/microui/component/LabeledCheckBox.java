@@ -47,26 +47,21 @@ public final class LabeledCheckBox extends Component {
         setMinSize(DEFAULT_SIZE);
         setMaxSize(ctx.width / 2, DEFAULT_SIZE);
 
-        // Initialize checkbox with margin and priority
         checkBox = new CheckBox();
         checkBox.setPriority(1);
         checkBox.setMarginLeft(10);
 
-        // Initialize text view
         textView = new TextView();
 
-        // Initialize hover effect
         hover = new Hover(this);
         hover.setColor(new Color(32, 16));
 
-        // Make entire component clickable (except when directly clicking the checkbox)
         onClick(() -> {
             if (!checkBox.isHover()) {
                 checkBox.toggle();
             }
         });
 
-        // Configure text view properties
         textView.setPadding(20, 0);
         textView.setAutoResizeModeEnabled(false);
         textView.setAlignX(LEFT);
@@ -74,7 +69,6 @@ public final class LabeledCheckBox extends Component {
         textView.setConstrainDimensionsEnabled(true);
         textView.setMaxSize(ctx.width, DEFAULT_SIZE);
 
-        // Create container with row layout
         container = new Container(new RowLayout(), x, y, width, height);
         container.setMode(RESPECT_CONSTRAINTS);
         container.add(checkBox, new RowLayoutParams(.1f));  // Checkbox takes 10% width

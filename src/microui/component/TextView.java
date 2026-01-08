@@ -31,7 +31,6 @@ import processing.core.PFont;
  * </ul></p>
  */
 public final class TextView extends Component {
-    /** Default empty text string. */
     private static final String DEFAULT_TEXT = "";
     
     private AbstractColor textColor;
@@ -329,11 +328,6 @@ public final class TextView extends Component {
         recalculateAutoTextSize();
     }
 
-    /**
-     * Recalculates the automatic text size based on current bounds and auto-resize mode.
-     * The text size is calculated as the minimum of width and height divided by the
-     * auto-resize mode's scaling factor.
-     */
     private void recalculateAutoTextSize() {
         if (getAutoResizeMode() == null) {
             return;
