@@ -9,9 +9,6 @@ package microui.layout;
  * The weight parameter determines the proportional vertical space allocation,
  * while alignX controls horizontal alignment within the column.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see LinearAxisLayoutParams
  * @see ColumnLayout
  */

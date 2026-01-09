@@ -26,32 +26,21 @@ import microui.util.Debugger;
  * Status: STABLE - Do not modify
  * Last Reviewed: 29.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see View
  * @see SpatialAnimator
  * @see HooksUpdateMode
  */
 public abstract class SpatialView extends View {
-	/** Default minimum size for dimensions. */
 	private static final int DEFAULT_MIN_SIZE = 1;
-	/** Default maximum size for dimensions. */
 	private static final int DEFAULT_MAX_SIZE = 1000;
-	/** Epsilon value for floating-point comparisons. */
 	private static final float EPSILON = .01f;
 
-	/** Flags indicating if position or dimensions have changed. */
 	private boolean posDirty, dimDirty, negativeDimensionsEnabled, constrainDimensionsEnabled;
-	/** Spatial properties: position and dimensions. */
 	private float x, y, width, height, minWidth, minHeight, maxWidth, maxHeight;
-	/** Timestamp of last hooks update. */
 	private long lastUpdateHooksMs;
 
-	/** Current update mode for change hooks. */
 	private HooksUpdateMode hooksUpdateMode;
 
-	/** Animator for spatial property animations. */
 	private SpatialAnimator spatialAnimator;
 
 	/**
@@ -884,20 +873,10 @@ public abstract class SpatialView extends View {
 		onChangeBounds();
 	}
 
-	/**
-	 * Compares two float values with epsilon precision.
-	 * 
-	 * @param firstValue the first value
-	 * @param secondValue the second value
-	 * @return true if values are equal within epsilon, false otherwise
-	 */
 	private static boolean areEqual(float firstValue, float secondValue) {
 		return abs(firstValue - secondValue) < EPSILON;
 	}
 
-	/**
-	 * Updates hooks based on dirty flags.
-	 */
 	private void hooksUpdate() {
 		if (posDirty || dimDirty) {
 			onChangeBounds();
@@ -911,15 +890,6 @@ public abstract class SpatialView extends View {
 		}
 	}
 
-	/**
-	 * Calculates the correct dimension value based on constraints and settings.
-	 * 
-	 * @param currentValue the current dimension value
-	 * @param newValue the new dimension value requested
-	 * @param min the minimum allowed value
-	 * @param max the maximum allowed value
-	 * @return the corrected dimension value
-	 */
 	private float getCorrectDimension(float currentValue, float newValue, float min, float max) {
 		if (areEqual(currentValue, newValue)) {
 			return currentValue;
@@ -944,21 +914,11 @@ public abstract class SpatialView extends View {
 		return correctValue;
 	}
 
-	/**
-	 * Initializes default minimum and maximum size constraints.
-	 */
 	private void initDefaultMinMaxSize() {
 		minWidth = minHeight = DEFAULT_MIN_SIZE;
 		maxWidth = maxHeight = DEFAULT_MAX_SIZE;
 	}
 
-	/**
-	 * Validates a SpatialView object for copy operations.
-	 * 
-	 * @param other the SpatialView to validate
-	 * @throws NullPointerException if other is null
-	 * @throws IllegalArgumentException if other is this view
-	 */
 	private void checkSpatialViewObject(SpatialView other) {
 		requireNonNull(other, "other");
 
@@ -968,9 +928,6 @@ public abstract class SpatialView extends View {
 		
 	}
 
-	/**
-	 * Draws debug visualization when debug mode is enabled.
-	 */
 	private void debugOnDraw() {
 		if (Debugger.isEnabled()) {
 			ctx.fill(255, 0, 0, 64);
@@ -993,7 +950,6 @@ public abstract class SpatialView extends View {
 		/** Hooks are called approximately every 128ms (~8fps). */
 		VERY_SLOW(128);
 
-		/** Time interval in milliseconds. */
 		private final int ms;
 
 		/**

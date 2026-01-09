@@ -50,29 +50,6 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		animator = new Animator();
 	}
 
-	protected final AbstractColor getStart() {
-		return start;
-	}
-
-	protected final AbstractColor getEnd() {
-		return end;
-	}
-
-	@Override
-	protected void preApply() {
-		super.preApply();
-		animator.update();
-
-		if (getStart() instanceof AbstractLerpedColor gradient) {
-			gradient.preApply();
-		}
-
-		if (getEnd() instanceof AbstractLerpedColor gradient) {
-			gradient.preApply();
-		}
-
-	}
-
 	/**
 	 * Returns the red component of the interpolated color.
 	 * The value is calculated based on the current animation progress.
@@ -142,6 +119,29 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		
 		return this;
 	}
+	
+	protected final AbstractColor getStart() {
+		return start;
+	}
+
+	protected final AbstractColor getEnd() {
+		return end;
+	}
+
+	@Override
+	protected void preApply() {
+		super.preApply();
+		animator.update();
+
+		if (getStart() instanceof AbstractLerpedColor gradient) {
+			gradient.preApply();
+		}
+
+		if (getEnd() instanceof AbstractLerpedColor gradient) {
+			gradient.preApply();
+		}
+
+	}
 
 	protected final Animator getAnimator() {
 		return animator;
@@ -169,14 +169,7 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	 * </ul>
 	 */
 	protected final class Animator {
-		/**
-		 * The starting progress value (0.0), representing full start color.
-		 */
 		public static final int START_PROGRESS = 0;
-		
-		/**
-		 * The ending progress value (1.0), representing full end color.
-		 */
 		public static final int END_PROGRESS = 1;
 		
 		private float progress, speed;

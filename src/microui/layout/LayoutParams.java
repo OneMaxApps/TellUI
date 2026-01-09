@@ -11,5 +11,4 @@ package microui.layout;
  * layout configuration data from components to layout managers.</p>
  */
 public interface LayoutParams {
-    // Marker interface - no methods defined
 }

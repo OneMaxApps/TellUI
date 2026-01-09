@@ -13,15 +13,11 @@ import processing.core.PApplet;
  * based on the weight values set for each side. When alpha fade-out is enabled,
  * the shadow creates a smooth gradient from full opacity to transparent.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractShadow
  * @see ContentView
  */
 public class PlainShadow extends AbstractShadow {
-	/** Flag indicating whether alpha fade-out effect is enabled. */
-	private boolean isAlphaFadeOutEnabled;
+	private boolean alphaFadeOutEnabled;
 
 	/**
 	 * Constructs a PlainShadow with default properties.
@@ -48,7 +44,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return true if alpha fade-out is enabled, false for solid outline
 	 */
 	public boolean isAlphaFadeOutEnabled() {
-		return isAlphaFadeOutEnabled;
+		return alphaFadeOutEnabled;
 	}
 
 	/**
@@ -57,8 +53,8 @@ public class PlainShadow extends AbstractShadow {
 	 * @param isAlphaFadeOutEnabled true to enable gradient fade-out, false for solid outline
 	 * @return this PlainShadow for method chaining
 	 */
-	public PlainShadow setAlphaFadeOutEnabled(boolean isAlphaFadeOutEnabled) {
-		this.isAlphaFadeOutEnabled = isAlphaFadeOutEnabled;
+	public PlainShadow setAlphaFadeOutEnabled(boolean alphaFadeOutEnabled) {
+		this.alphaFadeOutEnabled = alphaFadeOutEnabled;
 		
 		return this;
 	}
@@ -164,37 +160,29 @@ public class PlainShadow extends AbstractShadow {
 	 */
 	@Override
 	protected void render() {
-		// Apply the shadow color to the drawing context
 		getColor().apply();
 		
-		// Get target component bounds
 		float x = getTargetX();
 		float y = getTargetY();
 		float x1 = getTargetX()+getTargetWidth();
 		float y1 = getTargetY()+getTargetHeight();
 		
-		// Set rectangle mode to corner coordinates
 		ctx.rectMode(PApplet.CORNERS);
 		
 		if(isAlphaFadeOutEnabled()) {
-			// Render gradient fade-out effect
 			for(int i = 0; i < MAX_WEIGHT; i++) {
-				// Calculate alpha value that fades from full to transparent
 				ctx.stroke(getColor().getRed(), getColor().getGreen(), getColor().getBlue(),
 				          convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
 				
-				// Calculate expanded bounds for this gradient level
-				float newX = x-convert(i,0,MAX_WEIGHT,0,getWeightLeft());
-				float newY = y-convert(i,0,MAX_WEIGHT,0,getWeightTop());
-				float newX1 = x1+convert(i,0,MAX_WEIGHT,0,getWeightRight());
-				float newY1 = y1+convert(i,0,MAX_WEIGHT,0,getWeightBottom());
+				final float newX = x-convert(i,0,MAX_WEIGHT,0,getWeightLeft());
+				final float newY = y-convert(i,0,MAX_WEIGHT,0,getWeightTop());
+				final float newX1 = x1+convert(i,0,MAX_WEIGHT,0,getWeightRight());
+				final float newY1 = y1+convert(i,0,MAX_WEIGHT,0,getWeightBottom());
 				
-				// Draw rectangle for this gradient level
 				ctx.rect(newX,newY,newX1,newY1);
 			}
 			
 		} else {
-			// Render solid outline
 			getColor().applyStroke();
 			ctx.rect(x-getWeightLeft(),y-getWeightTop(),x1+getWeightRight(),y1+getWeightBottom());
 		}

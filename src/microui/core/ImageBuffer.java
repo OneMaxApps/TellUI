@@ -26,7 +26,6 @@ import processing.core.PImage;
  * </ul></p>
  * 
  * @see SpatialView
- * @see PImage
  * @see AbstractColor
  */
 public class ImageBuffer extends SpatialView {
@@ -52,21 +51,7 @@ public class ImageBuffer extends SpatialView {
             super.draw();
         }
     }
-
-    /**
-     * Renders the image with applied color tint at the buffer's position and dimensions.
-     * Only called when an image is loaded.
-     */
-    @Override
-    protected void render() {
-        if (isLoaded()) {
-            ctx.pushStyle();
-            color.applyTint();
-            ctx.image(image, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
-            ctx.popStyle();
-        }
-    }
-
+    
     /**
      * Checks if an image is currently loaded in the buffer.
      *
@@ -138,12 +123,19 @@ public class ImageBuffer extends SpatialView {
     }
 
     /**
-     * Clamps image dimensions to fit within the current sketch dimensions.
-     * If the image is larger than the sketch in either dimension, it is resized
-     * to fit while maintaining aspect ratio.
-     *
-     * @param image the image to clamp dimensions for
+     * Renders the image with applied color tint at the buffer's position and dimensions.
+     * Only called when an image is loaded.
      */
+    @Override
+    protected void render() {
+        if (isLoaded()) {
+            ctx.pushStyle();
+            color.applyTint();
+            ctx.image(image, (int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
+            ctx.popStyle();
+        }
+    }
+    
     private static final void clampDimensions(PImage image) {
         if (image.width > ctx.width || image.height > ctx.height) {
             image.resize((int) max(1, ctx.width), (int) max(1, ctx.height));

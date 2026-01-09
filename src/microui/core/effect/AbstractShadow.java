@@ -16,33 +16,21 @@ import microui.core.style.Color;
  * This class manages the relationship between shadow effects and their target components,
  * allowing shadows to be positioned and sized relative to their targets.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see ContentView
  * @see AbstractColor
  * @see View
  */
 public abstract class AbstractShadow extends View {
-	/** Default left shadow weight (intensity). */
 	public static final int DEFAULT_WEIGHT_LEFT = 0;
-	/** Default top shadow weight (intensity). */
 	public static final int DEFAULT_WEIGHT_TOP = 0;
-	/** Default right shadow weight (intensity). */
 	public static final int DEFAULT_WEIGHT_RIGHT = 3;
-	/** Default bottom shadow weight (intensity). */
 	public static final int DEFAULT_WEIGHT_BOTTOM = 2;
-	/** Minimum allowed shadow weight value. */
 	public static final int MIN_WEIGHT = 0;
-	/** Maximum allowed shadow weight value. */
 	public static final int MAX_WEIGHT = 10;
 	
-	/** Color of the shadow effect. */
 	private AbstractColor color;
-	/** Target ContentView that this shadow is applied to. */
 	private ContentView target;
 	
-	/** Shadow weight (intensity) for each side. */
 	private int weightLeft,weightTop,weightRight,weightBottom;
 	
 	/**

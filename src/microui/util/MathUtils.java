@@ -12,13 +12,7 @@ import microui.core.base.SpatialView;
  */
 public final class MathUtils {
 
-    /**
-     * Private constructor to prevent instantiation.
-     * 
-     * <p>This is a utility class with only static methods.</p>
-     */
     private MathUtils() {
-        // Prevent instantiation
     }
 
     /**

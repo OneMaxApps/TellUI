@@ -16,17 +16,12 @@ import microui.core.base.SpatialView;
  * and dispatches events to appropriate callbacks when events occur. It supports enabling/disabling
  * the entire handler and provides safe methods for adding/removing listeners.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractEventSystem
  * @see EventType
  * @see Listener
  */
 public final class InteractionHandler extends AbstractEventSystem {
-	/** Whether this interaction handler is enabled. */
 	private boolean isEnabled;
-	/** The event dispatcher responsible for managing listeners and dispatching events. */
 	private final EventDispatcher dispatcher;
 
 	/**
@@ -48,15 +43,12 @@ public final class InteractionHandler extends AbstractEventSystem {
 	 */
 	@Override
 	public void listen() {
-		// Skip if disabled
 		if(!isEnabled()) {
 			return;
 		}
 		
-		// Update detector state
 		super.listen();
 
-		// Dispatch events based on detector state
 		if (getDetector().isPress()) {
 			dispatcher.dispatch(EventType.PRESS);
 		}

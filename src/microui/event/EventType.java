@@ -9,9 +9,6 @@ package microui.event;
  * EDGE events fire once when the event occurs, while LEVEL events remain active as long
  * as the condition persists.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  */
 public enum EventType {
 	/**

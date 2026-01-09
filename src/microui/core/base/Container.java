@@ -37,22 +37,15 @@ import processing.event.MouseEvent;
  * Last Reviewed: 08.11.2025
  * </p>
  * 
- * @author microui.core
- * @version 1.0
  * @see ContentView
  * @see LayoutManager
  * @see LayoutParams
  */
 public final class Container extends Component implements KeyPressable, Scrollable {
-	/** List of entries containing child components and their layout parameters. */
 	private final List<Entry> entryList;
-	/** Layout manager responsible for positioning child components. */
 	private final LayoutManager layoutManager;
-	/** Manager for handling component rendering priorities. */
 	private final PriorityManager priorityManager;
-	/** Image buffer for container background. */
 	private final ImageBuffer image;
-	/** Current container mode. */
 	private Mode mode;
 
 	/**
@@ -407,14 +400,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	/**
-	 * Internal method to add a ContentView with validation.
-	 * 
-	 * @param contentView the component to add
-	 * @param layoutParams the layout parameters
-	 * @throws NullPointerException if contentView or layoutParams is null
-	 * @throws IllegalArgumentException if contentView is already added or is the container itself
-	 */
 	private void addInternal(ContentView contentView, LayoutParams layoutParams) {
 		requireNonNull(contentView,"contentView");
 		requireNonNull(layoutParams,"layoutParams");
@@ -435,13 +420,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		priorityManager.recalculateMax();
 	}
 
-	/**
-	 * Internal method to remove a ContentView with validation.
-	 * 
-	 * @param contentView the component to remove
-	 * @throws NullPointerException if contentView is null
-	 * @throws NoSuchElementException if the component is not found
-	 */
 	private void removeInternal(ContentView contentView) {
 		requireNonNull(contentView,"contentView");
 		
@@ -461,9 +439,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		priorityManager.recalculateMax();
 	}
 
-	/**
-	 * Draws all child components in priority order.
-	 */
 	private void contentViewsOnDraw() {
 		if (entryList.isEmpty()) {
 			return;
@@ -480,9 +455,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	}
 
-	/**
-	 * Draws debug information when debug mode is enabled.
-	 */
 	private void debugOnDraw() {
 		if (Debugger.isEnabled()) {
 
@@ -496,12 +468,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	/**
-	 * Checks if the container already contains the specified ContentView.
-	 * 
-	 * @param contentView the component to check
-	 * @return true if the component is already in the container, false otherwise
-	 */
 	private boolean checkListContains(ContentView contentView) {
 		for (int i = 0; i < entryList.size(); i++) {
 			if (entryList.get(i).contentView() == contentView) {
@@ -512,9 +478,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		return false;
 	}
 
-	/**
-	 * Draws the container background (either image or solid color).
-	 */
 	private void backgroundOnDraw() {
 		if (image.isLoaded()) {
 			image.draw();
@@ -525,40 +488,20 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 	}
 
-	/**
-	 * Internal class for managing component rendering priorities.
-	 * Ensures components are drawn in correct priority order.
-	 */
 	private static final class PriorityManager {
-		/** Reference to the entry list for priority calculations. */
 		private final List<Entry> list;
-		/** Maximum priority value among all components. */
 		private int max;
 		
-		/**
-		 * Creates a PriorityManager for the specified entry list.
-		 * 
-		 * @param list the entry list to manage priorities for (cannot be null)
-		 * @throws NullPointerException if list is null
-		 */
 		private PriorityManager(List<Entry> list) {
 			super();
 			
 			this.list = requireNonNull(list,"list");
 		}
 
-		/**
-		 * Returns the maximum priority value among all components.
-		 * 
-		 * @return the maximum priority value
-		 */
 		public int getMax() {
 			return max;
 		}
 
-		/**
-		 * Recalculates the maximum priority value by scanning all components.
-		 */
 		public void recalculateMax() {
 			setMax(0);
 			for (int i = 0; i < list.size(); i++) {
@@ -567,12 +510,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 			}
 		}
 		
-		/**
-		 * Sets the maximum priority value with validation.
-		 * 
-		 * @param max the maximum priority value to set
-		 * @throws IllegalArgumentException if max is less than 0
-		 */
 		private void setMax(int max) {
 			if(max < 0) {
 				throw new IllegalArgumentException("Max priority cannot be less than 0");

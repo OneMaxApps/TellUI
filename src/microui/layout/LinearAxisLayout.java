@@ -11,14 +11,9 @@ import microui.core.base.ContentView;
  * in two different constraint modes.</p>
  */
 public abstract class LinearAxisLayout extends LayoutManager {
-    /** Small epsilon value for floating-point comparisons. */
     private static final float EPSILON = .01f;
-    
-    /** Total weight value used for weight calculations. */
     private static final float TOTAL_WEIGHT = 1.0f;
-    
-    /** Flag indicating whether the layout is in vertical mode (true) or horizontal mode (false). */
-    private boolean isVerticalMode;
+    private boolean verticalMode;
 
     /**
      * Recalculates the layout by positioning and sizing all entries based on their weights.
@@ -45,16 +40,16 @@ public abstract class LinearAxisLayout extends LayoutManager {
             ContentView contentView = entry.contentView();
             LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
 
-            float usedSpace = isVerticalMode ? containerH * usedWeight : containerW * usedWeight;
+            float usedSpace = verticalMode ? containerH * usedWeight : containerW * usedWeight;
 
             switch (getContainer().getMode()) {
 
             case IGNORE_CONSTRAINTS:
                 contentView.setConstrainDimensionsEnabled(false);
-                contentView.setAbsolutePosition(isVerticalMode ? containerX : containerX + usedSpace,
-                        isVerticalMode ? containerY + usedSpace : containerY);
-                contentView.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
-                contentView.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
+                contentView.setAbsolutePosition(verticalMode ? containerX : containerX + usedSpace,
+                		verticalMode ? containerY + usedSpace : containerY);
+                contentView.setAbsoluteWidth(verticalMode ? containerW : containerW * params.getWeight());
+                contentView.setAbsoluteHeight(verticalMode ? containerH * params.getWeight() : containerH);
 
                 break;
 
@@ -67,13 +62,13 @@ public abstract class LinearAxisLayout extends LayoutManager {
                 float alignYCenter = containerY + containerH / 2 - contentView.getAbsoluteHeight() / 2;
                 float alignYBottom = containerY + containerH - contentView.getAbsoluteHeight();
 
-                contentView.setAbsoluteX(isVerticalMode
+                contentView.setAbsoluteX(verticalMode
                         ? params.getAlignX() == -1 ? alignXLeft : params.getAlignX() == 1 ? alignXRight : alignXCenter
                         : containerX + usedSpace);
-                contentView.setAbsoluteY(isVerticalMode ? containerY + usedSpace
+                contentView.setAbsoluteY(verticalMode ? containerY + usedSpace
                         : params.getAlignY() == -1 ? alignYTop : params.getAlignY() == 1 ? alignYBottom : alignYCenter);
-                contentView.setAbsoluteWidth(isVerticalMode ? containerW : containerW * params.getWeight());
-                contentView.setAbsoluteHeight(isVerticalMode ? containerH * params.getWeight() : containerH);
+                contentView.setAbsoluteWidth(verticalMode ? containerW : containerW * params.getWeight());
+                contentView.setAbsoluteHeight(verticalMode ? containerH * params.getWeight() : containerH);
 
                 break;
 
@@ -98,7 +93,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
         getEntryList().forEach(entry -> {
             ContentView contentView = entry.contentView();
             LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
-            if (isVerticalMode) {
+            if (verticalMode) {
                 ctx.rect(getContainer().getX(), contentView.getAbsoluteY(), getContainer().getWidth(),
                         getContainer().getHeight() * params.getWeight());
             } else {
@@ -129,7 +124,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
      * @return true if the layout is vertical, false if horizontal
      */
     protected boolean isVerticalMode() {
-        return isVerticalMode;
+        return verticalMode;
     }
 
     /**
@@ -139,11 +134,11 @@ public abstract class LinearAxisLayout extends LayoutManager {
      * 
      * @param isVerticalMode true for vertical layout, false for horizontal layout
      */
-    protected void setVerticalMode(boolean isVerticalMode) {
-        if (this.isVerticalMode == isVerticalMode) {
+    protected void setVerticalMode(boolean verticalMode) {
+        if (this.verticalMode == verticalMode) {
             return;
         }
-        this.isVerticalMode = isVerticalMode;
+        this.verticalMode = verticalMode;
         if (getContainer() != null) {
             recalculate();
         }

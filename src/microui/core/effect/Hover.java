@@ -22,21 +22,14 @@ import microui.util.MathUtils;
  * Status: STABLE - Do not modify
  * Last Reviewed: 16.09.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see Component
  * @see View
  * @see AbstractColor
  */
 public final class Hover extends View {
-	/** The component this hover effect is attached to. */
 	private final Component component;
-	/** Color of the hover effect. */
 	private AbstractColor color;
-	/** Current animation timer value. */
 	private float timer, timerMax, speed;
-	/** Whether the hover effect is enabled. */
 	private boolean isEnabled;
 
 	/**
@@ -81,29 +74,22 @@ public final class Hover extends View {
 	protected void render() {
 		ctx.noStroke();
 		
-		// Update animation timer based on component state
 		if (component.isHover()) {
-			// Fade in when hovered
 			if (timer < timerMax) {
 				timer += speed;
 			}
 		} else {
-			// Fade out when not hovered (twice as fast for responsiveness)
 			if (timer > 0) {
 				timer -= speed * 2;
 			}
 		}
 
-		// Apply different colors based on interaction state
 		if (component.isPressed()) {
-			// Black overlay for press state
 			ctx.fill(0, getAlpha());
 		} else {
-			// Theme color for hover state
 			ctx.fill(color.getRed(), color.getGreen(), color.getBlue(), getAlpha());
 		}
 
-		// Draw the hover overlay over the component's padded area
 		ctx.rect(component.getPadX(), component.getPadY(), component.getPadWidth(), component.getPadHeight());
 
 	}
@@ -167,11 +153,6 @@ public final class Hover extends View {
 		this.isEnabled = isEnabled;
 	}
 
-	/**
-	 * Calculates the current alpha value for the hover effect based on animation timer.
-	 * 
-	 * @return the interpolated alpha value between 0 and the color's alpha
-	 */
 	private float getAlpha() {
 		return MathUtils.convert(timer, 0, timerMax, 0, color.getAlpha());
 	}

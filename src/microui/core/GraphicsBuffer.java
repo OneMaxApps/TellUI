@@ -25,7 +25,6 @@ import processing.core.PGraphics;
  * 
  * @see SpatialView
  * @see BufferedView
- * @see PGraphics
  */
 public class GraphicsBuffer extends SpatialView {
     private PGraphics graphics;
@@ -174,10 +173,6 @@ public class GraphicsBuffer extends SpatialView {
         createGraphics();
     }
 
-    /**
-     * Creates or recreates the PGraphics buffer with current dimensions.
-     * Disposes of any existing buffer first to prevent memory leaks.
-     */
     private void createGraphics() {
         if (graphics != null) {
             graphics.dispose();            
@@ -186,11 +181,6 @@ public class GraphicsBuffer extends SpatialView {
         graphics = ctx.createGraphics((int) max(1, getWidth()), (int) max(1, getHeight()), ctx.sketchRenderer());
     }
 
-    /**
-     * Draws all BufferedView components to the graphics buffer.
-     *
-     * @param pGraphics the graphics buffer to draw to
-     */
     private void listOnDraw(PGraphics pGraphics) {
         if (viewList.isEmpty()) {
             return;

@@ -22,19 +22,12 @@ import processing.core.PGraphics;
  * Status: STABLE - Do not modify
  * Last Reviewed: 27.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractColor
- * @see PGraphics
  * @see Metrics
  */
 public final class Stroke {
-	/** Default stroke weight (thickness) in pixels. */
 	private static final int DEFAULT_STROKE_WEIGHT = 1;
-	/** Color of the stroke. */
 	private AbstractColor color;
-	/** Weight (thickness) of the stroke in pixels. */
 	private float weight;
 
 	/**

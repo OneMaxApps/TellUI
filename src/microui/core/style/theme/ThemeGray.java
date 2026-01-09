@@ -12,9 +12,6 @@ import microui.core.style.Color;
  * luminance values to create good contrast and readability while
  * maintaining a neutral, professional appearance.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractTheme
  * @see Color
  */

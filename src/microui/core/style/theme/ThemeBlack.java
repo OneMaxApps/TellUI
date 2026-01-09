@@ -14,8 +14,6 @@ import microui.core.style.LerpedLoopColor;
  * for enhanced visual feedback.
  * </p>
  * 
- * @author microui.core
- * @version 1.0
  * @see AbstractTheme
  * @see Color
  * @see LerpedColor

@@ -15,23 +15,14 @@ import microui.event.Listener;
  * and validation of allowed characters. It includes event listeners for various
  * text manipulation operations.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see Listener
  */
 public final class SingleLineTextController {
-	/** Standard characters considered valid for text input. */
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
-	/** Capacity threshold for clearing StringBuilder. */
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
-	/** StringBuilder storing the actual text content. */
 	private final StringBuilder sb;
-	/** Temporary StringBuilder for validation operations. */
 	private StringBuilder adapterSb;
-	/** Cached text representation. */
 	private String cachedText;
-	/** Listeners for text manipulation events. */
 	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
 	
 	/**
@@ -236,12 +227,6 @@ public final class SingleLineTextController {
 		return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
 	}
 
-	/**
-	 * Filters a string to contain only valid characters.
-	 * 
-	 * @param src the source string to validate
-	 * @return a string containing only valid characters from the source
-	 */
 	private String getValidatedString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
@@ -262,21 +247,12 @@ public final class SingleLineTextController {
 		return adapterSb.toString();
 	}
 
-	/**
-	 * Updates the cached string representation and notifies listeners.
-	 */
 	private void updateCachedString() {
 		cachedText = sb.toString();
 
 		notifyOnTextChanged();
 	}
 
-	/**
-	 * Internal method for character insertion with validation.
-	 * 
-	 * @param pos the position to insert at
-	 * @param ch the character to insert
-	 */
 	private void insertInternal(int pos, char ch) {
 		if (!isValidChar(ch)) {
 			return;
@@ -289,13 +265,6 @@ public final class SingleLineTextController {
 		notifyOnAfterCharInsert();
 	}
 	
-	/**
-	 * Internal method for string insertion with validation.
-	 * 
-	 * @param pos the position to insert at
-	 * @param str the string to insert
-	 * @throws NullPointerException if str is null
-	 */
 	private void insertInternal(int pos, String str) {
 		requireNonNull(str,"str");
 
@@ -308,13 +277,7 @@ public final class SingleLineTextController {
 		updateCachedString();
 		notifyOnAfterStringInsert();
 	}
-	
-	/**
-	 * Internal method for setting text with validation.
-	 * 
-	 * @param text the text to set
-	 * @throws NullPointerException if text is null
-	 */
+
 	private void setInternal(String text) {
 		requireNonNull(text, "text");
 		
@@ -329,27 +292,18 @@ public final class SingleLineTextController {
 		updateCachedString();
 	}
 	
-	/**
-	 * Notifies the after-character-insert listener if set.
-	 */
 	private void notifyOnAfterCharInsert() {
 		if (onAfterCharInsertListener != null) {
 			onAfterCharInsertListener.action();
 		}
 	}
 	
-	/**
-	 * Notifies the after-string-insert listener if set.
-	 */
 	private void notifyOnAfterStringInsert() {
 		if (onAfterStringInsertListener != null) {
 			onAfterCharInsertListener.action();
 		}
 	}
-	
-	/**
-	 * Notifies the text-changed listener if set.
-	 */
+
 	private void notifyOnTextChanged() {
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();

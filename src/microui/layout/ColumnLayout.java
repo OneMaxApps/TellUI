@@ -11,9 +11,6 @@ import microui.core.base.Container.Entry;
  * vertical space based on each component's weight parameter. Components
  * are arranged sequentially with no horizontal overlap.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see LinearAxisLayout
  * @see ColumnLayoutParams
  * @see Entry

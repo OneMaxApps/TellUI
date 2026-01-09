@@ -10,9 +10,6 @@ import microui.core.base.SpatialView;
  * needing to access the internal detector directly. It's designed for easy integration
  * into component update loops.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractEventSystem
  * @see SpatialView
  */

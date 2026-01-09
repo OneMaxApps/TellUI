@@ -13,16 +13,10 @@ import java.io.IOException;
  * between the operating system's clipboard and a local buffer for testing or special cases.</p>
  */
 public final class Clipboard {
-    /** Local buffer used when not using the system clipboard. */
     private static String localBuffer;
-    
-    /** Flag indicating whether to use the local buffer instead of the system clipboard. */
     private static boolean usingLocalBuffer;
-    
-    /** Reference to the system clipboard. */
     private static java.awt.datatransfer.Clipboard clip;
 
-    // Static initialization block
     static {
         usingLocalBuffer = false;
         clip = Toolkit.getDefaultToolkit().getSystemClipboard();

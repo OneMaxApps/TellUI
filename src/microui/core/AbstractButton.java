@@ -53,20 +53,6 @@ public abstract class AbstractButton extends Component {
     }
 
     /**
-     * Renders the button's base visual representation.
-     * Draws a rectangle with stroke and background color.
-     * Subclasses should call super.render() and add their specific rendering.
-     */
-    @Override
-    protected void render() {
-        ctx.pushStyle();
-        stroke.apply();
-        getBackgroundColor().apply();
-        ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
-        ctx.popStyle();
-    }
-
-    /**
      * Gets the color of the ripple effects.
      *
      * @return the current ripple effect color
@@ -204,6 +190,20 @@ public abstract class AbstractButton extends Component {
     public final AbstractButton setStrokeColor(AbstractColor color) {
         stroke.setColor(color);
         return this;
+    }
+    
+    /**
+     * Renders the button's base visual representation.
+     * Draws a rectangle with stroke and background color.
+     * Subclasses should call super.render() and add their specific rendering.
+     */
+    @Override
+    protected void render() {
+        ctx.pushStyle();
+        stroke.apply();
+        getBackgroundColor().apply();
+        ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
+        ctx.popStyle();
     }
 
     /**

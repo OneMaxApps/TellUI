@@ -8,22 +8,11 @@ package microui.util;
  * methods to check completion status.</p>
  */
 public final class Timer {
-    /** Default speed value for the timer. */
     public static final float DEFAULT_SPEED = .05f;
-    
-    /** Starting value of the timer (0%). */
     public static final int START = 0;
-    
-    /** Ending value of the timer (100%). */
     public static final int END = 1;
-    
-    /** Current timer value between START and END. */
     private float currentTime;
-    
-    /** Speed at which the timer progresses per update. */
     private float speed;
-    
-    /** Direction flag: true for incrementing (START to END), false for decrementing (END to START). */
     private boolean incrementing;
 
     /**
@@ -115,13 +104,6 @@ public final class Timer {
         return currentTime == START || currentTime == END;
     }
 
-    /**
-     * Sets the current time value with range constraint.
-     * 
-     * <p>Constrains the value to stay within the START-END range.</p>
-     * 
-     * @param current the new current time value
-     */
     private void setCurrentTime(float current) {
         this.currentTime = current < START ? START : current > END ? END : current;
     }

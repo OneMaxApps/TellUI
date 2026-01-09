@@ -11,9 +11,6 @@ package microui.event;
  * This interface is designed to be implemented using lambda expressions,
  * method references, or anonymous classes for concise event handling.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see InteractionHandler
  */
 public interface Listener {

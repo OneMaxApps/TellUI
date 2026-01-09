@@ -21,30 +21,19 @@ import microui.util.Timer;
  * configurable reaction modes (Reactive and Trigger) and separate controls for
  * position and dimension animations.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see SpatialView
  * @see ContentView
  * @see SpatialState
  * @see Timer
  */
 public final class SpatialAnimator {
-	/** Start and end spatial states for the animation. */
 	private final SpatialState startSpatialState, endSpatialState;
-	/** Optional ContentView references for dynamic state resolution. */
 	private ContentView startContentView, endContentView;
-	/** Timer for controlling animation progress. */
 	private final Timer timer;
-	/** Condition supplier for controlling animation direction/activation. */
 	private final BooleanSupplier condition;
-	/** Target SpatialView to animate. */
 	private SpatialView targetSpatialView;
-	/** Current reaction mode for animation triggering. */
 	private ReactionMode reactionMode;
-	/** Whether the animator is enabled. */
 	private boolean isEnabled;
-	/** Whether position animation is enabled. */
 	private boolean isPositionEnabled, isDimensionsEnabled;
 
 	/**
@@ -227,30 +216,24 @@ public final class SpatialAnimator {
 	 * Should be called every frame for smooth animation.
 	 */
 	public void update() {
-		// Skip update if disabled or no target set
 		if (!isEnabled() || targetSpatialView == null) {
 			return;
 		}
 
-		// Handle different reaction modes
 		switch (getReactionMode()) {
 		case REACTIVE:
-			// Timer direction changes immediately based on condition
 			timer.setIncrementing(condition.getAsBoolean());
 			break;
 
 		case TRIGGER:
-			// Timer direction only changes when current animation completes
 			if (timer.isComplete()) {
 				timer.setIncrementing(condition.getAsBoolean());
 			}
 			break;
 		}
 
-		// Update timer progress
 		timer.update();
 
-		// Animate position if enabled
 		if (isPositionEnabled()) {
 			final float startX = startContentView != null ? startContentView.getAbsoluteX() : startSpatialState.x();
 			final float endX = endContentView != null ? endContentView.getAbsoluteX() : endSpatialState.x();
@@ -262,7 +245,6 @@ public final class SpatialAnimator {
 			targetSpatialView.setY(lerp(startY, endY));
 		}
 
-		// Animate dimensions if enabled
 		if (isDimensionsEnabled()) {
 
 			final float startWidth = startContentView != null ? startContentView.getAbsoluteWidth() : startSpatialState.width();
@@ -287,13 +269,6 @@ public final class SpatialAnimator {
 		TRIGGER;
 	}
 
-	/**
-	 * Linear interpolation between start and end values based on timer progress.
-	 * 
-	 * @param start the starting value
-	 * @param end the ending value
-	 * @return the interpolated value between start and end
-	 */
 	private float lerp(float start, float end) {
 		return convert(timer.getCurrent(), START, END, start, end);
 	}

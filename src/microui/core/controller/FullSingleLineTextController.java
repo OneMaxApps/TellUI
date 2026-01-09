@@ -20,41 +20,24 @@ import microui.util.Debugger;
  * supporting features like character validation, length constraints, password masking,
  * and history tracking for undo/redo operations.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see ValidationMode
  * @see Listener
  */
 public class FullSingleLineTextController {
-	/** Standard characters considered valid in ALL validation mode. */
 	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
-	/** Default maximum character limit. */
 	private static final int DEFAULT_MAX_CHARS = 4;
-	/** Minimum value for character constraints. */
 	private static final int MIN_CONSTRAIN_VALUE = 1;
-	/** Capacity threshold for clearing StringBuilder. */
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
-	/** Default character used for password masking. */
 	private static final char DEFAULT_PASSWORD_CHAR = '*';
 
-	/** Manager for undo/redo operations. */
 	private final UndoRedoManager undoRedoManager;
-	/** StringBuilder storing the actual text content. */
 	private final StringBuilder sb;
-	/** Temporary StringBuilder for validation operations. */
 	private StringBuilder adapterSb;
-	/** Cached visible text content. */
 	private String cachedText, cachedPasswordText;
-	/** Listeners for text manipulation events. */
 	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
-	/** State flags for controller features. */
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
-	/** Maximum allowed characters when constraints are enabled. */
 	private int maxChars;
-	/** Character used for password masking. */
 	private char passwordChar;
-	/** Current validation mode. */
 	private ValidationMode validationMode;
 
 	/**
@@ -482,39 +465,24 @@ public class FullSingleLineTextController {
 
 	}
 	
-	/**
-	 * Notifies the after-character-insert listener if set.
-	 */
 	private void notifyOnAfterCharInsert() {
 		if (onAfterCharInsertListener != null) {
 			onAfterCharInsertListener.action();
 		}
 	}
 	
-	/**
-	 * Notifies the after-string-insert listener if set.
-	 */
 	private void notifyOnAfterStringInsert() {
 		if (onAfterStringInsertListener != null) {
 			onAfterStringInsertListener.action();
 		}
 	}
 	
-	/**
-	 * Notifies the text-changed listener if set.
-	 */
 	private void notifyOnTextChanged() {
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
 	}
 	
-	/**
-	 * Filters a string based on current validation rules.
-	 * 
-	 * @param src the source string to validate
-	 * @return a string containing only valid characters from the source
-	 */
 	private String getValidatedString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
@@ -535,9 +503,6 @@ public class FullSingleLineTextController {
 		return adapterSb.toString();
 	}
 
-	/**
-	 * Updates cached string representations and notifies listeners.
-	 */
 	private void updateCachedStrings() {
 		cachedText = sb.toString();
 
@@ -553,9 +518,6 @@ public class FullSingleLineTextController {
 		
 	}
 
-	/**
-	 * Applies character length constraints if enabled.
-	 */
 	private void updateConstrainedValue() {
 		if (constrainEnabled) {
 			if (length() > maxChars) {
@@ -565,12 +527,6 @@ public class FullSingleLineTextController {
 		}
 	}
 
-	/**
-	 * Internal method for character insertion with validation and constraints.
-	 * 
-	 * @param pos the position to insert at
-	 * @param ch the character to insert
-	 */
 	private void insertInternal(int pos, char ch) {
 		if (constrainEnabled && length() == maxChars) {
 			return;
@@ -587,13 +543,6 @@ public class FullSingleLineTextController {
 		notifyOnAfterCharInsert();
 	}
 	
-	/**
-	 * Internal method for string insertion with validation and constraints.
-	 * 
-	 * @param pos the position to insert at
-	 * @param str the string to insert
-	 * @throws NullPointerException if str is null
-	 */
 	private void insertInternal(int pos, String str) {
 		requireNonNull(str,"str");
 		
@@ -617,12 +566,6 @@ public class FullSingleLineTextController {
 		notifyOnAfterStringInsert();
 	}
 	
-	/**
-	 * Internal method for setting text with validation and constraints.
-	 * 
-	 * @param text the text to set
-	 * @throws NullPointerException if text is null
-	 */
 	private void setInternal(String text) {
 		requireNonNull(text, "text");
 		
@@ -653,44 +596,22 @@ public class FullSingleLineTextController {
 		ONLY_LETTERS;
 	}
 	
-	/**
-	 * Internal class managing undo/redo functionality.
-	 */
 	private final static class UndoRedoManager {
-		/** Reference to the parent controller. */
 		private final FullSingleLineTextController controller;
-		/** Stacks for undo and redo operations. */
 		private final Deque<String> undo, redo;
-		/** Flag to prevent recursive updates during undo/redo operations. */
 		private boolean operation;
-		/** Listener for history change events. */
 		private Listener onHistoryChangedListener;
 		
-		/**
-		 * Constructs an UndoRedoManager for the specified controller.
-		 * 
-		 * @param controller the text controller to manage (cannot be null)
-		 * @throws NullPointerException if controller is null
-		 */
 		public UndoRedoManager(FullSingleLineTextController controller) {
 			this.controller = requireNonNull(controller,"controller");
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
 		}
 
-		/**
-		 * Sets the listener for history change events.
-		 * 
-		 * @param onHistoryChangedListener the listener to set (cannot be null)
-		 * @throws NullPointerException if listener is null
-		 */
 		public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
 			this.onHistoryChangedListener = requireNonNull(onHistoryChangedListener,"onHistoryChangedListener");
 		}
 
-		/**
-		 * Performs an undo operation.
-		 */
 		public void undo() {
 			operation = true;
 			
@@ -710,9 +631,6 @@ public class FullSingleLineTextController {
 			operation = false;
 		}
 		
-		/**
-		 * Performs a redo operation.
-		 */
 		public void redo() {
 			operation = true;
 			if (!redo.isEmpty()) {
@@ -725,11 +643,7 @@ public class FullSingleLineTextController {
 			}
 			operation = false;
 		}
-		
-		/**
-		 * Updates the history state with current text.
-		 * Skips update during undo/redo operations to prevent recursion.
-		 */
+
 		private void updateState() {
 			if (operation) {
 				return;

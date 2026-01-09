@@ -17,18 +17,12 @@ import microui.util.Debugger;
  * Status: STABLE - Do not modify
  * Last Reviewed: 29.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see SpatialView
  * @see AbstractShadow
  */
 public abstract class ContentView extends SpatialView {
-	/** Padding manager for internal spacing. */
 	private final Padding padding;
-	/** Margin manager for external spacing. */
 	private final Margin margin;
-	/** Shadow effect applied to the component. */
 	private AbstractShadow shadow;
 	
 	/**
@@ -667,9 +661,6 @@ public abstract class ContentView extends SpatialView {
 		setAbsoluteDimensionsFrom(other);
 	}
 
-	/**
-	 * Draws debug visualization showing margin, padding, and content areas.
-	 */
 	private void debugOnDraw() {
 		if (Debugger.isEnabled()) {
 			ctx.pushStyle();
@@ -697,27 +688,14 @@ public abstract class ContentView extends SpatialView {
 		}
 	}
 
-	/**
-	 * Internal class for managing padding values and state.
-	 */
 	private final class Padding {
 		float left, right, top, bottom;
 		boolean enabled;
 
-		/**
-		 * Checks if padding is enabled.
-		 * 
-		 * @return true if enabled, false otherwise
-		 */
 		boolean isEnabled() {
 			return enabled;
 		}
 
-		/**
-		 * Enables or disables padding.
-		 * 
-		 * @param enabled true to enable, false to disable
-		 */
 		void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 			if (enabled) {
@@ -725,47 +703,22 @@ public abstract class ContentView extends SpatialView {
 			}
 		}
 
-		/**
-		 * Returns the left padding value.
-		 * 
-		 * @return the left padding value, or 0 if disabled
-		 */
 		float getLeft() {
 			return enabled ? left : 0;
 		}
 
-		/**
-		 * Returns the right padding value.
-		 * 
-		 * @return the right padding value, or 0 if disabled
-		 */
 		float getRight() {
 			return enabled ? right : 0;
 		}
 
-		/**
-		 * Returns the top padding value.
-		 * 
-		 * @return the top padding value, or 0 if disabled
-		 */
 		float getTop() {
 			return enabled ? top : 0;
 		}
 
-		/**
-		 * Returns the bottom padding value.
-		 * 
-		 * @return the bottom padding value, or 0 if disabled
-		 */
 		float getBottom() {
 			return enabled ? bottom : 0;
 		}
 
-		/**
-		 * Sets the left padding value.
-		 * 
-		 * @param left the left padding value
-		 */
 		void setLeft(float left) {
 			if (!isCorrectNewValue(this.left, left)) {
 				return;
@@ -773,11 +726,6 @@ public abstract class ContentView extends SpatialView {
 			this.left = left;
 		}
 
-		/**
-		 * Sets the right padding value.
-		 * 
-		 * @param right the right padding value
-		 */
 		void setRight(float right) {
 			if (!isCorrectNewValue(this.right, right)) {
 				return;
@@ -785,11 +733,6 @@ public abstract class ContentView extends SpatialView {
 			this.right = right;
 		}
 
-		/**
-		 * Sets the top padding value.
-		 * 
-		 * @param top the top padding value
-		 */
 		void setTop(float top) {
 			if (!isCorrectNewValue(this.top, top)) {
 				return;
@@ -797,11 +740,6 @@ public abstract class ContentView extends SpatialView {
 			this.top = top;
 		}
 
-		/**
-		 * Sets the bottom padding value.
-		 * 
-		 * @param bottom the bottom padding value
-		 */
 		void setBottom(float bottom) {
 			if (!isCorrectNewValue(this.bottom, bottom)) {
 				return;
@@ -809,14 +747,6 @@ public abstract class ContentView extends SpatialView {
 			this.bottom = bottom;
 		}
 
-		/**
-		 * Validates a new padding value.
-		 * 
-		 * @param currentValue the current padding value
-		 * @param newValue the new padding value
-		 * @return true if the new value is valid and different from current, false otherwise
-		 * @throws IllegalArgumentException if newValue is less than zero
-		 */
 		boolean isCorrectNewValue(float currentValue, float newValue) {
 			if (newValue < 0) {
 				throw new IllegalArgumentException("Padding cannot be less than zero");
@@ -829,11 +759,6 @@ public abstract class ContentView extends SpatialView {
 			return true;
 		}
 
-		/**
-		 * Checks if padding can be enabled in the current state.
-		 * 
-		 * @throws IllegalStateException if negative dimensions are enabled
-		 */
 		void checkCorrectState() {
 			if (isNegativeDimensionsEnabled()) {
 				throw new IllegalStateException("Negative dimensions must be disabled for using Padding system");
@@ -842,107 +767,50 @@ public abstract class ContentView extends SpatialView {
 
 	}
 
-	/**
-	 * Internal class for managing margin values and state.
-	 */
 	private final class Margin {
 		private float left, right, top, bottom;
 		private boolean enabled;
 
-		/**
-		 * Returns the left margin value.
-		 * 
-		 * @return the left margin value, or 0 if disabled
-		 */
 		float getLeft() {
 			return enabled ? left : 0;
 		}
 
-		/**
-		 * Returns the right margin value.
-		 * 
-		 * @return the right margin value, or 0 if disabled
-		 */
 		float getRight() {
 			return enabled ? right : 0;
 		}
 
-		/**
-		 * Returns the top margin value.
-		 * 
-		 * @return the top margin value, or 0 if disabled
-		 */
 		float getTop() {
 			return enabled ? top : 0;
 		}
 
-		/**
-		 * Returns the bottom margin value.
-		 * 
-		 * @return the bottom margin value, or 0 if disabled
-		 */
 		float getBottom() {
 			return enabled ? bottom : 0;
 		}
 
-		/**
-		 * Sets the left margin value.
-		 * 
-		 * @param left the left margin value
-		 * @throws IllegalArgumentException if left is less than zero
-		 */
 		void setLeft(float left) {
 			checkValue(left);
 			this.left = left;
 		}
 
-		/**
-		 * Sets the right margin value.
-		 * 
-		 * @param right the right margin value
-		 * @throws IllegalArgumentException if right is less than zero
-		 */
 		void setRight(float right) {
 			checkValue(right);
 			this.right = right;
 		}
 
-		/**
-		 * Sets the top margin value.
-		 * 
-		 * @param top the top margin value
-		 * @throws IllegalArgumentException if top is less than zero
-		 */
 		void setTop(float top) {
 			checkValue(top);
 			this.top = top;
 		}
 
-		/**
-		 * Sets the bottom margin value.
-		 * 
-		 * @param bottom the bottom margin value
-		 * @throws IllegalArgumentException if bottom is less than zero
-		 */
 		void setBottom(float bottom) {
 			checkValue(bottom);
 			this.bottom = bottom;
 		}
 
-		/**
-		 * Checks if margin is enabled.
-		 * 
-		 * @return true if enabled, false otherwise
-		 */
 		boolean isEnabled() {
 			return enabled;
 		}
 
-		/**
-		 * Enables or disables margin.
-		 * 
-		 * @param enabled true to enable, false to disable
-		 */
 		void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 
@@ -951,23 +819,12 @@ public abstract class ContentView extends SpatialView {
 			}
 		}
 
-		/**
-		 * Validates a margin value.
-		 * 
-		 * @param value the margin value to validate
-		 * @throws IllegalArgumentException if value is less than zero
-		 */
 		void checkValue(float value) {
 			if (value < 0) {
 				throw new IllegalArgumentException("Margin cannot be less than zero");
 			}
 		}
 
-		/**
-		 * Checks if margin can be enabled in the current state.
-		 * 
-		 * @throws IllegalStateException if negative dimensions are enabled
-		 */
 		void checkCorrectState() {
 			if (isNegativeDimensionsEnabled()) {
 				throw new IllegalStateException("Negative dimensions must be disabled for using Margin system");

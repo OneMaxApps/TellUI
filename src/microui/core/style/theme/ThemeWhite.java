@@ -14,9 +14,6 @@ import microui.core.style.LerpedLoopColor;
  * animated gradient effects for interactive elements. It is designed for
  * good readability and a modern aesthetic.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractTheme
  * @see Color
  * @see LerpedColor

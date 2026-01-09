@@ -18,7 +18,7 @@ package microui.core.style;
  */
 public class LerpedLoopColor extends AbstractLerpedColor {
 	
-	private boolean isLoopEnabled;
+	private boolean loopEnabled;
 
 	/**
 	 * Constructs a new looping interpolated color with the specified start and end colors.
@@ -52,9 +52,9 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	 * 
 	 * @param isLoopEnabled true to enable continuous looping, false to pause at current progress
 	 */
-	public final void setLoopEnabled(boolean isLoopEnabled) {
-		getAnimator().setLoopEnabled(isLoopEnabled);
-		this.isLoopEnabled = isLoopEnabled;
+	public final void setLoopEnabled(boolean loopEnabled) {
+		getAnimator().setLoopEnabled(loopEnabled);
+		this.loopEnabled = loopEnabled;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	@Override
 	protected void preApply() {
 		super.preApply();
-		if (isLoopEnabled) {
+		if (loopEnabled) {
 			getAnimator().update();
 		}
 	}

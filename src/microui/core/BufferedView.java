@@ -15,10 +15,8 @@ import processing.core.PGraphics;
  * rendering logic.</p>
  * 
  * @see Visible
- * @see PGraphics
  */
 public abstract class BufferedView implements Visible {
-    /** Visibility flag controlling whether the view is rendered. */
     private boolean visible;
     
     /**

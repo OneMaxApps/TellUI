@@ -8,13 +8,8 @@ package microui.layout;
  * weight distribution and alignment values.</p>
  */
 public abstract class LinearAxisLayoutParams implements LayoutParams {
-    /** The weight of the component in the layout (0.0 to 1.0). */
     private final float weight;
-    
-    /** Horizontal alignment value (-1 for left, 0 for center, 1 for right). */
     private final int alignX;
-    
-    /** Vertical alignment value (-1 for top, 0 for center, 1 for bottom). */
     private final int alignY;
 
     /**

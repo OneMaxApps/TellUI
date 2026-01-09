@@ -13,14 +13,10 @@ import microui.core.base.ContentView;
  * capabilities while adding tooltip-specific functionality. Subclasses must
  * implement methods to determine when the tooltip can be shown and closed.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see ContentView
  * @see Tooltip
  */
 public abstract class TooltipContent extends ContentView {
-	/** The Tooltip that contains this content. */
 	private Tooltip tooltip;
 
 	/**

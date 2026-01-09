@@ -16,53 +16,29 @@ import static microui.util.MathUtils.constrain;
  * Status: STABLE - Do not modify
  * Last Reviewed: 11.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractColor
  */
 public class Color extends AbstractColor {
-	// Primary Colors
-	/** Pure red color. */
 	public static final Color RED = new Color(255, 0, 0);
-	/** Pure green color. */
 	public static final Color GREEN = new Color(0, 255, 0);
-	/** Pure blue color. */
 	public static final Color BLUE = new Color(0, 0, 255);
-	/** Yellow color (red + green). */
 	public static final Color YELLOW = new Color(255, 255, 0);
-	/** Pink color (red + blue). */
 	public static final Color PINK = new Color(255, 0, 255);
-	/** Sky blue color (green + blue). */
 	public static final Color SKY = new Color(0, 255, 255);
 
-	// Grayscale Colors
-	/** Pure black color. */
 	public static final Color BLACK = new Color(0);
-	/** Very dark gray (8 luminance). */
 	public static final Color GRAY_8L = new Color(8);
-	/** Dark gray (16 luminance). */
 	public static final Color GRAY_16L = new Color(16);
-	/** Medium dark gray (32 luminance). */
 	public static final Color GRAY_32L = new Color(32);
-	/** Medium gray (64 luminance). */
 	public static final Color GRAY_64L = new Color(64);
-	/** Medium light gray (128 luminance). */
 	public static final Color GRAY_128L = new Color(128);
-	/** Light gray (164 luminance). */
 	public static final Color GRAY_164L = new Color(164);
-	/** Very light gray (200 luminance). */
 	public static final Color GRAY_200L = new Color(200);
-	/** Almost white gray (232 luminance). */
 	public static final Color GRAY_232L = new Color(232);
-	/** Pure white color. */
 	public static final Color WHITE = new Color(255);
 
-	// Special Colors
-	/** Fully transparent color. */
 	public static final Color TRANSPARENT = new Color(0, 0);
 
-	/** Red component (0-255). */
 	private final int red, green, blue, alpha;
 
 	/**

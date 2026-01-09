@@ -16,16 +16,9 @@ import microui.event.Listener;
  * <p>Last reviewed: 03.11.2025</p>
  */
 public final class BoundedValue {
-    /** The minimum allowed value (inclusive). */
     private float min;
-    
-    /** The maximum allowed value (inclusive). */
     private float max;
-    
-    /** The current value, constrained between min and max. */
     private float value;
-    
-    /** Listener to be notified when the value changes. */
     private Listener onChangeValueListener;
 
     /**
@@ -249,11 +242,6 @@ public final class BoundedValue {
         return this;
     }
     
-    /**
-     * Notifies the change listener if one is set.
-     * 
-     * <p>This method is called internally whenever the value changes.</p>
-     */
     private void onChangeValueListener() {
         if (onChangeValueListener != null) {
             onChangeValueListener.action();

@@ -9,27 +9,15 @@ import static java.util.Objects.requireNonNull;
  * hotkey switching, and storing additional debug information.</p>
  */
 public final class Debugger {
-    /** Additional debug information that can be displayed during debugging. */
     private static String additionalInfo = "";
-    
-    /** Flag indicating whether debug mode is currently enabled. */
     private static boolean enabled;
-    
-    /** Flag indicating whether hotkey switching of debug mode is enabled. */
     private static boolean hotKeySwitchEnabled;
     
-    // Static initialization block - initializes with hotkey switching disabled by default
     static {
         setHotKeySwitchEnabled(false);
     }
     
-    /**
-     * Private constructor to prevent instantiation.
-     * 
-     * <p>This is a utility class with only static methods.</p>
-     */
     private Debugger() {
-        // Prevent instantiation
     }
     
     /**

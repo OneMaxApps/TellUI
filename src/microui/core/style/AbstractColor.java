@@ -22,13 +22,10 @@ import processing.core.PGraphics;
  * </p>
  * 
  * @see Color
- * @see PGraphics
  * @see Metrics
  */
 public abstract class AbstractColor {
-	/** Minimum allowed color component value. */
 	public static final int MIN_VALUE = 0;
-	/** Maximum allowed color component value. */
 	public static final int MAX_VALUE = 255;
 
 	/**

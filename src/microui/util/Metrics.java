@@ -15,19 +15,10 @@ import java.util.Map;
  * <p>Last Reviewed: 26.09.2025</p>
  */
 public final class Metrics {
-    /** Total count of all registered objects. */
     private static int totalCreatedObjects;
-    
-    /** Map storing counts of objects by class name. */
     private static final Map<String, Integer> metrics = new LinkedHashMap<String, Integer>();
 
-    /**
-     * Private constructor to prevent instantiation.
-     * 
-     * <p>This is a utility class with only static methods.</p>
-     */
     private Metrics() {
-        // Prevent instantiation
     }
 
     /**

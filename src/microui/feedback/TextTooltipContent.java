@@ -16,28 +16,18 @@ import microui.core.style.AbstractColor;
  * and configurable text properties. It supports multiline text (using newline characters)
  * and automatically adjusts its dimensions to fit the text content.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see TooltipContent
  * @see AbstractColor
  */
 public final class TextTooltipContent extends TooltipContent {
-	/** Default text size in points. */
 	private static final byte DEFAULT_TEXT_SIZE = 12;
-	/** Default padding around text in pixels. */
 	private static final byte DEFAULT_PADDING = 5;
-	/** Default left margin from target element in pixels. */
 	private static final byte DEFAULT_MARGIN_LEFT = 10;
 	
-	/** Minimum allowed text size in points. */
 	private static final byte MIN_TEXT_SIZE = 4;
 	
-	/** Background color of the tooltip. */
 	private AbstractColor backgroundColor, textColor;
-	/** The text content to display. */
 	private String text;
-	/** Text size in points. */
 	private int textSize;
 	
 	/**
@@ -165,10 +155,8 @@ public final class TextTooltipContent extends TooltipContent {
 	public void setText(String text) {
 		requireNonNull(text,"text");
 		
-		// Split text into lines for size calculation
 		final String[] lines = text.split("\n");
 		
-		// Calculate and set optimal size based on text content
 		prepareSize(lines);
 		
 		this.text = text;
@@ -180,11 +168,9 @@ public final class TextTooltipContent extends TooltipContent {
 	 */
 	@Override
 	protected void render() {
-		// Draw background
 		backgroundColor.apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		
-		// Draw text
 		textColor.apply();
 		ctx.textSize(textSize);
 		ctx.textAlign(LEFT, TOP);
@@ -192,19 +178,11 @@ public final class TextTooltipContent extends TooltipContent {
 		ctx.text(text, getX(), getY());
 	}
 	
-	/**
-	 * Calculates the pixel width of text with current text size settings.
-	 * 
-	 * @param text the text to measure
-	 * @return the width of the text in pixels
-	 * @throws NullPointerException if text is null
-	 */
 	private float getTextWidth(String text) {
 		requireNonNull(text,"text");
 		
 		final float width;
 		
-		// Temporarily apply text settings for measurement
 		ctx.pushStyle();
 		ctx.textSize(textSize);
 		ctx.textAlign(LEFT, TOP);
@@ -213,26 +191,17 @@ public final class TextTooltipContent extends TooltipContent {
 		
 		return width;
 	}
-	
-	/**
-	 * Prepares the tooltip size based on text content.
-	 * Calculates width as the widest line and height based on line count.
-	 * 
-	 * @param text array of text lines to measure
-	 */
+
 	private void prepareSize(String... text) {
 		float newWidth = 0;
 		final float newHeight;
 		
-		// Find the widest line
 		for (int i = 0; i < text.length; i++) {
 			newWidth = Math.max(newWidth, getTextWidth(text[i]));
 		}
 		
-		// Calculate height based on line count
 		newHeight = textSize * text.length;
 		
-		// Update tooltip size
 		setSize(newWidth,newHeight);
 	}
 }

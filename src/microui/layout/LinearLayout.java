@@ -52,19 +52,6 @@ public class LinearLayout extends LinearAxisLayout {
     }
 
     /**
-     * Validates that the provided layout parameters are of the correct type.
-     * 
-     * @param layoutParams the layout parameters to validate
-     * @throws IllegalArgumentException if the parameters are not an instance of LinearLayoutParams
-     */
-    @Override
-    protected void checkCorrectParams(LayoutParams layoutParams) {
-        if (!(layoutParams instanceof LinearLayoutParams)) {
-            throw new IllegalArgumentException("using not correct layout params for LinearLayoutParams");
-        }
-    }
-
-    /**
      * Returns whether the layout is in vertical mode.
      * 
      * @return true if the layout is vertical, false if horizontal
@@ -82,5 +69,18 @@ public class LinearLayout extends LinearAxisLayout {
     @Override
     public void setVerticalMode(boolean isVerticalMode) {
         super.setVerticalMode(isVerticalMode);
+    }
+    
+    /**
+     * Validates that the provided layout parameters are of the correct type.
+     * 
+     * @param layoutParams the layout parameters to validate
+     * @throws IllegalArgumentException if the parameters are not an instance of LinearLayoutParams
+     */
+    @Override
+    protected void checkCorrectParams(LayoutParams layoutParams) {
+        if (!(layoutParams instanceof LinearLayoutParams)) {
+            throw new IllegalArgumentException("using not correct layout params for LinearLayoutParams");
+        }
     }
 }

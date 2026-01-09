@@ -9,14 +9,10 @@ package microui.layout;
  * - Span values (columnSpan, rowSpan) determine how many cells the component occupies
  * - Alignment values (alignX, alignY) control positioning within the allocated cell space
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see LayoutParams
  * @see GridLayout
  */
 public final class GridLayoutParams implements LayoutParams {
-	/** Grid column index (0-based). */
 	private final int column, row, columnSpan, rowSpan, alignX, alignY;
 
 	/**
@@ -32,7 +28,6 @@ public final class GridLayoutParams implements LayoutParams {
 	 */
 	public GridLayoutParams(int column, int row, int columnSpan, int rowSpan, int alignX, int alignY) {
 		super();
-		// Validate parameters
 		if (column < 0) {
 			throw new IllegalArgumentException("grid layout param: \"column\" cannot be less than zero");
 		}
@@ -60,7 +55,6 @@ public final class GridLayoutParams implements LayoutParams {
 			throw new IllegalArgumentException("grid layout param: \"alignY\" cannot be greater than 1");
 		}
 
-		// Assign validated values
 		this.column = column;
 		this.row = row;
 		this.columnSpan = columnSpan;

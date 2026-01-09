@@ -10,10 +10,6 @@ import processing.event.KeyEvent;
  * no-operation method for simple key presses and a method for detailed
  * key events with KeyEvent information.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
- * @see KeyEvent
  */
 public interface KeyPressable {
 	

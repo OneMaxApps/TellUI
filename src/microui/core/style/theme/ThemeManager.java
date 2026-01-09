@@ -10,14 +10,10 @@ import static java.util.Objects.requireNonNull;
  * global theme changes that affect all components. By default, it uses ThemeWhite
  * as the initial theme.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractTheme
  * @see ThemeWhite
  */
 public final class ThemeManager {
-	/** The currently active theme, initialized to ThemeWhite by default. */
 	private static AbstractTheme currentTheme = new ThemeWhite();
 
 	/**

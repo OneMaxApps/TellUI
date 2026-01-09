@@ -47,41 +47,6 @@ public abstract class LinearRangeControl extends RangeControl {
     }
 
     /**
-     * Renders the linear range control track and handles value change events.
-     * Draws the background track and manages the lifecycle of value change events
-     * (start, change, end) based on user interaction.
-     */
-    @Override
-    protected void render() {
-        // Draw the control track
-        ctx.pushStyle();
-        getMutableStroke().apply();
-        getBackgroundColor().apply();
-        ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
-        ctx.popStyle();
-
-        // Handle scrolling-based value changes
-        if (getMutableScrolling().isScrolling()) {
-            getMutableValue().append(getMutableScrolling().get());
-            onChangeValue();
-            valueChangeEnd = true;
-            if (!ctx.mousePressed && !valueChangeStart) {
-                onStartChangeValue();
-            }
-        } else {
-            if (!ctx.mousePressed) {
-                valueChangeStart = false;
-            }
-        }
-
-        // Handle end of value change
-        if (!ctx.mousePressed && valueChangeEnd && !getMutableScrolling().isScrolling()) {
-            onEndChangeValue();
-            valueChangeEnd = false;
-        }
-    }
-
-    /**
      * Handles mouse wheel events for value adjustment.
      * When the control is hovered, mouse wheel scrolling adjusts the value.
      *
@@ -203,6 +168,38 @@ public abstract class LinearRangeControl extends RangeControl {
      */
     public final void setOnEndChangeValueListener(Listener onEndChangeValueListener) {
         this.onEndChangeValueListener = onEndChangeValueListener;
+    }
+    
+    /**
+     * Renders the linear range control track and handles value change events.
+     * Draws the background track and manages the lifecycle of value change events
+     * (start, change, end) based on user interaction.
+     */
+    @Override
+    protected void render() {
+        ctx.pushStyle();
+        getMutableStroke().apply();
+        getBackgroundColor().apply();
+        ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
+        ctx.popStyle();
+
+        if (getMutableScrolling().isScrolling()) {
+            getMutableValue().append(getMutableScrolling().get());
+            onChangeValue();
+            valueChangeEnd = true;
+            if (!ctx.mousePressed && !valueChangeStart) {
+                onStartChangeValue();
+            }
+        } else {
+            if (!ctx.mousePressed) {
+                valueChangeStart = false;
+            }
+        }
+
+        if (!ctx.mousePressed && valueChangeEnd && !getMutableScrolling().isScrolling()) {
+            onEndChangeValue();
+            valueChangeEnd = false;
+        }
     }
 
     /**

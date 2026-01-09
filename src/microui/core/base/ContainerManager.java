@@ -38,31 +38,18 @@ import processing.event.MouseEvent;
  * Last Reviewed: 8.11.2025
  * </p>
  * 
- * @author microui.core
- * @version 1.0
  * @see Container
  * @see AnimatorMode
  */
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
-	/** Singleton instance of ContainerManager. */
 	private static ContainerManager instance;
-	/** Indicates if the ContainerManager has been initialized. */
 	private static boolean initialized, canDraw;
-	/** List of managed containers. */
 	private final List<Container> list;
-	/** Animator for handling container transitions. */
 	private final Animator animator;
-	/** Tooltip manager for displaying tooltips. */
 	private final TooltipManager tooltipManager;
-	/** Previously active container. */
 	private Container prevContainer, currentContainer;
-	/** Whether animator is enabled for transitions. */
 	private boolean animatorEnabled;
 
-	/**
-	 * Private constructor for Singleton pattern.
-	 * Initializes the ContainerManager and registers event handlers.
-	 */
 	private ContainerManager() {
 		setVisible(true);
 		list = new ArrayList<Container>();
@@ -546,9 +533,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 */
 	public final class Render {
 
-		/**
-		 * Registers this class with Processing's draw method.
-		 */
 		private Render() {
 			getContext().registerMethod("draw", this);
 		}
@@ -563,20 +547,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	/**
-	 * Returns the index of the current container in the list.
-	 * 
-	 * @return the index of the current container
-	 */
 	private int getCurrentContainerIndex() {
 		return list.indexOf(currentContainer);
 	}
 
-	/**
-	 * Returns the index of the previous container in the list (circular).
-	 * 
-	 * @return the index of the previous container
-	 */
 	private int getPreviousContainerIndex() {
 		final int curr = getCurrentContainerIndex();
 
@@ -587,11 +561,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return curr - 1;
 	}
 
-	/**
-	 * Returns the index of the next container in the list (circular).
-	 * 
-	 * @return the index of the next container
-	 */
 	private int getNextContainerIndex() {
 		final int curr = getCurrentContainerIndex();
 
@@ -602,32 +571,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return curr + 1;
 	}
 
-	/**
-	 * Returns the previous container in the list (circular).
-	 * 
-	 * @return the previous container
-	 */
 	private Container getPreviousContainer() {
 		return list.get(getPreviousContainerIndex());
 	}
 
-	/**
-	 * Returns the next container in the list (circular).
-	 * 
-	 * @return the next container
-	 */
 	private Container getNextContainer() {
 		return list.get(getNextContainerIndex());
 	}
 
-	/**
-	 * Initiates a transition to the specified container.
-	 * 
-	 * @param container the container to switch to
-	 * @throws NullPointerException if container is null
-	 * @throws IllegalStateException if there are less than 2 containers in the manager
-	 * @throws NoSuchElementException if the container is not found in the manager
-	 */
 	private void launchContainer(Container container) {
 		requireNonNull(container, "container");
 
@@ -645,13 +596,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		animator.setAnimating(true);
 	}
 
-	/**
-	 * Internal method to add a container with validation.
-	 * 
-	 * @param container the container to add
-	 * @throws NullPointerException if container is null
-	 * @throws DuplicateItemException if the container is already added
-	 */
 	private void addInternal(Container container) {
 		requireNonNull(container, "container");
 
@@ -670,13 +614,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	/**
-	 * Internal method to remove a container with validation.
-	 * 
-	 * @param container the container to remove
-	 * @throws NullPointerException if container is null
-	 * @throws NoSuchElementException if the container is not found
-	 */
 	private void removeInternal(Container container) {
 		requireNonNull(container, "container");
 
@@ -695,27 +632,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	/**
-	 * Internal method to remove a container by numeric ID.
-	 * 
-	 * @param id the numeric ID of the container to remove
-	 */
 	private void removeInternal(int id) {
 		removeInternal(getById(id));
 	}
 
-	/**
-	 * Internal method to remove a container by text ID.
-	 * 
-	 * @param textId the text ID of the container to remove
-	 */
 	private void removeInternal(String textId) {
 		removeInternal(getByTextId(textId));
 	}
 
-	/**
-	 * Draws debug information when debug mode is enabled.
-	 */
 	private void debugOnDraw() {
 		if (Debugger.isEnabled()) {
 			ctx.push();
@@ -726,33 +650,16 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	/**
-	 * Internal class for handling animated transitions between containers.
-	 */
 	private static final class Animator extends View {
-		/** Reference to the parent ContainerManager. */
 		private final ContainerManager manager;
-		/** Maximum possible distance for easing calculations. */
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
-		/** Image buffers for previous and current container snapshots. */
 		private final ImageBuffer prevImage, currentImage;
-		/** Predefined direction vectors for slide animations. */
 		private static final byte[][] DIRECTIONS = {{-1,0},{1,0},{0,-1},{0,1}};
-		/** Current animation mode. */
 		private AnimatorMode animatorMode;
-		/** Raw animation speed. */
 		private float speed;
-		/** Random direction components for SLIDE_RANDOM mode. */
 		private byte randDirX, randDirY;
-		/** Whether animation is currently in progress. */
 		private boolean animating, newContainerPrepared, easing;
 
-		/**
-		 * Creates an Animator for the specified ContainerManager.
-		 * 
-		 * @param manager the ContainerManager to animate for
-		 * @throws NullPointerException if manager is null
-		 */
 		private Animator(ContainerManager manager) {
 			super();
 			setVisible(true);
@@ -770,9 +677,41 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			setEasingEnabled(true);
 		}
 
-		/**
-		 * Renders the animation or current container.
-		 */
+		public boolean isAnimating() {
+			return animating;
+		}
+
+		public void setAnimating(boolean animating) {
+			this.animating = animating;
+		}
+
+		public float getRawSpeed() {
+			return speed;
+		}
+
+		public void setSpeed(float speed) {
+			if (speed <= 0) {
+				throw new IllegalArgumentException("Animator speed must be greater than 0");
+			}
+			this.speed = speed;
+		}
+
+		public AnimatorMode getAnimatorMode() {
+			return animatorMode;
+		}
+
+		public void setAnimatorMode(AnimatorMode animatorMode) {
+			this.animatorMode = requireNonNull(animatorMode, "animatorMode");
+		}
+
+		public boolean isEasingEnabled() {
+			return easing;
+		}
+
+		public void setEasingEnabled(boolean easing) {
+			this.easing = easing;
+		}
+		
 		@Override
 		protected void render() {
 			if (isAnimating()) {
@@ -795,86 +734,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		}
 
-		/**
-		 * Checks if animation is currently in progress.
-		 * 
-		 * @return true if animating, false otherwise
-		 */
-		public boolean isAnimating() {
-			return animating;
-		}
-
-		/**
-		 * Sets the animation state.
-		 * 
-		 * @param animating true to start animation, false to stop
-		 */
-		public void setAnimating(boolean animating) {
-			this.animating = animating;
-		}
-
-		/**
-		 * Returns the raw animation speed.
-		 * 
-		 * @return the raw speed value
-		 */
-		public float getRawSpeed() {
-			return speed;
-		}
-
-		/**
-		 * Sets the animation speed.
-		 * 
-		 * @param speed the speed to set (must be greater than 0)
-		 * @throws IllegalArgumentException if speed is less than or equal to 0
-		 */
-		public void setSpeed(float speed) {
-			if (speed <= 0) {
-				throw new IllegalArgumentException("Animator speed must be greater than 0");
-			}
-			this.speed = speed;
-		}
-
-		/**
-		 * Returns the current animator mode.
-		 * 
-		 * @return the current animator mode
-		 */
-		public AnimatorMode getAnimatorMode() {
-			return animatorMode;
-		}
-
-		/**
-		 * Sets the animator mode.
-		 * 
-		 * @param animatorMode the animator mode to set
-		 * @throws NullPointerException if animatorMode is null
-		 */
-		public void setAnimatorMode(AnimatorMode animatorMode) {
-			this.animatorMode = requireNonNull(animatorMode, "animatorMode");
-		}
-
-		/**
-		 * Checks if easing is enabled.
-		 * 
-		 * @return true if easing is enabled, false otherwise
-		 */
-		public boolean isEasingEnabled() {
-			return easing;
-		}
-
-		/**
-		 * Enables or disables easing.
-		 * 
-		 * @param easing true to enable easing, false to disable
-		 */
-		public void setEasingEnabled(boolean easing) {
-			this.easing = easing;
-		}
-
-		/**
-		 * Updates the animation state.
-		 */
 		private void update() {
 			if (!prevImage.isLoaded()) {
 				manager.prevContainer.draw();
@@ -916,20 +775,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			}
 		}
 
-		/**
-		 * Captures the current screen buffer.
-		 * 
-		 * @return a PImage of the current screen
-		 */
 		private PImage getScreenBuffer() {
 			return ctx.get(0, 0, ctx.width, ctx.height);
 		}
 
-		/**
-		 * Calculates the internal animation speed with optional easing.
-		 * 
-		 * @return the calculated speed for the current frame
-		 */
 		private int getSpeedInternal() {
 			int additionalMinSpeed = 1;
 			if (easing) {
@@ -939,9 +788,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			return (int) (additionalMinSpeed + speed);
 		}
 
-		/**
-		 * Completes the animation and resets state.
-		 */
 		private void complete() {
 			prevImage.setBounds(0, 0, ctx.width, ctx.height);
 			currentImage.setBoundsFrom(prevImage);
@@ -949,12 +795,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			newContainerPrepared = false;
 		}
 
-		/**
-		 * Performs slide animation in the specified direction.
-		 * 
-		 * @param dirX the x-direction (-1 for left, 1 for right, 0 for none)
-		 * @param dirY the y-direction (-1 for up, 1 for down, 0 for none)
-		 */
 		private void slideDirection(int dirX, int dirY) {
 			if (!newContainerPrepared) {
 				currentImage.setPosition(dirX == -1 ? ctx.width : dirX == 1 ? -ctx.width : 0,

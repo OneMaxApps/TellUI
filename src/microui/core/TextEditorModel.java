@@ -622,85 +622,41 @@ public final class TextEditorModel {
 
     // == PRIVATE API ==
 
-    /**
-     * Gets the underlying text controller.
-     *
-     * @return the MultiLineTextController instance
-     */
     private MultiLineTextController getController() {
         return controller;
     }
 
-    /**
-     * Notifies the text change listener when text content changes.
-     */
     private void onTextChanged() {
         if (onTextChangedListener != null) {
             onTextChangedListener.action();
         }
     }
 
-    /**
-     * Internal class for managing cursor position within the text.
-     */
     private static final class Cursor {
         private final TextEditorModel model;
         private int column, row;
 
-        /**
-         * Constructs a Cursor for the text editor model.
-         *
-         * @param textAreaModel the parent text editor model
-         * @throws NullPointerException if textAreaModel is null
-         */
         public Cursor(TextEditorModel textAreaModel) {
             super();
             model = requireNonNull(textAreaModel, "textAreaModel");
         }
 
-        /**
-         * Gets the current column position (clamped to valid range).
-         *
-         * @return the current column
-         */
         public int getColumn() {
             return getClampedColumn(column);
         }
 
-        /**
-         * Sets the column position (clamped to valid range).
-         *
-         * @param column the column to set
-         */
         public void setColumn(int column) {
             this.column = getClampedColumn(column);
         }
 
-        /**
-         * Gets the current row position (clamped to valid range).
-         *
-         * @return the current row
-         */
         public int getRow() {
             return getClampedRow(row);
         }
 
-        /**
-         * Sets the row position (clamped to valid range).
-         *
-         * @param row the row to set
-         */
         public void setRow(int row) {
             this.row = getClampedRow(row);
         }
-
-        /**
-         * Moves the cursor in the specified direction by the specified number of steps.
-         *
-         * @param direction the direction to move
-         * @param repeat the number of steps to move
-         * @throws NullPointerException if direction is null
-         */
+        
         public void moveTo(Direction direction, int repeat) {
             requireNonNull(direction, "direction");
 
@@ -722,21 +678,10 @@ public final class TextEditorModel {
             }
         }
 
-        /**
-         * Moves the cursor one step in the specified direction.
-         *
-         * @param direction the direction to move
-         */
         public void moveTo(Direction direction) {
             moveTo(direction, 1);
         }
 
-        /**
-         * Moves the cursor to the specified row and column.
-         *
-         * @param row the target row
-         * @param column the target column
-         */
         public void moveTo(int row, int column) {
             setRow(row);
             setColumn(column);
@@ -744,31 +689,14 @@ public final class TextEditorModel {
 
         // == PRIVATE API ==
 
-        /**
-         * Gets the underlying text controller.
-         *
-         * @return the MultiLineTextController instance
-         */
         private MultiLineTextController getController() {
             return model.getController();
         }
 
-        /**
-         * Clamps a column value to the valid range for the current row.
-         *
-         * @param column the column value to clamp
-         * @return the clamped column value
-         */
         private int getClampedColumn(int column) {
             return (int) constrain(column, 0, getController().getLine(getRow()).length());
         }
 
-        /**
-         * Clamps a row value to the valid range.
-         *
-         * @param row the row value to clamp
-         * @return the clamped row value
-         */
         private int getClampedRow(int row) {
             return (int) constrain(row, 0, getController().getLinesCount() - 1);
         }
@@ -778,148 +706,77 @@ public final class TextEditorModel {
      * Provides constants for cursor direction
      */
     public enum Direction {
-        /** Left direction, typically used for moving cursor left or scrolling left. */
+        /** Left direction, typically used for moving cursor left. */
         LEFT,
         
-        /** Up direction, typically used for moving cursor up or scrolling up. */
+        /** Up direction, typically used for moving cursor up. */
         UP,
         
-        /** Right direction, typically used for moving cursor right or scrolling right. */
+        /** Right direction, typically used for moving cursor right. */
         RIGHT,
         
-        /** Down direction, typically used for moving cursor down or scrolling down. */
+        /** Down direction, typically used for moving cursor down. */
         DOWN;
     }
     
-    /**
-     * Internal class for managing text selection within the document.
-     */
     private static final class Selection {
         private final TextEditorModel model;
         private int startRow, endRow, startColumn, endColumn;
         private Listener onSelectingListener;
 
-        /**
-         * Constructs a Selection for the text editor model.
-         *
-         * @param model the parent text editor model
-         * @throws NullPointerException if model is null
-         */
         public Selection(TextEditorModel model) {
             super();
             this.model = requireNonNull(model, "model");
         }
 
-        /**
-         * Gets the selection start row (clamped to valid range).
-         *
-         * @return the start row
-         */
         public int getStartRow() {
             return getClampedRow(startRow);
         }
 
-        /**
-         * Sets the selection start row (clamped to valid range).
-         *
-         * @param startRow the start row to set
-         */
         public void setStartRow(int startRow) {
             this.startRow = getClampedRow(startRow);
             notifyOnSelecting();
         }
 
-        /**
-         * Gets the selection end row (clamped to valid range).
-         *
-         * @return the end row
-         */
         public int getEndRow() {
             return getClampedRow(endRow);
         }
 
-        /**
-         * Sets the selection end row (clamped to valid range).
-         *
-         * @param endRow the end row to set
-         */
         public void setEndRow(int endRow) {
             this.endRow = getClampedRow(endRow);
             notifyOnSelecting();
         }
 
-        /**
-         * Gets the selection start column (clamped to valid range for the start row).
-         *
-         * @return the start column
-         */
         public int getStartColumn() {
             return getClampedColumn(getStartRow(), startColumn);
         }
 
-        /**
-         * Sets the selection start column (clamped to valid range for the start row).
-         *
-         * @param startColumn the start column to set
-         */
         public void setStartColumn(int startColumn) {
             this.startColumn = getClampedColumn(getStartRow(), startColumn);
             notifyOnSelecting();
         }
 
-        /**
-         * Gets the selection end column (clamped to valid range for the end row).
-         *
-         * @return the end column
-         */
         public int getEndColumn() {
             return getClampedColumn(getEndRow(), endColumn);
         }
 
-        /**
-         * Sets the selection end column (clamped to valid range for the end row).
-         *
-         * @param endColumn the end column to set
-         */
         public void setEndColumn(int endColumn) {
             this.endColumn = getClampedColumn(getEndRow(), endColumn);
             notifyOnSelecting();
         }
 
-        /**
-         * Checks if the selection spans multiple lines.
-         *
-         * @return true if selection spans multiple lines, false otherwise
-         */
         public boolean isMultiLineSelected() {
             return getStartRow() != getEndRow();
         }
 
-        /**
-         * Gets the effective start row (minimum of start and end rows).
-         *
-         * @return the effective start row
-         */
         public int getEffectiveStartRow() {
             return Math.min(getStartRow(), getEndRow());
         }
 
-        /**
-         * Gets the effective end row (maximum of start and end rows).
-         *
-         * @return the effective end row
-         */
         public int getEffectiveEndRow() {
             return Math.max(getStartRow(), getEndRow());
         }
 
-        /**
-         * Gets the effective start column.
-         * For forward selections (start before end), returns start column.
-         * For backward selections (end before start), returns end column.
-         *
-         * @return the effective start column
-         */
         public int getEffectiveStartColumn() {
             if (getStartRow() <= getEndRow()) {
                 return getStartColumn();
@@ -928,13 +785,6 @@ public final class TextEditorModel {
             }
         }
 
-        /**
-         * Gets the effective end column.
-         * For forward selections (start before end), returns end column.
-         * For backward selections (end before start), returns start column.
-         *
-         * @return the effective end column
-         */
         public int getEffectiveEndColumn() {
             if (getStartRow() > getEndRow()) {
                 return getStartColumn();
@@ -943,77 +793,37 @@ public final class TextEditorModel {
             }
         }
 
-        /**
-         * Sets the selection start position.
-         *
-         * @param row the start row
-         * @param column the start column
-         */
         public void setStart(int row, int column) {
             setStartRow(row);
             setStartColumn(column);
         }
 
-        /**
-         * Sets the selection end position.
-         *
-         * @param row the end row
-         * @param column the end column
-         */
         public void setEnd(int row, int column) {
             setEndRow(row);
             setEndColumn(column);
         }
 
-        /**
-         * Sets the complete selection range.
-         *
-         * @param startRow the start row
-         * @param endRow the end row
-         * @param startColumn the start column
-         * @param endColumn the end column
-         */
         public void set(int startRow, int endRow, int startColumn, int endColumn) {
             setStart(startRow, startColumn);
             setEnd(endRow, endColumn);
         }
 
-        /**
-         * Checks if the selection is empty (covers no text).
-         *
-         * @return true if selection is empty, false otherwise
-         */
         public boolean isEmpty() {
             return getStartRow() == getEndRow() && getStartColumn() == getEndColumn();
         }
 
-        /**
-         * Resets the selection to empty (position 0,0).
-         */
         public void reset() {
             set(0, 0, 0, 0);
         }
 
-        /**
-         * Selects all text in the document.
-         */
         public void selectAll() {
             set(0, model.getLineCount() - 1, 0, model.getLineLength(model.getLineCount() - 1));
         }
 
-        /**
-         * Sets a listener to be notified when selection changes.
-         *
-         * @param onSelectingListener the selection change listener
-         * @throws NullPointerException if the listener is null
-         */
         public void setOnSelectingListener(Listener onSelectingListener) {
             this.onSelectingListener = requireNonNull(onSelectingListener, "onSelectingListener");
         }
 
-        /**
-         * Notifies the selection change listener.
-         */
         private void notifyOnSelecting() {
             if (onSelectingListener != null) {
                 onSelectingListener.action();
@@ -1022,52 +832,25 @@ public final class TextEditorModel {
 
         // == PRIVATE API ==
 
-        /**
-         * Clamps a row value to the valid range.
-         *
-         * @param row the row value to clamp
-         * @return the clamped row value
-         */
         private int getClampedRow(int row) {
             return (int) constrain(row, 0, model.getLineCount() - 1);
         }
 
-        /**
-         * Clamps a column value to the valid range for the specified row.
-         *
-         * @param row the row for column range validation
-         * @param column the column value to clamp
-         * @return the clamped column value
-         */
         private int getClampedColumn(int row, int column) {
             return (int) constrain(column, 0, model.getLineLength(getClampedRow(row)));
         }
     }
 
-    /**
-     * Internal class for extracting text fragments from the document.
-     */
     private static final class TextFragment {
         private final TextEditorModel model;
         private final StringBuilder sb;
         
-        /**
-         * Constructs a TextFragment for the text editor model.
-         *
-         * @param textEditorModel the parent text editor model
-         * @throws NullPointerException if textEditorModel is null
-         */
         public TextFragment(TextEditorModel textEditorModel) {
             super();
             this.model = requireNonNull(textEditorModel, "textEditorModel");
             sb = new StringBuilder();
         }
 
-        /**
-         * Gets the text from the beginning up to the current cursor position.
-         *
-         * @return the text before the cursor
-         */
         public String getTextUntilCursor() {
             sb.setLength(0);
             final int startRow = 0;
@@ -1084,11 +867,6 @@ public final class TextEditorModel {
             return sb.toString();
         }
 
-        /**
-         * Gets the text from the current cursor position to the end.
-         *
-         * @return the text after the cursor
-         */
         public String getTextAfterCursor() {
             sb.setLength(0);
 
@@ -1113,12 +891,7 @@ public final class TextEditorModel {
 
             return sb.toString();
         }
-        
-        /**
-         * Gets the text from the beginning up to the start of the current selection.
-         *
-         * @return the text before the selection, or empty string if no selection
-         */
+
         public String getTextUntilSelection() {
             if (!model.hasSelection()) {
                 return "";
@@ -1140,11 +913,6 @@ public final class TextEditorModel {
             return sb.toString();
         }
         
-        /**
-         * Gets the text from the end of the current selection to the end.
-         *
-         * @return the text after the selection, or empty string if no selection
-         */
         public String getTextAfterSelection() {
             if (!model.hasSelection()) {
                 return "";

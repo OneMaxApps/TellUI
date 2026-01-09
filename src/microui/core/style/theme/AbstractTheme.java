@@ -11,9 +11,6 @@ import microui.core.style.AbstractColor;
  * color values for various UI elements and interaction states. Subclasses
  * must implement all abstract methods to provide a complete theme.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractColor
  */
 public abstract class AbstractTheme {

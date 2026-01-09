@@ -18,17 +18,12 @@ import microui.service.TooltipManager;
  * Status: STABLE - Do not modify
  * Last Reviewed: 21.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see Component
  * @see TooltipContent
  * @see TooltipManager
  */
 public final class Tooltip extends View {
-	/** The content to display in this tooltip. */
 	private TooltipContent content;
-	/** Flag indicating the tooltip should be closed. */
 	private boolean isMustBeClosed;
 
 	/**
@@ -44,19 +39,16 @@ public final class Tooltip extends View {
 
 		requireNonNull(component,"component");
 
-		// Show tooltip on enter-long (hover for extended time)
 		component.onEnterLong(() -> {
 			if (content != null && content.isPreparedShow()) {
 				setVisible(true);
 			}
 		});
 
-		// Schedule closure on mouse leave
 		component.onLeave(() -> {
 			isMustBeClosed = true;
 		});
 
-		// Schedule closure on mouse press
 		component.onPress(() -> {
 			isMustBeClosed = true;
 		});
@@ -68,13 +60,11 @@ public final class Tooltip extends View {
 	 * Should be called every frame to handle tooltip lifecycle.
 	 */
 	public void listen() {
-		// Close tooltip if scheduled and content allows closure
 		if (isMustBeClosed && content != null && content.isPreparedClose()) {
 			setVisible(false);
 			isMustBeClosed = false;
 		}
 
-		// Register with TooltipManager if visible
 		if (isVisible()) {
 			TooltipManager.setTooltip(this);
 		}

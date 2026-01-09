@@ -37,29 +37,18 @@ import processing.core.PApplet;
  * Status: STABLE - Do not modify
  * Last Reviewed: 29.10.2025
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see Visible
  * @see Metrics
  */
 public abstract class View implements Visible {
-	/** Default text identifier for View objects. */
 	public static final String DEFAULT_TEXT_ID = "";
-	/** Default numeric identifier for View objects. */
 	public static final int DEFAULT_ID = 0;
-	/** Minimum allowed priority value. */
 	public static final int MIN_PRIORITY = 0;
-	/** Minimum allowed numeric identifier value. */
 	public static final int MIN_ID = 0;
-	/** Processing context for drawing operations. */
 	protected static final PApplet ctx = getContext();
 	
-	/** Text identifier for this View. */
 	private String textId;
-	/** Rendering priority (z-order) for this View. */
 	private int priority, id;
-	/** Visibility state of this View. */
 	private boolean visible;
 
 	/**

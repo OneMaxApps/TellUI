@@ -20,28 +20,17 @@ import microui.event.Listener;
  * each representing a single line of text. It supports undo/redo operations with
  * configurable update speed to prevent excessive history entries during rapid typing.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see SingleLineTextController
  * @see Listener
  */
 public final class MultiLineTextController {
-	/** Constant for empty text. */
 	private static final String EMPTY_TEXT;
-	/** Minimum number of lines that must always be present. */
 	private static final byte MIN_LINES_COUNT;
-	/** List of single-line text controllers for each line. */
 	private final List<SingleLineTextController> list;
-	/** Manager for undo/redo operations. */
 	private final UndoRedoManager undoRedoManager;
-	/** Temporary StringBuilder for text assembly. */
 	private StringBuilder adapterSb;
-	/** Cached complete text representation. */
 	private String cachedText;
-	/** Listener for text change events. */
 	private Listener onTextChangedListener;
-	/** Flag indicating if text has changed since last cache. */
 	private boolean textChanged;
 
 	static {
@@ -367,12 +356,7 @@ public final class MultiLineTextController {
 	}
 
 	// == PRIVATE API ==
-	/**
-	 * Adds a line without triggering text change notification.
-	 * 
-	 * @param text the text for the new line
-	 * @throws NullPointerException if text is null
-	 */
+
 	private void addLineSilently(String text) {
 		requireNonNull(text, "text");
 
@@ -382,11 +366,6 @@ public final class MultiLineTextController {
 
 	}
 
-	/**
-	 * Returns the cached text or rebuilds cache if text has changed.
-	 * 
-	 * @return the complete text content
-	 */
 	private String getCachedText() {
 		if (!textChanged) {
 			return cachedText;
@@ -411,29 +390,14 @@ public final class MultiLineTextController {
 		return cachedText = adapterSb.toString();
 	}
 
-	/**
-	 * Clamps an index to the valid range of line indices.
-	 * 
-	 * @param index the index to clamp
-	 * @return the clamped index (0 to linesCount-1)
-	 */
 	private int getClampedIndex(int index) {
 		return (int) constrain(index, 0, getLinesCount() - 1);
 	}
 
-	/**
-	 * Checks if a row index corresponds to the last line.
-	 * 
-	 * @param row the row index to check
-	 * @return true if this is the last row, false otherwise
-	 */
 	private boolean isLastRow(int row) {
 		return getClampedIndex(row) == getLinesCount() - 1;
 	}
 
-	/**
-	 * Notifies listeners that text has changed and updates cache.
-	 */
 	private void notifyTextChanged() {
 		textChanged = true;
 
@@ -444,42 +408,20 @@ public final class MultiLineTextController {
 		}
 	}
 
-	/**
-	 * Checks if there is only one line in the text.
-	 * 
-	 * @return true if there is exactly one line, false otherwise
-	 */
 	private boolean hasOnlyOneLine() {
 		return getLinesCount() == 1;
 	}
 
-	/**
-	 * Internal class managing undo/redo functionality with configurable update speed.
-	 */
 	private static final class UndoRedoManager {
-		/** Minimum allowed update speed in milliseconds. */
 		private static final int MIN_MS_FOR_UPDATE = 0;
-		/** Default update speed in milliseconds. */
 		private static final int DEFAULT_MS_FOR_UPDATE = 100;
-		/** Reference to the parent controller. */
 		private final MultiLineTextController controller;
-		/** Stacks for undo and redo operations. */
 		private final Deque<String> undo, redo;
-		/** Previous text state for incremental updates. */
 		private String prevState;
-		/** Timestamp of last history update. */
 		private long lastUpdateTime;
-		/** Minimum milliseconds between history updates. */
 		private int speedForUpdate;
-		/** Flag to prevent recursive updates during undo/redo operations. */
 		private boolean operation;
 
-		/**
-		 * Constructs an UndoRedoManager for the specified controller.
-		 * 
-		 * @param controller the multi-line text controller to manage (cannot be null)
-		 * @throws NullPointerException if controller is null
-		 */
 		public UndoRedoManager(MultiLineTextController controller) {
 			super();
 			this.controller = requireNonNull(controller, "controller");
@@ -494,21 +436,10 @@ public final class MultiLineTextController {
 			setSpeedForUpdate(DEFAULT_MS_FOR_UPDATE);
 		}
 		
-		/**
-		 * Returns the current update speed.
-		 * 
-		 * @return the update speed in milliseconds
-		 */
 		public int getSpeedForUpdate() {
 			return speedForUpdate;
 		}
 
-		/**
-		 * Sets the update speed for history tracking.
-		 * 
-		 * @param speedForUpdate the minimum milliseconds between history updates (must be ≥ 0)
-		 * @throws IllegalArgumentException if speedForUpdate is less than 0
-		 */
 		public void setSpeedForUpdate(int speedForUpdate) {
 			if (speedForUpdate < MIN_MS_FOR_UPDATE) {
 				throw new IllegalArgumentException("Speed for update must be equal or greater than: " + MIN_MS_FOR_UPDATE);
@@ -517,9 +448,6 @@ public final class MultiLineTextController {
 			this.speedForUpdate = speedForUpdate;
 		}
 
-		/**
-		 * Performs an undo operation.
-		 */
 		public void undo() {
 			operation = true;
 
@@ -534,9 +462,6 @@ public final class MultiLineTextController {
 			operation = false;
 		}
 
-		/**
-		 * Performs a redo operation.
-		 */
 		public void redo() {
 			operation = true;
 			
@@ -548,28 +473,14 @@ public final class MultiLineTextController {
 			operation = false;
 		}
 
-		/**
-		 * Returns a string representation of the undo stack.
-		 * 
-		 * @return string representation of undo stack
-		 */
 		public String getUndoStack() {
 			return undo.toString();
 		}
 
-		/**
-		 * Returns a string representation of the redo stack.
-		 * 
-		 * @return string representation of redo stack
-		 */
 		public String getRedoStack() {
 			return redo.toString();
 		}
 
-		/**
-		 * Updates the history state with current text if enough time has passed.
-		 * Skips update during undo/redo operations to prevent recursion.
-		 */
 		public void updateState() {
 			if (operation) {
 				return;
@@ -602,20 +513,10 @@ public final class MultiLineTextController {
 			redo.clear();
 		}
 		
-		/**
-		 * Checks if undo operations are available.
-		 * 
-		 * @return true if undo stack is not empty, false otherwise
-		 */
 		private boolean canUndo() {
 			return !undo.isEmpty();
 		}
 
-		/**
-		 * Checks if redo operations are available.
-		 * 
-		 * @return true if redo stack is not empty, false otherwise
-		 */
 		private boolean canRedo() {
 			return !redo.isEmpty();
 		}

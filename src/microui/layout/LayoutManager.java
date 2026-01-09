@@ -17,13 +17,9 @@ import processing.core.PApplet;
  * of container entries based on their layout parameters and the available space.</p>
  */
 public abstract class LayoutManager {
-    /** The Processing context used for drawing operations. */
     protected PApplet ctx = MicroUI.getContext();
     
-    /** The container managed by this layout manager. */
     private Container container;
-    
-    /** List of entries within the managed container. */
     private List<Container.Entry> entryList;
 
     /**

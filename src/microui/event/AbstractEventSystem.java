@@ -16,17 +16,12 @@ import microui.util.Metrics;
  * various mouse interactions with configurable thresholds. It supports both
  * ContentView (with padding/margin) and basic SpatialView components.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see SpatialView
  * @see ContentView
  * @see EventDetector
  */
 public abstract class AbstractEventSystem {
-	/** The SpatialView this event system is monitoring. */
 	private SpatialView spatialView;
-	/** The main event detector instance. */
 	private final EventDetector detector;
  
 	/**
@@ -140,15 +135,11 @@ public abstract class AbstractEventSystem {
 	 * Internal class containing all event detection logic and sub-detectors.
 	 */
 	protected final class EventDetector {
-		/** Default threshold for timing-based events. */
 		private static final long DEFAULT_THRESHOLD = 1000;
-		/** Default threshold for double-click detection. */
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
 		
-		/** Current hover state. */
 		private boolean isHover, isPressed;
 
-		// Sub-detectors for specific event types
 		private final PressDetector pressDetector;
 		private final ReleaseDetector releaseDetector;
 		private final LongPressDetector longPressDetector;
@@ -330,13 +321,11 @@ public abstract class AbstractEventSystem {
 			int x, y, w, h;
 
 			if (spatialView instanceof ContentView c) {
-				// Use padded bounds for ContentView (includes padding)
 				x = (int) c.getPadX();
 				y = (int) c.getPadY();
 				w = (int) c.getPadWidth();
 				h = (int) c.getPadHeight();
 			} else {
-				// Use basic bounds for SpatialView
 				x = (int) spatialView.getX();
 				y = (int) spatialView.getY();
 				w = (int) spatialView.getWidth();
@@ -348,9 +337,6 @@ public abstract class AbstractEventSystem {
 			return isHover;
 		}
 
-		/**
-		 * Detects mouse press events (initial mouse down while hovering).
-		 */
 		private final class PressDetector {
 			private boolean isPressHookCalled;
 			private long pressTime;
@@ -379,9 +365,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects mouse release events (mouse up after being pressed).
-		 */
 		private final class ReleaseDetector {
 			private boolean isReleaseHookCalled;
 			private long releaseTime;
@@ -411,9 +394,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects long-press events (mouse held down for extended duration).
-		 */
 		private final class LongPressDetector {
 			private final PressDetector pressDetectorInternal;
 			private boolean isLongPressHookCalled;
@@ -455,9 +435,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects mouse enter events (mouse moves into component bounds).
-		 */
 		private final class EnterDetector {
 			private boolean isEnterHookCalled;
 			private long enterTime;
@@ -484,9 +461,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects mouse leave events (mouse moves out of component bounds).
-		 */
 		private final class LeaveDetector {
 			private boolean isLeaveHookCalled;
 			private long leaveTime;
@@ -518,9 +492,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects enter-long events (mouse hovers over component for extended duration).
-		 */
 		private final class EnterLongDetector {
 			private final EnterDetector enterDetectorInternal;
 			private boolean isEnterLongHookCalled;
@@ -563,10 +534,7 @@ public abstract class AbstractEventSystem {
 			}
 
 		}
-
-		/**
-		 * Detects leave-long events (mouse stays out of component bounds for extended duration).
-		 */
+		
 		private final class LeaveLongDetector {
 			private final LeaveDetector leaveDetectorInternal;
 			private boolean isLeaveLongHookCalled;
@@ -611,9 +579,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects click events (press and release while hovering).
-		 */
 		private final class ClickDetector {
 			private boolean isCanCallHook;
 
@@ -636,9 +601,6 @@ public abstract class AbstractEventSystem {
 			}
 		}
 
-		/**
-		 * Detects double-click events (two clicks within time threshold).
-		 */
 		private final class DoubleClickDetector {
 			private final ClickDetector clickDetectorInternal;
 			private final ReleaseDetector releaseDetectorInternal;
@@ -653,7 +615,6 @@ public abstract class AbstractEventSystem {
 			}
 
 			public boolean isDetected() {
-				// background update state for local using
 				releaseDetectorInternal.isDetected();
 
 				if (System.currentTimeMillis() - releaseDetectorInternal.getReleaseTime() > threshold) {
@@ -685,9 +646,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects drag start events (mouse moved while pressed).
-		 */
 		private final class DragStartDetector {
 			private boolean isHookCalled;
 
@@ -713,10 +671,7 @@ public abstract class AbstractEventSystem {
 				return mx != pmx || my != pmy;
 			}
 		}
-
-		/**
-		 * Detects ongoing dragging state.
-		 */
+		
 		private final class DraggingDetector {
 			private final DragStartDetector dragStartDetector;
 
@@ -741,9 +696,6 @@ public abstract class AbstractEventSystem {
 
 		}
 
-		/**
-		 * Detects drag end events (mouse released after dragging).
-		 */
 		private final class DragEndDetector {
 			private final DragStartDetector dragStartDetector;
 			private boolean isDragEnd;

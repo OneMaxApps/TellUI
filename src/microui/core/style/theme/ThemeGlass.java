@@ -13,9 +13,6 @@ import microui.core.style.LerpedLoopColor;
  * soft color palettes to create a "glass" or "frosted glass" visual effect.
  * It includes looping animations for dynamic visual interest.
  * </p>
- * 
- * @author microui.core
- * @version 1.0
  * @see AbstractTheme
  * @see Color
  * @see LerpedLoopColor
