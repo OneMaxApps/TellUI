@@ -66,6 +66,38 @@ public final class Knob extends RangeControl {
     }
 
     /**
+     * Handles mouse wheel events when the mouse is within the knob's diameter.
+     * The scrolling delta is captured for value adjustment.
+     *
+     * @param mouseEvent the mouse wheel event
+     */
+    @Override
+    public void mouseWheel(MouseEvent mouseEvent) {
+        if (isMouseInDiameter()) {
+            getMutableScrolling().init(mouseEvent);
+        }
+    }
+
+    /**
+     * Gets the color used for the indicator arc.
+     *
+     * @return the current indicator color
+     */
+    public AbstractColor getIndicatorColor() {
+        return indicatorColor;
+    }
+
+    /**
+     * Sets the color used for the indicator arc.
+     *
+     * @param indicatorColor the color to use for the indicator
+     * @throws NullPointerException if indicatorColor is null
+     */
+    public void setIndicatorColor(AbstractColor indicatorColor) {
+        this.indicatorColor = requireNonNull(indicatorColor, "indicatorColor");
+    }
+    
+    /**
      * Renders the knob and handles user interaction.
      * The rendering includes:
      * <ol>
@@ -103,38 +135,6 @@ public final class Knob extends RangeControl {
         super.onChangeBounds();
         recalculateCenter();
         recalculateDiameter();
-    }
-
-    /**
-     * Handles mouse wheel events when the mouse is within the knob's diameter.
-     * The scrolling delta is captured for value adjustment.
-     *
-     * @param mouseEvent the mouse wheel event
-     */
-    @Override
-    public void mouseWheel(MouseEvent mouseEvent) {
-        if (isMouseInDiameter()) {
-            getMutableScrolling().init(mouseEvent);
-        }
-    }
-
-    /**
-     * Gets the color used for the indicator arc.
-     *
-     * @return the current indicator color
-     */
-    public AbstractColor getIndicatorColor() {
-        return indicatorColor;
-    }
-
-    /**
-     * Sets the color used for the indicator arc.
-     *
-     * @param indicatorColor the color to use for the indicator
-     * @throws NullPointerException if indicatorColor is null
-     */
-    public void setIndicatorColor(AbstractColor indicatorColor) {
-        this.indicatorColor = requireNonNull(indicatorColor, "indicatorColor");
     }
 
     private void recalculateCenter() {

@@ -13,16 +13,6 @@ import microui.event.Listener;
  * cursor positioning, and text selection. Provides a complete API for text manipulation
  * in a multi-line editing environment.
  * 
- * <p>TextEditorModel handles:
- * <ul>
- *   <li>Multi-line text storage and manipulation</li>
- *   <li>Cursor navigation and positioning</li>
- *   <li>Text selection with single and multi-line support</li>
- *   <li>Undo/redo functionality</li>
- *   <li>Line-based operations (split, merge, insert, remove)</li>
- *   <li>Event notifications for text changes</li>
- * </ul></p>
- * 
  * <p>This model is designed to be used by text editing UI components that need
  * sophisticated text manipulation capabilities.</p>
  */

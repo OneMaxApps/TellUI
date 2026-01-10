@@ -9,15 +9,6 @@ import processing.event.MouseEvent;
  * Provides common functionality for components that allow selecting a value along
  * a linear axis, with support for orientation, mouse wheel scrolling, and value change events.
  * 
- * <p>LinearRangeControl handles:
- * <ul>
- *   <li>Horizontal and vertical orientations</li>
- *   <li>Mouse wheel interaction for value adjustment</li>
- *   <li>Value change event notifications (start, change, end)</li>
- *   <li>Automatic scrolling behavior</li>
- *   <li>Visual rendering of the control track</li>
- * </ul></p>
- * 
  * @see RangeControl
  * @see Orientation
  */

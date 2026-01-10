@@ -50,7 +50,7 @@ public class PlainShadow extends AbstractShadow {
 	/**
 	 * Enables or disables the alpha fade-out effect.
 	 * 
-	 * @param isAlphaFadeOutEnabled true to enable gradient fade-out, false for solid outline
+	 * @param alphaFadeOutEnabled true to enable gradient fade-out, false for solid outline
 	 * @return this PlainShadow for method chaining
 	 */
 	public PlainShadow setAlphaFadeOutEnabled(boolean alphaFadeOutEnabled) {

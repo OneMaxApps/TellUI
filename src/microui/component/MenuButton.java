@@ -38,9 +38,6 @@ import processing.event.MouseEvent;
  * <p><strong>Note:</strong> If a menu is the root menu, it displays as a vertical list.
  * Non-root menus add horizontal shifting to create nested menu hierarchies.</p>
  * 
- * <p><strong>Status:</strong> STABLE - Do not modify</p>
- * <p><strong>Last Reviewed:</strong> 29.10.2025</p>
- * 
  * @see Button
  * @see Scrollable
  */

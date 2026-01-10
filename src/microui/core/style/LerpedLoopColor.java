@@ -50,7 +50,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	 * When disabled, the animation stops at the current progress until loop mode
 	 * is re-enabled.
 	 * 
-	 * @param isLoopEnabled true to enable continuous looping, false to pause at current progress
+	 * @param loopEnabled true to enable continuous looping, false to pause at current progress
 	 */
 	public final void setLoopEnabled(boolean loopEnabled) {
 		getAnimator().setLoopEnabled(loopEnabled);

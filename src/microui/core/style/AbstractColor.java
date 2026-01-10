@@ -25,7 +25,9 @@ import processing.core.PGraphics;
  * @see Metrics
  */
 public abstract class AbstractColor {
+	/** Minimal value for color */
 	public static final int MIN_VALUE = 0;
+	/** Maximal value for color */
 	public static final int MAX_VALUE = 255;
 
 	/**

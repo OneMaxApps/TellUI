@@ -39,6 +39,7 @@ public final class RendererConfig {
 
 	/**
 	 * Sets the rendering mode for all MicroUI components.
+	 * <p>
 	 * <b>Note:</b> This affects only MicroUI components like {@code Button},
 	 * {@code Slider}, {@code Panel}, etc.
 	 * </p>

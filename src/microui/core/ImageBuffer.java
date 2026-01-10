@@ -16,15 +16,6 @@ import processing.core.PImage;
  * <p><strong>Status:</strong> Stable - Do not modify</p>
  * <p><strong>Last Reviewed:</strong> 13.09.2025</p>
  * 
- * <p>Features include:
- * <ul>
- *   <li>Image loading from file paths</li>
- *   <li>Color tinting of images</li>
- *   <li>Automatic image resizing to fit screen bounds</li>
- *   <li>Image existence checking</li>
- *   <li>Texture removal and management</li>
- * </ul></p>
- * 
  * @see SpatialView
  * @see AbstractColor
  */

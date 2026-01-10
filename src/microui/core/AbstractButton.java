@@ -16,15 +16,6 @@ import microui.core.style.Stroke;
  * <p><strong>Status:</strong> STABLE - Do not modify</p>
  * <p><strong>Last Reviewed:</strong> 21.10.2025</p>
  * 
- * <p>Features include:
- * <ul>
- *   <li>Ripple animation effects on click/tap</li>
- *   <li>Hover state detection and visual feedback</li>
- *   <li>Configurable stroke (border) styling</li>
- *   <li>Theme-based default styling</li>
- *   <li>Common button interaction patterns</li>
- * </ul></p>
- * 
  * @see Component
  * @see Ripples
  * @see Hover

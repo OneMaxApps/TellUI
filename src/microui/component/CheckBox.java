@@ -15,14 +15,11 @@ import microui.event.Listener;
  * The CheckBox extends AbstractButton to provide toggle functionality with
  * three visual styles for the checked state: MARK, RECT, and DOT.
  * 
- * <p><strong>Status:</strong> STABLE - Do not modify</p>
- * <p><strong>Last Reviewed:</strong> 17.11.2025</p>
- * 
  * @see AbstractButton
  * @see CheckStyle
  */
 public class CheckBox extends AbstractButton {
-    /** Default size of the CheckBox in pixels. */
+	/** Default size of CheckBox*/
     public static final int DEFAULT_SIZE = 16;
     
     private AbstractColor markColor;
@@ -45,20 +42,20 @@ public class CheckBox extends AbstractButton {
         setCheckStyle(MARK);
     }
 
-    /**
-     * Constructs a CheckBox with the specified checked state, centered on the screen.
-     *
-     * @param checked the initial checked state (true for checked, false for unchecked)
-     */
+    /** 
+     * Default constructor with default initialization
+     * 
+     * @param checked the state for CheckBox
+     * */
     public CheckBox(boolean checked) {
         this(0, 0);
         setPositionInCenter();
         setChecked(checked);
     }
 
-    /**
-     * Constructs a default CheckBox in the unchecked state, centered on the screen.
-     */
+    /** 
+     * Default constructor with default initialization
+     * */
     public CheckBox() {
         this(false);
     }

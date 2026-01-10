@@ -21,11 +21,17 @@ import microui.core.style.Color;
  * @see View
  */
 public abstract class AbstractShadow extends View {
+	/** Default weight of left side*/
 	public static final int DEFAULT_WEIGHT_LEFT = 0;
+	/** Default weight of top side*/
 	public static final int DEFAULT_WEIGHT_TOP = 0;
+	/** Default weight of right side*/
 	public static final int DEFAULT_WEIGHT_RIGHT = 3;
+	/** Default weight of bottom side*/
 	public static final int DEFAULT_WEIGHT_BOTTOM = 2;
+	/** Minimal weight of shadow*/
 	public static final int MIN_WEIGHT = 0;
+	/** Maximal weight of shadow*/
 	public static final int MAX_WEIGHT = 10;
 	
 	private AbstractColor color;

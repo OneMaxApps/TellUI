@@ -30,20 +30,6 @@ import processing.event.KeyEvent;
  * A single-line text input field with support for text editing, selection,
  * copy/paste, undo/redo, validation, and password masking.
  * 
- * <p>TextField provides a comprehensive text input component with:
- * <ul>
- *   <li>Single-line text editing with character constraints</li>
- *   <li>Text selection with mouse and keyboard</li>
- *   <li>Horizontal scrolling for long text</li>
- *   <li>Copy, cut, and paste operations</li>
- *   <li>Undo and redo functionality</li>
- *   <li>Password masking with configurable mask character</li>
- *   <li>Input validation with multiple validation modes</li>
- *   <li>Hint text when field is empty and not focused</li>
- *   <li>Cursor blinking and visual selection highlighting</li>
- *   <li>Keyboard navigation (arrow keys, home, end)</li>
- * </ul></p>
- * 
  * <p>The component uses off-screen buffering for efficient rendering and
  * includes sophisticated text width caching for performance.</p>
  */

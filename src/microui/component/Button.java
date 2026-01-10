@@ -15,9 +15,6 @@ import processing.core.PImage;
  * with support for text rendering, image display, hover effects, and ripple animations.
  * This component automatically handles text resizing and positioning within the button bounds.
  * 
- * <p><strong>Status:</strong> STABLE - Do not modify</p>
- * <p><strong>Last Reviewed:</strong> 21.10.2025</p>
- * 
  * @see AbstractButton
  * @see TextView
  * @see ImageBuffer

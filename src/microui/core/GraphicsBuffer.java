@@ -14,15 +14,6 @@ import processing.core.PGraphics;
  * GraphicsBuffer provides a flexible way to render multiple BufferedView components
  * to an off-screen PGraphics buffer before compositing them onto the main drawing surface.
  * 
- * <p>Features include:
- * <ul>
- *   <li>Automatic buffer creation and management</li>
- *   <li>Composition of multiple BufferedView components</li>
- *   <li>Configurable auto-clearing of buffer between frames</li>
- *   <li>Automatic buffer resizing when dimensions change</li>
- *   <li>Optional custom drawing via override method</li>
- * </ul></p>
- * 
  * @see SpatialView
  * @see BufferedView
  */

@@ -20,16 +20,6 @@ import microui.feedback.TooltipContent;
  * <p><strong>Status:</strong> STABLE - Do not modify</p>
  * <p><strong>Last Reviewed:</strong> 04.12.2025</p>
  * 
- * <p>Features include:
- * <ul>
- *   <li>Complete mouse interaction handling (click, hover, drag, etc.)</li>
- *   <li>Event listener registration for all interaction types</li>
- *   <li>Tooltip support with configurable content</li>
- *   <li>Background color management</li>
- *   <li>State query methods for current interaction state</li>
- *   <li>Automatic event detection and propagation</li>
- * </ul></p>
- * 
  * <p>This class serves as the foundation for all interactive UI elements
  * and should be extended by specific component implementations.</p>
  * 

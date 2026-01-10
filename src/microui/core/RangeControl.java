@@ -11,15 +11,6 @@ import processing.event.MouseEvent;
  * Abstract base class for range control components that allow selecting
  * a numeric value within a specified range.
  * 
- * <p>RangeControl provides the foundation for components like sliders, scrollbars,
- * and other controls that operate on a bounded numeric range. It handles:
- * <ul>
- *   <li>Bounded value management with min/max constraints</li>
- *   <li>Mouse wheel scrolling with inertia</li>
- *   <li>Stroke (border) styling</li>
- *   <li>Value change operations</li>
- * </ul></p>
- * 
  * @see Component
  * @see Scrollable
  * @see BoundedValue

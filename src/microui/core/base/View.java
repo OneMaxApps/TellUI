@@ -41,10 +41,15 @@ import processing.core.PApplet;
  * @see Metrics
  */
 public abstract class View implements Visible {
+	/** Default text id ("") for View objects*/
 	public static final String DEFAULT_TEXT_ID = "";
+	/** Default id (0) for View objects*/
 	public static final int DEFAULT_ID = 0;
+	/** Minimal priority (0) for Z-order in rendering*/
 	public static final int MIN_PRIORITY = 0;
+	/** Minimal id (0) for View objects*/
 	public static final int MIN_ID = 0;
+	/** Instance of context by Processing*/
 	protected static final PApplet ctx = getContext();
 	
 	private String textId;

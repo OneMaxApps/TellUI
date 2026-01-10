@@ -19,24 +19,42 @@ import static microui.util.MathUtils.constrain;
  * @see AbstractColor
  */
 public class Color extends AbstractColor {
+	/** Pure red color*/
 	public static final Color RED = new Color(255, 0, 0);
+	/** Pure green color*/
 	public static final Color GREEN = new Color(0, 255, 0);
+	/** Pure blue color*/
 	public static final Color BLUE = new Color(0, 0, 255);
+	/** Pure yellow color*/
 	public static final Color YELLOW = new Color(255, 255, 0);
+	/** Pure pink color*/
 	public static final Color PINK = new Color(255, 0, 255);
+	/** Pure sky color*/
 	public static final Color SKY = new Color(0, 255, 255);
 
+	/** Pure black color*/
 	public static final Color BLACK = new Color(0);
+	/** Gray color 8 shades */
 	public static final Color GRAY_8L = new Color(8);
+	/** Gray color 16 shades */
 	public static final Color GRAY_16L = new Color(16);
+	/** Gray color 32 shades */
 	public static final Color GRAY_32L = new Color(32);
+	/** Gray color 64 shades */
 	public static final Color GRAY_64L = new Color(64);
+	/** Gray color 128 shades */
 	public static final Color GRAY_128L = new Color(128);
+	/** Gray color 164 shades */
 	public static final Color GRAY_164L = new Color(164);
+	/** Gray color 200 shades */
 	public static final Color GRAY_200L = new Color(200);
+	/** Gray color 232 shades */
 	public static final Color GRAY_232L = new Color(232);
+	
+	/** Pure white color */
 	public static final Color WHITE = new Color(255);
 
+	/** Fully transparent color */
 	public static final Color TRANSPARENT = new Color(0, 0);
 
 	private final int red, green, blue, alpha;

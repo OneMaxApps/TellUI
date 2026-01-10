@@ -52,19 +52,6 @@ import processing.event.MouseEvent;
  * A multi-line text editing component with support for selection, scrolling,
  * copy/paste, undo/redo, and keyboard navigation.
  * 
- * <p>TextArea provides a full-featured text editor with:
- * <ul>
- *   <li>Multi-line text editing with line wrapping</li>
- *   <li>Text selection with mouse and keyboard</li>
- *   <li>Horizontal and vertical scrolling</li>
- *   <li>Copy, cut, and paste operations</li>
- *   <li>Undo and redo functionality</li>
- *   <li>Tab support with configurable tab size</li>
- *   <li>Configurable text styling (font, size, color)</li>
- *   <li>Cursor blinking and visual selection highlighting</li>
- *   <li>Keyboard navigation (arrow keys, home, end, page up/down)</li>
- * </ul></p>
- * 
  * <p>The component uses a buffered rendering approach for efficient text display
  * and includes sophisticated cursor positioning and scrolling behavior.</p>
  */

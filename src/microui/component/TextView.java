@@ -20,15 +20,6 @@ import processing.core.PFont;
  * A component for displaying text with automatic resizing, alignment, and clipping options.
  * TextView provides flexible text rendering with support for automatic font size adjustment
  * to fit within bounds, horizontal and vertical alignment, and optional text clipping.
- * 
- * <p>Features include:
- * <ul>
- *   <li>Automatic text resizing based on component bounds</li>
- *   <li>Configurable horizontal and vertical alignment</li>
- *   <li>Text clipping to bounds or overflow display</li>
- *   <li>Custom font support</li>
- *   <li>Manual or automatic text sizing</li>
- * </ul></p>
  */
 public final class TextView extends Component {
     private static final String DEFAULT_TEXT = "";
