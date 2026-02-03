@@ -8,13 +8,15 @@ import static microui.util.MathUtils.constrain;
 import microui.event.Listener;
 
 /**
- * Controller for managing single-line text input with validation and event listeners.
- * Provides basic text manipulation operations with character validation and event notifications.
+ * Controller for managing single-line text input with validation and event
+ * listeners. Provides basic text manipulation operations with character
+ * validation and event notifications.
  * <p>
- * This controller manages a single line of text with support for insertion, removal,
- * and validation of allowed characters. It includes event listeners for various
- * text manipulation operations.
+ * This controller manages a single line of text with support for insertion,
+ * removal, and validation of allowed characters. It includes event listeners
+ * for various text manipulation operations.
  * </p>
+ * 
  * @see Listener
  */
 public final class SingleLineTextController {
@@ -23,8 +25,8 @@ public final class SingleLineTextController {
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText;
-	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
-	
+	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener;
+
 	/**
 	 * Constructs a SingleLineTextController with initial text.
 	 * 
@@ -32,7 +34,7 @@ public final class SingleLineTextController {
 	 * @throws NullPointerException if text is null
 	 */
 	public SingleLineTextController(final String text) {
-		sb = new StringBuilder(requireNonNull(text,"text"));
+		sb = new StringBuilder(requireNonNull(text, "text"));
 		updateCachedString();
 	}
 
@@ -42,37 +44,40 @@ public final class SingleLineTextController {
 	public SingleLineTextController() {
 		this("");
 	}
-	
+
 	/**
 	 * Sets the listener for after-character-insert events.
 	 * 
-	 * @param onAfterCharInsertListener the listener to call after character insertion (cannot be null)
+	 * @param onAfterCharInsertListener the listener to call after character
+	 *                                  insertion (cannot be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnAfterCharInsertListener(Listener onAfterCharInsertListener) {
-		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener,"onAfterCharInsertListener");
+		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener, "onAfterCharInsertListener");
 	}
 
 	/**
 	 * Sets the listener for after-string-insert events.
 	 * 
-	 * @param onAfterStringInsertListener the listener to call after string insertion (cannot be null)
+	 * @param onAfterStringInsertListener the listener to call after string
+	 *                                    insertion (cannot be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnAfterStringInsertListener(Listener onAfterStringInsertListener) {
-		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener,"onAfterStringInsertListener");
+		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener, "onAfterStringInsertListener");
 	}
 
 	/**
 	 * Sets the listener for text-changed events.
 	 * 
-	 * @param onTextChangedListener the listener to call when text changes (cannot be null)
+	 * @param onTextChangedListener the listener to call when text changes (cannot
+	 *                              be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
-		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
+		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
 	}
-	
+
 	/**
 	 * Returns the text content as a string.
 	 * 
@@ -86,7 +91,7 @@ public final class SingleLineTextController {
 	 * Inserts a character at the specified position.
 	 * 
 	 * @param pos the position to insert at (will be constrained to valid range)
-	 * @param ch the character to insert
+	 * @param ch  the character to insert
 	 */
 	public void insert(int pos, char ch) {
 		insertInternal(pos, ch);
@@ -95,11 +100,11 @@ public final class SingleLineTextController {
 	/**
 	 * Inserts a string at the specified position.
 	 * 
-	 * @param pos the position to insert at (will be constrained to valid range)
+	 * @param pos  the position to insert at (will be constrained to valid range)
 	 * @param text the string to insert
 	 */
 	public void insert(int pos, String text) {
-		insertInternal(pos,text);
+		insertInternal(pos, text);
 	}
 
 	/**
@@ -131,8 +136,8 @@ public final class SingleLineTextController {
 	}
 
 	/**
-	 * Clears all text content.
-	 * If the internal buffer capacity exceeds MAX_CAPACITY_FOR_CLEAR, trims the buffer.
+	 * Clears all text content. If the internal buffer capacity exceeds
+	 * MAX_CAPACITY_FOR_CLEAR, trims the buffer.
 	 */
 	public void clear() {
 		if (isEmpty()) {
@@ -140,17 +145,18 @@ public final class SingleLineTextController {
 		}
 
 		sb.setLength(0);
-		if(sb.capacity() >= MAX_CAPACITY_FOR_CLEAR) {
+		if (sb.capacity() >= MAX_CAPACITY_FOR_CLEAR) {
 			sb.trimToSize();
 		}
-		
+
 		updateCachedString();
 	}
 
 	/**
 	 * Removes a character at the specified position.
 	 * 
-	 * @param pos the position of the character to remove (will be constrained to valid range)
+	 * @param pos the position of the character to remove (will be constrained to
+	 *            valid range)
 	 */
 	public void removeCharAt(final int pos) {
 		if (isEmpty()) {
@@ -166,7 +172,7 @@ public final class SingleLineTextController {
 	 * Removes characters between specified positions.
 	 * 
 	 * @param firstChar the starting position (inclusive, will be constrained)
-	 * @param lastChar the ending position (exclusive, will be constrained)
+	 * @param lastChar  the ending position (exclusive, will be constrained)
 	 */
 	public void remove(int firstChar, int lastChar) {
 		if (isEmpty()) {
@@ -178,7 +184,7 @@ public final class SingleLineTextController {
 
 		final int effectiveFirst = min(firstChar, lastChar);
 		final int effectiveLast = max(firstChar, lastChar);
-		
+
 		sb.delete(effectiveFirst, effectiveLast);
 
 		updateCachedString();
@@ -217,8 +223,8 @@ public final class SingleLineTextController {
 	}
 
 	/**
-	 * Validates if a character is allowed based on standard validation rules.
-	 * Valid characters include letters, digits, and standard special characters.
+	 * Validates if a character is allowed based on standard validation rules. Valid
+	 * characters include letters, digits, and standard special characters.
 	 * 
 	 * @param ch the character to validate
 	 * @return true if the character is valid, false otherwise
@@ -264,23 +270,23 @@ public final class SingleLineTextController {
 		updateCachedString();
 		notifyOnAfterCharInsert();
 	}
-	
+
 	private void insertInternal(int pos, String str) {
-		requireNonNull(str,"str");
+		requireNonNull(str, "str");
 
 		str = getValidatedString(str);
-		
+
 		pos = (int) constrain(pos, 0, length());
 
 		sb.insert(pos, str);
-		
+
 		updateCachedString();
 		notifyOnAfterStringInsert();
 	}
 
 	private void setInternal(String text) {
 		requireNonNull(text, "text");
-		
+
 		if (text.equals(cachedText)) {
 			return;
 		}
@@ -291,13 +297,13 @@ public final class SingleLineTextController {
 
 		updateCachedString();
 	}
-	
+
 	private void notifyOnAfterCharInsert() {
 		if (onAfterCharInsertListener != null) {
 			onAfterCharInsertListener.action();
 		}
 	}
-	
+
 	private void notifyOnAfterStringInsert() {
 		if (onAfterStringInsertListener != null) {
 			onAfterCharInsertListener.action();

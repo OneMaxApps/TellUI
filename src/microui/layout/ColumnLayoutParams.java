@@ -1,14 +1,15 @@
 package microui.layout;
 
 /**
- * Layout parameters specifically for ColumnLayout, defining how components
- * are positioned and sized within a vertical column arrangement.
+ * Layout parameters specifically for ColumnLayout, defining how components are
+ * positioned and sized within a vertical column arrangement.
  * <p>
  * ColumnLayoutParams extends LinearAxisLayoutParams to provide weight-based
- * vertical sizing and horizontal alignment control for components in a ColumnLayout.
- * The weight parameter determines the proportional vertical space allocation,
- * while alignX controls horizontal alignment within the column.
+ * vertical sizing and horizontal alignment control for components in a
+ * ColumnLayout. The weight parameter determines the proportional vertical space
+ * allocation, while alignX controls horizontal alignment within the column.
  * </p>
+ * 
  * @see LinearAxisLayoutParams
  * @see ColumnLayout
  */
@@ -17,15 +18,18 @@ public final class ColumnLayoutParams extends LinearAxisLayoutParams {
 	/**
 	 * Constructs ColumnLayoutParams with specified weight and horizontal alignment.
 	 * 
-	 * @param weight the weight factor for vertical space allocation (determines height proportion)
-	 * @param alignX the horizontal alignment within the column (typically 0=left, 1=center, 2=right)
+	 * @param weight the weight factor for vertical space allocation (determines
+	 *               height proportion)
+	 * @param alignX the horizontal alignment within the column (typically 0=left,
+	 *               1=center, 2=right)
 	 */
 	public ColumnLayoutParams(float weight, int alignX) {
 		super(weight, alignX, 0);
 	}
 
 	/**
-	 * Constructs ColumnLayoutParams with specified weight and default left alignment.
+	 * Constructs ColumnLayoutParams with specified weight and default left
+	 * alignment.
 	 * 
 	 * @param weight the weight factor for vertical space allocation
 	 */
@@ -34,8 +38,8 @@ public final class ColumnLayoutParams extends LinearAxisLayoutParams {
 	}
 
 	/**
-	 * Returns the horizontal alignment value.
-	 * Overrides parent method to provide type-correct return value.
+	 * Returns the horizontal alignment value. Overrides parent method to provide
+	 * type-correct return value.
 	 * 
 	 * @return the horizontal alignment value
 	 */

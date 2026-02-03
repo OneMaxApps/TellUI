@@ -9,19 +9,20 @@ import microui.util.Metrics;
 import processing.core.PGraphics;
 
 /**
- * Represents a stroke style with color and weight properties for drawing outlines.
- * Provides methods for applying stroke settings to both the main Processing context
- * and PGraphics objects, with validation and default theme integration.
+ * Represents a stroke style with color and weight properties for drawing
+ * outlines. Provides methods for applying stroke settings to both the main
+ * Processing context and PGraphics objects, with validation and default theme
+ * integration.
  * <p>
  * The Stroke class encapsulates all stroke-related drawing properties including
- * color, weight (thickness), and stroke cap style (always SQUARE). It integrates
- * with the Metrics system for resource tracking and supports copying from other
- * Stroke objects.
+ * color, weight (thickness), and stroke cap style (always SQUARE). It
+ * integrates with the Metrics system for resource tracking and supports copying
+ * from other Stroke objects.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 27.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 27.10.2025
  * </p>
+ * 
  * @see AbstractColor
  * @see Metrics
  */
@@ -33,9 +34,9 @@ public final class Stroke {
 	/**
 	 * Constructs a Stroke with specified color and weight.
 	 * 
-	 * @param color the stroke color (cannot be null)
+	 * @param color  the stroke color (cannot be null)
 	 * @param weight the stroke weight in pixels (must be greater than 0)
-	 * @throws NullPointerException if color is null
+	 * @throws NullPointerException     if color is null
 	 * @throws IllegalArgumentException if weight is less than or equal to 0
 	 */
 	public Stroke(AbstractColor color, float weight) {
@@ -72,8 +73,8 @@ public final class Stroke {
 	}
 
 	/**
-	 * Applies this stroke style to the main Processing context.
-	 * Sets stroke cap to SQUARE, applies the color, and sets the weight.
+	 * Applies this stroke style to the main Processing context. Sets stroke cap to
+	 * SQUARE, applies the color, and sets the weight.
 	 */
 	public void apply() {
 		getContext().strokeCap(SQUARE);
@@ -84,12 +85,13 @@ public final class Stroke {
 	/**
 	 * Applies this stroke style to the specified PGraphics context.
 	 * 
-	 * @param pGraphics the PGraphics context to apply the stroke to (cannot be null)
+	 * @param pGraphics the PGraphics context to apply the stroke to (cannot be
+	 *                  null)
 	 * @throws NullPointerException if pGraphics is null
 	 */
 	public void apply(PGraphics pGraphics) {
-		requireNonNull(pGraphics,"pGraphics");
-		
+		requireNonNull(pGraphics, "pGraphics");
+
 		pGraphics.strokeCap(SQUARE);
 		color.applyStroke(pGraphics);
 		pGraphics.strokeWeight(weight);
@@ -124,7 +126,7 @@ public final class Stroke {
 	 * @throws NullPointerException if stroke is null
 	 */
 	public void set(Stroke stroke) {
-		requireNonNull(stroke,"stroke");
+		requireNonNull(stroke, "stroke");
 
 		color = stroke.getColor();
 		weight = stroke.getWeight();
@@ -146,6 +148,6 @@ public final class Stroke {
 	 * @throws NullPointerException if color is null
 	 */
 	public void setColor(AbstractColor color) {
-		this.color = requireNonNull(color,"color");
+		this.color = requireNonNull(color, "color");
 	}
 }

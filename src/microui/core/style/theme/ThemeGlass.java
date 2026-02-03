@@ -5,14 +5,15 @@ import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
 
 /**
- * Glass/transparent theme implementation with subtle animations and translucent effects.
- * Provides a modern, semi-transparent aesthetic with animated gradient backgrounds
- * and soft color transitions.
+ * Glass/transparent theme implementation with subtle animations and translucent
+ * effects. Provides a modern, semi-transparent aesthetic with animated gradient
+ * backgrounds and soft color transitions.
  * <p>
  * This theme features animated gradient backgrounds, translucent elements, and
- * soft color palettes to create a "glass" or "frosted glass" visual effect.
- * It includes looping animations for dynamic visual interest.
+ * soft color palettes to create a "glass" or "frosted glass" visual effect. It
+ * includes looping animations for dynamic visual interest.
  * </p>
+ * 
  * @see AbstractTheme
  * @see Color
  * @see LerpedLoopColor
@@ -20,8 +21,8 @@ import microui.core.style.LerpedLoopColor;
 public class ThemeGlass extends AbstractTheme {
 
 	/**
-	 * Returns an animated looping gradient for the background.
-	 * Transitions between light blue and white with transparency.
+	 * Returns an animated looping gradient for the background. Transitions between
+	 * light blue and white with transparency.
 	 * 
 	 * @return looping gradient from light blue to white
 	 */
@@ -81,8 +82,8 @@ public class ThemeGlass extends AbstractTheme {
 	}
 
 	/**
-	 * Returns an animated looping gradient for primary accents.
-	 * Transitions between blue and purple tones with transparency.
+	 * Returns an animated looping gradient for primary accents. Transitions between
+	 * blue and purple tones with transparency.
 	 * 
 	 * @return looping gradient from blue to purple
 	 */

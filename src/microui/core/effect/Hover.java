@@ -9,19 +9,20 @@ import microui.core.style.AbstractColor;
 import microui.util.MathUtils;
 
 /**
- * Visual hover effect for Component elements with smooth fade-in/fade-out animation.
- * Provides a translucent overlay that appears when the component is hovered over,
- * with separate visual states for hover and press interactions.
+ * Visual hover effect for Component elements with smooth fade-in/fade-out
+ * animation. Provides a translucent overlay that appears when the component is
+ * hovered over, with separate visual states for hover and press interactions.
  * <p>
- * The Hover effect creates a smooth animated overlay that responds to mouse interactions.
- * It fades in when the component is hovered and fades out when the hover ends, with
- * accelerated fade-out for better responsiveness. When the component is pressed,
- * the effect switches to a black overlay for visual feedback.
+ * The Hover effect creates a smooth animated overlay that responds to mouse
+ * interactions. It fades in when the component is hovered and fades out when
+ * the hover ends, with accelerated fade-out for better responsiveness. When the
+ * component is pressed, the effect switches to a black overlay for visual
+ * feedback.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 16.09.2025
+ * Status: STABLE - Do not modify Last Reviewed: 16.09.2025
  * </p>
+ * 
  * @see Component
  * @see View
  * @see AbstractColor
@@ -33,8 +34,8 @@ public final class Hover extends View {
 	private boolean isEnabled;
 
 	/**
-	 * Constructs a Hover effect for the specified component.
-	 * Initializes with default theme color and animation parameters.
+	 * Constructs a Hover effect for the specified component. Initializes with
+	 * default theme color and animation parameters.
 	 * 
 	 * @param component the component to attach the hover effect to (cannot be null)
 	 * @throws NullPointerException if component is null
@@ -55,8 +56,8 @@ public final class Hover extends View {
 	}
 
 	/**
-	 * Draws the hover effect if enabled.
-	 * Calls the parent draw method which handles the rendering.
+	 * Draws the hover effect if enabled. Calls the parent draw method which handles
+	 * the rendering.
 	 */
 	@Override
 	public void draw() {
@@ -67,13 +68,13 @@ public final class Hover extends View {
 	}
 
 	/**
-	 * Renders the hover effect animation.
-	 * Handles fade-in on hover, fade-out on hover end, and visual feedback for press state.
+	 * Renders the hover effect animation. Handles fade-in on hover, fade-out on
+	 * hover end, and visual feedback for press state.
 	 */
 	@Override
 	protected void render() {
 		ctx.noStroke();
-		
+
 		if (component.isHover()) {
 			if (timer < timerMax) {
 				timer += speed;
@@ -110,7 +111,7 @@ public final class Hover extends View {
 	 * @throws NullPointerException if color is null
 	 */
 	public void setColor(AbstractColor color) {
-		this.color = requireNonNull(color,"color");
+		this.color = requireNonNull(color, "color");
 	}
 
 	/**

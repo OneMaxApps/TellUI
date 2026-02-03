@@ -3,13 +3,15 @@ package microui.event;
 import microui.core.base.SpatialView;
 
 /**
- * Concrete implementation of AbstractEventSystem providing direct access to all mouse event states.
- * This class serves as a convenient wrapper for detecting various mouse interactions with SpatialView components.
+ * Concrete implementation of AbstractEventSystem providing direct access to all
+ * mouse event states. This class serves as a convenient wrapper for detecting
+ * various mouse interactions with SpatialView components.
  * <p>
- * The Event class provides simple boolean methods to check for different mouse events without
- * needing to access the internal detector directly. It's designed for easy integration
- * into component update loops.
+ * The Event class provides simple boolean methods to check for different mouse
+ * events without needing to access the internal detector directly. It's
+ * designed for easy integration into component update loops.
  * </p>
+ * 
  * @see AbstractEventSystem
  * @see SpatialView
  */
@@ -80,9 +82,11 @@ public final class Event extends AbstractEventSystem {
 	}
 
 	/**
-	 * Checks if a leave-long event occurred (mouse stayed out for extended duration).
+	 * Checks if a leave-long event occurred (mouse stayed out for extended
+	 * duration).
 	 * 
-	 * @return true if mouse stayed out of component bounds beyond the leave-long threshold
+	 * @return true if mouse stayed out of component bounds beyond the leave-long
+	 *         threshold
 	 */
 	public boolean isLeaveLong() {
 		return getDetector().isLeaveLong();

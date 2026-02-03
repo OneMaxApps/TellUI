@@ -8,46 +8,48 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 
 /**
- * Abstract base class for shadow effects that can be applied to ContentView components.
- * Provides common functionality for managing shadow properties such as color, weight (intensity),
- * and target component association.
+ * Abstract base class for shadow effects that can be applied to ContentView
+ * components. Provides common functionality for managing shadow properties such
+ * as color, weight (intensity), and target component association.
  * <p>
- * Subclasses must implement the {@link #render()} method to define specific shadow drawing logic.
- * This class manages the relationship between shadow effects and their target components,
- * allowing shadows to be positioned and sized relative to their targets.
+ * Subclasses must implement the {@link #render()} method to define specific
+ * shadow drawing logic. This class manages the relationship between shadow
+ * effects and their target components, allowing shadows to be positioned and
+ * sized relative to their targets.
  * </p>
+ * 
  * @see ContentView
  * @see AbstractColor
  * @see View
  */
 public abstract class AbstractShadow extends View {
-	/** Default weight of left side*/
+	/** Default weight of left side */
 	public static final int DEFAULT_WEIGHT_LEFT = 0;
-	/** Default weight of top side*/
+	/** Default weight of top side */
 	public static final int DEFAULT_WEIGHT_TOP = 0;
-	/** Default weight of right side*/
+	/** Default weight of right side */
 	public static final int DEFAULT_WEIGHT_RIGHT = 3;
-	/** Default weight of bottom side*/
+	/** Default weight of bottom side */
 	public static final int DEFAULT_WEIGHT_BOTTOM = 2;
-	/** Minimal weight of shadow*/
+	/** Minimal weight of shadow */
 	public static final int MIN_WEIGHT = 0;
-	/** Maximal weight of shadow*/
+	/** Maximal weight of shadow */
 	public static final int MAX_WEIGHT = 10;
-	
+
 	private AbstractColor color;
 	private ContentView target;
-	
-	private int weightLeft,weightTop,weightRight,weightBottom;
-	
+
+	private int weightLeft, weightTop, weightRight, weightBottom;
+
 	/**
-	 * Constructs an AbstractShadow with default properties.
-	 * Default shadow has right and bottom weight with transparent black color.
+	 * Constructs an AbstractShadow with default properties. Default shadow has
+	 * right and bottom weight with transparent black color.
 	 */
 	public AbstractShadow() {
 		super();
 		setVisible(true);
 		setWeight(DEFAULT_WEIGHT_LEFT, DEFAULT_WEIGHT_TOP, DEFAULT_WEIGHT_RIGHT, DEFAULT_WEIGHT_BOTTOM);
-		setColor(new Color(0,10));		
+		setColor(new Color(0, 10));
 	}
 
 	/**
@@ -60,19 +62,19 @@ public abstract class AbstractShadow extends View {
 	}
 
 	/**
-	 * Sets the target ContentView for this shadow.
-	 * The shadow will be positioned and sized relative to this target.
+	 * Sets the target ContentView for this shadow. The shadow will be positioned
+	 * and sized relative to this target.
 	 * 
 	 * @param target the ContentView to apply shadow to (cannot be null)
 	 * @return this AbstractShadow for method chaining
 	 * @throws NullPointerException if target is null
 	 */
 	public AbstractShadow setTarget(ContentView target) {
-		this.target = requireNonNull(target,"target");
-		
+		this.target = requireNonNull(target, "target");
+
 		return this;
 	}
-	
+
 	/**
 	 * Returns the color of this shadow.
 	 * 
@@ -90,11 +92,11 @@ public abstract class AbstractShadow extends View {
 	 * @throws NullPointerException if color is null
 	 */
 	public AbstractShadow setColor(AbstractColor color) {
-		this.color = requireNonNull(color,"color");
-		
+		this.color = requireNonNull(color, "color");
+
 		return this;
 	}
-	
+
 	/**
 	 * Returns the left shadow weight (intensity).
 	 * 
@@ -139,7 +141,7 @@ public abstract class AbstractShadow extends View {
 	public boolean hasWeightLeft() {
 		return weightLeft != 0;
 	}
-	
+
 	/**
 	 * Checks if top shadow weight is non-zero.
 	 * 
@@ -148,7 +150,7 @@ public abstract class AbstractShadow extends View {
 	public boolean hasWeightTop() {
 		return weightTop != 0;
 	}
-	
+
 	/**
 	 * Checks if right shadow weight is non-zero.
 	 * 
@@ -157,7 +159,7 @@ public abstract class AbstractShadow extends View {
 	public boolean hasWeightRight() {
 		return weightRight != 0;
 	}
-	
+
 	/**
 	 * Checks if bottom shadow weight is non-zero.
 	 * 
@@ -166,102 +168,107 @@ public abstract class AbstractShadow extends View {
 	public boolean hasWeightBottom() {
 		return weightBottom != 0;
 	}
-	
+
 	/**
 	 * Checks if any shadow weight is non-zero.
 	 * 
-	 * @return true if any weight (left, top, right, or bottom) is not 0, false otherwise
+	 * @return true if any weight (left, top, right, or bottom) is not 0, false
+	 *         otherwise
 	 */
 	public boolean hasWeight() {
-		return hasWeightLeft() || hasWeightTop() || hasWeightRight() || hasWeightBottom(); 
+		return hasWeightLeft() || hasWeightTop() || hasWeightRight() || hasWeightBottom();
 	}
 
 	/**
-	 * Returns the x-coordinate of the target's padded area.
-	 * Used for positioning the shadow relative to the target.
+	 * Returns the x-coordinate of the target's padded area. Used for positioning
+	 * the shadow relative to the target.
 	 * 
 	 * @return the target's padded x-coordinate, or 0 if no target is set
 	 */
 	protected float getTargetX() {
-		if(target == null) {
+		if (target == null) {
 			return 0;
 		}
-		
+
 		return target.getPadX();
 	}
-	
+
 	/**
-	 * Returns the y-coordinate of the target's padded area.
-	 * Used for positioning the shadow relative to the target.
+	 * Returns the y-coordinate of the target's padded area. Used for positioning
+	 * the shadow relative to the target.
 	 * 
 	 * @return the target's padded y-coordinate, or 0 if no target is set
 	 */
 	protected float getTargetY() {
-		if(target == null) {
+		if (target == null) {
 			return 0;
 		}
-		
+
 		return target.getPadY();
 	}
-	
+
 	/**
-	 * Returns the width of the target's padded area.
-	 * Used for sizing the shadow relative to the target.
+	 * Returns the width of the target's padded area. Used for sizing the shadow
+	 * relative to the target.
 	 * 
 	 * @return the target's padded width, or 0 if no target is set
 	 */
 	protected float getTargetWidth() {
-		if(target == null) {
+		if (target == null) {
 			return 0;
 		}
-		
+
 		return target.getPadWidth();
 	}
-	
+
 	/**
-	 * Returns the height of the target's padded area.
-	 * Used for sizing the shadow relative to the target.
+	 * Returns the height of the target's padded area. Used for sizing the shadow
+	 * relative to the target.
 	 * 
 	 * @return the target's padded height, or 0 if no target is set
 	 */
 	protected float getTargetHeight() {
-		if(target == null) {
+		if (target == null) {
 			return 0;
 		}
-		
+
 		return target.getPadHeight();
 	}
-	
+
 	/**
 	 * Validates that a weight value is within allowed bounds.
 	 * 
 	 * @param weight the weight value to validate
-	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT or greater than MAX_WEIGHT
+	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT or greater
+	 *                                  than MAX_WEIGHT
 	 */
 	protected void checkWeight(int weight) {
-		if(weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
-			throw new IllegalArgumentException("Weight for Shadow must be between: " + MIN_WEIGHT + " and " + MAX_WEIGHT);
+		if (weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
+			throw new IllegalArgumentException(
+					"Weight for Shadow must be between: " + MIN_WEIGHT + " and " + MAX_WEIGHT);
 		}
 	}
-	
+
 	/**
 	 * Sets the left shadow weight.
 	 * 
-	 * @param weightLeft the left weight to set (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightLeft the left weight to set (must be between MIN_WEIGHT and
+	 *                   MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if weightLeft is out of bounds
 	 */
 	protected AbstractShadow setWeightLeft(int weightLeft) {
 		checkWeight(weightLeft);
 		this.weightLeft = weightLeft;
-		
+
 		return this;
 	}
-	
+
 	/**
 	 * Sets the top shadow weight.
 	 * 
-	 * @param weightTop the top weight to set (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightTop the top weight to set (must be between MIN_WEIGHT and
+	 *                  MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if weightTop is out of bounds
 	 */
@@ -270,11 +277,12 @@ public abstract class AbstractShadow extends View {
 		this.weightTop = weightTop;
 		return this;
 	}
-	
+
 	/**
 	 * Sets the right shadow weight.
 	 * 
-	 * @param weightRight the right weight to set (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightRight the right weight to set (must be between MIN_WEIGHT and
+	 *                    MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if weightRight is out of bounds
 	 */
@@ -283,11 +291,12 @@ public abstract class AbstractShadow extends View {
 		this.weightRight = weightRight;
 		return this;
 	}
-	
+
 	/**
 	 * Sets the bottom shadow weight.
 	 * 
-	 * @param weightBottom the bottom weight to set (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightBottom the bottom weight to set (must be between MIN_WEIGHT and
+	 *                     MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if weightBottom is out of bounds
 	 */
@@ -296,7 +305,7 @@ public abstract class AbstractShadow extends View {
 		this.weightBottom = weightBottom;
 		return this;
 	}
-	
+
 	/**
 	 * Clears all shadow weights (sets all to zero).
 	 * 
@@ -306,11 +315,12 @@ public abstract class AbstractShadow extends View {
 		weightLeft = weightTop = weightRight = weightBottom = 0;
 		return this;
 	}
-	
+
 	/**
 	 * Sets uniform shadow weight for all sides.
 	 * 
-	 * @param weight the weight value for all sides (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weight the weight value for all sides (must be between MIN_WEIGHT and
+	 *               MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if weight is out of bounds
 	 */
@@ -319,30 +329,32 @@ public abstract class AbstractShadow extends View {
 		weightLeft = weightTop = weightRight = weightBottom = weight;
 		return this;
 	}
-	
+
 	/**
 	 * Sets shadow weight for horizontal and vertical sides separately.
 	 * 
-	 * @param weightHorizontal the weight for left and right sides (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param weightVertical the weight for top and bottom sides (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightHorizontal the weight for left and right sides (must be between
+	 *                         MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightVertical   the weight for top and bottom sides (must be between
+	 *                         MIN_WEIGHT and MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
 	protected AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
 		checkWeight(weightHorizontal);
 		checkWeight(weightVertical);
-		
+
 		weightLeft = weightRight = weightHorizontal;
 		weightTop = weightBottom = weightVertical;
 		return this;
 	}
-	
+
 	/**
 	 * Sets individual shadow weights for each side.
 	 * 
-	 * @param left the left weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param top the top weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param right the right weight (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param left   the left weight (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param top    the top weight (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param right  the right weight (must be between MIN_WEIGHT and MAX_WEIGHT)
 	 * @param bottom the bottom weight (must be between MIN_WEIGHT and MAX_WEIGHT)
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if any weight is out of bounds
@@ -352,7 +364,7 @@ public abstract class AbstractShadow extends View {
 		checkWeight(top);
 		checkWeight(right);
 		checkWeight(bottom);
-		
+
 		weightLeft = left;
 		weightTop = top;
 		weightRight = right;

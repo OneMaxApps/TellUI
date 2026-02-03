@@ -4,14 +4,17 @@ import microui.core.base.Container.Entry;
 import microui.core.base.ContentView;
 
 /**
- * Layout manager that arranges child components in a grid with specified columns and rows.
- * Provides flexible grid-based positioning with support for cell spanning and alignment options.
+ * Layout manager that arranges child components in a grid with specified
+ * columns and rows. Provides flexible grid-based positioning with support for
+ * cell spanning and alignment options.
  * <p>
- * The GridLayout divides the container into a grid of equal-sized cells and positions
- * components within those cells. Components can span multiple cells and can be aligned
- * within their allocated space. Supports two modes: IGNORE_CONSTRAINTS (forces exact cell sizing)
- * and RESPECT_CONSTRAINTS (respects component size constraints with alignment).
+ * The GridLayout divides the container into a grid of equal-sized cells and
+ * positions components within those cells. Components can span multiple cells
+ * and can be aligned within their allocated space. Supports two modes:
+ * IGNORE_CONSTRAINTS (forces exact cell sizing) and RESPECT_CONSTRAINTS
+ * (respects component size constraints with alignment).
  * </p>
+ * 
  * @see LayoutManager
  * @see GridLayoutParams
  * @see Entry
@@ -24,7 +27,7 @@ public final class GridLayout extends LayoutManager {
 	 * Constructs a GridLayout with specified columns and rows.
 	 * 
 	 * @param columns the number of columns in the grid (must be ≥ 1)
-	 * @param rows the number of rows in the grid (must be ≥ 1)
+	 * @param rows    the number of rows in the grid (must be ≥ 1)
 	 * @throws IllegalArgumentException if columns or rows is less than 1
 	 */
 	public GridLayout(int columns, int rows) {
@@ -35,8 +38,8 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	/**
-	 * Draws debug visualization showing grid cell boundaries.
-	 * Useful for development to see the grid structure.
+	 * Draws debug visualization showing grid cell boundaries. Useful for
+	 * development to see the grid structure.
 	 */
 	@Override
 	public void debugOnDraw() {
@@ -52,10 +55,10 @@ public final class GridLayout extends LayoutManager {
 		}
 		ctx.popStyle();
 	}
-	
+
 	/**
-	 * Recalculates and positions all child components within the grid.
-	 * Handles both IGNORE_CONSTRAINTS and RESPECT_CONSTRAINTS modes.
+	 * Recalculates and positions all child components within the grid. Handles both
+	 * IGNORE_CONSTRAINTS and RESPECT_CONSTRAINTS modes.
 	 */
 	@Override
 	public void recalculate() {
@@ -115,8 +118,8 @@ public final class GridLayout extends LayoutManager {
 	}
 
 	/**
-	 * Called when a new entry is added to the container.
-	 * Validates that components don't overlap in the grid.
+	 * Called when a new entry is added to the container. Validates that components
+	 * don't overlap in the grid.
 	 * 
 	 * @param contentViewEntry the entry being added
 	 */
@@ -143,12 +146,14 @@ public final class GridLayout extends LayoutManager {
 	public final int getRows() {
 		return rows;
 	}
-	
+
 	/**
-	 * Validates that the provided LayoutParams are of the correct type for GridLayout.
+	 * Validates that the provided LayoutParams are of the correct type for
+	 * GridLayout.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if layoutParams is not an instance of GridLayoutParams
+	 * @throws IllegalArgumentException if layoutParams is not an instance of
+	 *                                  GridLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
@@ -156,7 +161,7 @@ public final class GridLayout extends LayoutManager {
 			throw new IllegalArgumentException("using not correct layout params for GridLayout");
 		}
 	}
-	
+
 	private void setColumns(int columns) {
 		if (columns < 1) {
 			throw new IllegalArgumentException("columns in grid layout cannot be less than 1");

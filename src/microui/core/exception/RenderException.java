@@ -1,7 +1,8 @@
 package microui.core.exception;
 
 /**
- * Exception thrown when rendering operations encounter errors or invalid states.
+ * Exception thrown when rendering operations encounter errors or invalid
+ * states.
  * <p>
  * This exception is used to indicate problems during the rendering process,
  * such as attempting to draw outside of valid contexts, invalid render states,

@@ -11,21 +11,21 @@ import static microui.RendererConfig.Mode.FLEXIBLE;
  */
 public final class RendererConfig {
 	private static Mode mode;
-	
+
 	static {
 		setMode(FLEXIBLE);
 	}
-	
+
 	private RendererConfig() {
-		
+
 	}
-	
+
 	/**
 	 * Returns the current rendering mode for MicroUI components.
 	 * <p>
-	 * The mode determines how strictly MicroUI components validate and
-	 * execute their internal rendering logic. This affects only the
-	 * behavior of MicroUI components, not the overall rendering architecture.
+	 * The mode determines how strictly MicroUI components validate and execute
+	 * their internal rendering logic. This affects only the behavior of MicroUI
+	 * components, not the overall rendering architecture.
 	 * </p>
 	 * 
 	 * @return the current rendering mode (never {@code null})
@@ -44,21 +44,22 @@ public final class RendererConfig {
 	 * {@code Slider}, {@code Panel}, etc.
 	 * </p>
 	 * 
-	 * @param mode the new rendering mode for MicroUI components (cannot be {@code null})
+	 * @param mode the new rendering mode for MicroUI components (cannot be
+	 *             {@code null})
 	 * @throws NullPointerException if {@code mode} is {@code null}
 	 * 
 	 * @see #getMode()
 	 * @see Mode
 	 */
 	public static void setMode(Mode mode) {
-		RendererConfig.mode = requireNonNull(mode,"mode");
+		RendererConfig.mode = requireNonNull(mode, "mode");
 	}
 
 	/**
 	 * Rendering modes for MicroUI component behavior.
 	 * <p>
-	 * These modes define different rendering strategies.
-	 * <b>internal to MicroUI components only</b>.
+	 * These modes define different rendering strategies. <b>internal to MicroUI
+	 * components only</b>.
 	 * </p>
 	 */
 	public static enum Mode {
@@ -66,11 +67,12 @@ public final class RendererConfig {
 		 * Flexible rendering mode (default).
 		 * 
 		 * <p>
-		 * Allows manual rendering in the draw method without conflicting with automatic rendering.
+		 * Allows manual rendering in the draw method without conflicting with automatic
+		 * rendering.
 		 * </p>
 		 */
 		FLEXIBLE,
-		
+
 		/**
 		 * Strict rendering mode.
 		 * <p>
@@ -79,5 +81,5 @@ public final class RendererConfig {
 		 */
 		STRICT;
 	}
-	
+
 }

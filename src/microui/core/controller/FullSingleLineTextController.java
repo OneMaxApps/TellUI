@@ -12,14 +12,16 @@ import microui.event.Listener;
 import microui.util.Debugger;
 
 /**
- * Comprehensive controller for managing single-line text input with advanced features.
- * Provides text validation, constraint management, password mode, undo/redo functionality,
- * and event listeners for text manipulation operations.
+ * Comprehensive controller for managing single-line text input with advanced
+ * features. Provides text validation, constraint management, password mode,
+ * undo/redo functionality, and event listeners for text manipulation
+ * operations.
  * <p>
- * This controller is designed for robust text input management in GUI applications,
- * supporting features like character validation, length constraints, password masking,
- * and history tracking for undo/redo operations.
+ * This controller is designed for robust text input management in GUI
+ * applications, supporting features like character validation, length
+ * constraints, password masking, and history tracking for undo/redo operations.
  * </p>
+ * 
  * @see ValidationMode
  * @see Listener
  */
@@ -34,7 +36,7 @@ public class FullSingleLineTextController {
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText, cachedPasswordText;
-	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener; 
+	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener;
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
 	private char passwordChar;
@@ -48,7 +50,7 @@ public class FullSingleLineTextController {
 	 */
 	public FullSingleLineTextController(final String text) {
 		undoRedoManager = new UndoRedoManager(this);
-		sb = new StringBuilder(requireNonNull(text,"text"));
+		sb = new StringBuilder(requireNonNull(text, "text"));
 		updateCachedStrings();
 
 		validationEnabled = true;
@@ -64,41 +66,45 @@ public class FullSingleLineTextController {
 	public FullSingleLineTextController() {
 		this("");
 	}
-	
+
 	/**
 	 * Sets the listener for after-character-insert events.
 	 * 
-	 * @param onAfterCharInsertListener the listener to call after character insertion (cannot be null)
+	 * @param onAfterCharInsertListener the listener to call after character
+	 *                                  insertion (cannot be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnAfterCharInsertListener(Listener onAfterCharInsertListener) {
-		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener,"onAfterCharInsertListener");
+		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener, "onAfterCharInsertListener");
 	}
 
 	/**
 	 * Sets the listener for after-string-insert events.
 	 * 
-	 * @param onAfterStringInsertListener the listener to call after string insertion (cannot be null)
+	 * @param onAfterStringInsertListener the listener to call after string
+	 *                                    insertion (cannot be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnAfterStringInsertListener(Listener onAfterStringInsertListener) {
-		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener,"onAfterStringInsertListener");
+		this.onAfterStringInsertListener = requireNonNull(onAfterStringInsertListener, "onAfterStringInsertListener");
 	}
 
 	/**
 	 * Sets the listener for text-changed events.
 	 * 
-	 * @param onTextChangedListener the listener to call when text changes (cannot be null)
+	 * @param onTextChangedListener the listener to call when text changes (cannot
+	 *                              be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
-		this.onTextChangedListener = requireNonNull(onTextChangedListener,"onTextChangedListener");
+		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
 	}
-	
+
 	/**
 	 * Sets the listener for history-changed events (undo/redo operations).
 	 * 
-	 * @param onHistoryChangedListener the listener to call when history changes (cannot be null)
+	 * @param onHistoryChangedListener the listener to call when history changes
+	 *                                 (cannot be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
@@ -184,7 +190,7 @@ public class FullSingleLineTextController {
 		}
 
 		this.validationMode = requireNonNull(validationMode, "validationMode");
-		
+
 		setInternal(getValidatedString(cachedText));
 	}
 
@@ -230,7 +236,7 @@ public class FullSingleLineTextController {
 		if (maxChars < MIN_CONSTRAIN_VALUE) {
 			throw new IllegalArgumentException("Max chars cannot be less than " + MIN_CONSTRAIN_VALUE);
 		}
-		
+
 		if (this.maxChars == maxChars) {
 			return;
 		}
@@ -241,15 +247,15 @@ public class FullSingleLineTextController {
 	}
 
 	/**
-	 * Returns the text content as a string.
-	 * Returns password-masked text if password mode is enabled.
+	 * Returns the text content as a string. Returns password-masked text if
+	 * password mode is enabled.
 	 * 
 	 * @return the text content (masked if in password mode)
 	 */
 	public final String getAsString() {
 		return passwordModeEnabled ? cachedPasswordText : cachedText;
 	}
-	
+
 	/**
 	 * Returns the hidden (unmasked) text content.
 	 * 
@@ -270,7 +276,8 @@ public class FullSingleLineTextController {
 	}
 
 	/**
-	 * Returns the text content parsed as an integer, or a default value if parsing fails.
+	 * Returns the text content parsed as an integer, or a default value if parsing
+	 * fails.
 	 * 
 	 * @param defaultValue the default value to return if parsing fails
 	 * @return the parsed integer or defaultValue if parsing fails
@@ -280,7 +287,9 @@ public class FullSingleLineTextController {
 			return Integer.parseInt(cachedText);
 		} catch (NumberFormatException e) {
 			if (Debugger.isEnabled()) {
-				System.err.println("Invalid number format in TextController. Switch validation mode to DIGITS_ONLY.\nInput: " + cachedText);
+				System.err.println(
+						"Invalid number format in TextController. Switch validation mode to DIGITS_ONLY.\nInput: "
+								+ cachedText);
 			}
 
 			return defaultValue;
@@ -291,7 +300,7 @@ public class FullSingleLineTextController {
 	 * Inserts a character at the specified position.
 	 * 
 	 * @param pos the position to insert at (will be constrained to valid range)
-	 * @param ch the character to insert
+	 * @param ch  the character to insert
 	 */
 	public final void insert(int pos, char ch) {
 		insertInternal(pos, ch);
@@ -300,11 +309,11 @@ public class FullSingleLineTextController {
 	/**
 	 * Inserts a string at the specified position.
 	 * 
-	 * @param pos the position to insert at (will be constrained to valid range)
+	 * @param pos  the position to insert at (will be constrained to valid range)
 	 * @param text the string to insert
 	 */
 	public final void insert(int pos, String text) {
-		insertInternal(pos,text);
+		insertInternal(pos, text);
 	}
 
 	/**
@@ -336,8 +345,8 @@ public class FullSingleLineTextController {
 	}
 
 	/**
-	 * Clears all text content.
-	 * If the internal buffer capacity exceeds MAX_CAPACITY_FOR_CLEAR, trims the buffer.
+	 * Clears all text content. If the internal buffer capacity exceeds
+	 * MAX_CAPACITY_FOR_CLEAR, trims the buffer.
 	 */
 	public final void clear() {
 		if (isEmpty()) {
@@ -345,17 +354,18 @@ public class FullSingleLineTextController {
 		}
 
 		sb.setLength(0);
-		if(sb.capacity() >= MAX_CAPACITY_FOR_CLEAR) {
+		if (sb.capacity() >= MAX_CAPACITY_FOR_CLEAR) {
 			sb.trimToSize();
 		}
-		
+
 		updateCachedStrings();
 	}
 
 	/**
 	 * Removes a character at the specified position.
 	 * 
-	 * @param pos the position of the character to remove (will be constrained to valid range)
+	 * @param pos the position of the character to remove (will be constrained to
+	 *            valid range)
 	 */
 	public final void removeCharAt(final int pos) {
 		if (isEmpty()) {
@@ -371,7 +381,7 @@ public class FullSingleLineTextController {
 	 * Removes characters between specified positions.
 	 * 
 	 * @param firstChar the starting position (inclusive, will be constrained)
-	 * @param lastChar the ending position (exclusive, will be constrained)
+	 * @param lastChar  the ending position (exclusive, will be constrained)
 	 */
 	public final void remove(int firstChar, int lastChar) {
 		if (isEmpty()) {
@@ -383,7 +393,7 @@ public class FullSingleLineTextController {
 
 		final int effectiveFirst = min(firstChar, lastChar);
 		final int effectiveLast = max(firstChar, lastChar);
-		
+
 		sb.delete(effectiveFirst, effectiveLast);
 
 		updateCachedStrings();
@@ -464,25 +474,25 @@ public class FullSingleLineTextController {
 		}
 
 	}
-	
+
 	private void notifyOnAfterCharInsert() {
 		if (onAfterCharInsertListener != null) {
 			onAfterCharInsertListener.action();
 		}
 	}
-	
+
 	private void notifyOnAfterStringInsert() {
 		if (onAfterStringInsertListener != null) {
 			onAfterStringInsertListener.action();
 		}
 	}
-	
+
 	private void notifyOnTextChanged() {
 		if (onTextChangedListener != null) {
 			onTextChangedListener.action();
 		}
 	}
-	
+
 	private String getValidatedString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
@@ -513,9 +523,9 @@ public class FullSingleLineTextController {
 		}
 
 		notifyOnTextChanged();
-		
+
 		undoRedoManager.updateState();
-		
+
 	}
 
 	private void updateConstrainedValue() {
@@ -542,10 +552,10 @@ public class FullSingleLineTextController {
 		updateCachedStrings();
 		notifyOnAfterCharInsert();
 	}
-	
+
 	private void insertInternal(int pos, String str) {
-		requireNonNull(str,"str");
-		
+		requireNonNull(str, "str");
+
 		if (constrainEnabled && length() == maxChars) {
 			return;
 		}
@@ -557,18 +567,18 @@ public class FullSingleLineTextController {
 		pos = (int) constrain(pos, 0, length());
 
 		sb.insert(pos, str);
-		
+
 		if (constrainEnabled) {
 			updateConstrainedValue();
 		}
-		
+
 		updateCachedStrings();
 		notifyOnAfterStringInsert();
 	}
-	
+
 	private void setInternal(String text) {
 		requireNonNull(text, "text");
-		
+
 		if (text.equals(cachedText)) {
 			return;
 		}
@@ -589,55 +599,55 @@ public class FullSingleLineTextController {
 	 */
 	public static enum ValidationMode {
 		/** Allow letters, digits, and standard special characters. */
-		ALL, 
+		ALL,
 		/** Allow only digit characters (0-9). */
-		ONLY_DIGITS, 
+		ONLY_DIGITS,
 		/** Allow only letter characters (a-z, A-Z). */
 		ONLY_LETTERS;
 	}
-	
+
 	private final static class UndoRedoManager {
 		private final FullSingleLineTextController controller;
 		private final Deque<String> undo, redo;
 		private boolean operation;
 		private Listener onHistoryChangedListener;
-		
+
 		public UndoRedoManager(FullSingleLineTextController controller) {
-			this.controller = requireNonNull(controller,"controller");
+			this.controller = requireNonNull(controller, "controller");
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
 		}
 
 		public final void setOnHistoryChangedListener(Listener onHistoryChangedListener) {
-			this.onHistoryChangedListener = requireNonNull(onHistoryChangedListener,"onHistoryChangedListener");
+			this.onHistoryChangedListener = requireNonNull(onHistoryChangedListener, "onHistoryChangedListener");
 		}
 
 		public void undo() {
 			operation = true;
-			
+
 			if (!undo.isEmpty()) {
 				redo.push(undo.pop());
-				if(!undo.isEmpty()) {
+				if (!undo.isEmpty()) {
 					controller.set(undo.peek());
 				} else {
 					controller.set("");
 				}
-				
-				if(onHistoryChangedListener != null) {
+
+				if (onHistoryChangedListener != null) {
 					onHistoryChangedListener.action();
 				}
 			}
-			
+
 			operation = false;
 		}
-		
+
 		public void redo() {
 			operation = true;
 			if (!redo.isEmpty()) {
 				undo.push(redo.peek());
 				controller.set(redo.pop());
-				
-				if(onHistoryChangedListener != null) {
+
+				if (onHistoryChangedListener != null) {
 					onHistoryChangedListener.action();
 				}
 			}
@@ -651,6 +661,6 @@ public class FullSingleLineTextController {
 			undo.push(controller.getHiddenText());
 			redo.clear();
 		}
-		
+
 	}
 }

@@ -1,14 +1,17 @@
 package microui.layout;
 
 /**
- * Layout parameters for positioning components within a GridLayout.
- * Defines grid coordinates, spanning, and alignment for components in a grid-based layout.
+ * Layout parameters for positioning components within a GridLayout. Defines
+ * grid coordinates, spanning, and alignment for components in a grid-based
+ * layout.
  * <p>
- * GridLayoutParams specifies where and how a component should be placed within a GridLayout:
- * - Grid coordinates (column, row) determine starting cell
- * - Span values (columnSpan, rowSpan) determine how many cells the component occupies
- * - Alignment values (alignX, alignY) control positioning within the allocated cell space
+ * GridLayoutParams specifies where and how a component should be placed within
+ * a GridLayout: - Grid coordinates (column, row) determine starting cell - Span
+ * values (columnSpan, rowSpan) determine how many cells the component occupies
+ * - Alignment values (alignX, alignY) control positioning within the allocated
+ * cell space
  * </p>
+ * 
  * @see LayoutParams
  * @see GridLayout
  */
@@ -18,12 +21,12 @@ public final class GridLayoutParams implements LayoutParams {
 	/**
 	 * Constructs GridLayoutParams with all parameters specified.
 	 * 
-	 * @param column the starting column index (0-based, must be ≥ 0)
-	 * @param row the starting row index (0-based, must be ≥ 0)
+	 * @param column     the starting column index (0-based, must be ≥ 0)
+	 * @param row        the starting row index (0-based, must be ≥ 0)
 	 * @param columnSpan the number of columns to span (must be ≥ 1)
-	 * @param rowSpan the number of rows to span (must be ≥ 1)
-	 * @param alignX horizontal alignment (-1=left, 0=center, 1=right)
-	 * @param alignY vertical alignment (-1=top, 0=center, 1=bottom)
+	 * @param rowSpan    the number of rows to span (must be ≥ 1)
+	 * @param alignX     horizontal alignment (-1=left, 0=center, 1=right)
+	 * @param alignY     vertical alignment (-1=top, 0=center, 1=bottom)
 	 * @throws IllegalArgumentException if any parameter is out of valid range
 	 */
 	public GridLayoutParams(int column, int row, int columnSpan, int rowSpan, int alignX, int alignY) {
@@ -66,10 +69,10 @@ public final class GridLayoutParams implements LayoutParams {
 	/**
 	 * Constructs GridLayoutParams with default center alignment.
 	 * 
-	 * @param column the starting column index (0-based)
-	 * @param row the starting row index (0-based)
+	 * @param column     the starting column index (0-based)
+	 * @param row        the starting row index (0-based)
 	 * @param columnSpan the number of columns to span
-	 * @param rowSpan the number of rows to span
+	 * @param rowSpan    the number of rows to span
 	 */
 	public GridLayoutParams(int column, int row, int columnSpan, int rowSpan) {
 		this(column, row, columnSpan, rowSpan, 0, 0);
@@ -79,7 +82,7 @@ public final class GridLayoutParams implements LayoutParams {
 	 * Constructs GridLayoutParams for a single cell with default center alignment.
 	 * 
 	 * @param column the column index (0-based)
-	 * @param row the row index (0-based)
+	 * @param row    the row index (0-based)
 	 */
 	public GridLayoutParams(int column, int row) {
 		this(column, row, 1, 1);

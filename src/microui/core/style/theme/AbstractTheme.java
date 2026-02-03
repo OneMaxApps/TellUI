@@ -4,17 +4,18 @@ import microui.core.style.AbstractColor;
 
 /**
  * Abstract base class for defining color themes in the MicroUI framework.
- * Provides a contract for all theme implementations to define consistent
- * color schemes across different UI components and states.
+ * Provides a contract for all theme implementations to define consistent color
+ * schemes across different UI components and states.
  * <p>
- * Themes define the visual appearance of the application by providing
- * color values for various UI elements and interaction states. Subclasses
- * must implement all abstract methods to provide a complete theme.
+ * Themes define the visual appearance of the application by providing color
+ * values for various UI elements and interaction states. Subclasses must
+ * implement all abstract methods to provide a complete theme.
  * </p>
+ * 
  * @see AbstractColor
  */
 public abstract class AbstractTheme {
-	
+
 	/**
 	 * Returns the background color for containers and main UI areas.
 	 * 
@@ -44,7 +45,8 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getStrokeColor();
 
 	/**
-	 * Returns the color for hover effects when users mouse over interactive elements.
+	 * Returns the color for hover effects when users mouse over interactive
+	 * elements.
 	 * 
 	 * @return the hover color
 	 */
@@ -105,19 +107,19 @@ public abstract class AbstractTheme {
 	 * @return the tooltip text color
 	 */
 	public abstract AbstractColor getTooltipTextColor();
-	
+
 	/**
 	 * Returns the background color for menu button items.
 	 * 
 	 * @return the menu button item color
 	 */
 	public abstract AbstractColor getMenuButtonItemColor();
-	
+
 	/**
 	 * Returns the text color for menu button items.
 	 * 
 	 * @return the menu button item text color
 	 */
 	public abstract AbstractColor getMenuButtonItemTextColor();
-	
+
 }

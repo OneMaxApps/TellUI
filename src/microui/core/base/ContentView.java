@@ -6,17 +6,18 @@ import microui.core.effect.AbstractShadow;
 import microui.util.Debugger;
 
 /**
- * Abstract base class for all GUI components that can be displayed and interacted with.
- * Provides padding, margin, shadow effects, and debugging capabilities.
+ * Abstract base class for all GUI components that can be displayed and
+ * interacted with. Provides padding, margin, shadow effects, and debugging
+ * capabilities.
  * <p>
- * ContentView extends SpatialView to add visual styling and layout spacing features.
- * It manages internal padding (space inside the component) and external margin 
- * (space outside the component), and supports shadow effects.
+ * ContentView extends SpatialView to add visual styling and layout spacing
+ * features. It manages internal padding (space inside the component) and
+ * external margin (space outside the component), and supports shadow effects.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 29.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
  * </p>
+ * 
  * @see SpatialView
  * @see AbstractShadow
  */
@@ -24,13 +25,13 @@ public abstract class ContentView extends SpatialView {
 	private final Padding padding;
 	private final Margin margin;
 	private AbstractShadow shadow;
-	
+
 	/**
 	 * Constructs a ContentView with specified position and dimensions.
 	 * 
-	 * @param x the x-coordinate of the component
-	 * @param y the y-coordinate of the component
-	 * @param width the width of the component
+	 * @param x      the x-coordinate of the component
+	 * @param y      the y-coordinate of the component
+	 * @param width  the width of the component
 	 * @param height the height of the component
 	 */
 	public ContentView(float x, float y, float width, float height) {
@@ -44,7 +45,7 @@ public abstract class ContentView extends SpatialView {
 
 		setPaddingEnabled(true);
 		setMarginEnabled(true);
-		
+
 	}
 
 	/**
@@ -55,8 +56,8 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	/**
-	 * Draws the component with shadow effects and debug information.
-	 * Overrides the parent draw method to add shadow rendering and debug visualization.
+	 * Draws the component with shadow effects and debug information. Overrides the
+	 * parent draw method to add shadow rendering and debug visualization.
 	 */
 	@Override
 	public void draw() {
@@ -64,15 +65,15 @@ public abstract class ContentView extends SpatialView {
 			return;
 		}
 
-		if(shadow != null) {
+		if (shadow != null) {
 			shadow.draw();
 		}
-		
+
 		super.draw();
 
 		debugOnDraw();
 	}
-	
+
 	/**
 	 * Returns the shadow effect applied to this component.
 	 * 
@@ -90,10 +91,10 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if shadow is null
 	 */
 	public final ContentView setShadow(AbstractShadow shadow) {
-		this.shadow = requireNonNull(shadow,"shadow");
-		
+		this.shadow = requireNonNull(shadow, "shadow");
+
 		shadow.setTarget(this);
-		
+
 		return this;
 	}
 
@@ -148,9 +149,9 @@ public abstract class ContentView extends SpatialView {
 	/**
 	 * Sets all four padding values individually.
 	 * 
-	 * @param left the left padding value
-	 * @param right the right padding value
-	 * @param top the top padding value
+	 * @param left   the left padding value
+	 * @param right  the right padding value
+	 * @param top    the top padding value
 	 * @param bottom the bottom padding value
 	 * @return this ContentView for method chaining
 	 */
@@ -166,7 +167,7 @@ public abstract class ContentView extends SpatialView {
 	 * Sets horizontal and vertical padding symmetrically.
 	 * 
 	 * @param paddingHorizontal the horizontal padding (applied to left and right)
-	 * @param paddingVertical the vertical padding (applied to top and bottom)
+	 * @param paddingVertical   the vertical padding (applied to top and bottom)
 	 * @return this ContentView for method chaining
 	 */
 	public final ContentView setPadding(float paddingHorizontal, float paddingVertical) {
@@ -194,8 +195,9 @@ public abstract class ContentView extends SpatialView {
 	 */
 	public final ContentView copyPaddingFrom(ContentView otherContentView) {
 		requireNonNull(otherContentView, "otherContentView");
-		
-		setPadding(otherContentView.getPaddingLeft(),otherContentView.getPaddingRight(), otherContentView.getPaddingTop(),otherContentView.getPaddingBottom());
+
+		setPadding(otherContentView.getPaddingLeft(), otherContentView.getPaddingRight(),
+				otherContentView.getPaddingTop(), otherContentView.getPaddingBottom());
 		return this;
 	}
 
@@ -350,9 +352,9 @@ public abstract class ContentView extends SpatialView {
 	/**
 	 * Sets all four margin values individually.
 	 * 
-	 * @param left the left margin value
-	 * @param right the right margin value
-	 * @param top the top margin value
+	 * @param left   the left margin value
+	 * @param right  the right margin value
+	 * @param top    the top margin value
 	 * @param bottom the bottom margin value
 	 * @return this ContentView for method chaining
 	 */
@@ -412,7 +414,7 @@ public abstract class ContentView extends SpatialView {
 	 * Sets horizontal and vertical margin symmetrically.
 	 * 
 	 * @param marginHorizontal the horizontal margin (applied to left and right)
-	 * @param marginVertical the vertical margin (applied to top and bottom)
+	 * @param marginVertical   the vertical margin (applied to top and bottom)
 	 * @return this ContentView for method chaining
 	 */
 	public final ContentView setMargin(float marginHorizontal, float marginVertical) {
@@ -440,9 +442,10 @@ public abstract class ContentView extends SpatialView {
 	 */
 	public final ContentView copyMarginFrom(ContentView otherContentView) {
 		requireNonNull(otherContentView, "otherContentView");
-		
-		setMargin(otherContentView.getMarginLeft(),otherContentView.getMarginRight(), otherContentView.getMarginTop(), otherContentView.getMarginBottom());
-		
+
+		setMargin(otherContentView.getMarginLeft(), otherContentView.getMarginRight(), otherContentView.getMarginTop(),
+				otherContentView.getMarginBottom());
+
 		return this;
 	}
 
@@ -606,7 +609,7 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if other is null
 	 */
 	public final void setMarginFrom(ContentView other) {
-		requireNonNull(other,"other");
+		requireNonNull(other, "other");
 
 		setMargin(other.getMarginLeft(), other.getMarginRight(), other.getMarginTop(), other.getMarginBottom());
 	}
@@ -618,7 +621,7 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if other is null
 	 */
 	public final void setPaddingFrom(ContentView other) {
-		requireNonNull(other,"other");
+		requireNonNull(other, "other");
 
 		setPadding(other.getPaddingLeft(), other.getPaddingRight(), other.getPaddingTop(), other.getPaddingBottom());
 	}
@@ -630,8 +633,8 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if other is null
 	 */
 	public final void setAbsolutePositionFrom(ContentView other) {
-		requireNonNull(other,"other");
-		
+		requireNonNull(other, "other");
+
 		setAbsolutePosition(other.getAbsoluteX(), other.getAbsoluteY());
 	}
 
@@ -642,7 +645,7 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if other is null
 	 */
 	public final void setAbsoluteDimensionsFrom(ContentView other) {
-		requireNonNull(other,"other");
+		requireNonNull(other, "other");
 
 		setAbsoluteSize(other.getAbsoluteWidth(), other.getAbsoluteHeight());
 
@@ -655,7 +658,7 @@ public abstract class ContentView extends SpatialView {
 	 * @throws NullPointerException if other is null
 	 */
 	public final void setAbsoluteBoundsFrom(ContentView other) {
-		requireNonNull(other,"other");
+		requireNonNull(other, "other");
 
 		setAbsolutePositionFrom(other);
 		setAbsoluteDimensionsFrom(other);

@@ -21,20 +21,20 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 /**
- * Container component for organizing and managing GUI components.
- * Provides functionality for managing child elements (ContentView) through a layout system (LayoutManager),
- * event handling, and rendering priority management.
+ * Container component for organizing and managing GUI components. Provides
+ * functionality for managing child elements (ContentView) through a layout
+ * system (LayoutManager), event handling, and rendering priority management.
  * <p>
- * The container supports two operation modes: {@link Mode#RESPECT_CONSTRAINTS} (respect constraints)
- * and {@link Mode#IGNORE_CONSTRAINTS} (ignore constraints). Default mode is {@code RESPECT_CONSTRAINTS}.
+ * The container supports two operation modes: {@link Mode#RESPECT_CONSTRAINTS}
+ * (respect constraints) and {@link Mode#IGNORE_CONSTRAINTS} (ignore
+ * constraints). Default mode is {@code RESPECT_CONSTRAINTS}.
  * </p>
  * <p>
- * Implements {@link KeyPressable} and {@link Scrollable} interfaces to propagate keyboard
- * and scroll events to child components.
+ * Implements {@link KeyPressable} and {@link Scrollable} interfaces to
+ * propagate keyboard and scroll events to child components.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 08.11.2025
+ * Status: STABLE - Do not modify Last Reviewed: 08.11.2025
  * </p>
  * 
  * @see ContentView
@@ -52,10 +52,10 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * Constructs a Container with specified layout manager and dimensions.
 	 * 
 	 * @param layoutManager the layout manager to use (cannot be null)
-	 * @param x the x-coordinate of the container
-	 * @param y the y-coordinate of the container
-	 * @param width the width of the container
-	 * @param height the height of the container
+	 * @param x             the x-coordinate of the container
+	 * @param y             the y-coordinate of the container
+	 * @param width         the width of the container
+	 * @param height        the height of the container
 	 * @throws NullPointerException if layoutManager is null
 	 */
 	public Container(LayoutManager layoutManager, float x, float y, float width, float height) {
@@ -65,14 +65,14 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		setBackgroundColor(Color.TRANSPARENT);
 
 		entryList = new ArrayList<Entry>();
-		
+
 		this.layoutManager = requireNonNull(layoutManager, "layoutManager");
 		layoutManager.setContainer(this);
 
 		priorityManager = new PriorityManager(entryList);
-		
+
 		image = new ImageBuffer();
-		
+
 		setMode(RESPECT_CONSTRAINTS);
 	}
 
@@ -88,7 +88,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	/**
-	 * Handles mouse wheel events by propagating them to scrollable child components.
+	 * Handles mouse wheel events by propagating them to scrollable child
+	 * components.
 	 * 
 	 * @param event the mouse wheel event
 	 */
@@ -108,7 +109,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	/**
-	 * Handles key press events by propagating them to key-pressable child components.
+	 * Handles key press events by propagating them to key-pressable child
+	 * components.
 	 */
 	@Override
 	public void keyPressed() {
@@ -124,9 +126,10 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 	}
-	
+
 	/**
-	 * Handles key press events with KeyEvent details by propagating them to key-pressable child components.
+	 * Handles key press events with KeyEvent details by propagating them to
+	 * key-pressable child components.
 	 * 
 	 * @param e the key event
 	 */
@@ -157,10 +160,10 @@ public final class Container extends Component implements KeyPressable, Scrollab
 				return contentView;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Searches for a ContentView by its text ID.
 	 * 
@@ -169,8 +172,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * @throws NullPointerException if textId is null
 	 */
 	public ContentView findByTextId(final String textId) {
-		requireNonNull(textId,"textId");
-		
+		requireNonNull(textId, "textId");
+
 		for (int i = 0; i < entryList.size(); i++) {
 			ContentView contentView = entryList.get(i).contentView();
 			if (contentView.getTextId().equals(textId)) {
@@ -180,17 +183,20 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 		return null;
 	}
-	
+
 	/**
 	 * Retrieves a ContentView by its numeric ID.
 	 * 
 	 * @param id the unique numeric identifier of the ContentView
 	 * @return the ContentView with the specified ID
-	 * @throws NoSuchElementException if no ContentView with the specified ID is found
+	 * @throws NoSuchElementException if no ContentView with the specified ID is
+	 *                                found
 	 */
 	public ContentView getById(final int id) {
 		ContentView contentView = findById(id);
-		if(contentView != null) { return contentView; }
+		if (contentView != null) {
+			return contentView;
+		}
 		throw new NoSuchElementException("ContentView with id [" + id + "] not found");
 	}
 
@@ -199,24 +205,29 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param textId the text identifier of the ContentView (cannot be null)
 	 * @return the ContentView with the specified text ID
-	 * @throws NullPointerException if textId is null
-	 * @throws NoSuchElementException if no ContentView with the specified text ID is found
+	 * @throws NullPointerException   if textId is null
+	 * @throws NoSuchElementException if no ContentView with the specified text ID
+	 *                                is found
 	 */
 	public ContentView getByTextId(final String textId) {
 		ContentView contentView = findByTextId(textId);
-		if(contentView != null) { return contentView; }
+		if (contentView != null) {
+			return contentView;
+		}
 		throw new NoSuchElementException("ContentView with text id [" + textId + "] not found");
 	}
 
 	/**
-	 * Adds a ContentView to the container with specified layout parameters and numeric ID.
+	 * Adds a ContentView to the container with specified layout parameters and
+	 * numeric ID.
 	 * 
-	 * @param contentView the component to add (cannot be null)
+	 * @param contentView  the component to add (cannot be null)
 	 * @param layoutParams the layout parameters for the component (cannot be null)
-	 * @param id the numeric identifier for the component
+	 * @param id           the numeric identifier for the component
 	 * @return this container for method chaining
-	 * @throws NullPointerException if contentView or layoutParams is null
-	 * @throws IllegalArgumentException if contentView is already added or is the container itself
+	 * @throws NullPointerException     if contentView or layoutParams is null
+	 * @throws IllegalArgumentException if contentView is already added or is the
+	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams, int id) {
 		addInternal(contentView, layoutParams);
@@ -225,14 +236,17 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	/**
-	 * Adds a ContentView to the container with specified layout parameters and text ID.
+	 * Adds a ContentView to the container with specified layout parameters and text
+	 * ID.
 	 * 
-	 * @param contentView the component to add (cannot be null)
+	 * @param contentView  the component to add (cannot be null)
 	 * @param layoutParams the layout parameters for the component (cannot be null)
-	 * @param textId the text identifier for the component (cannot be null)
+	 * @param textId       the text identifier for the component (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException if contentView, layoutParams, or textId is null
-	 * @throws IllegalArgumentException if contentView is already added or is the container itself
+	 * @throws NullPointerException     if contentView, layoutParams, or textId is
+	 *                                  null
+	 * @throws IllegalArgumentException if contentView is already added or is the
+	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams, String textId) {
 		addInternal(contentView, layoutParams);
@@ -243,11 +257,12 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	/**
 	 * Adds a ContentView to the container with specified layout parameters.
 	 * 
-	 * @param contentView the component to add (cannot be null)
+	 * @param contentView  the component to add (cannot be null)
 	 * @param layoutParams the layout parameters for the component (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException if contentView or layoutParams is null
-	 * @throws IllegalArgumentException if contentView is already added or is the container itself
+	 * @throws NullPointerException     if contentView or layoutParams is null
+	 * @throws IllegalArgumentException if contentView is already added or is the
+	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams) {
 		addInternal(contentView, layoutParams);
@@ -259,7 +274,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param contentView the component to remove (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException if contentView is null
+	 * @throws NullPointerException   if contentView is null
 	 * @throws NoSuchElementException if the component is not found in the container
 	 */
 	public Container remove(ContentView contentView) {
@@ -276,7 +291,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 */
 	public Container removeById(int id) {
 		removeInternal(getById(id));
-		
+
 		return this;
 	}
 
@@ -285,12 +300,13 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param textId the text identifier of the component to remove (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException if textId is null
-	 * @throws NoSuchElementException if no component with the specified text ID is found
+	 * @throws NullPointerException   if textId is null
+	 * @throws NoSuchElementException if no component with the specified text ID is
+	 *                                found
 	 */
 	public Container removeByTextId(String textId) {
 		removeInternal(getByTextId(textId));
-		
+
 		return this;
 	}
 
@@ -329,7 +345,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * @throws NullPointerException if mode is null
 	 */
 	public Container setMode(Mode mode) {
-		requireNonNull(mode,"mode");
+		requireNonNull(mode, "mode");
 
 		if (this.mode == mode) {
 			return this;
@@ -350,7 +366,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	public PImage getImage() {
 		return image.get();
 	}
-	
+
 	/**
 	 * Sets the background image of the container.
 	 * 
@@ -359,7 +375,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	public void setImage(PImage image) {
 		this.image.set(image);
 	}
-	
+
 	/**
 	 * Returns the color applied to the background image.
 	 * 
@@ -401,28 +417,28 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void addInternal(ContentView contentView, LayoutParams layoutParams) {
-		requireNonNull(contentView,"contentView");
-		requireNonNull(layoutParams,"layoutParams");
-		
+		requireNonNull(contentView, "contentView");
+		requireNonNull(layoutParams, "layoutParams");
+
 		if (checkListContains(contentView)) {
 			throw new IllegalArgumentException("ContentView cannot be added twice");
 		}
-		
+
 		if (contentView == this) {
 			throw new IllegalArgumentException("Cannot add in container itself");
 		}
-		
+
 		final Entry entry = new Entry(contentView, layoutParams);
-		
+
 		entryList.add(entry);
 		layoutManager.onAdd(entry);
-		
+
 		priorityManager.recalculateMax();
 	}
 
 	private void removeInternal(ContentView contentView) {
-		requireNonNull(contentView,"contentView");
-		
+		requireNonNull(contentView, "contentView");
+
 		if (!checkListContains(contentView)) {
 			throw new NoSuchElementException("ContentView not found");
 		}
@@ -474,7 +490,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -491,11 +507,11 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	private static final class PriorityManager {
 		private final List<Entry> list;
 		private int max;
-		
+
 		private PriorityManager(List<Entry> list) {
 			super();
-			
-			this.list = requireNonNull(list,"list");
+
+			this.list = requireNonNull(list, "list");
 		}
 
 		public int getMax() {
@@ -509,47 +525,47 @@ public final class Container extends Component implements KeyPressable, Scrollab
 				setMax(Math.max(max, priority));
 			}
 		}
-		
+
 		private void setMax(int max) {
-			if(max < 0) {
+			if (max < 0) {
 				throw new IllegalArgumentException("Max priority cannot be less than 0");
 			}
-			
+
 			this.max = max;
 		}
 	}
-	
+
 	/**
 	 * Container operation modes.
 	 */
 	public static enum Mode {
 		/** Ignore component constraints during layout. */
-		IGNORE_CONSTRAINTS, 
+		IGNORE_CONSTRAINTS,
 		/** Respect component constraints during layout (default). */
 		RESPECT_CONSTRAINTS;
 	}
 
 	/**
-	 * Represents an entry in the container, pairing a ContentView with its layout parameters.
-	 * This is a record type providing immutable data storage.
+	 * Represents an entry in the container, pairing a ContentView with its layout
+	 * parameters. This is a record type providing immutable data storage.
 	 * 
-	 * @param contentView the component (cannot be null)
+	 * @param contentView  the component (cannot be null)
 	 * @param layoutParams the layout parameters for the component (cannot be null)
 	 */
 	public static final record Entry(ContentView contentView, LayoutParams layoutParams) {
-		
+
 		/**
 		 * Creates an Entry with validation.
 		 * 
-		 * @param contentView the component to add
+		 * @param contentView  the component to add
 		 * @param layoutParams the layout parameters for the component
 		 * @throws NullPointerException if contentView or layoutParams is null
 		 */
 		public Entry {
-			requireNonNull(contentView,"contentView");
-			requireNonNull(layoutParams,"layoutParams");
+			requireNonNull(contentView, "contentView");
+			requireNonNull(layoutParams, "layoutParams");
 		}
-		
+
 	}
-	
+
 }

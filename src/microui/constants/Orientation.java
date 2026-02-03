@@ -1,16 +1,19 @@
 package microui.constants;
 
 /**
- * Enumeration representing the two primary layout orientations for sliders and scrolls components.
+ * Enumeration representing the two primary layout orientations for sliders and
+ * scrolls components.
  */
 public enum Orientation {
-    /**
-     * Vertical orientation - components are arranged or operate in a top-to-bottom manner.
-     */
-    VERTICAL,
-    
-    /**
-     * Horizontal orientation - components are arranged or operate in a left-to-right manner.
-     */
-    HORIZONTAL;
+	/**
+	 * Vertical orientation - components are arranged or operate in a top-to-bottom
+	 * manner.
+	 */
+	VERTICAL,
+
+	/**
+	 * Horizontal orientation - components are arranged or operate in a
+	 * left-to-right manner.
+	 */
+	HORIZONTAL;
 }

@@ -13,52 +13,50 @@ import microui.util.Metrics;
 import processing.core.PApplet;
 
 /**
- * Abstract base class for all visual elements in MicroUI.
- * Provides fundamental functionality for managing visibility, rendering priority, 
- * and element identification within the GUI framework.
+ * Abstract base class for all visual elements in MicroUI. Provides fundamental
+ * functionality for managing visibility, rendering priority, and element
+ * identification within the GUI framework.
  * 
  * <p>
  * The View class serves as the foundation for all visual components in MicroUI.
- * Subclasses must implement the {@link #render()} method to define their specific
- * drawing logic. This class implements the {@link Visible} interface and provides
- * built-in support for metrics collection.
+ * Subclasses must implement the {@link #render()} method to define their
+ * specific drawing logic. This class implements the {@link Visible} interface
+ * and provides built-in support for metrics collection.
  * </p>
  * 
  * <p>
- * Key features include:
- * - Visibility management (show/hide)
- * - Rendering priority control (z-order)
- * - Numeric and text-based identification
- * - Integration with MicroUI's rendering system
- * - Automatic style management via push/pop
+ * Key features include: - Visibility management (show/hide) - Rendering
+ * priority control (z-order) - Numeric and text-based identification -
+ * Integration with MicroUI's rendering system - Automatic style management via
+ * push/pop
  * </p>
  * 
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 29.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
  * </p>
+ * 
  * @see Visible
  * @see Metrics
  */
 public abstract class View implements Visible {
-	/** Default text id ("") for View objects*/
+	/** Default text id ("") for View objects */
 	public static final String DEFAULT_TEXT_ID = "";
-	/** Default id (0) for View objects*/
+	/** Default id (0) for View objects */
 	public static final int DEFAULT_ID = 0;
-	/** Minimal priority (0) for Z-order in rendering*/
+	/** Minimal priority (0) for Z-order in rendering */
 	public static final int MIN_PRIORITY = 0;
-	/** Minimal id (0) for View objects*/
+	/** Minimal id (0) for View objects */
 	public static final int MIN_ID = 0;
-	/** Instance of context by Processing*/
+	/** Instance of context by Processing */
 	protected static final PApplet ctx = getContext();
-	
+
 	private String textId;
 	private int priority, id;
 	private boolean visible;
 
 	/**
-	 * Constructs a new View with default values.
-	 * Automatically registers the view with the metrics system.
+	 * Constructs a new View with default values. Automatically registers the view
+	 * with the metrics system.
 	 */
 	public View() {
 		Metrics.register(this);
@@ -153,7 +151,7 @@ public abstract class View implements Visible {
 	 * @param textId new text identifier for this View object (cannot be null and
 	 *               (or) empty)
 	 * @return this View for method chaining
-	 * @throws NullPointerException if textId is null
+	 * @throws NullPointerException     if textId is null
 	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public final View setTextId(final String textId) {
@@ -200,8 +198,9 @@ public abstract class View implements Visible {
 	 * Calls the {@link #render() method} only if the element is visible.
 	 * </p>
 	 * 
-	 * @throws RenderException if in STRICT mode and ContainerManager is not initialized
-	 *                         or if drawing occurs outside ContainerManager's draw cycle
+	 * @throws RenderException if in STRICT mode and ContainerManager is not
+	 *                         initialized or if drawing occurs outside
+	 *                         ContainerManager's draw cycle
 	 */
 	public void draw() {
 		if (getMode() == STRICT) {
@@ -227,9 +226,9 @@ public abstract class View implements Visible {
 	 * This method is called by {@link #draw()} when the View is visible.
 	 * 
 	 * <p>
-	 * Subclasses should override this method to define how the View is rendered
-	 * to the screen. The Processing context is automatically prepared with
-	 * proper style management (push/pop).
+	 * Subclasses should override this method to define how the View is rendered to
+	 * the screen. The Processing context is automatically prepared with proper
+	 * style management (push/pop).
 	 * </p>
 	 */
 	protected abstract void render();

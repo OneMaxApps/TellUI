@@ -8,14 +8,15 @@ import microui.core.base.SpatialView;
 import microui.util.Metrics;
 
 /**
- * Abstract base class for event detection systems in MicroUI.
- * Provides comprehensive mouse event detection for SpatialView components,
- * including hover, press, click, drag, and timing-based events.
+ * Abstract base class for event detection systems in MicroUI. Provides
+ * comprehensive mouse event detection for SpatialView components, including
+ * hover, press, click, drag, and timing-based events.
  * <p>
  * This class implements a sophisticated event detection system that can track
  * various mouse interactions with configurable thresholds. It supports both
  * ContentView (with padding/margin) and basic SpatialView components.
  * </p>
+ * 
  * @see SpatialView
  * @see ContentView
  * @see EventDetector
@@ -23,7 +24,7 @@ import microui.util.Metrics;
 public abstract class AbstractEventSystem {
 	private SpatialView spatialView;
 	private final EventDetector detector;
- 
+
 	/**
 	 * Constructs an AbstractEventSystem for the specified SpatialView.
 	 * 
@@ -31,7 +32,7 @@ public abstract class AbstractEventSystem {
 	 * @throws NullPointerException if spatialView is null
 	 */
 	public AbstractEventSystem(SpatialView spatialView) {
-		this.spatialView = requireNonNull(spatialView,"spatialView");
+		this.spatialView = requireNonNull(spatialView, "spatialView");
 
 		detector = new EventDetector();
 
@@ -39,8 +40,8 @@ public abstract class AbstractEventSystem {
 	}
 
 	/**
-	 * Updates event detection state.
-	 * Should be called every frame to ensure accurate event detection.
+	 * Updates event detection state. Should be called every frame to ensure
+	 * accurate event detection.
 	 */
 	public void listen() {
 		detector.update();
@@ -94,7 +95,8 @@ public abstract class AbstractEventSystem {
 	}
 
 	/**
-	 * Returns the threshold for leave-long events (time after leaving before trigger).
+	 * Returns the threshold for leave-long events (time after leaving before
+	 * trigger).
 	 * 
 	 * @return the leave-long threshold in milliseconds
 	 */
@@ -137,7 +139,7 @@ public abstract class AbstractEventSystem {
 	protected final class EventDetector {
 		private static final long DEFAULT_THRESHOLD = 1000;
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
-		
+
 		private boolean isHover, isPressed;
 
 		private final PressDetector pressDetector;
@@ -308,8 +310,8 @@ public abstract class AbstractEventSystem {
 		}
 
 		/**
-		 * Checks if the mouse is currently hovering over this component.
-		 * Handles both ContentView (with padding) and basic SpatialView bounds.
+		 * Checks if the mouse is currently hovering over this component. Handles both
+		 * ContentView (with padding) and basic SpatialView bounds.
 		 * 
 		 * @return true if hovering, false otherwise
 		 */
@@ -534,7 +536,7 @@ public abstract class AbstractEventSystem {
 			}
 
 		}
-		
+
 		private final class LeaveLongDetector {
 			private final LeaveDetector leaveDetectorInternal;
 			private boolean isLeaveLongHookCalled;
@@ -671,7 +673,7 @@ public abstract class AbstractEventSystem {
 				return mx != pmx || my != pmy;
 			}
 		}
-		
+
 		private final class DraggingDetector {
 			private final DragStartDetector dragStartDetector;
 

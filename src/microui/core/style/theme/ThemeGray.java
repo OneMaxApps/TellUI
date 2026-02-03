@@ -4,14 +4,15 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 
 /**
- * Gray theme implementation with a monochromatic color scheme.
- * Provides a clean, professional aesthetic using various shades of gray
- * with subtle color accents for interactive elements.
+ * Gray theme implementation with a monochromatic color scheme. Provides a
+ * clean, professional aesthetic using various shades of gray with subtle color
+ * accents for interactive elements.
  * <p>
- * This theme uses a restrained gray palette with carefully selected
- * luminance values to create good contrast and readability while
- * maintaining a neutral, professional appearance.
+ * This theme uses a restrained gray palette with carefully selected luminance
+ * values to create good contrast and readability while maintaining a neutral,
+ * professional appearance.
  * </p>
+ * 
  * @see AbstractTheme
  * @see Color
  */
@@ -166,6 +167,5 @@ public class ThemeGray extends AbstractTheme {
 	public AbstractColor getMenuButtonItemTextColor() {
 		return Color.WHITE;
 	}
-	
-	
+
 }

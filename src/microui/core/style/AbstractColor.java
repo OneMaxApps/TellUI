@@ -8,17 +8,16 @@ import processing.core.PGraphics;
 
 /**
  * Abstract base class for color representations in the MicroUI framework.
- * Provides common functionality for applying colors to different drawing contexts
- * and components. All color implementations should extend this class.
+ * Provides common functionality for applying colors to different drawing
+ * contexts and components. All color implementations should extend this class.
  * <p>
  * This class defines the standard interface for colors in MicroUI, including
- * methods for applying colors as fills, strokes, backgrounds, and tints to
- * both the main Processing context and PGraphics objects. It also integrates
- * with the Metrics system for resource tracking.
+ * methods for applying colors as fills, strokes, backgrounds, and tints to both
+ * the main Processing context and PGraphics objects. It also integrates with
+ * the Metrics system for resource tracking.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 27.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 27.10.2025
  * </p>
  * 
  * @see Color
@@ -152,11 +151,11 @@ public abstract class AbstractColor {
 	public abstract int getAlpha();
 
 	/**
-	 * Hook method called before any color application.
-	 * Subclasses can override this to perform setup or validation.
+	 * Hook method called before any color application. Subclasses can override this
+	 * to perform setup or validation.
 	 */
 	protected void preApply() {
 
 	}
-	
+
 }

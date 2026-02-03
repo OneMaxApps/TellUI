@@ -24,18 +24,17 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 /**
- * Singleton manager for handling multiple Container instances and providing animation transitions between them.
- * Manages the lifecycle, rendering, and event handling for containers in a GUI application.
+ * Singleton manager for handling multiple Container instances and providing
+ * animation transitions between them. Manages the lifecycle, rendering, and
+ * event handling for containers in a GUI application.
  * <p>
- * This class implements the Singleton pattern and is responsible for:
- * - Managing a collection of Container objects
- * - Handling transitions between containers with various animation effects
- * - Propagating keyboard and mouse events to the active container
- * - Managing tooltips and debug information
+ * This class implements the Singleton pattern and is responsible for: -
+ * Managing a collection of Container objects - Handling transitions between
+ * containers with various animation effects - Propagating keyboard and mouse
+ * events to the active container - Managing tooltips and debug information
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 8.11.2025
+ * Status: STABLE - Do not modify Last Reviewed: 18.01.2026
  * </p>
  * 
  * @see Container
@@ -66,8 +65,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	/**
-	 * Renders the current state of the ContainerManager.
-	 * If animator is enabled, uses animator for drawing; otherwise draws current container directly.
+	 * Renders the current state of the ContainerManager. If animator is enabled,
+	 * uses animator for drawing; otherwise draws current container directly.
 	 */
 	@Override
 	public void render() {
@@ -85,7 +84,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	/**
 	 * Draws the ContainerManager and debug information if enabled.
 	 * 
-	 * @throws RenderException if draw() is called manually without FLEXIBLE render mode
+	 * @throws RenderException if draw() is called manually without FLEXIBLE render
+	 *                         mode
 	 */
 	@Override
 	public void draw() {
@@ -108,9 +108,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		currentContainer.keyPressed();
 	}
-	
+
 	/**
-	 * Handles key press events with KeyEvent details by propagating them to the current container.
+	 * Handles key press events with KeyEvent details by propagating them to the
+	 * current container.
 	 * 
 	 * @param e the key event
 	 */
@@ -124,15 +125,15 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	/**
-	 * Processes key events from the Processing environment.
-	 * Handles debug hotkeys and propagates events to keyboard manager and containers.
+	 * Processes key events from the Processing environment. Handles debug hotkeys
+	 * and propagates events to keyboard manager and containers.
 	 * 
 	 * @param keyEvent the key event from Processing
 	 * @throws NullPointerException if keyEvent is null
 	 */
 	public void keyEvent(KeyEvent keyEvent) {
-		requireNonNull(keyEvent,"keyEvent");
-		
+		requireNonNull(keyEvent, "keyEvent");
+
 		if (keyEvent.getAction() == KeyEvent.PRESS) {
 
 			if (isHotKeySwitchEnabled()) {
@@ -153,8 +154,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 */
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
-		requireNonNull(mouseEvent,"mouseEvent");
-		
+		requireNonNull(mouseEvent, "mouseEvent");
+
 		if (currentContainer == null) {
 			return;
 		}
@@ -166,13 +167,22 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	/**
-	 * Processes mouse events from the Processing environment.
-	 * Currently only handles mouse wheel events.
+	 * Processes mouse events from the Processing environment. Currently only
+	 * handles mouse wheel events.
 	 * 
 	 * @param mouseEvent the mouse event from Processing
 	 */
 	public void mouseEvent(MouseEvent mouseEvent) {
 		mouseWheel(mouseEvent);
+	}
+
+	/**
+	 * Returns the current active container.
+	 * 
+	 * @return the current container (can return null if not have active container)
+	 */
+	public Container getActiveContainer() {
+		return currentContainer;
 	}
 
 	/**
@@ -261,7 +271,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * Adds a container to the manager with a text ID.
 	 * 
 	 * @param container the container to add
-	 * @param textId the text identifier for the container
+	 * @param textId    the text identifier for the container
 	 */
 	public void add(Container container, String textId) {
 		addInternal(container);
@@ -273,7 +283,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * Adds a container to the manager with a numeric ID.
 	 * 
 	 * @param container the container to add
-	 * @param id the numeric identifier for the container
+	 * @param id        the numeric identifier for the container
 	 */
 	public void add(Container container, int id) {
 		addInternal(container);
@@ -337,7 +347,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	/**
 	 * Switches to the specified container with a specific animation mode.
 	 * 
-	 * @param container the container to switch to
+	 * @param container    the container to switch to
 	 * @param animatorMode the animation mode to use
 	 */
 	public void switchOn(Container container, AnimatorMode animatorMode) {
@@ -357,7 +367,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	/**
 	 * Switches to a container by its numeric ID with a specific animation mode.
 	 * 
-	 * @param id the numeric ID of the container to switch to
+	 * @param id           the numeric ID of the container to switch to
 	 * @param animatorMode the animation mode to use
 	 */
 	public void switchOn(int id, AnimatorMode animatorMode) {
@@ -377,7 +387,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	/**
 	 * Switches to a container by its text ID with a specific animation mode.
 	 * 
-	 * @param textId the text ID of the container to switch to
+	 * @param textId       the text ID of the container to switch to
 	 * @param animatorMode the animation mode to use
 	 */
 	public void switchOn(String textId, AnimatorMode animatorMode) {
@@ -466,8 +476,9 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @param textId the text ID of the container to retrieve (cannot be null)
 	 * @return the container with the specified text ID
-	 * @throws NullPointerException if textId is null
-	 * @throws NoSuchElementException if no container with the specified text ID is found
+	 * @throws NullPointerException   if textId is null
+	 * @throws NoSuchElementException if no container with the specified text ID is
+	 *                                found
 	 */
 	public Container getByTextId(String textId) {
 		final Container c = findByTextId(textId);
@@ -498,8 +509,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	/**
-	 * Returns the singleton instance of ContainerManager.
-	 * Creates the instance if it doesn't exist.
+	 * Returns the singleton instance of ContainerManager. Creates the instance if
+	 * it doesn't exist.
 	 * 
 	 * @return the singleton ContainerManager instance
 	 */
@@ -517,19 +528,20 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 */
 	public static enum AnimatorMode {
 		/** Slide animation from left to right. */
-		SLIDE_LEFT, 
+		SLIDE_LEFT,
 		/** Slide animation from right to left. */
-		SLIDE_RIGHT, 
+		SLIDE_RIGHT,
 		/** Slide animation from top to bottom. */
-		SLIDE_TOP, 
+		SLIDE_TOP,
 		/** Slide animation from bottom to top. */
-		SLIDE_BOTTOM, 
+		SLIDE_BOTTOM,
 		/** Random slide animation direction. */
 		SLIDE_RANDOM;
 	}
 
 	/**
-	 * Internal class for handling automatic rendering through Processing's draw cycle.
+	 * Internal class for handling automatic rendering through Processing's draw
+	 * cycle.
 	 */
 	public final class Render {
 
@@ -654,7 +666,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private final ImageBuffer prevImage, currentImage;
-		private static final byte[][] DIRECTIONS = {{-1,0},{1,0},{0,-1},{0,1}};
+		private static final byte[][] DIRECTIONS = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
 		private AnimatorMode animatorMode;
 		private float speed;
 		private byte randDirX, randDirY;
@@ -711,7 +723,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		public void setEasingEnabled(boolean easing) {
 			this.easing = easing;
 		}
-		
+
 		@Override
 		protected void render() {
 			if (isAnimating()) {

@@ -5,25 +5,29 @@ import static java.util.Objects.requireNonNull;
 import microui.util.MathUtils;
 
 /**
- * An abstract base class for colors that interpolate between two other colors over time.
- * Provides animation control for the interpolation progress and implements color
- * component calculation through linear interpolation.
+ * An abstract base class for colors that interpolate between two other colors
+ * over time. Provides animation control for the interpolation progress and
+ * implements color component calculation through linear interpolation.
  * 
- * <p>This class manages an internal animation progress that determines the blend ratio
- * between the start and end colors. The animation can be configured to progress
- * forward, backward, or loop continuously between the two colors.
+ * <p>
+ * This class manages an internal animation progress that determines the blend
+ * ratio between the start and end colors. The animation can be configured to
+ * progress forward, backward, or loop continuously between the two colors.
  * 
- * <p>Subclasses must implement the abstract methods from {@link AbstractColor}
- * and can use the protected methods provided here to access the animation state
- * and perform interpolation calculations.
+ * <p>
+ * Subclasses must implement the abstract methods from {@link AbstractColor} and
+ * can use the protected methods provided here to access the animation state and
+ * perform interpolation calculations.
  * 
- * <p><b>Animation Behavior:</b>
+ * <p>
+ * <b>Animation Behavior:</b>
  * <ul>
- *   <li>When the animation is enabled ({@code isStartEnabled = true}), the progress
- *       increases from 0.0 to 1.0 at the configured speed.</li>
- *   <li>When disabled, the progress decreases from the current value back to 0.0.</li>
- *   <li>When looping is enabled, the animation automatically reverses direction
- *       when it reaches either endpoint.</li>
+ * <li>When the animation is enabled ({@code isStartEnabled = true}), the
+ * progress increases from 0.0 to 1.0 at the configured speed.</li>
+ * <li>When disabled, the progress decreases from the current value back to
+ * 0.0.</li>
+ * <li>When looping is enabled, the animation automatically reverses direction
+ * when it reaches either endpoint.</li>
  * </ul>
  * 
  * @see AbstractColor
@@ -38,21 +42,21 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	 * The initial animation speed is set to 0.1 (10% progress per update).
 	 * 
 	 * @param start the starting color of the interpolation sequence, cannot be null
-	 * @param end the ending color of the interpolation sequence, cannot be null
+	 * @param end   the ending color of the interpolation sequence, cannot be null
 	 * @throws NullPointerException if either start or end is null
 	 */
 	public AbstractLerpedColor(AbstractColor start, AbstractColor end) {
 		super();
-		
-		this.start = requireNonNull(start,"start");
-		this.end = requireNonNull(end,"end");
+
+		this.start = requireNonNull(start, "start");
+		this.end = requireNonNull(end, "end");
 
 		animator = new Animator();
 	}
 
 	/**
-	 * Returns the red component of the interpolated color.
-	 * The value is calculated based on the current animation progress.
+	 * Returns the red component of the interpolated color. The value is calculated
+	 * based on the current animation progress.
 	 * 
 	 * @return the interpolated red component value (0-255)
 	 */
@@ -62,8 +66,8 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	}
 
 	/**
-	 * Returns the green component of the interpolated color.
-	 * The value is calculated based on the current animation progress.
+	 * Returns the green component of the interpolated color. The value is
+	 * calculated based on the current animation progress.
 	 * 
 	 * @return the interpolated green component value (0-255)
 	 */
@@ -73,8 +77,8 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	}
 
 	/**
-	 * Returns the blue component of the interpolated color.
-	 * The value is calculated based on the current animation progress.
+	 * Returns the blue component of the interpolated color. The value is calculated
+	 * based on the current animation progress.
 	 * 
 	 * @return the interpolated blue component value (0-255)
 	 */
@@ -84,8 +88,8 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	}
 
 	/**
-	 * Returns the alpha component of the interpolated color.
-	 * The value is calculated based on the current animation progress.
+	 * Returns the alpha component of the interpolated color. The value is
+	 * calculated based on the current animation progress.
 	 * 
 	 * @return the interpolated alpha component value (0-255)
 	 */
@@ -93,22 +97,21 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	public int getAlpha() {
 		return lerp(getStart().getAlpha(), getEnd().getAlpha());
 	}
-	
+
 	/**
-	 * Returns the current animation speed.
-	 * The speed determines how quickly the interpolation progresses between
-	 * the start and end colors during each update.
+	 * Returns the current animation speed. The speed determines how quickly the
+	 * interpolation progresses between the start and end colors during each update.
 	 * 
 	 * @return the current animation speed, a value between 0.0 and 1.0
 	 */
 	public final float getSpeed() {
 		return getAnimator().getSpeed();
 	}
-	
+
 	/**
-	 * Sets the animation speed and returns this instance for method chaining.
-	 * The speed determines how quickly the interpolation progresses between
-	 * the start and end colors during each update.
+	 * Sets the animation speed and returns this instance for method chaining. The
+	 * speed determines how quickly the interpolation progresses between the start
+	 * and end colors during each update.
 	 * 
 	 * @param speed the new animation speed, must be between 0.0 and 1.0
 	 * @return this instance for method chaining
@@ -116,10 +119,10 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	 */
 	public final AbstractLerpedColor setSpeed(float speed) {
 		getAnimator().setSpeed(speed);
-		
+
 		return this;
 	}
-	
+
 	protected final AbstractColor getStart() {
 		return start;
 	}
@@ -153,35 +156,45 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	}
 
 	/**
-	 * A controller for managing the interpolation animation progress.
-	 * This inner class handles the timing and direction of color interpolation.
+	 * A controller for managing the interpolation animation progress. This inner
+	 * class handles the timing and direction of color interpolation.
 	 * 
-	 * <p>The animator maintains a progress value between {@link #START_PROGRESS} (0.0)
+	 * <p>
+	 * The animator maintains a progress value between {@link #START_PROGRESS} (0.0)
 	 * and {@link #END_PROGRESS} (1.0) that represents the current blend ratio
 	 * between the start and end colors.
 	 * 
-	 * <p><b>Usage:</b>
+	 * <p>
+	 * <b>Usage:</b>
 	 * <ul>
-	 *   <li>Call {@link #update()} periodically to advance/reverse the animation</li>
-	 *   <li>Use {@link #setStartEnabled(boolean)} to start/stop forward progression</li>
-	 *   <li>Use {@link #setLoopEnabled(boolean)} to enable automatic direction reversal</li>
-	 *   <li>Use {@link #setProgress(float)} to manually set the interpolation point</li>
+	 * <li>Call {@link #update()} periodically to advance/reverse the animation</li>
+	 * <li>Use {@link #setStartEnabled(boolean)} to start/stop forward
+	 * progression</li>
+	 * <li>Use {@link #setLoopEnabled(boolean)} to enable automatic direction
+	 * reversal</li>
+	 * <li>Use {@link #setProgress(float)} to manually set the interpolation
+	 * point</li>
 	 * </ul>
 	 */
 	protected final class Animator {
 		public static final int START_PROGRESS = 0;
 		public static final int END_PROGRESS = 1;
 		
+		private static final int EPSILON = 32;
+		
 		private float progress, speed;
 		private boolean isStartEnabled, isLoopEnabled;
+
+		private static long lastUpdateTime;
+		
 
 		/**
 		 * Creates a new Animator with default settings:
 		 * <ul>
-		 *   <li>Progress: 0.0 (full start color)</li>
-		 *   <li>Speed: 0.1 (10% progress per update)</li>
-		 *   <li>Start enabled: false</li>
-		 *   <li>Loop enabled: false</li>
+		 * <li>Progress: 0.0 (full start color)</li>
+		 * <li>Speed: 0.1 (10% progress per update)</li>
+		 * <li>Start enabled: false</li>
+		 * <li>Loop enabled: false</li>
 		 * </ul>
 		 */
 		public Animator() {
@@ -190,12 +203,19 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Updates the animation progress based on current settings.
-		 * This method should be called periodically (e.g., each frame) to advance
-		 * the interpolation. The direction of progression depends on whether
-		 * start is enabled and if looping is configured.
+		 * Updates the animation progress based on current settings. This method should
+		 * be called periodically (e.g., each frame) to advance the interpolation. The
+		 * direction of progression depends on whether start is enabled and if looping
+		 * is configured.
 		 */
 		public void update() {
+
+			if (System.currentTimeMillis() - lastUpdateTime < EPSILON) {
+				return;
+			}
+
+			lastUpdateTime = System.currentTimeMillis();
+
 			if (isStartEnabled()) {
 				if (progress < END_PROGRESS) {
 					progress = Math.min(progress + speed, END_PROGRESS);
@@ -219,29 +239,29 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		/**
 		 * Checks whether forward animation progression is currently enabled.
 		 * 
-		 * @return true if the animation is progressing from start to end,
-		 *         false if it's progressing from end to start or paused
+		 * @return true if the animation is progressing from start to end, false if it's
+		 *         progressing from end to start or paused
 		 */
 		public final boolean isStartEnabled() {
 			return isStartEnabled;
 		}
 
 		/**
-		 * Enables or disables forward animation progression.
-		 * When enabled, the progress increases toward {@link #END_PROGRESS}.
-		 * When disabled, the progress decreases toward {@link #START_PROGRESS}.
+		 * Enables or disables forward animation progression. When enabled, the progress
+		 * increases toward {@link #END_PROGRESS}. When disabled, the progress decreases
+		 * toward {@link #START_PROGRESS}.
 		 * 
-		 * @param isStartEnabled true to enable forward progression,
-		 *                      false to enable reverse progression
+		 * @param isStartEnabled true to enable forward progression, false to enable
+		 *                       reverse progression
 		 */
 		public final void setStartEnabled(boolean isStartEnabled) {
 			this.isStartEnabled = isStartEnabled;
 		}
 
 		/**
-		 * Returns the current interpolation progress.
-		 * A value of 0.0 represents the start color, 1.0 represents the end color,
-		 * and values in between represent interpolated colors.
+		 * Returns the current interpolation progress. A value of 0.0 represents the
+		 * start color, 1.0 represents the end color, and values in between represent
+		 * interpolated colors.
 		 * 
 		 * @return the current progress value between 0.0 and 1.0
 		 */
@@ -250,9 +270,9 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Sets the interpolation progress to a specific value.
-		 * This allows manual control over the interpolation point without
-		 * waiting for the animation to progress naturally.
+		 * Sets the interpolation progress to a specific value. This allows manual
+		 * control over the interpolation point without waiting for the animation to
+		 * progress naturally.
 		 * 
 		 * @param progress the new progress value, must be between 0.0 and 1.0
 		 * @throws IllegalArgumentException if progress is outside the range [0.0, 1.0]
@@ -265,9 +285,9 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Checks whether looping animation is enabled.
-		 * When looping is enabled, the animation automatically reverses direction
-		 * when it reaches either endpoint ({@link #START_PROGRESS} or {@link #END_PROGRESS}).
+		 * Checks whether looping animation is enabled. When looping is enabled, the
+		 * animation automatically reverses direction when it reaches either endpoint
+		 * ({@link #START_PROGRESS} or {@link #END_PROGRESS}).
 		 * 
 		 * @return true if looping is enabled, false otherwise
 		 */
@@ -276,9 +296,9 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Enables or disables looping animation.
-		 * When enabled, the animation will automatically reverse direction when it
-		 * reaches either endpoint, creating a continuous back-and-forth animation.
+		 * Enables or disables looping animation. When enabled, the animation will
+		 * automatically reverse direction when it reaches either endpoint, creating a
+		 * continuous back-and-forth animation.
 		 * 
 		 * @param isLoopEnabled true to enable looping, false to disable it
 		 */
@@ -287,8 +307,8 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Returns the current animation speed.
-		 * The speed determines how much the progress changes during each {@link #update()}.
+		 * Returns the current animation speed. The speed determines how much the
+		 * progress changes during each {@link #update()}.
 		 * 
 		 * @return the current speed value between 0.0 and 1.0
 		 */
@@ -297,9 +317,9 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Sets the animation speed.
-		 * The speed determines how much the progress changes during each {@link #update()}.
-		 * Higher values result in faster interpolation between colors.
+		 * Sets the animation speed. The speed determines how much the progress changes
+		 * during each {@link #update()}. Higher values result in faster interpolation
+		 * between colors.
 		 * 
 		 * @param speed the new speed value, must be between 0.0 and 1.0
 		 * @throws IllegalArgumentException if speed is outside the range [0.0, 1.0]

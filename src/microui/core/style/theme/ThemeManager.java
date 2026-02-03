@@ -4,12 +4,14 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Manager for handling theme selection and retrieval in the MicroUI framework.
- * Provides a centralized way to set and get the current theme used by all UI components.
+ * Provides a centralized way to set and get the current theme used by all UI
+ * components.
  * <p>
  * The ThemeManager follows the singleton pattern for theme management, allowing
- * global theme changes that affect all components. By default, it uses ThemeWhite
- * as the initial theme.
+ * global theme changes that affect all components. By default, it uses
+ * ThemeWhite as the initial theme.
  * </p>
+ * 
  * @see AbstractTheme
  * @see ThemeWhite
  */
@@ -23,7 +25,7 @@ public final class ThemeManager {
 	 * @throws NullPointerException if theme is null
 	 */
 	public static void setTheme(AbstractTheme theme) {
-		currentTheme = requireNonNull(theme,"theme");
+		currentTheme = requireNonNull(theme, "theme");
 	}
 
 	/**

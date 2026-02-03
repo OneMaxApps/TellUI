@@ -1,11 +1,11 @@
 package microui.core.exception;
 
 /**
- * Exception thrown when attempting to add a duplicate item to a collection or container
- * that does not allow duplicates.
+ * Exception thrown when attempting to add a duplicate item to a collection or
+ * container that does not allow duplicates.
  * <p>
- * This exception is used throughout the MicroUI framework to indicate that
- * an operation failed because it would result in duplicate items where uniqueness
+ * This exception is used throughout the MicroUI framework to indicate that an
+ * operation failed because it would result in duplicate items where uniqueness
  * is required. Commonly used in container and collection management.
  * </p>
  * 
@@ -22,5 +22,5 @@ public class DuplicateItemException extends MicroUIException {
 	public DuplicateItemException(String message) {
 		super(message);
 	}
-	
+
 }

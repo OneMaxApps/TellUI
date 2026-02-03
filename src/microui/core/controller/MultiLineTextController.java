@@ -12,14 +12,17 @@ import java.util.List;
 import microui.event.Listener;
 
 /**
- * Controller for managing multi-line text with line-based operations and undo/redo functionality.
- * Provides comprehensive text manipulation capabilities across multiple lines, including
- * line insertion, removal, splitting, merging, and character-level editing.
+ * Controller for managing multi-line text with line-based operations and
+ * undo/redo functionality. Provides comprehensive text manipulation
+ * capabilities across multiple lines, including line insertion, removal,
+ * splitting, merging, and character-level editing.
  * <p>
- * This controller manages a collection of {@link SingleLineTextController} instances,
- * each representing a single line of text. It supports undo/redo operations with
- * configurable update speed to prevent excessive history entries during rapid typing.
+ * This controller manages a collection of {@link SingleLineTextController}
+ * instances, each representing a single line of text. It supports undo/redo
+ * operations with configurable update speed to prevent excessive history
+ * entries during rapid typing.
  * </p>
+ * 
  * @see SingleLineTextController
  * @see Listener
  */
@@ -118,8 +121,9 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a new line with the specified text at the given index.
 	 * 
-	 * @param index the position to insert the new line (0-based, constrained to valid range)
-	 * @param text the text for the new line
+	 * @param index the position to insert the new line (0-based, constrained to
+	 *              valid range)
+	 * @param text  the text for the new line
 	 * @throws NullPointerException if text is null
 	 */
 	public void insertLine(int index, String text) {
@@ -132,8 +136,8 @@ public final class MultiLineTextController {
 	}
 
 	/**
-	 * Removes a line at the specified index.
-	 * If only one line remains, clears its content instead of removing.
+	 * Removes a line at the specified index. If only one line remains, clears its
+	 * content instead of removing.
 	 * 
 	 * @param index the index of the line to remove (constrained to valid range)
 	 */
@@ -150,9 +154,10 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a character at a specific position in a line.
 	 * 
-	 * @param row the line index (0-based, constrained to valid range)
-	 * @param column the character position within the line (constrained to valid range)
-	 * @param ch the character to insert
+	 * @param row    the line index (0-based, constrained to valid range)
+	 * @param column the character position within the line (constrained to valid
+	 *               range)
+	 * @param ch     the character to insert
 	 */
 	public void insertCharForLine(int row, int column, char ch) {
 		list.get(getClampedIndex(row)).insert(column, ch);
@@ -161,9 +166,10 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a string at a specific position in a line.
 	 * 
-	 * @param row the line index (0-based, constrained to valid range)
-	 * @param column the character position within the line (constrained to valid range)
-	 * @param str the string to insert
+	 * @param row    the line index (0-based, constrained to valid range)
+	 * @param column the character position within the line (constrained to valid
+	 *               range)
+	 * @param str    the string to insert
 	 */
 	public void insertStringForLine(int row, int column, String str) {
 		list.get(getClampedIndex(row)).insert(column, str);
@@ -172,8 +178,9 @@ public final class MultiLineTextController {
 	/**
 	 * Removes a character at a specific position in a line.
 	 * 
-	 * @param row the line index (0-based, constrained to valid range)
-	 * @param column the character position within the line (constrained to valid range)
+	 * @param row    the line index (0-based, constrained to valid range)
+	 * @param column the character position within the line (constrained to valid
+	 *               range)
 	 */
 	public void removeCharForLine(int row, int column) {
 		list.get(getClampedIndex(row)).removeCharAt(column);
@@ -182,19 +189,19 @@ public final class MultiLineTextController {
 	/**
 	 * Removes a substring from a line.
 	 * 
-	 * @param row the line index (0-based, constrained to valid range)
+	 * @param row         the line index (0-based, constrained to valid range)
 	 * @param columnStart the starting position (inclusive, constrained)
-	 * @param columnEnd the ending position (exclusive, constrained)
+	 * @param columnEnd   the ending position (exclusive, constrained)
 	 */
 	public void removeStringForLine(int row, int columnStart, int columnEnd) {
 		list.get(getClampedIndex(row)).remove(columnStart, columnEnd);
 	}
 
 	/**
-	 * Splits a line at the specified column position.
-	 * Text from the column position to the end of the line becomes a new line below.
+	 * Splits a line at the specified column position. Text from the column position
+	 * to the end of the line becomes a new line below.
 	 * 
-	 * @param row the line index to split (0-based, constrained to valid range)
+	 * @param row    the line index to split (0-based, constrained to valid range)
 	 * @param column the column position to split at (constrained to line length)
 	 */
 	public void splitLine(int row, int column) {
@@ -210,7 +217,8 @@ public final class MultiLineTextController {
 	/**
 	 * Merges a line with the line below it.
 	 * 
-	 * @param row the line index to merge with the next line (0-based, constrained to valid range)
+	 * @param row the line index to merge with the next line (0-based, constrained
+	 *            to valid range)
 	 */
 	public void mergeLines(int row) {
 		row = getClampedIndex(row);
@@ -258,7 +266,7 @@ public final class MultiLineTextController {
 			requireNonNull(lines[i], "lines[" + i + "]");
 			if (i == 0) {
 				getLine(0).set(lines[i]);
-				
+
 			} else {
 				addLineSilently(lines[i]);
 			}
@@ -266,7 +274,7 @@ public final class MultiLineTextController {
 
 		notifyTextChanged();
 	}
-	
+
 	/**
 	 * Sets the text content from a raw string with newline separators.
 	 * 
@@ -274,14 +282,14 @@ public final class MultiLineTextController {
 	 * @throws NullPointerException if text is null
 	 */
 	public void setRawText(String text) {
-		requireNonNull(text,"text");
-		
+		requireNonNull(text, "text");
+
 		if (text.contains("\n")) {
 			setText(text.split("\n", -1));
 		} else {
 			setText(text);
 		}
-		
+
 	}
 
 	/**
@@ -329,15 +337,17 @@ public final class MultiLineTextController {
 	/**
 	 * Sets the listener for text change events.
 	 * 
-	 * @param onTextChangedListener the listener to call when text changes (cannot be null)
+	 * @param onTextChangedListener the listener to call when text changes (cannot
+	 *                              be null)
 	 * @throws NullPointerException if listener is null
 	 */
 	public void setOnTextChangedListener(Listener onTextChangedListener) {
 		this.onTextChangedListener = requireNonNull(onTextChangedListener, "onTextChangedListener");
 	}
-	
+
 	/**
-	 * Returns the current update speed (minimum milliseconds between history updates).
+	 * Returns the current update speed (minimum milliseconds between history
+	 * updates).
 	 * 
 	 * @return the update speed in milliseconds
 	 */
@@ -348,7 +358,8 @@ public final class MultiLineTextController {
 	/**
 	 * Sets the update speed for history tracking.
 	 * 
-	 * @param speedForUpdate the minimum milliseconds between history updates (must be ≥ 0)
+	 * @param speedForUpdate the minimum milliseconds between history updates (must
+	 *                       be ≥ 0)
 	 * @throws IllegalArgumentException if speedForUpdate is less than 0
 	 */
 	public void setSpeedForUpdate(int speedForUpdate) {
@@ -428,23 +439,24 @@ public final class MultiLineTextController {
 
 			undo = new ArrayDeque<String>();
 			redo = new ArrayDeque<String>();
-			
+
 			prevState = controller.getText();
-			
+
 			lastUpdateTime = currentTimeMillis();
-			
+
 			setSpeedForUpdate(DEFAULT_MS_FOR_UPDATE);
 		}
-		
+
 		public int getSpeedForUpdate() {
 			return speedForUpdate;
 		}
 
 		public void setSpeedForUpdate(int speedForUpdate) {
 			if (speedForUpdate < MIN_MS_FOR_UPDATE) {
-				throw new IllegalArgumentException("Speed for update must be equal or greater than: " + MIN_MS_FOR_UPDATE);
+				throw new IllegalArgumentException(
+						"Speed for update must be equal or greater than: " + MIN_MS_FOR_UPDATE);
 			}
-			
+
 			this.speedForUpdate = speedForUpdate;
 		}
 
@@ -458,18 +470,18 @@ public final class MultiLineTextController {
 			} else {
 				controller.setText("");
 			}
-			
+
 			operation = false;
 		}
 
 		public void redo() {
 			operation = true;
-			
+
 			if (canRedo()) {
 				undo.push(controller.getText());
 				controller.setRawText(redo.pop());
 			}
-			
+
 			operation = false;
 		}
 
@@ -487,19 +499,19 @@ public final class MultiLineTextController {
 			}
 
 			final String text = controller.getText();
-			
+
 			final long now = currentTimeMillis();
-			
+
 			if (now - lastUpdateTime < getSpeedForUpdate()) {
 				return;
 			}
-			
+
 			lastUpdateTime = now;
-			
+
 			if (prevState == null) {
 				prevState = text;
 			}
-			
+
 			if (canUndo()) {
 				if (!undo.peek().equals(prevState)) {
 					undo.push(prevState);
@@ -507,12 +519,12 @@ public final class MultiLineTextController {
 			} else {
 				undo.push(prevState);
 			}
-			
+
 			prevState = text;
-			
+
 			redo.clear();
 		}
-		
+
 		private boolean canUndo() {
 			return !undo.isEmpty();
 		}

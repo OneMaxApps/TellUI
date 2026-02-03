@@ -6,12 +6,13 @@ import microui.core.style.LerpedColor;
 import microui.core.style.LerpedLoopColor;
 
 /**
- * Dark theme implementation with black/dark gray color scheme and gradient effects.
- * Provides a modern dark theme with subtle animations and visual effects for MicroUI components.
+ * Dark theme implementation with black/dark gray color scheme and gradient
+ * effects. Provides a modern dark theme with subtle animations and visual
+ * effects for MicroUI components.
  * <p>
- * This theme uses a predominantly dark color palette with accent colors and gradient
- * effects for interactive elements. It includes animated tooltips and gradient effects
- * for enhanced visual feedback.
+ * This theme uses a predominantly dark color palette with accent colors and
+ * gradient effects for interactive elements. It includes animated tooltips and
+ * gradient effects for enhanced visual feedback.
  * </p>
  * 
  * @see AbstractTheme
@@ -132,8 +133,8 @@ public class ThemeBlack extends AbstractTheme {
 	}
 
 	/**
-	 * Returns an animated gradient for tooltip backgrounds.
-	 * Transitions from transparent to semi-transparent black.
+	 * Returns an animated gradient for tooltip backgrounds. Transitions from
+	 * transparent to semi-transparent black.
 	 * 
 	 * @return gradient from transparent to black with animation
 	 */
@@ -143,15 +144,14 @@ public class ThemeBlack extends AbstractTheme {
 	}
 
 	/**
-	 * Returns a complex animated gradient for tooltip text.
-	 * Features nested gradients with looping animation effects.
+	 * Returns a complex animated gradient for tooltip text. Features nested
+	 * gradients with looping animation effects.
 	 * 
 	 * @return multi-layer gradient with looping animation
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.WHITE, new Color(255, 154)),
-				() -> true);
+		return new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.WHITE, new Color(255, 154)), () -> true);
 	}
 
 	/**
@@ -173,7 +173,5 @@ public class ThemeBlack extends AbstractTheme {
 	public AbstractColor getMenuButtonItemTextColor() {
 		return Color.WHITE;
 	}
-	
-	
 
 }

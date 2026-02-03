@@ -13,26 +13,26 @@ import static microui.util.MathUtils.constrain;
  * convenient factory methods and predefined color constants.
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 11.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 11.10.2025
  * </p>
+ * 
  * @see AbstractColor
  */
 public class Color extends AbstractColor {
-	/** Pure red color*/
+	/** Pure red color */
 	public static final Color RED = new Color(255, 0, 0);
-	/** Pure green color*/
+	/** Pure green color */
 	public static final Color GREEN = new Color(0, 255, 0);
-	/** Pure blue color*/
+	/** Pure blue color */
 	public static final Color BLUE = new Color(0, 0, 255);
-	/** Pure yellow color*/
+	/** Pure yellow color */
 	public static final Color YELLOW = new Color(255, 255, 0);
-	/** Pure pink color*/
+	/** Pure pink color */
 	public static final Color PINK = new Color(255, 0, 255);
-	/** Pure sky color*/
+	/** Pure sky color */
 	public static final Color SKY = new Color(0, 255, 255);
 
-	/** Pure black color*/
+	/** Pure black color */
 	public static final Color BLACK = new Color(0);
 	/** Gray color 8 shades */
 	public static final Color GRAY_8L = new Color(8);
@@ -50,7 +50,7 @@ public class Color extends AbstractColor {
 	public static final Color GRAY_200L = new Color(200);
 	/** Gray color 232 shades */
 	public static final Color GRAY_232L = new Color(232);
-	
+
 	/** Pure white color */
 	public static final Color WHITE = new Color(255);
 
@@ -68,9 +68,9 @@ public class Color extends AbstractColor {
 	 * @param alpha the alpha component (0-255, will be constrained)
 	 */
 	public Color(float red, float green, float blue, float alpha) {
-		this.red   = (int) constrain(red, MIN_VALUE, MAX_VALUE);
+		this.red = (int) constrain(red, MIN_VALUE, MAX_VALUE);
 		this.green = (int) constrain(green, MIN_VALUE, MAX_VALUE);
-		this.blue  = (int) constrain(blue, MIN_VALUE, MAX_VALUE);
+		this.blue = (int) constrain(blue, MIN_VALUE, MAX_VALUE);
 		this.alpha = (int) constrain(alpha, MIN_VALUE, MAX_VALUE);
 	}
 
@@ -111,8 +111,7 @@ public class Color extends AbstractColor {
 	 * @throws NullPointerException if color is null
 	 */
 	public Color(AbstractColor color) {
-		this(requireNonNull(color, "color").getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		this(requireNonNull(color, "color").getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
 	/**

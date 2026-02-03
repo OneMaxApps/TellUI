@@ -12,20 +12,20 @@ import microui.core.effect.SpatialAnimator;
 import microui.util.Debugger;
 
 /**
- * Abstract base class for GUI components that have spatial properties (position and dimensions).
- * Provides comprehensive management of position, size, constraints, and animation capabilities.
+ * Abstract base class for GUI components that have spatial properties (position
+ * and dimensions). Provides comprehensive management of position, size,
+ * constraints, and animation capabilities.
  * <p>
- * SpatialView extends View to add spatial properties and constraints system. It manages:
- * - Position (x, y coordinates) and dimensions (width, height)
- * - Minimum and maximum size constraints
- * - Negative dimensions handling
- * - Spatial animation through SpatialAnimator
- * - Update hooks with configurable timing modes
+ * SpatialView extends View to add spatial properties and constraints system. It
+ * manages: - Position (x, y coordinates) and dimensions (width, height) -
+ * Minimum and maximum size constraints - Negative dimensions handling - Spatial
+ * animation through SpatialAnimator - Update hooks with configurable timing
+ * modes
  * </p>
  * <p>
- * Status: STABLE - Do not modify
- * Last Reviewed: 29.10.2025
+ * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
  * </p>
+ * 
  * @see View
  * @see SpatialAnimator
  * @see HooksUpdateMode
@@ -46,9 +46,9 @@ public abstract class SpatialView extends View {
 	/**
 	 * Constructs a SpatialView with specified position and dimensions.
 	 * 
-	 * @param x the x-coordinate
-	 * @param y the y-coordinate
-	 * @param width the width
+	 * @param x      the x-coordinate
+	 * @param y      the y-coordinate
+	 * @param width  the width
 	 * @param height the height
 	 */
 	public SpatialView(float x, float y, float width, float height) {
@@ -76,8 +76,8 @@ public abstract class SpatialView extends View {
 	}
 
 	/**
-	 * Draws the SpatialView and manages update hooks and animations.
-	 * Overrides parent draw method to add spatial update logic.
+	 * Draws the SpatialView and manages update hooks and animations. Overrides
+	 * parent draw method to add spatial update logic.
 	 */
 	@Override
 	public void draw() {
@@ -223,7 +223,7 @@ public abstract class SpatialView extends View {
 	/**
 	 * Sets the size (width and height).
 	 * 
-	 * @param width the width
+	 * @param width  the width
 	 * @param height the height
 	 */
 	public final void setSize(float width, float height) {
@@ -243,9 +243,9 @@ public abstract class SpatialView extends View {
 	/**
 	 * Sets all bounds (position and size).
 	 * 
-	 * @param x the x-coordinate
-	 * @param y the y-coordinate
-	 * @param width the width
+	 * @param x      the x-coordinate
+	 * @param y      the y-coordinate
+	 * @param width  the width
 	 * @param height the height
 	 */
 	public final void setBounds(float x, float y, float width, float height) {
@@ -297,7 +297,8 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum height constraint.
 	 * 
 	 * @param minHeight the minimum height to set
-	 * @throws IllegalArgumentException if minHeight is greater than current maxHeight
+	 * @throws IllegalArgumentException if minHeight is greater than current
+	 *                                  maxHeight
 	 */
 	public final void setMinHeight(float minHeight) {
 		if (areEqual(this.minHeight, minHeight)) {
@@ -378,7 +379,7 @@ public abstract class SpatialView extends View {
 	/**
 	 * Sets both minimum width and height constraints.
 	 * 
-	 * @param minWidth the minimum width
+	 * @param minWidth  the minimum width
 	 * @param minHeight the minimum height
 	 */
 	public final void setMinSize(float minWidth, float minHeight) {
@@ -399,7 +400,7 @@ public abstract class SpatialView extends View {
 	/**
 	 * Sets both maximum width and height constraints.
 	 * 
-	 * @param maxWidth the maximum width
+	 * @param maxWidth  the maximum width
 	 * @param maxHeight the maximum height
 	 */
 	public final void setMaxSize(float maxWidth, float maxHeight) {
@@ -431,9 +432,9 @@ public abstract class SpatialView extends View {
 	/**
 	 * Sets all minimum and maximum size constraints.
 	 * 
-	 * @param minWidth the minimum width
+	 * @param minWidth  the minimum width
 	 * @param minHeight the minimum height
-	 * @param maxWidth the maximum width
+	 * @param maxWidth  the maximum width
 	 * @param maxHeight the maximum height
 	 */
 	public final void setMinMaxSize(float minWidth, float minHeight, float maxWidth, float maxHeight) {
@@ -464,7 +465,8 @@ public abstract class SpatialView extends View {
 	/**
 	 * Enables or disables dimension constraints.
 	 * 
-	 * @param constrainDimensionsEnabled true to enable constraints, false to disable
+	 * @param constrainDimensionsEnabled true to enable constraints, false to
+	 *                                   disable
 	 */
 	public final void setConstrainDimensionsEnabled(boolean constrainDimensionsEnabled) {
 		if (this.constrainDimensionsEnabled == constrainDimensionsEnabled) {
@@ -489,8 +491,8 @@ public abstract class SpatialView extends View {
 	 * Appends a delta value to the x-coordinate within specified bounds.
 	 * 
 	 * @param delta the value to add to x-coordinate
-	 * @param min the minimum allowed x-coordinate
-	 * @param max the maximum allowed x-coordinate
+	 * @param min   the minimum allowed x-coordinate
+	 * @param max   the maximum allowed x-coordinate
 	 */
 	public final void appendX(float delta, float min, float max) {
 		setX(constrain(getX() + delta, min, max));
@@ -509,8 +511,8 @@ public abstract class SpatialView extends View {
 	 * Appends a delta value to the y-coordinate within specified bounds.
 	 * 
 	 * @param delta the value to add to y-coordinate
-	 * @param min the minimum allowed y-coordinate
-	 * @param max the maximum allowed y-coordinate
+	 * @param min   the minimum allowed y-coordinate
+	 * @param max   the maximum allowed y-coordinate
 	 */
 	public final void appendY(float delta, float min, float max) {
 		setY(constrain(getY() + delta, min, max));
@@ -529,8 +531,8 @@ public abstract class SpatialView extends View {
 	 * Appends a delta value to the width within specified bounds.
 	 * 
 	 * @param delta the value to add to width
-	 * @param min the minimum allowed width
-	 * @param max the maximum allowed width
+	 * @param min   the minimum allowed width
+	 * @param max   the maximum allowed width
 	 */
 	public final void appendWidth(float delta, float min, float max) {
 		setWidth(constrain(getWidth() + delta, min, max));
@@ -549,8 +551,8 @@ public abstract class SpatialView extends View {
 	 * Appends a delta value to the height within specified bounds.
 	 * 
 	 * @param delta the value to add to height
-	 * @param min the minimum allowed height
-	 * @param max the maximum allowed height
+	 * @param min   the minimum allowed height
+	 * @param max   the maximum allowed height
 	 */
 	public final void appendHeight(float delta, float min, float max) {
 		setHeight(constrain(getHeight() + delta, min, max));
@@ -569,8 +571,8 @@ public abstract class SpatialView extends View {
 	 * Appends a delta value to both width and height within specified bounds.
 	 * 
 	 * @param delta the value to add to both dimensions
-	 * @param min the minimum allowed size
-	 * @param max the maximum allowed size
+	 * @param min   the minimum allowed size
+	 * @param max   the maximum allowed size
 	 */
 	public final void appendSize(float delta, float min, float max) {
 		setSize(constrain(getWidth() + delta, min, max), constrain(getHeight() + delta, min, max));
@@ -599,7 +601,7 @@ public abstract class SpatialView extends View {
 	 * Sets the x-coordinate from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy x-coordinate from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setXFrom(SpatialView other) {
@@ -612,7 +614,7 @@ public abstract class SpatialView extends View {
 	 * Sets the y-coordinate from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy y-coordinate from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setYFrom(SpatialView other) {
@@ -625,7 +627,7 @@ public abstract class SpatialView extends View {
 	 * Sets the height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy height from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setHeightFrom(SpatialView other) {
@@ -638,7 +640,7 @@ public abstract class SpatialView extends View {
 	 * Sets the width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy width from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setWidthFrom(SpatialView other) {
@@ -651,7 +653,7 @@ public abstract class SpatialView extends View {
 	 * Sets the position from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy position from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setPositionFrom(SpatialView other) {
@@ -664,7 +666,7 @@ public abstract class SpatialView extends View {
 	 * Sets the size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy size from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setSizeFrom(SpatialView other) {
@@ -677,7 +679,7 @@ public abstract class SpatialView extends View {
 	 * Sets all bounds from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy bounds from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setBoundsFrom(SpatialView other) {
@@ -690,7 +692,7 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum width from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinWidthFrom(SpatialView other) {
@@ -703,7 +705,7 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum height from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinHeightFrom(SpatialView other) {
@@ -716,7 +718,7 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum width from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxWidthFrom(SpatialView other) {
@@ -729,7 +731,7 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum height from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxHeightFrom(SpatialView other) {
@@ -742,7 +744,7 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum size from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxSizeFrom(SpatialView other) {
@@ -756,7 +758,7 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum size from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinSizeFrom(SpatialView other) {
@@ -770,7 +772,7 @@ public abstract class SpatialView extends View {
 	 * Sets both minimum and maximum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy size constraints from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinMaxSizeFrom(SpatialView other) {
@@ -781,11 +783,11 @@ public abstract class SpatialView extends View {
 	}
 
 	/**
-	 * Copies all spatial configuration from another SpatialView.
-	 * Includes constraints and bounds.
+	 * Copies all spatial configuration from another SpatialView. Includes
+	 * constraints and bounds.
 	 * 
 	 * @param other the SpatialView to copy configuration from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setSpatialConfigFrom(SpatialView other) {
@@ -799,7 +801,7 @@ public abstract class SpatialView extends View {
 	 * Copies constraint configuration from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy constraints from (cannot be null)
-	 * @throws NullPointerException if other is null
+	 * @throws NullPointerException     if other is null
 	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setConstrainConfigFrom(SpatialView other) {
@@ -814,22 +816,22 @@ public abstract class SpatialView extends View {
 	}
 
 	/**
-	 * Hook method called when position changes.
-	 * Override to implement custom behavior.
+	 * Hook method called when position changes. Override to implement custom
+	 * behavior.
 	 */
 	protected void onChangePosition() {
 	}
 
 	/**
-	 * Hook method called when dimensions change.
-	 * Override to implement custom behavior.
+	 * Hook method called when dimensions change. Override to implement custom
+	 * behavior.
 	 */
 	protected void onChangeDimensions() {
 	}
 
 	/**
-	 * Hook method called when bounds (position or dimensions) change.
-	 * Override to implement custom behavior.
+	 * Hook method called when bounds (position or dimensions) change. Override to
+	 * implement custom behavior.
 	 */
 	protected void onChangeBounds() {
 	}
@@ -846,7 +848,8 @@ public abstract class SpatialView extends View {
 	/**
 	 * Enables or disables negative dimensions.
 	 * 
-	 * @param negativeDimensionsEnabled true to allow negative dimensions, false to restrict to non-negative values
+	 * @param negativeDimensionsEnabled true to allow negative dimensions, false to
+	 *                                  restrict to non-negative values
 	 */
 	protected final void setNegativeDimensionsEnabled(boolean negativeDimensionsEnabled) {
 		if (this.negativeDimensionsEnabled == negativeDimensionsEnabled) {
@@ -863,8 +866,8 @@ public abstract class SpatialView extends View {
 	/**
 	 * Requests an update of state hooks.
 	 * <p>
-	 * This method calls hooks forcefully, even if there were no actual changes
-	 * in position or dimensions.
+	 * This method calls hooks forcefully, even if there were no actual changes in
+	 * position or dimensions.
 	 * </p>
 	 */
 	protected final void requestUpdate() {
@@ -925,7 +928,7 @@ public abstract class SpatialView extends View {
 		if (other == this) {
 			throw new IllegalArgumentException("Cannot set property from itself");
 		}
-		
+
 	}
 
 	private void debugOnDraw() {
@@ -940,13 +943,13 @@ public abstract class SpatialView extends View {
 	 */
 	public static enum HooksUpdateMode {
 		/** Hooks are called immediately when changes occur. */
-		REACTIVE(0), 
+		REACTIVE(0),
 		/** Hooks are called approximately every 16ms (~60fps). */
-		FAST(16), 
+		FAST(16),
 		/** Hooks are called approximately every 32ms (~30fps). */
-		NORMAL(32), 
+		NORMAL(32),
 		/** Hooks are called approximately every 64ms (~15fps). */
-		SLOW(64), 
+		SLOW(64),
 		/** Hooks are called approximately every 128ms (~8fps). */
 		VERY_SLOW(128);
 
