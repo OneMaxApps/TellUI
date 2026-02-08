@@ -277,6 +277,11 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		return stateConfig.isEditable();
 	}
 	
+	/**
+	 * Checks if text area is blank
+	 * 
+	 * @return true if text area is blank, false if it's blank
+	 */
 	public boolean isBlank() {
 		return textEditorModel.isBlank();
 	}
@@ -298,6 +303,15 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 */
 	public void setText(String... strings) {
 		textEditorModel.setText(strings);
+	}
+	
+	/**
+	 * Gets the text from TextArea
+	 * 
+	 * @return the current text from TextArea
+	 */
+	public String getText() {
+		return textEditorModel.getText();
 	}
 
 	/**
@@ -1007,6 +1021,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private static final int DEFAULT_TEXT_SIZE = 12;
 		private static final int MIN_TEXT_SIZE = 4;
 
+		private final TextArea textArea;
+		
 		private AbstractColor textColor;
 		private PFont font;
 		private Listener onTextStyleChangedListener;
@@ -1014,6 +1030,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		public TextStyle(TextArea textArea) {
 			super();
+			this.textArea = requireNonNull(textArea,"textArea");
+			
 			setTextColor(getTheme().getEditableTextColor());
 			setTextSize(DEFAULT_TEXT_SIZE);
 		}
@@ -1065,12 +1083,14 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			this.textSize = textSize;
 			onTextStyleChanged();
+			
 		}
 
 		public void onTextStyleChanged() {
 			if (onTextStyleChangedListener != null) {
 				onTextStyleChangedListener.action();
 			}
+			
 		}
 
 		public void setOnStyleChangedListener(Listener onTextSizeChangedListener) {
