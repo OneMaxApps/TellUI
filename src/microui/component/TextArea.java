@@ -64,7 +64,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	private final TextEditorModel textEditorModel;
 	private final TextMetricsPool textMetricsPool;
 	private final TextStyle textStyle;
-	private final TabConfig styleConfig;
+	private final TabConfig tabConfig;
 	private final GraphicsBuffer graphics;
 	private final CursorRenderer cursorRenderer;
 	private final SelectionRenderer selectionRenderer;
@@ -91,8 +91,8 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		textEditorModel = new TextEditorModel();
 		textMetricsPool = new TextMetricsPool(this);
-		textStyle = new TextStyle(this);
-		styleConfig = new TabConfig();
+		textStyle = new TextStyle();
+		tabConfig = new TabConfig();
 		graphics = new GraphicsBuffer();
 		graphics.setAutoClearBufferEnabled(true);
 		graphics.addBufferedView(new TextRenderer(this));
@@ -104,15 +104,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		cursorSearch = new CursorSearch(this);
 		stateConfig = new StateConfig();
 
-		textEditorModel.setOnTextChangedListener(() -> {
-			textMetricsPool.clearCache();
-			scrollManager.recalculateRanges();
-
-			if (onTextChangedListener != null) {
-				onTextChangedListener.action();
-			}
-		});
-
 		textStyle.setOnStyleChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
@@ -121,6 +112,19 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 				onStyleChangedListener.action();
 			}
 		});
+		
+		textEditorModel.setOnTextChangedListener(() -> {
+			textMetricsPool.clearCache();
+			scrollManager.recalculateRanges();
+
+			if (onTextChangedListener != null) {
+				onTextChangedListener.action();
+			}
+			
+			textStyle.onTextStyleChanged();
+		});
+
+		
 
 		onPress(() -> {
 			if (ctx.mouseButton == LEFT) {
@@ -216,7 +220,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * @return the current tab size
 	 */
 	public int getTabSize() {
-		return styleConfig.getTabSize();
+		return tabConfig.getTabSize();
 	}
 
 	/**
@@ -227,7 +231,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * @throws IllegalArgumentException if tabSize is not between 1 and 8
 	 */
 	public void setTabSize(int tabSize) {
-		styleConfig.setTabSize(tabSize);
+		tabConfig.setTabSize(tabSize);
 	}
 
 	/**
@@ -1021,16 +1025,13 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		private static final int DEFAULT_TEXT_SIZE = 12;
 		private static final int MIN_TEXT_SIZE = 4;
 
-		private final TextArea textArea;
-		
 		private AbstractColor textColor;
 		private PFont font;
 		private Listener onTextStyleChangedListener;
 		private int textSize;
 
-		public TextStyle(TextArea textArea) {
+		public TextStyle() {
 			super();
-			this.textArea = requireNonNull(textArea,"textArea");
 			
 			setTextColor(getTheme().getEditableTextColor());
 			setTextSize(DEFAULT_TEXT_SIZE);

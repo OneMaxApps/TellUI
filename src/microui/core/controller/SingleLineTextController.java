@@ -306,7 +306,7 @@ public final class SingleLineTextController {
 
 	private void notifyOnAfterStringInsert() {
 		if (onAfterStringInsertListener != null) {
-			onAfterCharInsertListener.action();
+			onAfterStringInsertListener.action();
 		}
 	}
 
