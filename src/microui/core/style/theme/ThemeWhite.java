@@ -6,12 +6,12 @@ import microui.core.style.LerpedColor;
 import microui.core.style.LerpedLoopColor;
 
 /**
- * Light theme implementation with a white/gray color scheme and gradient
+ * Light theme implementation with a white/gray color scheme and lerp
  * effects. Provides a clean, modern light theme with subtle animations and good
  * contrast for readability.
  * <p>
  * This theme uses a predominantly light color palette with dark text and
- * animated gradient effects for interactive elements. It is designed for good
+ * animated lerp effects for interactive elements. It is designed for good
  * readability and a modern aesthetic.
  * </p>
  * 
@@ -133,10 +133,10 @@ public class ThemeWhite extends AbstractTheme {
 	}
 
 	/**
-	 * Returns an animated gradient for tooltip backgrounds. Transitions from
+	 * Returns an animated lerp for tooltip backgrounds. Transitions from
 	 * transparent to very light gray.
 	 * 
-	 * @return gradient from transparent to very light gray with animation
+	 * @return lerp from transparent to very light gray with animation
 	 */
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
@@ -145,10 +145,10 @@ public class ThemeWhite extends AbstractTheme {
 	}
 
 	/**
-	 * Returns a complex animated gradient for tooltip text. Features nested
-	 * gradients with looping animation effects.
+	 * Returns a complex animated lerp for tooltip text. Features nested
+	 * lerps with looping animation effects.
 	 * 
-	 * @return multi-layer gradient with looping animation
+	 * @return multi-layer lerp with looping animation
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {

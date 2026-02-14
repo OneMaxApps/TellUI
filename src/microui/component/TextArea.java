@@ -120,8 +120,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			if (onTextChangedListener != null) {
 				onTextChangedListener.action();
 			}
-			
-			textStyle.onTextStyleChanged();
 		});
 
 		
@@ -483,6 +481,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		}
 
 		cursorSearch.updateState();
+		
 	}
 
 	/**
@@ -1067,6 +1066,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 			this.font = requireNonNull(font, "font");
 			onTextStyleChanged();
+
 		}
 
 		public int getTextSize() {
@@ -1083,8 +1083,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			}
 
 			this.textSize = textSize;
-			onTextStyleChanged();
 			
+			onTextStyleChanged();
+
 		}
 
 		public void onTextStyleChanged() {

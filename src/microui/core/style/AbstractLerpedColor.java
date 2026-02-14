@@ -136,12 +136,12 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		super.preApply();
 		animator.update();
 
-		if (getStart() instanceof AbstractLerpedColor gradient) {
-			gradient.preApply();
+		if (getStart() instanceof AbstractLerpedColor lerp) {
+			lerp.preApply();
 		}
 
-		if (getEnd() instanceof AbstractLerpedColor gradient) {
-			gradient.preApply();
+		if (getEnd() instanceof AbstractLerpedColor lerp) {
+			lerp.preApply();
 		}
 
 	}
@@ -279,7 +279,7 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		 */
 		public final void setProgress(float progress) {
 			if (progress < START_PROGRESS || progress > END_PROGRESS) {
-				throw new IllegalArgumentException("progress for gradient must be between 0 and 1");
+				throw new IllegalArgumentException("Progress for lerp must be between 0 and 1");
 			}
 			this.progress = progress;
 		}
