@@ -545,20 +545,37 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		RESPECT_CONSTRAINTS;
 	}
 	
-	// TODO write JavaDoc
+	/**
+	 * Entry the class for storing the data of content and layout parameters
+	 */
 	public static final class Entry {
 		private final ContentView contentView;
 		private final LayoutParams layoutParams;
 		
+		/**
+		 * Constructs of Entry
+		 * @param contentView is content for view
+		 * @param layoutParams is parameters for layout
+		 */
 		public Entry(ContentView contentView, LayoutParams layoutParams) {
 			this.contentView = requireNonNull(contentView, "contentView");
 			this.layoutParams = requireNonNull(layoutParams, "layoutParams");
 		}
 		
+		/**
+		 * Returns the contentView object
+		 * 
+		 * @return the current contentView object
+		 */
 		public ContentView contentView() {
 			return contentView;
 		}
 		
+		/**
+		 * Returns the LayoutParams object
+		 * 
+		 * @return the current LayoutParams object
+		 */
 		public LayoutParams layoutParams() {
 			return layoutParams;
 		}

@@ -42,7 +42,9 @@ public final class Hover extends View {
 	 */
 	public Hover(Component component) {
 		super();
-		setVisible(true);
+		final boolean launchedOnAndroid = System.getProperty("os.name").contains("Android") || System.getProperty("java.vendor").contains("Android");
+		
+		setVisible(!launchedOnAndroid);
 
 		color = getTheme().getHoverColor();
 
