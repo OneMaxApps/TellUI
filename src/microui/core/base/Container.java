@@ -544,28 +544,25 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		/** Respect component constraints during layout (default). */
 		RESPECT_CONSTRAINTS;
 	}
-
-	/**
-	 * Represents an entry in the container, pairing a ContentView with its layout
-	 * parameters. This is a record type providing immutable data storage.
-	 * 
-	 * @param contentView  the component (cannot be null)
-	 * @param layoutParams the layout parameters for the component (cannot be null)
-	 */
-	public static final record Entry(ContentView contentView, LayoutParams layoutParams) {
-
-		/**
-		 * Creates an Entry with validation.
-		 * 
-		 * @param contentView  the component to add
-		 * @param layoutParams the layout parameters for the component
-		 * @throws NullPointerException if contentView or layoutParams is null
-		 */
-		public Entry {
-			requireNonNull(contentView, "contentView");
-			requireNonNull(layoutParams, "layoutParams");
+	
+	// TODO write JavaDoc
+	public static final class Entry {
+		private final ContentView contentView;
+		private final LayoutParams layoutParams;
+		
+		public Entry(ContentView contentView, LayoutParams layoutParams) {
+			this.contentView = requireNonNull(contentView, "contentView");
+			this.layoutParams = requireNonNull(layoutParams, "layoutParams");
 		}
-
+		
+		public ContentView contentView() {
+			return contentView;
+		}
+		
+		public LayoutParams layoutParams() {
+			return layoutParams;
+		}
+		
 	}
 
 }
