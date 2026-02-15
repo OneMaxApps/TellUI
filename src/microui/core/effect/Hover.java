@@ -6,6 +6,7 @@ import static microui.core.style.theme.ThemeManager.getTheme;
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
+import microui.util.Environment;
 import microui.util.MathUtils;
 
 /**
@@ -42,9 +43,7 @@ public final class Hover extends View {
 	 */
 	public Hover(Component component) {
 		super();
-		final boolean launchedOnAndroid = System.getProperty("os.name").contains("Android") || System.getProperty("java.vendor").contains("Android");
-		
-		setVisible(!launchedOnAndroid);
+		setVisible(true);
 
 		color = getTheme().getHoverColor();
 
@@ -78,15 +77,18 @@ public final class Hover extends View {
 		ctx.noStroke();
 
 		if (component.isHover()) {
-			if (timer < timerMax) {
-				timer += speed;
+			if ((Environment.isAndroid() && component.isPressed()) || !Environment.isAndroid()) { 
+				if (timer < timerMax) {
+					timer += speed;
+				}
 			}
 		} else {
 			if (timer > 0) {
 				timer -= speed * 2;
 			}
 		}
-
+		
+		
 		if (component.isPressed()) {
 			ctx.fill(0, getAlpha());
 		} else {
@@ -95,6 +97,7 @@ public final class Hover extends View {
 
 		ctx.rect(component.getPadX(), component.getPadY(), component.getPadWidth(), component.getPadHeight());
 
+		
 	}
 
 	/**

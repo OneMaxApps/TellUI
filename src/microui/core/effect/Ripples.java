@@ -7,6 +7,7 @@ import static microui.core.style.theme.ThemeManager.getTheme;
 import microui.core.base.Component;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
+import microui.util.Environment;
 import microui.util.MathUtils;
 import microui.util.Metrics;
 import processing.core.PGraphics;
@@ -32,7 +33,7 @@ import processing.core.PGraphics;
 public final class Ripples extends View {
 	private final Animation animation;
 	private final Component component;
-	private boolean isEnabled, isLaunched;
+	private boolean enabled, launched;
 	private PGraphics pg;
 
 	/**
@@ -73,7 +74,7 @@ public final class Ripples extends View {
 	 * @return true if enabled, false if disabled
 	 */
 	public boolean isEnabled() {
-		return isEnabled;
+		return enabled;
 	}
 
 	/**
@@ -100,8 +101,8 @@ public final class Ripples extends View {
 	 * 
 	 * @param isEnabled true to enable the ripple effect, false to disable
 	 */
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	/**
@@ -110,7 +111,7 @@ public final class Ripples extends View {
 	 * @return true if a ripple is animating, false otherwise
 	 */
 	public boolean isLaunched() {
-		return isLaunched;
+		return launched;
 	}
 
 	/**
@@ -118,7 +119,7 @@ public final class Ripples extends View {
 	 * animation state and prepares the starting position.
 	 */
 	public void launch() {
-		isLaunched = true;
+		launched = true;
 		animation.resetState();
 		animation.preparePosition();
 	}
@@ -134,7 +135,13 @@ public final class Ripples extends View {
 		}
 
 		pg.beginDraw();
-		pg.clear();
+		
+		if(Environment.isAndroid()) {
+			pg.background(0,0);
+		} else {
+			pg.clear();
+		}
+		
 		pg.pushStyle();
 		animation.render(pg);
 		pg.popStyle();
@@ -156,12 +163,7 @@ public final class Ripples extends View {
 
 	private void initCallbackForComponent() {
 		component.onClick(() -> {
-			if (pg == null) {
-				createGraphics();
-				animation.recalculateMaxRadius();
-			}
-
-			if (isComponentResized()) {
+			if (pg == null || isComponentResized()) {
 				createGraphics();
 				animation.recalculateMaxRadius();
 			}
@@ -174,14 +176,14 @@ public final class Ripples extends View {
 		private AbstractColor color;
 		private float maxRadius;
 		private int startX, startY, radius;
-		private boolean isPositionPrepared;
+		private boolean positionPrepared;
 
 		Animation() {
 			color = getTheme().getRipplesColor();
 		}
 
 		void render(PGraphics pg) {
-			if (!isLaunched) {
+			if (!launched) {
 				return;
 			}
 
@@ -208,16 +210,16 @@ public final class Ripples extends View {
 		}
 
 		void preparePosition() {
-			if (!isPositionPrepared) {
+			if (!positionPrepared) {
 				startX = (int) (ctx.mouseX - component.getPadX());
 				startY = (int) (ctx.mouseY - component.getPadY());
-				isPositionPrepared = true;
+				positionPrepared = true;
 			}
 		}
 
 		void resetState() {
 			startX = startY = -1;
-			isPositionPrepared = false;
+			positionPrepared = false;
 			radius = 0;
 		}
 
@@ -227,7 +229,7 @@ public final class Ripples extends View {
 
 		void complete() {
 			resetState();
-			isLaunched = false;
+			launched = false;
 		}
 
 		float getSpeed() {

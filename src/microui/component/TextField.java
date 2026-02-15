@@ -1,6 +1,13 @@
 package microui.component;
 
-import static java.awt.event.KeyEvent.*;
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_C;
+import static java.awt.event.KeyEvent.VK_END;
+import static java.awt.event.KeyEvent.VK_HOME;
+import static java.awt.event.KeyEvent.VK_V;
+import static java.awt.event.KeyEvent.VK_X;
+import static java.awt.event.KeyEvent.VK_Y;
+import static java.awt.event.KeyEvent.VK_Z;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
