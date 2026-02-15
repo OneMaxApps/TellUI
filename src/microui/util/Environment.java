@@ -1,5 +1,8 @@
 package microui.util;
 
+/**
+ *  Environment class provides information about system
+ */
 public final class Environment {
 	private static final boolean isAndroid;
 	
@@ -11,6 +14,11 @@ public final class Environment {
 		
 	}
 	
+	/**
+	 * Returns environment information about OS
+	 * 
+	 * @return true if environment is Android, false if isn't
+	 */
 	public static boolean isAndroid() {
 		return isAndroid;
 	}
