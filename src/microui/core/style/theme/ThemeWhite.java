@@ -140,7 +140,7 @@ public class ThemeWhite extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new LerpedColor(new Color(232, 0), Color.GRAY_232L, () -> true);
+		return new LerpedColor(new Color(232, 0), Color.GRAY_232L, () -> true).setSpeed(.1f);
 
 	}
 
@@ -152,7 +152,7 @@ public class ThemeWhite extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.BLACK, new Color(0, 154)), () -> true);
+		return new LerpedColor(Color.TRANSPARENT, Color.BLACK, () -> true).setSpeed(.1f);
 	}
 
 	/**

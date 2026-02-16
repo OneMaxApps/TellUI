@@ -26,7 +26,7 @@ import microui.service.TooltipManager;
  */
 public final class Tooltip extends View {
 	private TooltipContent content;
-	private boolean isMustBeClosed;
+	private boolean mustBeClosed;
 
 	/**
 	 * Constructs a Tooltip associated with the specified component. Sets up event
@@ -43,17 +43,15 @@ public final class Tooltip extends View {
 		requireNonNull(component, "component");
 
 		component.onEnterLong(() -> {
-			if (content != null && content.isPreparedShow()) {
-				setVisible(true);
-			}
+			setVisible(content != null && content.isPreparedShow());
 		});
 
 		component.onLeave(() -> {
-			isMustBeClosed = true;
+			mustBeClosed = true;
 		});
 
 		component.onPress(() -> {
-			isMustBeClosed = true;
+			mustBeClosed = true;
 		});
 
 	}
@@ -63,9 +61,9 @@ public final class Tooltip extends View {
 	 * handle tooltip lifecycle.
 	 */
 	public void listen() {
-		if (isMustBeClosed && content != null && content.isPreparedClose()) {
+		if (mustBeClosed && content != null && content.isPreparedClose()) {
 			setVisible(false);
-			isMustBeClosed = false;
+			mustBeClosed = false;
 		}
 
 		if (isVisible()) {

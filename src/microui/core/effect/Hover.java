@@ -74,13 +74,13 @@ public final class Hover extends View {
 	 */
 	@Override
 	protected void render() {
+		final boolean onAndroid = Environment.isAndroid();
+		
 		ctx.noStroke();
 
-		if (component.isHover()) {
-			if ((Environment.isAndroid() && component.isPressed()) || !Environment.isAndroid()) { 
-				if (timer < timerMax) {
-					timer += speed;
-				}
+		if (component.isHover() && ((component.isPressed() && onAndroid) || !onAndroid)) {
+			if (timer < timerMax) {
+				timer += speed;
 			}
 		} else {
 			if (timer > 0) {
@@ -88,15 +88,19 @@ public final class Hover extends View {
 			}
 		}
 		
-		
-		if (component.isPressed()) {
-			ctx.fill(0, getAlpha());
-		} else {
+		if (onAndroid) {
 			ctx.fill(color.getRed(), color.getGreen(), color.getBlue(), getAlpha());
+		} else {
+			if (component.isPressed()) {
+				ctx.fill(0, getAlpha());
+			} else {
+				ctx.fill(color.getRed(), color.getGreen(), color.getBlue(), getAlpha());
+			}
 		}
-
-		ctx.rect(component.getPadX(), component.getPadY(), component.getPadWidth(), component.getPadHeight());
-
+		
+		if ((onAndroid && component.isPressed()) || !onAndroid) {
+			ctx.rect(component.getPadX(), component.getPadY(), component.getPadWidth(), component.getPadHeight());
+		}
 		
 	}
 

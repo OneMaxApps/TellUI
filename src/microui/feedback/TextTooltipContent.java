@@ -6,6 +6,7 @@ import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.TOP;
 
 import microui.core.style.AbstractColor;
+import microui.core.style.LerpedColor;
 
 /**
  * Tooltip content implementation that displays text with customizable styling.
@@ -134,6 +135,14 @@ public final class TextTooltipContent extends TooltipContent {
 	 */
 	@Override
 	public boolean isPreparedClose() {
+		if (backgroundColor instanceof LerpedColor l) {
+			l.resetAnimationProgress();
+		}
+		
+		if (textColor instanceof LerpedColor l) {
+			l.resetAnimationProgress();
+		}
+		
 		return true;
 	}
 

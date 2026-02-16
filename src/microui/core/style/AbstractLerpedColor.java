@@ -185,7 +185,7 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		private float progress, speed;
 		private boolean isStartEnabled, isLoopEnabled;
 
-		private static long lastUpdateTime;
+		private long lastUpdateTime;
 		
 
 		/**
