@@ -397,15 +397,17 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	/**
 	 * Changing mode of constraints
 	 */
-	public void respectConstraints() {
+	public Container respectConstraints() {
 		setMode(Mode.RESPECT_CONSTRAINTS);
+		return this;
 	}
 	
 	/**
 	 * Changing mode of constraints
 	 */
-	public void ignoreConstraints() {
+	public Container ignoreConstraints() {
 		setMode(Mode.IGNORE_CONSTRAINTS);
+		return this;
 	}
 	
 	/**

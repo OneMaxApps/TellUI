@@ -1,14 +1,13 @@
 package microui.component;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
-import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PApplet.dist;
 
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
+import microui.core.style.Color;
 import microui.util.MathUtils;
 import processing.event.MouseEvent;
 
@@ -25,14 +24,14 @@ import processing.event.MouseEvent;
  * 
  * @see RangeControl
  */
+// TODO add JavaDoc for all public methods
 public final class Knob extends RangeControl {
-	private static final float START = 0;
-
-	private static final float END = (float) (PI * 2);
-
+	private static final float START = (float) PI/8;
+	private static final float END = (float) (PI * 2 - PI/8);
+	private static final int MIN_INDICATOR_WEIGHT = 1;
 	private AbstractColor indicatorColor;
-	private float centerX, centerY, diameter;
-	private boolean isCanDrag;
+	private float centerX, centerY, diameter, indicatorWeight;
+	private boolean canDrag;
 
 	/**
 	 * Constructs a Knob with specified position and dimensions. The knob is
@@ -48,13 +47,16 @@ public final class Knob extends RangeControl {
 		super(x, y, width, height);
 		setMinMaxSize(10, 50);
 
-		indicatorColor = getTheme().getPrimaryColor();
+		indicatorColor = new Color(0,200,0);
 
 		onDragging(() -> {
 			if (isMouseInDiameter()) {
-				isCanDrag = true;
+				canDrag = true;
 			}
 		});
+		
+		recalculateDiameter();
+		setIndicatorWeight(diameter);
 	}
 
 	/**
@@ -98,6 +100,17 @@ public final class Knob extends RangeControl {
 	public void setIndicatorColor(AbstractColor indicatorColor) {
 		this.indicatorColor = requireNonNull(indicatorColor, "indicatorColor");
 	}
+	
+	public float getIndicatorWeight() {
+		return indicatorWeight;
+	}
+
+	public void setIndicatorWeight(float indicatorWeight) {
+		if(indicatorWeight < MIN_INDICATOR_WEIGHT) {
+			throw new IllegalArgumentException("Indicator weight for Knob must be greater than " + MIN_INDICATOR_WEIGHT);
+		}
+		this.indicatorWeight = indicatorWeight;
+	}
 
 	/**
 	 * Renders the knob and handles user interaction. The rendering includes:
@@ -110,17 +123,13 @@ public final class Knob extends RangeControl {
 	 */
 	@Override
 	protected void render() {
-		getMutableStroke().apply();
-		getBackgroundColor().apply();
-		ctx.ellipse(centerX, centerY, diameter, diameter);
-
 		indicatorOnDraw();
 
 		if (!ctx.mousePressed) {
-			isCanDrag = false;
+			canDrag = false;
 		}
 
-		if (isCanDrag) {
+		if (canDrag) {
 			getMutableValue().append(ctx.pmouseY - ctx.mouseY);
 		}
 
@@ -157,23 +166,17 @@ public final class Knob extends RangeControl {
 		ctx.translate(centerX, centerY);
 		ctx.rotate((float) PI / 2);
 		ctx.noFill();
-		ctx.strokeWeight(getIndicatorWeight());
+		ctx.strokeWeight(indicatorWeight);
 
-		indicatorColor.apply();
+		getBackgroundColor().applyStroke();
 		ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, END);
 
 		indicatorColor.applyStroke();
 		ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, MathUtils.convert(getMutableValue().get(),
 				getMutableValue().getMin(), getMutableValue().getMax(), START, END));
 
-		if (getMutableValue().get() == getMutableValue().getMax()) {
-			ctx.ellipse(0, 0, diameter / 4, diameter / 4);
-		}
-
 		ctx.pop();
 	}
 
-	private float getIndicatorWeight() {
-		return diameter * .1f + abs(getMutableScrolling().get() * 2);
-	}
+	
 }
