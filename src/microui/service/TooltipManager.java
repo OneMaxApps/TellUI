@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import microui.core.base.View;
 import microui.feedback.Tooltip;
+import microui.util.Environment;
 import microui.util.MathUtils;
 
 /**
@@ -19,7 +20,7 @@ import microui.util.MathUtils;
  * Status: STABLE - Do not modify
  * </p>
  * <p>
- * Last Reviewed: 21.10.2025
+ * Last Reviewed: 24.02.2026
  * </p>
  */
 public final class TooltipManager extends View {
@@ -61,6 +62,10 @@ public final class TooltipManager extends View {
 	 */
 	@Override
 	protected void render() {
+		if (Environment.isAndroid()) {
+			return;
+		}
+			
 		if (tooltip != null) {
 			tooltip.getContent().setAbsolutePosition(getCorrectPositionX(), getCorrectPositionY());
 			tooltip.draw();

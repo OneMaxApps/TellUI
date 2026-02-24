@@ -394,6 +394,43 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		image.setColor(color);
 	}
 
+	/**
+	 * Changing mode of constraints
+	 */
+	public void respectConstraints() {
+		setMode(Mode.RESPECT_CONSTRAINTS);
+	}
+	
+	/**
+	 * Changing mode of constraints
+	 */
+	public void ignoreConstraints() {
+		setMode(Mode.IGNORE_CONSTRAINTS);
+	}
+	
+	/**
+	 * Checking mode of constraints
+	 * @return true if respect constraints, false if isn't
+	 */
+	public boolean isRespectConstraints() {
+		return getMode() == Mode.RESPECT_CONSTRAINTS;
+	}
+	
+	/**
+	 * Checking mode of constraints
+	 * @return true if ignore constraints, false if isn't
+	 */
+	public boolean isIgnoreConstraints() {
+		return getMode() == Mode.IGNORE_CONSTRAINTS;
+	}
+	
+	/**
+	 * Changing mode of constraints on other
+	 */
+	public void toggleConstraintsMode() {
+		setMode(isRespectConstraints() ?  Mode.IGNORE_CONSTRAINTS : Mode.RESPECT_CONSTRAINTS);
+	}
+	
 	@Override
 	protected void render() {
 		backgroundOnDraw();

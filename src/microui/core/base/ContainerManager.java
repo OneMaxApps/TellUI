@@ -4,8 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
-import static microui.util.Debugger.getAdditionalInfo;
-import static microui.util.Debugger.isHotKeySwitchEnabled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +91,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			throw new RenderException("Cannot call draw() manually. set FLEXIBLE render mode first");
 		}
 		super.draw();
-		debugOnDraw();
+		Debugger.draw();
 
 	}
 
@@ -136,7 +134,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		if (keyEvent.getAction() == KeyEvent.PRESS) {
 
-			if (isHotKeySwitchEnabled()) {
+			if (Debugger.isHotKeyEnabled()) {
 				if (keyEvent.isAltDown()) {
 					Debugger.setEnabled(!Debugger.isEnabled());
 				}
@@ -650,16 +648,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	private void removeInternal(String textId) {
 		removeInternal(getByTextId(textId));
-	}
-
-	private void debugOnDraw() {
-		if (Debugger.isEnabled()) {
-			ctx.push();
-			ctx.fill(255);
-			ctx.textSize(24);
-			ctx.text("fps: " + (int) ctx.frameRate + "\n" + getAdditionalInfo(), 10, 24);
-			ctx.pop();
-		}
 	}
 
 	private static final class Animator extends View {

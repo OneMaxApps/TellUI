@@ -99,7 +99,7 @@ public final class Ripples extends View {
 	/**
 	 * Enables or disables the ripple effect.
 	 * 
-	 * @param isEnabled true to enable the ripple effect, false to disable
+	 * @param enabled true to enable the ripple effect, false to disable
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
