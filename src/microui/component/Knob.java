@@ -18,12 +18,13 @@ public final class Knob extends RangeControl {
 	private static final float MIN_SCALE_WEIGHT_RATIO = 0f;
 	private static final float MAX_SCALE_WEIGHT_RATIO = 2f;
 	
-	private AbstractColor scaleStartColor,scaleEndColor;
+	private AbstractColor scaleStartColor,scaleEndColor, handleColor;
 	private float scaleWeightRatio;
 	
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
-	private boolean mustDragging;
+	private float defaultValue;
+	private boolean mustDragging, defaultValueInitialized;
 	
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -33,6 +34,8 @@ public final class Knob extends RangeControl {
 		
 		setScaleStartColor(new Color(0,255,0,200));
 		setScaleEndColor(new Color(255,128,0,200));
+		setHandleColor(new Color(128,128));
+		
 		setScaleWeightRatio(DEFAULT_SCALE_WEIGHT_RATIO);
 		
 		onDragStart(() -> {
@@ -41,6 +44,12 @@ public final class Knob extends RangeControl {
 		
 		onRelease(() -> {
 			mustDragging = false;
+		});
+		
+		onDoubleClick(() -> {
+			if (mouseInsideCircle()) {
+				setDefaultValue();
+			}
 		});
 	}
 	
@@ -53,6 +62,20 @@ public final class Knob extends RangeControl {
 		setPosition(x,y);
 	}
 	
+	public float getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(float defaultValue) {
+		if (defaultValue < getMinValue() || defaultValue > getMaxValue()) {
+			throw new IllegalArgumentException(String.format("Default value must be between min(%f) and max(%f) value",getMinValue(),getMaxValue()));
+		}
+		
+		defaultValueInitialized = true;
+		
+		this.defaultValue = defaultValue;
+	}
+
 	public float getScaleWeightRatio() {
 		return scaleWeightRatio;
 	}
@@ -80,6 +103,14 @@ public final class Knob extends RangeControl {
 		this.scaleEndColor = requireNonNull(scaleEndColor,"scaleEndColor");
 	}
 	
+	public AbstractColor getHandleColor() {
+		return handleColor;
+	}
+
+	public void setHandleColor(AbstractColor handleColor) {
+		this.handleColor = requireNonNull(handleColor,"handleColor");
+	}
+
 	public void setScaleColor(AbstractColor solidColor) {
 		setScaleStartColor(solidColor);
 		setScaleEndColor(solidColor);
@@ -133,9 +164,37 @@ public final class Knob extends RangeControl {
 	protected void render() {
 		getInternalStroke().apply();
 		getBackgroundColor().apply();
-		
 		ctx.ellipse(cachedCenterX,cachedCenterY,cachedSize,cachedSize);
 		
+		scaleOnRender();
+		handleOnRender();
+		
+		getInternalValue().append(getInternalScrolling().get());
+		
+		if (mustDragging) {
+			appendValue((ctx.pmouseY-ctx.mouseY) * dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) * .001f);
+		}
+	}
+	
+	@Override
+	protected void onChangeBounds() {
+		super.onChangeBounds();
+		
+		cachedCenterX = getX() + getWidth()/2;
+		cachedCenterY = getY() + getHeight()/2;
+		
+		cachedSize = Math.min(getWidth(),getHeight());
+	}
+
+	private boolean mouseInsideCircle() {
+		return dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) < cachedSize/2;
+	}
+	
+	private float mapFromValue(float start, float end) {
+		return convert(getValue(),getMinValue(), getMaxValue(),start, end);
+	}
+	
+	private void scaleOnRender() {
 		ctx.pushMatrix();
 		ctx.translate(cachedCenterX,cachedCenterY);
 		ctx.rotate(HALF_PI);
@@ -150,34 +209,23 @@ public final class Knob extends RangeControl {
 		
 		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, convert(getValue(),getMinValue(), getMaxValue(), startAngle, endAngle));
 		ctx.popMatrix();
-		
-		getInternalValue().append(getInternalScrolling().get());
-		
-		if (mustDragging) {
-			appendValue(ctx.pmouseY-ctx.mouseY);
-		}
-	}
-
-	@Override
-	protected void onChangePosition() {
-		super.onChangePosition();
-		
-		cachedCenterX = getX() + getWidth()/2;
-		cachedCenterY = getY() + getHeight()/2;
-	}
-
-	@Override
-	protected void onChangeDimensions() {
-		super.onChangeDimensions();
-		
-		cachedSize = Math.min(getWidth(),getHeight());
-	}
-
-	private boolean mouseInsideCircle() {
-		return dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) < cachedSize/2;
 	}
 	
-	private float mapFromValue(float start, float end) {
-		return convert(getValue(),getMinValue(), getMaxValue(),start, end);
+	private void handleOnRender() {
+		ctx.pushMatrix();
+		ctx.translate(cachedCenterX,cachedCenterY);
+		ctx.rotate(HALF_PI + mapFromValue(startAngle, endAngle));
+		ctx.noStroke();
+		handleColor.apply();
+		ctx.ellipse(cachedSize*.3f, 0, cachedSize * .2f, cachedSize * .2f);
+		ctx.popMatrix();
+	}
+	
+	private void setDefaultValue() {
+		if (!defaultValueInitialized) {
+			return;
+		}
+		
+		setValue(defaultValue);
 	}
 }
