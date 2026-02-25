@@ -147,7 +147,7 @@ public abstract class RangeControl extends Component implements Scrollable {
 	 *
 	 * @param weight the stroke weight to set
 	 */
-	public final void setStrokeWeight(int weight) {
+	public final void setStrokeWeight(float weight) {
 		stroke.setWeight(weight);
 	}
 

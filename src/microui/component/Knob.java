@@ -17,12 +17,15 @@ public final class Knob extends RangeControl {
 	private static final float DEFAULT_SCALE_WEIGHT_RATIO = 1f;
 	private static final float MIN_SCALE_WEIGHT_RATIO = 0f;
 	private static final float MAX_SCALE_WEIGHT_RATIO = 2f;
+	private static final float SCALE_START_WEIGHT = .05f;
+	private static final float SCALE_END_WEIGHT = .1f;		
 	private static final float DEFAULT_HANDLE_SIZE_RATIO = .2f;
 	private static final float DEFAULT_HANDLE_OFFSET_RATIO = .3f;
 	private static final float MIN_HANDLE_SIZE_RATIO = .1f;
 	private static final float MAX_HANDLE_SIZE_RATIO = 1f;
 	private static final float MIN_HANDLE_OFFSET_RATIO = 0f;
 	private static final float MAX_HANDLE_OFFSET_RATIO = .4f;
+	private static final float MAX_DRAGGING_DIST = dist(0,0,ctx.width,ctx.height);
 	
 	private AbstractColor scaleStartColor,scaleEndColor, handleColor;
 	private float scaleWeightRatio;
@@ -31,7 +34,7 @@ public final class Knob extends RangeControl {
 	private float cachedCenterX, cachedCenterY, cachedSize;
 	private float defaultValue;
 	private float handleOffsetRatio, handleSizeRatio;
-	private boolean mustDragging, defaultValueInitialized;
+	private boolean draggableState, defaultValueInitialized;
 	
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
@@ -49,11 +52,11 @@ public final class Knob extends RangeControl {
 		setScaleWeightRatio(DEFAULT_SCALE_WEIGHT_RATIO);
 		
 		onDragStart(() -> {
-			mustDragging = mouseInsideCircle();
+			draggableState = mouseInsideCircle();
 		});
 		
 		onRelease(() -> {
-			mustDragging = false;
+			draggableState = false;
 		});
 		
 		onDoubleClick(() -> {
@@ -205,14 +208,19 @@ public final class Knob extends RangeControl {
 		
 		getInternalValue().append(getInternalScrolling().get());
 		
-		if (mustDragging) {
-			if (mouseInsideCircle()) {
-				appendValue(ctx.pmouseY-ctx.mouseY);
+		if (draggableState) {
+			final float dist = dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY);
+			final float mouseVerticalDist = ctx.pmouseY-ctx.mouseY;
+			final boolean mouseDirectionUp = ctx.mouseY < ctx.pmouseY;
+			float value;
+			
+			if (mouseDirectionUp) {
+				value = Math.max(.1f,mouseVerticalDist * convert(dist, 0, MAX_DRAGGING_DIST, 1, .01f));
 			} else {
-				appendValue((ctx.pmouseY-ctx.mouseY) / (dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) * .01f));
+				value = Math.min(-.1f,mouseVerticalDist * convert(dist, 0, MAX_DRAGGING_DIST, 1, .01f));
 			}
 			
-		
+			appendValue(value);
 		}
 	}
 	
@@ -244,7 +252,7 @@ public final class Knob extends RangeControl {
 				  ,mapFromValue(scaleStartColor.getBlue(),scaleEndColor.getBlue())
 				  ,mapFromValue(scaleStartColor.getAlpha(),scaleEndColor.getAlpha()));
 		
-		final float sw = mapFromValue(cachedSize * .05f, cachedSize * .1f) * scaleWeightRatio;
+		final float sw = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio;
 		ctx.strokeWeight(sw);
 		
 		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, convert(getValue(),getMinValue(), getMaxValue(), startAngle, endAngle));
