@@ -17,6 +17,12 @@ public final class Knob extends RangeControl {
 	private static final float DEFAULT_SCALE_WEIGHT_RATIO = 1f;
 	private static final float MIN_SCALE_WEIGHT_RATIO = 0f;
 	private static final float MAX_SCALE_WEIGHT_RATIO = 2f;
+	private static final float DEFAULT_HANDLE_SIZE_RATIO = .2f;
+	private static final float DEFAULT_HANDLE_OFFSET_RATIO = .3f;
+	private static final float MIN_HANDLE_SIZE_RATIO = .1f;
+	private static final float MAX_HANDLE_SIZE_RATIO = 1f;
+	private static final float MIN_HANDLE_OFFSET_RATIO = 0f;
+	private static final float MAX_HANDLE_OFFSET_RATIO = .4f;
 	
 	private AbstractColor scaleStartColor,scaleEndColor, handleColor;
 	private float scaleWeightRatio;
@@ -24,6 +30,7 @@ public final class Knob extends RangeControl {
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
 	private float defaultValue;
+	private float handleOffsetRatio, handleSizeRatio;
 	private boolean mustDragging, defaultValueInitialized;
 	
 	public Knob(float x, float y, float width, float height) {
@@ -35,6 +42,9 @@ public final class Knob extends RangeControl {
 		setScaleStartColor(new Color(0,255,0,200));
 		setScaleEndColor(new Color(255,128,0,200));
 		setHandleColor(new Color(128,128));
+		
+		setHandleSizeRatio(DEFAULT_HANDLE_SIZE_RATIO);
+		setHandleOffsetRatio(DEFAULT_HANDLE_OFFSET_RATIO);
 		
 		setScaleWeightRatio(DEFAULT_SCALE_WEIGHT_RATIO);
 		
@@ -62,6 +72,30 @@ public final class Knob extends RangeControl {
 		setPosition(x,y);
 	}
 	
+	public float getHandleOffsetRatio() {
+		return handleOffsetRatio;
+	}
+
+	public void setHandleOffsetRatio(float handleOffsetRatio) {
+		if (handleOffsetRatio < MIN_HANDLE_OFFSET_RATIO || handleOffsetRatio > MAX_HANDLE_OFFSET_RATIO) {
+			throw new IllegalArgumentException(String.format("Handle offset ratio must be between min(%f) and max(%f) value",MIN_HANDLE_OFFSET_RATIO,MAX_HANDLE_OFFSET_RATIO));
+		}
+		
+		this.handleOffsetRatio = handleOffsetRatio;
+	}
+
+	public float getHandleSizeRatio() {
+		return handleSizeRatio;
+	}
+
+	public void setHandleSizeRatio(float handleSizeRatio) {
+		if (handleSizeRatio < MIN_HANDLE_SIZE_RATIO || handleSizeRatio > MAX_HANDLE_SIZE_RATIO) {
+			throw new IllegalArgumentException(String.format("Handle size ratio must be between min(%f) and max(%f) value",MIN_HANDLE_SIZE_RATIO,MAX_HANDLE_SIZE_RATIO));
+		}
+		
+		this.handleSizeRatio = handleSizeRatio;
+	}
+
 	public float getDefaultValue() {
 		return defaultValue;
 	}
@@ -172,7 +206,13 @@ public final class Knob extends RangeControl {
 		getInternalValue().append(getInternalScrolling().get());
 		
 		if (mustDragging) {
-			appendValue((ctx.pmouseY-ctx.mouseY) * dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) * .001f);
+			if (mouseInsideCircle()) {
+				appendValue(ctx.pmouseY-ctx.mouseY);
+			} else {
+				appendValue((ctx.pmouseY-ctx.mouseY) / (dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) * .01f));
+			}
+			
+		
 		}
 	}
 	
@@ -217,7 +257,8 @@ public final class Knob extends RangeControl {
 		ctx.rotate(HALF_PI + mapFromValue(startAngle, endAngle));
 		ctx.noStroke();
 		handleColor.apply();
-		ctx.ellipse(cachedSize*.3f, 0, cachedSize * .2f, cachedSize * .2f);
+		ctx.ellipse(cachedSize*handleOffsetRatio, 0, cachedSize * handleSizeRatio, cachedSize * handleSizeRatio);
+		
 		ctx.popMatrix();
 	}
 	
