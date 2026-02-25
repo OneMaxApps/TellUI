@@ -31,7 +31,7 @@ public abstract class LinearRangeControl extends RangeControl {
 		super(x, y, width, height);
 		setMinMaxSize(10, 20, 200, 20);
 
-		getMutableValue().setOnChangeValueListener(() -> requestUpdate());
+		getInternalValue().setOnChangeValueListener(() -> requestUpdate());
 
 		onPress(() -> valueChangeEnd = true);
 
@@ -47,8 +47,8 @@ public abstract class LinearRangeControl extends RangeControl {
 	@Override
 	public void mouseWheel(MouseEvent event) {
 		if (isHover()) {
-			getMutableScrolling().init(event);
-			getMutableValue().append(getMutableScrolling().get());
+			getInternalScrolling().init(event);
+			getInternalValue().append(getInternalScrolling().get());
 		}
 
 		onChangeValue();
@@ -64,8 +64,8 @@ public abstract class LinearRangeControl extends RangeControl {
 	 */
 	public void mouseWheel(MouseEvent event, boolean additionalCondition) {
 		if (isEnter() || additionalCondition) {
-			getMutableScrolling().init(event);
-			getMutableValue().append(getMutableScrolling().get());
+			getInternalScrolling().init(event);
+			getInternalValue().append(getInternalScrolling().get());
 		}
 		onChangeValue();
 	}
@@ -171,13 +171,13 @@ public abstract class LinearRangeControl extends RangeControl {
 	@Override
 	protected void render() {
 		ctx.pushStyle();
-		getMutableStroke().apply();
+		getInternalStroke().apply();
 		getBackgroundColor().apply();
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		ctx.popStyle();
 
-		if (getMutableScrolling().isScrolling()) {
-			getMutableValue().append(getMutableScrolling().get());
+		if (getInternalScrolling().isScrolling()) {
+			getInternalValue().append(getInternalScrolling().get());
 			onChangeValue();
 			valueChangeEnd = true;
 			if (!ctx.mousePressed && !valueChangeStart) {
@@ -189,7 +189,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			}
 		}
 
-		if (!ctx.mousePressed && valueChangeEnd && !getMutableScrolling().isScrolling()) {
+		if (!ctx.mousePressed && valueChangeEnd && !getInternalScrolling().isScrolling()) {
 			onEndChangeValue();
 			valueChangeEnd = false;
 		}
@@ -232,7 +232,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 * value. Also triggers the change value notification.
 	 */
 	protected final void autoScroll() {
-		getMutableValue().append(getMutableScrolling().get());
+		getInternalValue().append(getInternalScrolling().get());
 		onChangeValue();
 	}
 }

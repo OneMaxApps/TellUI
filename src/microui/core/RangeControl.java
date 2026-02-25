@@ -190,29 +190,29 @@ public abstract class RangeControl extends Component implements Scrollable {
 	}
 
 	/**
-	 * Gets the mutable BoundedValue instance for internal manipulation.
+	 * Gets the internal BoundedValue instance for internal manipulation.
 	 *
 	 * @return the internal BoundedValue instance
 	 */
-	protected final BoundedValue getMutableValue() {
+	protected final BoundedValue getInternalValue() {
 		return value;
 	}
 
 	/**
-	 * Gets the mutable Scrolling instance for internal manipulation.
+	 * Gets the internal Scrolling instance for internal manipulation.
 	 *
 	 * @return the internal Scrolling instance
 	 */
-	protected final Scrolling getMutableScrolling() {
+	protected final Scrolling getInternalScrolling() {
 		return scrolling;
 	}
 
 	/**
-	 * Gets the mutable Stroke instance for internal manipulation.
+	 * Gets the internal Stroke instance for internal manipulation.
 	 *
 	 * @return the internal Stroke instance
 	 */
-	protected final Stroke getMutableStroke() {
+	protected final Stroke getInternalStroke() {
 		return stroke;
 	}
 

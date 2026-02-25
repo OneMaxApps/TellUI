@@ -1,182 +1,183 @@
 package microui.component;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
+import static microui.util.MathUtils.convert;
 import static processing.core.PApplet.dist;
+import static processing.core.PConstants.HALF_PI;
+import static processing.core.PConstants.TWO_PI;
 
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.util.MathUtils;
 import processing.event.MouseEvent;
 
-/**
- * A circular knob control for selecting values within a range. The Knob
- * component allows users to adjust a numeric value by dragging the knob or
- * using mouse wheel scrolling. It provides visual feedback through an arc
- * indicator that shows the current value.
- * 
- * <p>
- * The knob is circular and responds to mouse dragging within its diameter as
- * well as mouse wheel events when hovered.
- * </p>
- * 
- * @see RangeControl
- */
-// TODO add JavaDoc for all public methods
 public final class Knob extends RangeControl {
-	private static final float START = (float) PI/8;
-	private static final float END = (float) (PI * 2 - PI/8);
-	private static final int MIN_INDICATOR_WEIGHT = 1;
-	private AbstractColor indicatorColor;
-	private float centerX, centerY, diameter, indicatorWeight;
-	private boolean canDrag;
-
-	/**
-	 * Constructs a Knob with specified position and dimensions. The knob is
-	 * initialized with the theme's primary color for the indicator and
-	 * minimum/maximum sizes of 10 and 50 pixels respectively.
-	 *
-	 * @param x      the x-coordinate of the knob's bounding box
-	 * @param y      the y-coordinate of the knob's bounding box
-	 * @param width  the width of the knob's bounding box
-	 * @param height the height of the knob's bounding box
-	 */
+	private static final float DEFAULT_START_ANGLE = HALF_PI/2;
+	private static final float DEFAULT_END_ANGLE = TWO_PI - HALF_PI / 2;
+	private static final float DEFAULT_SCALE_WEIGHT_RATIO = 1f;
+	private static final float MIN_SCALE_WEIGHT_RATIO = 0f;
+	private static final float MAX_SCALE_WEIGHT_RATIO = 2f;
+	
+	private AbstractColor scaleStartColor,scaleEndColor;
+	private float scaleWeightRatio;
+	
+	private float startAngle, endAngle;
+	private float cachedCenterX, cachedCenterY, cachedSize;
+	private boolean mustDragging;
+	
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
-		setMinMaxSize(10, 50);
-
-		indicatorColor = new Color(0,200,0);
-
-		onDragging(() -> {
-			if (isMouseInDiameter()) {
-				canDrag = true;
-			}
+		
+		startAngle = DEFAULT_START_ANGLE;
+		endAngle = DEFAULT_END_ANGLE;
+		
+		setScaleStartColor(new Color(0,255,0,200));
+		setScaleEndColor(new Color(255,128,0,200));
+		setScaleWeightRatio(DEFAULT_SCALE_WEIGHT_RATIO);
+		
+		onDragStart(() -> {
+			mustDragging = mouseInsideCircle();
 		});
 		
-		recalculateDiameter();
-		setIndicatorWeight(diameter);
+		onRelease(() -> {
+			mustDragging = false;
+		});
 	}
-
-	/**
-	 * Constructs a Knob with default maximum size, centered on the screen. This is
-	 * a convenience constructor for creating a centered knob.
-	 */
+	
 	public Knob() {
-		this(0, 0, 0, 0);
-		setSize(getMaxWidth(), getMaxHeight());
-		setPosition(ctx.width / 2 - getMaxWidth() / 2, ctx.height / 2 - getMaxHeight() / 2);
+		this(0,0,0,0);
+		
+		final float x = ctx.width / 2 - getWidth() / 2;
+		final float y = ctx.height / 2 - getHeight() / 2;
+		
+		setPosition(x,y);
+	}
+	
+	public float getScaleWeightRatio() {
+		return scaleWeightRatio;
 	}
 
-	/**
-	 * Handles mouse wheel events when the mouse is within the knob's diameter. The
-	 * scrolling delta is captured for value adjustment.
-	 *
-	 * @param mouseEvent the mouse wheel event
-	 */
+	public void setScaleWeightRatio(float scaleWeightRatio) {
+		if (scaleWeightRatio < MIN_SCALE_WEIGHT_RATIO || scaleWeightRatio > MAX_SCALE_WEIGHT_RATIO) {
+			throw new IllegalArgumentException("Scale weight ratio must be between " + MIN_SCALE_WEIGHT_RATIO + " and " + MAX_SCALE_WEIGHT_RATIO);
+		}
+		this.scaleWeightRatio = scaleWeightRatio;
+	}
+
+	public AbstractColor getScaleStartColor() {
+		return scaleStartColor;
+	}
+
+	public void setScaleStartColor(AbstractColor scaleStartColor) {
+		this.scaleStartColor = requireNonNull(scaleStartColor,"scaleStartColor");
+	}
+
+	public AbstractColor getScaleEndColor() {
+		return scaleEndColor;
+	}
+
+	public void setScaleEndColor(AbstractColor scaleEndColor) {
+		this.scaleEndColor = requireNonNull(scaleEndColor,"scaleEndColor");
+	}
+	
+	public void setScaleColor(AbstractColor solidColor) {
+		setScaleStartColor(solidColor);
+		setScaleEndColor(solidColor);
+	}
+	
+	public void setScaleColor(AbstractColor scaleStartColor, AbstractColor scaleEndColor) {
+		setScaleStartColor(scaleStartColor);
+		setScaleEndColor(scaleEndColor);
+	}
+
+	public float getStartAngle() {
+		return startAngle;
+	}
+
+	public void setStartAngle(float startAngle) {
+		if (startAngle < 0 || startAngle > TWO_PI) {
+			throw new IllegalArgumentException("Start angle must be between 0 and " + TWO_PI);
+		}
+		
+		if (startAngle > endAngle) {
+			throw new IllegalArgumentException("Start angle cannot be greater than end angle");
+		}
+		
+		this.startAngle = startAngle;
+	}
+
+	public float getEndAngle() {
+		return endAngle;
+	}
+
+	public void setEndAngle(float endAngle) {
+		if (endAngle < 0 || endAngle > TWO_PI) {
+			throw new IllegalArgumentException("End angle must be between 0 and " + TWO_PI);
+		}
+		
+		if (endAngle < startAngle) {
+			throw new IllegalArgumentException("End angle cannot be lower than start angle");
+		}
+		
+		this.endAngle = endAngle;
+	}
+
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
-		if (isMouseInDiameter()) {
-			getMutableScrolling().init(mouseEvent);
+		if (mouseInsideCircle()) {
+			getInternalScrolling().init(mouseEvent);
 		}
-	}
-
-	/**
-	 * Gets the color used for the indicator arc.
-	 *
-	 * @return the current indicator color
-	 */
-	public AbstractColor getIndicatorColor() {
-		return indicatorColor;
-	}
-
-	/**
-	 * Sets the color used for the indicator arc.
-	 *
-	 * @param indicatorColor the color to use for the indicator
-	 * @throws NullPointerException if indicatorColor is null
-	 */
-	public void setIndicatorColor(AbstractColor indicatorColor) {
-		this.indicatorColor = requireNonNull(indicatorColor, "indicatorColor");
 	}
 	
-	public float getIndicatorWeight() {
-		return indicatorWeight;
-	}
-
-	public void setIndicatorWeight(float indicatorWeight) {
-		if(indicatorWeight < MIN_INDICATOR_WEIGHT) {
-			throw new IllegalArgumentException("Indicator weight for Knob must be greater than " + MIN_INDICATOR_WEIGHT);
-		}
-		this.indicatorWeight = indicatorWeight;
-	}
-
-	/**
-	 * Renders the knob and handles user interaction. The rendering includes:
-	 * <ol>
-	 * <li>The circular background</li>
-	 * <li>The arc indicator showing the current value</li>
-	 * <li>Interaction state updates</li>
-	 * <li>Value updates based on dragging or scrolling</li>
-	 * </ol>
-	 */
 	@Override
 	protected void render() {
-		indicatorOnDraw();
-
-		if (!ctx.mousePressed) {
-			canDrag = false;
+		getInternalStroke().apply();
+		getBackgroundColor().apply();
+		
+		ctx.ellipse(cachedCenterX,cachedCenterY,cachedSize,cachedSize);
+		
+		ctx.pushMatrix();
+		ctx.translate(cachedCenterX,cachedCenterY);
+		ctx.rotate(HALF_PI);
+		
+		ctx.stroke(mapFromValue(scaleStartColor.getRed(),scaleEndColor.getRed())
+				  ,mapFromValue(scaleStartColor.getGreen(),scaleEndColor.getGreen())
+				  ,mapFromValue(scaleStartColor.getBlue(),scaleEndColor.getBlue())
+				  ,mapFromValue(scaleStartColor.getAlpha(),scaleEndColor.getAlpha()));
+		
+		final float sw = mapFromValue(cachedSize * .05f, cachedSize * .1f) * scaleWeightRatio;
+		ctx.strokeWeight(sw);
+		
+		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, convert(getValue(),getMinValue(), getMaxValue(), startAngle, endAngle));
+		ctx.popMatrix();
+		
+		getInternalValue().append(getInternalScrolling().get());
+		
+		if (mustDragging) {
+			appendValue(ctx.pmouseY-ctx.mouseY);
 		}
-
-		if (canDrag) {
-			getMutableValue().append(ctx.pmouseY - ctx.mouseY);
-		}
-
-		getMutableValue().append(getMutableScrolling().get());
 	}
 
-	/**
-	 * Called when the knob's bounds change. Recalculates the center point and
-	 * diameter based on the new bounds.
-	 */
 	@Override
-	protected void onChangeBounds() {
-		super.onChangeBounds();
-		recalculateCenter();
-		recalculateDiameter();
+	protected void onChangePosition() {
+		super.onChangePosition();
+		
+		cachedCenterX = getX() + getWidth()/2;
+		cachedCenterY = getY() + getHeight()/2;
 	}
 
-	private void recalculateCenter() {
-		centerX = getX() + getWidth() / 2;
-		centerY = getY() + getHeight() / 2;
+	@Override
+	protected void onChangeDimensions() {
+		super.onChangeDimensions();
+		
+		cachedSize = Math.min(getWidth(),getHeight());
 	}
 
-	private void recalculateDiameter() {
-		diameter = min(getWidth(), getHeight());
+	private boolean mouseInsideCircle() {
+		return dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY) < cachedSize/2;
 	}
-
-	private boolean isMouseInDiameter() {
-		return dist(centerX, centerY, ctx.mouseX, ctx.mouseY) < diameter / 2;
-	}
-
-	private void indicatorOnDraw() {
-		ctx.push();
-
-		ctx.translate(centerX, centerY);
-		ctx.rotate((float) PI / 2);
-		ctx.noFill();
-		ctx.strokeWeight(indicatorWeight);
-
-		getBackgroundColor().applyStroke();
-		ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, END);
-
-		indicatorColor.applyStroke();
-		ctx.arc(0, 0, diameter * .8f, diameter * .8f, START, MathUtils.convert(getMutableValue().get(),
-				getMutableValue().getMin(), getMutableValue().getMax(), START, END));
-
-		ctx.pop();
-	}
-
 	
+	private float mapFromValue(float start, float end) {
+		return convert(getValue(),getMinValue(), getMaxValue(),start, end);
+	}
 }
