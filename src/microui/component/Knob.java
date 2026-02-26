@@ -13,6 +13,7 @@ import java.util.Optional;
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.service.ValueOverlayManager;
 import processing.event.MouseEvent;
 
 public final class Knob extends RangeControl {
@@ -73,6 +74,7 @@ public final class Knob extends RangeControl {
 				setDefaultValue();
 			}
 		});
+		
 	}
 	
 	public Knob() {
@@ -217,6 +219,21 @@ public final class Knob extends RangeControl {
 		this.startAngle = startAngle;
 		this.endAngle = endAngle;
 	}
+	
+	@Override
+	public String getSource() {
+		return getOverlayText() + String.valueOf((int) getValue());
+	}
+
+	@Override
+	public boolean hasSource() {
+		return true;
+	}
+	
+	@Override
+	public boolean isContentPrepared() {
+		return mouseInsideCircle() || draggableState || getInternalScrolling().isScrolling();
+	}
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
@@ -227,6 +244,8 @@ public final class Knob extends RangeControl {
 	
 	@Override
 	protected void render() {
+		super.render();
+		
 		getInternalStroke().apply();
 		getBackgroundColor().apply();
 		ctx.ellipse(cachedCenterX,cachedCenterY,cachedSize,cachedSize);
@@ -240,6 +259,9 @@ public final class Knob extends RangeControl {
 			manualDragging();
 		}
 		
+		if (isContentPrepared()) {
+			ValueOverlayManager.setSource(this);
+		}
 	}
 	
 	@Override
@@ -283,7 +305,9 @@ public final class Knob extends RangeControl {
 		ctx.rotate(HALF_PI + mapFromValue(startAngle, endAngle));
 		ctx.noStroke();
 		handleColor.apply();
-		ctx.ellipse(cachedSize*handleOffsetRatio, 0, cachedSize * handleSizeRatio, cachedSize * handleSizeRatio);
+		float size = cachedSize * handleSizeRatio;
+		size = draggableState || isPressed() && mouseInsideCircle() ? size * .8f : size;
+		ctx.ellipse(cachedSize*handleOffsetRatio, 0, size, size);
 		
 		ctx.popMatrix();
 	}

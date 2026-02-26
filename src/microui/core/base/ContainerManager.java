@@ -15,6 +15,7 @@ import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.service.TooltipManager;
+import microui.service.ValueOverlayManager;
 import microui.util.Debugger;
 import microui.util.MathUtils;
 import processing.core.PImage;
@@ -44,6 +45,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	private final List<Container> list;
 	private final Animator animator;
 	private final TooltipManager tooltipManager;
+	private final ValueOverlayManager valueOverlayManager;
 	private Container prevContainer, currentContainer;
 	private boolean animatorEnabled;
 
@@ -52,6 +54,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		list = new ArrayList<Container>();
 		animator = new Animator(this);
 		tooltipManager = TooltipManager.getInstance();
+		valueOverlayManager = ValueOverlayManager.getInstance();
 
 		setAnimatorEnabled(true);
 
@@ -77,6 +80,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 
 		tooltipManager.draw();
+		valueOverlayManager.draw();
 	}
 
 	/**

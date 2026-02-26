@@ -76,6 +76,8 @@ public class Scroll extends LinearRangeControl {
 
 		updateThumbTransforms();
 		setValue(0, 100, 50);
+		
+		setOverlayText("scroll: ");
 	}
 
 	/**
@@ -276,7 +278,7 @@ public class Scroll extends LinearRangeControl {
 		}
 		this.thumbSizeRatio = thumbSizeRatio;
 	}
-
+	
 	/**
 	 * Renders the scrollbar and its thumb. The rendering includes the track (from
 	 * parent class) and the draggable thumb.

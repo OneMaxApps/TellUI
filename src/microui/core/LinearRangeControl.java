@@ -53,6 +53,21 @@ public abstract class LinearRangeControl extends RangeControl {
 
 		onChangeValue();
 	}
+	
+	@Override
+	public String getSource() {
+		return getOverlayText() + String.valueOf((int) getValue());
+	}
+
+	@Override
+	public boolean hasSource() {
+		return true;
+	}
+
+	@Override
+	public boolean isContentPrepared() {
+		return isHover() || getInternalScrolling().isScrolling() || isDragging();
+	}
 
 	/**
 	 * Handles mouse wheel events with an additional condition for value adjustment.
@@ -170,6 +185,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 */
 	@Override
 	protected void render() {
+		super.render();
 		ctx.pushStyle();
 		getInternalStroke().apply();
 		getBackgroundColor().apply();
