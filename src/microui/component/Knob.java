@@ -13,6 +13,7 @@ import java.util.Optional;
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.util.Environment;
 import processing.event.MouseEvent;
 
 public final class Knob extends RangeControl {
@@ -221,6 +222,10 @@ public final class Knob extends RangeControl {
 	
 	@Override
 	public boolean isContentPrepared() {
+		if (Environment.isAndroid() && mouseInsideCircle() && !isPressed()) {
+			return false;
+		}
+		
 		return mouseInsideCircle() || draggableState || getInternalScrolling().isScrolling();
 	}
 

@@ -160,7 +160,7 @@ public final class ValueOverlayManager extends View {
 	}
 	
 	private float getTextWidth() {
-		if (isTextNotChanged()) {
+		if (isCacheActual()) {
 			return cachedTextWidth;
 		}
 		
@@ -169,7 +169,7 @@ public final class ValueOverlayManager extends View {
 	}
 	
 	private float getTextHeight() {
-		if (isTextNotChanged()) {
+		if (isCacheActual()) {
 			return cachedTextHeight;
 		}
 		
@@ -214,7 +214,7 @@ public final class ValueOverlayManager extends View {
 		text.setSpatialAnimator(createDefaultAnimator());
 	}
 	
-	private boolean isTextNotChanged() {
+	private boolean isCacheActual() {
 		return tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()));
 	}
 }
