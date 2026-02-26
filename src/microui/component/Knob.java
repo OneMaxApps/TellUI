@@ -13,7 +13,6 @@ import java.util.Optional;
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.service.ValueOverlayManager;
 import processing.event.MouseEvent;
 
 public final class Knob extends RangeControl {
@@ -221,16 +220,6 @@ public final class Knob extends RangeControl {
 	}
 	
 	@Override
-	public String getSource() {
-		return getOverlayText() + String.valueOf((int) getValue());
-	}
-
-	@Override
-	public boolean hasSource() {
-		return true;
-	}
-	
-	@Override
 	public boolean isContentPrepared() {
 		return mouseInsideCircle() || draggableState || getInternalScrolling().isScrolling();
 	}
@@ -257,10 +246,6 @@ public final class Knob extends RangeControl {
 		
 		if (draggableState) {
 			manualDragging();
-		}
-		
-		if (isContentPrepared()) {
-			ValueOverlayManager.setSource(this);
 		}
 	}
 	

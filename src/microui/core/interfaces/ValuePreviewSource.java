@@ -4,8 +4,6 @@ public interface ValuePreviewSource {
 	
 	String getSource();
 	
-	boolean hasSource();
-	
 	boolean isContentPrepared();
 	
 }

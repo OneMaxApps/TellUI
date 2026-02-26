@@ -53,16 +53,6 @@ public abstract class LinearRangeControl extends RangeControl {
 
 		onChangeValue();
 	}
-	
-	@Override
-	public String getSource() {
-		return getOverlayText() + String.valueOf((int) getValue());
-	}
-
-	@Override
-	public boolean hasSource() {
-		return true;
-	}
 
 	@Override
 	public boolean isContentPrepared() {

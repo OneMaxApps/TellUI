@@ -2,7 +2,7 @@ package microui.core;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
+import java.util.function.Supplier;
 
 import microui.core.base.Component;
 import microui.core.interfaces.Scrollable;
@@ -25,7 +25,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	private final BoundedValue value;
 	private final Scrolling scrolling;
 	private final Stroke stroke;
-	private Optional<String> overlayText = Optional.empty();
+	private Supplier<String> supplierOverlayText;
 
 	/**
 	 * Constructs a RangeControl with specified position and dimensions. Initializes
@@ -44,17 +44,14 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 		scrolling = new Scrolling(this);
 		stroke = new Stroke();
 	}
-	
-	public String getOverlayText() {
-		if (overlayText.isEmpty()) {
-			return "";
-		}
-		
-		return overlayText.get();
+
+	public Supplier<String> getSupplierOverlayText() {
+		return supplierOverlayText;
 	}
-	
-	public void setOverlayText(String overlayInformation) {
-		this.overlayText = Optional.of(requireNonNull(overlayInformation,"overlayInformation"));
+
+
+	public void setSupplierOverlayText(Supplier<String> supplierOverlayText) {
+		this.supplierOverlayText = requireNonNull(supplierOverlayText);
 	}
 
 	/**
@@ -186,6 +183,15 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 */
 	public final void setStrokeColor(AbstractColor color) {
 		stroke.setColor(color);
+	}
+	
+	@Override
+	public String getSource() {
+		if (getSupplierOverlayText() == null) {
+			return String.valueOf((int) getValue());
+		}
+		
+		return getSupplierOverlayText().get();
 	}
 
 

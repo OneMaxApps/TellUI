@@ -76,8 +76,6 @@ public class Scroll extends LinearRangeControl {
 
 		updateThumbTransforms();
 		setValue(0, 100, 50);
-		
-		setOverlayText("scroll: ");
 	}
 
 	/**
