@@ -26,7 +26,6 @@ public final class ValueOverlayManager extends View {
 	private ValuePreviewSource source;
 	private String tmpText;
 	private float cachedTextWidth, cachedTextHeight;
-	private int cachedTextLinesCount;
 	
 	private ValueOverlayManager() {
 		super();
@@ -60,10 +59,9 @@ public final class ValueOverlayManager extends View {
 
 	public void setTextSize(float textSize) {
 		if (textSize != text.getTextSize()) {
+			text.setTextSize(textSize);
 			updateCachedTextData();
 		}
-		
-		text.setTextSize(textSize);
 	}
 
 	public PFont getFont() {
@@ -72,10 +70,9 @@ public final class ValueOverlayManager extends View {
 
 	public void setFont(PFont font) {
 		if (font != text.getFont()) {
+			text.setFont(font);
 			updateCachedTextData();
 		}
-		
-		text.setFont(font);
 	}
 	
 	public AutoResizeMode getAutoResizeMode() {
@@ -88,18 +85,16 @@ public final class ValueOverlayManager extends View {
 	
 	public void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
 		if (autoResizeModeEnabled != text.isAutoResizeModeEnabled()) {
+			text.setAutoResizeModeEnabled(autoResizeModeEnabled);
 			updateCachedTextData();
 		}
-		
-		text.setAutoResizeModeEnabled(autoResizeModeEnabled);
 	}
 
 	public void setAutoResizeMode(AutoResizeMode autoResizeMode) {
 		if (autoResizeMode != text.getAutoResizeMode()) {
+			text.setAutoResizeMode(autoResizeMode);
 			updateCachedTextData();
 		}
-		
-		text.setAutoResizeMode(autoResizeMode);
 	}
 	
 	public void setSpatialAnimator(SpatialAnimator spatialAnimator) {
@@ -127,7 +122,7 @@ public final class ValueOverlayManager extends View {
 	@Override
 	protected void render() {
 		if (source != null) {
-			if (source.isContentPrepared()) {
+			if (source.isContentPrepared() && !source.getSource().isBlank()) {
 				text.setText(source.getSource());
 			} else {
 				source = null;
@@ -198,8 +193,8 @@ public final class ValueOverlayManager extends View {
 		for(String l : lines) {
 			textWidth = Math.max(textWidth, ctx.textWidth(l));
 		}
-		cachedTextLinesCount = lines.length;
-		cachedTextHeight = (ctx.textAscent() + ctx.textDescent()) * cachedTextLinesCount;
+		
+		cachedTextHeight = (ctx.textAscent() + ctx.textDescent()) * lines.length;
 		cachedTextWidth = textWidth;
 		
 		ctx.popStyle();
