@@ -25,7 +25,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getBackgroundColor() {
-		return new Color(124);
+		return new Color(100);
 	}
 
 	/**

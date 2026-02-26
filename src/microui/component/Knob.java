@@ -1,10 +1,14 @@
 package microui.component;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.convert;
 import static processing.core.PApplet.dist;
 import static processing.core.PConstants.HALF_PI;
 import static processing.core.PConstants.TWO_PI;
+
+import java.util.Optional;
 
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
@@ -26,18 +30,23 @@ public final class Knob extends RangeControl {
 	private static final float MIN_HANDLE_OFFSET_RATIO = 0f;
 	private static final float MAX_HANDLE_OFFSET_RATIO = .4f;
 	private static final float MAX_DRAGGING_DIST = dist(0,0,ctx.width,ctx.height);
+	private static final float MIN_MANUAL_DRAGGING_SPEED = .1f;
+	private static final float MANUAL_DRAGGING_SENSITIVITY_FACTOR = .01f;
 	
 	private AbstractColor scaleStartColor,scaleEndColor, handleColor;
 	private float scaleWeightRatio;
 	
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
-	private float defaultValue;
 	private float handleOffsetRatio, handleSizeRatio;
-	private boolean draggableState, defaultValueInitialized;
+	private boolean draggableState;
+	
+	private Optional<Float> defaultValue;
 	
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
+		
+		defaultValue = Optional.empty();
 		
 		startAngle = DEFAULT_START_ANGLE;
 		endAngle = DEFAULT_END_ANGLE;
@@ -99,7 +108,7 @@ public final class Knob extends RangeControl {
 		this.handleSizeRatio = handleSizeRatio;
 	}
 
-	public float getDefaultValue() {
+	public Optional<Float> getDefaultValue() {
 		return defaultValue;
 	}
 
@@ -107,10 +116,8 @@ public final class Knob extends RangeControl {
 		if (defaultValue < getMinValue() || defaultValue > getMaxValue()) {
 			throw new IllegalArgumentException(String.format("Default value must be between min(%f) and max(%f) value",getMinValue(),getMaxValue()));
 		}
-		
-		defaultValueInitialized = true;
-		
-		this.defaultValue = defaultValue;
+
+		this.defaultValue = Optional.of(defaultValue);
 	}
 
 	public float getScaleWeightRatio() {
@@ -189,6 +196,27 @@ public final class Knob extends RangeControl {
 		
 		this.endAngle = endAngle;
 	}
+	
+	public void setAngles(float startAngle, float endAngle) {
+		if (startAngle < 0 || startAngle > TWO_PI) {
+			throw new IllegalArgumentException("Start angle must be between 0 and " + TWO_PI);
+		}
+		
+		if (endAngle < 0 || endAngle > TWO_PI) {
+			throw new IllegalArgumentException("End angle must be between 0 and " + TWO_PI);
+		}
+		
+		if (startAngle == endAngle) {
+			throw new IllegalArgumentException("Start and end angle cannot be equals");
+		}
+		
+		if (startAngle > endAngle) {
+			throw new IllegalArgumentException("Start angle cannot be greater than end angle");
+		}
+		
+		this.startAngle = startAngle;
+		this.endAngle = endAngle;
+	}
 
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
@@ -206,22 +234,12 @@ public final class Knob extends RangeControl {
 		scaleOnRender();
 		handleOnRender();
 		
-		getInternalValue().append(getInternalScrolling().get());
+		appendValue(getInternalScrolling().get());
 		
 		if (draggableState) {
-			final float dist = dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY);
-			final float mouseVerticalDist = ctx.pmouseY-ctx.mouseY;
-			final boolean mouseDirectionUp = ctx.mouseY < ctx.pmouseY;
-			float value;
-			
-			if (mouseDirectionUp) {
-				value = Math.max(.1f,mouseVerticalDist * convert(dist, 0, MAX_DRAGGING_DIST, 1, .01f));
-			} else {
-				value = Math.min(-.1f,mouseVerticalDist * convert(dist, 0, MAX_DRAGGING_DIST, 1, .01f));
-			}
-			
-			appendValue(value);
+			manualDragging();
 		}
+		
 	}
 	
 	@Override
@@ -255,7 +273,7 @@ public final class Knob extends RangeControl {
 		final float sw = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio;
 		ctx.strokeWeight(sw);
 		
-		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, convert(getValue(),getMinValue(), getMaxValue(), startAngle, endAngle));
+		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, mapFromValue(startAngle, endAngle));
 		ctx.popMatrix();
 	}
 	
@@ -271,10 +289,30 @@ public final class Knob extends RangeControl {
 	}
 	
 	private void setDefaultValue() {
-		if (!defaultValueInitialized) {
+		if (defaultValue.isEmpty()) {
 			return;
 		}
 		
-		setValue(defaultValue);
+		setValue(defaultValue.get());
+	}
+	
+	private void manualDragging() {
+		final boolean dragging = ctx.mouseX != ctx.pmouseX || ctx.mouseY != ctx.pmouseY;
+		
+		if (!dragging) {
+			return;
+		}
+		
+		final float dist = dist(cachedCenterX,cachedCenterY,ctx.mouseX,ctx.mouseY);
+		
+		final float mouseVerticalDist = ctx.pmouseY-ctx.mouseY;
+		
+		final float rawSpeed = mouseVerticalDist * convert(dist, 0, MAX_DRAGGING_DIST, 1, MANUAL_DRAGGING_SENSITIVITY_FACTOR);
+
+		final boolean mouseDirectionUp = ctx.mouseY < ctx.pmouseY;
+		
+		final float speed = mouseDirectionUp ? max(MIN_MANUAL_DRAGGING_SPEED,rawSpeed) : min(-MIN_MANUAL_DRAGGING_SPEED,rawSpeed);
+		
+		appendValue(speed);
 	}
 }
