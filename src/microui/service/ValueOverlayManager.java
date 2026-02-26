@@ -160,25 +160,20 @@ public final class ValueOverlayManager extends View {
 	}
 	
 	private float getTextWidth() {
-		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
+		if (isTextNotChanged()) {
 			return cachedTextWidth;
-		} else {
-			updateCachedTextData();
-			tmpText = text.getText();
 		}
-
+		
+		updateCachedTextData();
 		return cachedTextWidth;
 	}
 	
 	private float getTextHeight() {
-		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
+		if (isTextNotChanged()) {
 			return cachedTextHeight;
 		}
 		
 		updateCachedTextData();
-		
-		tmpText = text.getText();
-		
 		return cachedTextHeight;
 	}
 	
@@ -199,6 +194,7 @@ public final class ValueOverlayManager extends View {
 		
 		ctx.popStyle();
 		
+		tmpText = text.getText();
 	}
 	
 	private void prepareTextConfig() {
@@ -216,5 +212,9 @@ public final class ValueOverlayManager extends View {
 		text.setAlignY(TOP);
 		text.setClipModeEnabled(false);
 		text.setSpatialAnimator(createDefaultAnimator());
+	}
+	
+	private boolean isTextNotChanged() {
+		return tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()));
 	}
 }
