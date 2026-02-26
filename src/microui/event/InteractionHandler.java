@@ -24,7 +24,7 @@ import microui.core.base.SpatialView;
  * @see Listener
  */
 public final class InteractionHandler extends AbstractEventSystem {
-	private boolean isEnabled;
+	private boolean enabled;
 	private final EventDispatcher dispatcher;
 
 	/**
@@ -120,7 +120,7 @@ public final class InteractionHandler extends AbstractEventSystem {
 	 * @return true if enabled, false if disabled
 	 */
 	public boolean isEnabled() {
-		return isEnabled;
+		return enabled;
 	}
 
 	/**
@@ -130,7 +130,7 @@ public final class InteractionHandler extends AbstractEventSystem {
 	 * @param isEnabled true to enable, false to disable
 	 */
 	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+		this.enabled = isEnabled;
 	}
 
 	/**

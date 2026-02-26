@@ -140,7 +140,7 @@ public abstract class AbstractEventSystem {
 		private static final long DEFAULT_THRESHOLD = 1000;
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
 
-		private boolean isHover, isPressed;
+		private boolean hover, pressed;
 
 		private final PressDetector pressDetector;
 		private final ReleaseDetector releaseDetector;
@@ -179,8 +179,10 @@ public abstract class AbstractEventSystem {
 		 * Updates all detector states based on current input.
 		 */
 		public void update() {
-			isHover = isHover();
-			isPressed = isPressed();
+			
+			hover = isHover();
+			pressed = isPressed();
+			
 		}
 
 		/**
@@ -297,7 +299,7 @@ public abstract class AbstractEventSystem {
 		 * @return true if pressed, false otherwise
 		 */
 		public boolean isPressed() {
-			return isHover && MicroUI.getContext().mousePressed;
+			return hover && MicroUI.getContext().mousePressed;
 		}
 
 		/**
@@ -306,7 +308,7 @@ public abstract class AbstractEventSystem {
 		 * @return true if released, false otherwise
 		 */
 		public boolean isReleased() {
-			return !isPressed;
+			return !pressed;
 		}
 
 		/**
@@ -334,9 +336,9 @@ public abstract class AbstractEventSystem {
 				h = (int) spatialView.getHeight();
 			}
 
-			isHover = (mx > x && mx < x + w && my > y && my < y + h);
+			hover = (mx > x && mx < x + w && my > y && my < y + h);
 
-			return isHover;
+			return hover;
 		}
 
 		private final class PressDetector {
@@ -349,11 +351,12 @@ public abstract class AbstractEventSystem {
 			}
 
 			public boolean isDetected() {
+				
 				if (!MicroUI.getContext().mousePressed) {
 					isPressHookCalled = false;
 				}
 
-				if (!isPressHookCalled && isHover && isPressed) {
+				if (!isPressHookCalled && hover && pressed) {
 					isPressHookCalled = true;
 					pressTime = System.currentTimeMillis();
 					return true;
@@ -377,7 +380,7 @@ public abstract class AbstractEventSystem {
 			}
 
 			public boolean isDetected() {
-				if (isPressed) {
+				if (pressed) {
 					isReleaseHookCalled = false;
 				}
 
@@ -414,7 +417,7 @@ public abstract class AbstractEventSystem {
 					isLongPressHookCalled = false;
 				}
 
-				if (!isLongPressHookCalled && isPressed
+				if (!isLongPressHookCalled && pressed
 						&& System.currentTimeMillis() - pressDetectorInternal.getPressTime() >= longPressThreshold) {
 					isLongPressHookCalled = true;
 					return true;
@@ -442,12 +445,12 @@ public abstract class AbstractEventSystem {
 			private long enterTime;
 
 			public boolean isDetected() {
-				if (!isHover) {
+				if (!hover) {
 					isEnterHookCalled = false;
 				}
 
 				if (!isEnterHookCalled) {
-					if (isHover) {
+					if (hover) {
 						enterTime = System.currentTimeMillis();
 						isEnterHookCalled = true;
 						return true;
@@ -473,12 +476,12 @@ public abstract class AbstractEventSystem {
 			}
 
 			public boolean isDetected() {
-				if (isHover) {
+				if (hover) {
 					isLeaveHookCalled = false;
 				}
 
 				if (!isLeaveHookCalled) {
-					if (!isHover) {
+					if (!hover) {
 						isLeaveHookCalled = true;
 						leaveTime = System.currentTimeMillis();
 						return true;
@@ -509,12 +512,12 @@ public abstract class AbstractEventSystem {
 			public boolean isDetected() {
 				enterDetectorInternal.isDetected();
 
-				if (!isHover) {
+				if (!hover) {
 					isEnterLongHookCalled = false;
 				}
 
 				if (!isEnterLongHookCalled) {
-					if (isHover && System.currentTimeMillis()
+					if (hover && System.currentTimeMillis()
 							- enterDetectorInternal.getEnterTime() >= enterLongThreshold) {
 						isEnterLongHookCalled = true;
 						return true;
@@ -552,12 +555,12 @@ public abstract class AbstractEventSystem {
 			public boolean isDetected() {
 				leaveDetectorInternal.isDetected();
 
-				if (isHover) {
+				if (hover) {
 					isLeaveLongHookCalled = false;
 				}
 
 				if (!isLeaveLongHookCalled) {
-					if (!isHover && System.currentTimeMillis()
+					if (!hover && System.currentTimeMillis()
 							- leaveDetectorInternal.getLeaveTime() >= leaveLongThreshold) {
 						isLeaveLongHookCalled = true;
 						return true;
@@ -586,16 +589,16 @@ public abstract class AbstractEventSystem {
 
 			public boolean isDetected() {
 
-				if (isCanCallHook && !isPressed && isHover) {
+				if (isCanCallHook && !pressed && hover) {
 					isCanCallHook = false;
 					return true;
 				}
 
-				if (isPressed) {
+				if (pressed) {
 					isCanCallHook = true;
 				}
 
-				if (!isHover) {
+				if (!hover) {
 					isCanCallHook = false;
 				}
 
@@ -649,15 +652,15 @@ public abstract class AbstractEventSystem {
 		}
 
 		private final class DragStartDetector {
-			private boolean isHookCalled;
-
+			private boolean hookCalled;
+			
 			public boolean isDetected() {
 				if (!MicroUI.getContext().mousePressed) {
-					isHookCalled = false;
+					 hookCalled = false;
 				}
 
-				if (!isHookCalled && isPressed && isMouseMoved()) {
-					isHookCalled = true;
+				if (!hookCalled && pressed && isMouseMoved()) {
+					hookCalled = true;
 					return true;
 				}
 

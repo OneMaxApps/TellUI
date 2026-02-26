@@ -1,7 +1,6 @@
 package microui.service;
 
 import static java.util.Objects.requireNonNull;
-import static processing.core.PConstants.LEFT;
 
 import java.util.function.BooleanSupplier;
 
@@ -34,7 +33,6 @@ public final class ValueOverlayManager extends View {
 		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), s).setSpeed(.1f));
 		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, s).setSpeed(.1f));
 		
-		
 		text.setSpatialAnimator(createBaseAnimator());
 	}
 	
@@ -52,21 +50,13 @@ public final class ValueOverlayManager extends View {
 	public Component setBackgroundColor(AbstractColor backgroundColor) {
 		return text.setBackgroundColor(backgroundColor);
 	}
-
-	public static float getWidth() {
-		return text.getWidth();
-	}
-
-	public static void setWidth(float width) {
-		text.setWidth(width);
+	
+	public static AbstractColor getTextColor() {
+		return text.getTextColor();
 	}
 	
-	public static float getHeight() {
-		return text.getHeight();
-	}
-
-	public static void setHeight(float height) {
-		text.setHeight(height);
+	public static void setTextColor(AbstractColor textColor) {
+		text.setTextColor(textColor);
 	}
 
 	public static float getTextSize() {
@@ -77,28 +67,20 @@ public final class ValueOverlayManager extends View {
 		text.setTextSize(textSize);
 	}
 
-	public static void setFont(PFont font) {
-		text.setFont(font);
-	}
-	
 	public static PFont getFont() {
 		return text.getFont();
 	}
 
-	public static String getText() {
-		return text.getText();
+	public static void setFont(PFont font) {
+		text.setFont(font);
 	}
-
+	
 	public static AutoResizeMode getAutoResizeMode() {
 		return text.getAutoResizeMode();
 	}
-
-	public static AbstractColor getTextColor() {
-		return text.getTextColor();
-	}
-
-	public static void setTextColor(AbstractColor textColor) {
-		text.setTextColor(textColor);
+	
+	public static boolean isAutoResizeModeEnabled() {
+		return text.isAutoResizeModeEnabled();
 	}
 	
 	public static void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
@@ -108,15 +90,14 @@ public final class ValueOverlayManager extends View {
 	public static void setAutoResizeMode(AutoResizeMode autoResizeMode) {
 		text.setAutoResizeMode(autoResizeMode);
 	}
-
-	public static void setConstrainDimensionsEnabled(boolean constrainDimensionsEnabled) {
-		text.setConstrainDimensionsEnabled(constrainDimensionsEnabled);
-	}
 	
 	public static void setSpatialAnimator(SpatialAnimator spatialAnimator) {
 		text.setSpatialAnimator(spatialAnimator);
 	}
+	
+	
 
+	
 	public static ValuePreviewSource getSource() {
 		return source;
 	}
