@@ -52,7 +52,7 @@ public final class TextView extends Component {
 		setTextColor(textColor = getTheme().getTextViewColor());
 
 		setText(text);
-		setTextSize(max(1, min(width, height)));
+		setTextSize(max(32, min(width, height)));
 		setAutoResizeModeEnabled(true);
 		setAutoResizeMode(AutoResizeMode.BIG);
 		setClipModeEnabled(true);
@@ -163,6 +163,10 @@ public final class TextView extends Component {
 	 * @return the current manual text size in pixels
 	 */
 	public float getTextSize() {
+		if (isAutoResizeModeEnabled()) {
+			return autoTextSize;
+		}
+		
 		return textSize;
 	}
 
@@ -299,11 +303,8 @@ public final class TextView extends Component {
 			ctx.textFont(font);
 		}
 
-		if (isAutoResizeModeEnabled()) {
-			ctx.textSize(autoTextSize);
-		} else {
-			ctx.textSize(getTextSize());
-		}
+		ctx.textSize(getTextSize());
+		
 		textColor.apply();
 		ctx.textAlign(alignX, alignY);
 

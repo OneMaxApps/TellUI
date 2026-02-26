@@ -1,6 +1,9 @@
 package microui.service;
 
 import static java.util.Objects.requireNonNull;
+import static processing.core.PConstants.CENTER;
+import static processing.core.PConstants.LEFT;
+import static processing.core.PConstants.TOP;
 
 import java.util.function.BooleanSupplier;
 
@@ -20,6 +23,9 @@ public final class ValueOverlayManager extends View {
 	private static ValueOverlayManager instance;
 	private static final TextView text;
 	private static ValuePreviewSource source;
+	private static String tmpText;
+	private static float cachedTextWidth, cachedTextHeight;
+	private static int cachedTextLinesCount;
 	
 	static {
 		final BooleanSupplier s = () -> {
@@ -28,12 +34,17 @@ public final class ValueOverlayManager extends View {
 		
 		text = new TextView();
 		text.setConstrainDimensionsEnabled(false);
-		text.setSize(ctx.width/4, ctx.height*.1f);
-		text.setPosition(0, 0);
+		
 		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), s).setSpeed(.1f));
 		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, s).setSpeed(.1f));
 		
-		text.setSpatialAnimator(createBaseAnimator());
+		text.setAutoResizeModeEnabled(false);
+		text.setTextSize(24);
+		text.setPadding(10);
+		text.setAlignX(LEFT);
+		text.setAlignY(TOP);
+		
+		text.setSpatialAnimator(createDefaultAnimator());
 	}
 	
 	private ValueOverlayManager() {
@@ -95,9 +106,6 @@ public final class ValueOverlayManager extends View {
 		text.setSpatialAnimator(spatialAnimator);
 	}
 	
-	
-
-	
 	public static ValuePreviewSource getSource() {
 		return source;
 	}
@@ -124,44 +132,83 @@ public final class ValueOverlayManager extends View {
 		text.draw();
 	}
 	
-	private static SpatialAnimator createBaseAnimator() {
+	private static SpatialAnimator createDefaultAnimator() {
 		final SpatialState startState = new SpatialState();
 		
-		startState.setSupplierX(() -> {
-			return -text.getWidth();
-		});
+		startState.setSupplierX(() -> -text.getWidth());
+		startState.setSupplierY(() -> -text.getHeight());
+		startState.setSupplierWidth(() -> text.getWidth());
+		startState.setSupplierHeight(() -> text.getHeight());
 		
-		startState.setSupplierY(() -> {
-			return -text.getHeight();
-		});
+		final SpatialState endState = new SpatialState(10,10,0,0);
 		
-		startState.setSupplierWidth(() -> {
-			return text.getWidth();
-		});
-		
-		startState.setSupplierHeight(() -> {
-			return text.getHeight();
-		});
-		
-		final SpatialState endState = new SpatialState();
-		
-		endState.setSupplierX(() -> {
-			return 0f;
-		});
-		
-		endState.setSupplierY(() -> {
-			return 0f;
-		});
 		
 		endState.setSupplierWidth(() -> {
+			text.setWidth(getTextWidth());
 			return text.getWidth();
 		});
 		
 		endState.setSupplierHeight(() -> {
+			text.setHeight(getTextHeight());
 			return text.getHeight();
 		});
 		
 		return new SpatialAnimator(startState, endState, () -> source != null && source.isContentPrepared());
 		
 	}
+	
+	private static float getTextWidth() {
+		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
+			return cachedTextWidth;
+		} else {
+			updateCachedTextData();
+			tmpText = text.getText();
+		}
+
+		return cachedTextWidth;
+	}
+	
+	private static float getTextHeight() {
+		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
+			correctTextAlign();
+			return cachedTextHeight;
+		}
+		
+		updateCachedTextData();
+		
+		tmpText = text.getText();
+		
+		correctTextAlign();
+		
+		return cachedTextHeight;
+	}
+	
+	private static void updateCachedTextData() {
+		ctx.pushStyle();
+		if(getFont() != null) {
+			ctx.textFont(getFont());
+		}
+		ctx.textSize(getTextSize());
+		final String[] lines = text.getText().split("\n");
+		float textWidth = 0;
+		for(String l : lines) {
+			textWidth = Math.max(textWidth, ctx.textWidth(l));
+		}
+		ctx.popStyle();
+		
+		cachedTextWidth = textWidth * 1.1f;
+		
+		cachedTextLinesCount = lines.length;
+		cachedTextHeight = getTextSize() * cachedTextLinesCount * 1.1f;
+	}
+	
+	private static void correctTextAlign() {
+		if (cachedTextLinesCount > 1) {
+			text.setAlignY(TOP);
+		} else {
+			text.setAlignY(CENTER);
+		}
+	}
+	
+	
 }
