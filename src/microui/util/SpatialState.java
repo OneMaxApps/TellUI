@@ -2,6 +2,8 @@ package microui.util;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.function.Supplier;
+
 import microui.core.base.SpatialView;
 
 /**
@@ -10,7 +12,8 @@ import microui.core.base.SpatialView;
  */
 public final class SpatialState {
 	private final float x, y, width, height;
-
+	private Supplier<Float> supplierX, supplierY, supplierWidth, supplierHeight;
+	
 	/**
 	 * Constructs SpatialState with initialization
 	 * 
@@ -43,6 +46,26 @@ public final class SpatialState {
 	public SpatialState(SpatialState source) {
 		this(requireNonNull(source, "source").getX(), source.getY(), source.getWidth(), source.getHeight());
 	}
+	
+	public SpatialState() {
+		this(0,0,0,0);
+	}
+
+	public void setSupplierX(Supplier<Float> supplierX) {
+		this.supplierX = requireNonNull(supplierX);
+	}
+
+	public void setSupplierY(Supplier<Float> supplierY) {
+		this.supplierY = requireNonNull(supplierY);
+	}
+
+	public void setSupplierWidth(Supplier<Float> supplierWidth) {
+		this.supplierWidth = requireNonNull(supplierWidth);
+	}
+
+	public void setSupplierHeight(Supplier<Float> supplierHeight) {
+		this.supplierHeight = requireNonNull(supplierHeight);
+	}
 
 	/**
 	 * Returns variable x
@@ -50,7 +73,7 @@ public final class SpatialState {
 	 * @return the current variable x
 	 */
 	public float getX() {
-		return x;
+		return supplierX == null ? x : supplierX.get();
 	}
 
 	/**
@@ -59,7 +82,7 @@ public final class SpatialState {
 	 * @return the current variable y
 	 */
 	public float getY() {
-		return y;
+		return supplierY == null ? y : supplierY.get();
 	}
 
 	/**
@@ -68,7 +91,7 @@ public final class SpatialState {
 	 * @return the current variable width
 	 */
 	public float getWidth() {
-		return width;
+		return supplierWidth == null ? width : supplierWidth.get();
 	}
 
 	/**
@@ -77,7 +100,7 @@ public final class SpatialState {
 	 * @return the current variable height
 	 */
 	public float getHeight() {
-		return height;
+		return supplierHeight == null ? height : supplierHeight.get();
 	}
 	
 }

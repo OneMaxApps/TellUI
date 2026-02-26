@@ -1,16 +1,21 @@
 package microui.service;
 
 import static java.util.Objects.requireNonNull;
+import static processing.core.PConstants.LEFT;
 
 import java.util.function.BooleanSupplier;
 
 import microui.component.TextView;
 import microui.constants.AutoResizeMode;
+import microui.core.base.Component;
 import microui.core.base.View;
+import microui.core.effect.SpatialAnimator;
 import microui.core.interfaces.ValuePreviewSource;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
+import microui.util.SpatialState;
+import processing.core.PFont;
 
 public final class ValueOverlayManager extends View {
 	private static ValueOverlayManager instance;
@@ -23,9 +28,14 @@ public final class ValueOverlayManager extends View {
 		};
 		
 		text = new TextView();
+		text.setConstrainDimensionsEnabled(false);
+		text.setSize(ctx.width/4, ctx.height*.1f);
 		text.setPosition(0, 0);
 		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), s).setSpeed(.1f));
 		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, s).setSpeed(.1f));
+		
+		
+		text.setSpatialAnimator(createBaseAnimator());
 	}
 	
 	private ValueOverlayManager() {
@@ -34,60 +44,77 @@ public final class ValueOverlayManager extends View {
 		
 	}
 	
-	public static void setBackgroundColor(AbstractColor backgroundColor) {
-		text.setBackgroundColor(backgroundColor);
+	// == TEXT API == //
+	public static AbstractColor getBackgroundColor() {
+		return text.getBackgroundColor();
 	}
 
-	public static void setAlignX(int alignX) {
-		text.setAlignX(alignX);
+	public Component setBackgroundColor(AbstractColor backgroundColor) {
+		return text.setBackgroundColor(backgroundColor);
 	}
 
-	public static void setAlignY(int alignY) {
-		text.setAlignY(alignY);
-	}
-	
-	public static void setPadding(float left, float right, float top, float bottom) {
-		text.setPadding(left, right, top, bottom);
-	}
-
-	public static void setTextSize(float textSize) {
-		text.setTextSize(textSize);
-	}
-	
-	public static float getTextSize() {
-		return text.getTextSize();
-	}
-
-	public static void setSize(float width, float height) {
-		text.setSize(width, height);
-	}
-	
 	public static float getWidth() {
 		return text.getWidth();
+	}
+
+	public static void setWidth(float width) {
+		text.setWidth(width);
 	}
 	
 	public static float getHeight() {
 		return text.getHeight();
 	}
 
-	public static void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
-		text.setAutoResizeModeEnabled(autoResizeModeEnabled);
+	public static void setHeight(float height) {
+		text.setHeight(height);
+	}
+
+	public static float getTextSize() {
+		return text.getTextSize();
+	}
+
+	public static void setTextSize(float textSize) {
+		text.setTextSize(textSize);
+	}
+
+	public static void setFont(PFont font) {
+		text.setFont(font);
 	}
 	
-	public static void setAutoResizeMode(AutoResizeMode autoResizeMode) {
-		text.setAutoResizeMode(autoResizeMode);
+	public static PFont getFont() {
+		return text.getFont();
+	}
+
+	public static String getText() {
+		return text.getText();
+	}
+
+	public static AutoResizeMode getAutoResizeMode() {
+		return text.getAutoResizeMode();
+	}
+
+	public static AbstractColor getTextColor() {
+		return text.getTextColor();
 	}
 
 	public static void setTextColor(AbstractColor textColor) {
 		text.setTextColor(textColor);
 	}
+	
+	public static void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
+		text.setAutoResizeModeEnabled(autoResizeModeEnabled);
+	}
 
-	public static void setMargin(float left, float right, float top, float bottom) {
-		text.setMargin(left, right, top, bottom);
+	public static void setAutoResizeMode(AutoResizeMode autoResizeMode) {
+		text.setAutoResizeMode(autoResizeMode);
 	}
 
 	public static void setConstrainDimensionsEnabled(boolean constrainDimensionsEnabled) {
 		text.setConstrainDimensionsEnabled(constrainDimensionsEnabled);
+	}
+	
+	public static void setSpatialAnimator(SpatialAnimator spatialAnimator) {
+		text.setSpatialAnimator(spatialAnimator);
 	}
 
 	public static ValuePreviewSource getSource() {
@@ -114,5 +141,46 @@ public final class ValueOverlayManager extends View {
 		}
 		
 		text.draw();
+	}
+	
+	private static SpatialAnimator createBaseAnimator() {
+		final SpatialState startState = new SpatialState();
+		
+		startState.setSupplierX(() -> {
+			return -text.getWidth();
+		});
+		
+		startState.setSupplierY(() -> {
+			return -text.getHeight();
+		});
+		
+		startState.setSupplierWidth(() -> {
+			return text.getWidth();
+		});
+		
+		startState.setSupplierHeight(() -> {
+			return text.getHeight();
+		});
+		
+		final SpatialState endState = new SpatialState();
+		
+		endState.setSupplierX(() -> {
+			return 0f;
+		});
+		
+		endState.setSupplierY(() -> {
+			return 0f;
+		});
+		
+		endState.setSupplierWidth(() -> {
+			return text.getWidth();
+		});
+		
+		endState.setSupplierHeight(() -> {
+			return text.getHeight();
+		});
+		
+		return new SpatialAnimator(startState, endState, () -> source != null && source.isContentPrepared());
+		
 	}
 }
