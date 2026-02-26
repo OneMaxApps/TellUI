@@ -1,7 +1,6 @@
 package microui.service;
 
 import static java.util.Objects.requireNonNull;
-import static processing.core.PConstants.CENTER;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.TOP;
 
@@ -20,41 +19,26 @@ import microui.util.SpatialState;
 import processing.core.PFont;
 
 public final class ValueOverlayManager extends View {
+	private static final int DEFAULT_TEXT_SIZE = 24;
+	private static final int DEFAULT_PADDING_AROUND = 10;
 	private static ValueOverlayManager instance;
-	private static final TextView text;
-	private static ValuePreviewSource source;
-	private static String tmpText;
-	private static float cachedTextWidth, cachedTextHeight;
-	private static int cachedTextLinesCount;
-	
-	static {
-		final BooleanSupplier s = () -> {
-			return source != null && source.isContentPrepared();
-		};
-		
-		text = new TextView();
-		text.setConstrainDimensionsEnabled(false);
-		
-		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), s).setSpeed(.1f));
-		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, s).setSpeed(.1f));
-		
-		text.setAutoResizeModeEnabled(false);
-		text.setTextSize(24);
-		text.setPadding(10);
-		text.setAlignX(LEFT);
-		text.setAlignY(TOP);
-		
-		text.setSpatialAnimator(createDefaultAnimator());
-	}
+	private final TextView text;
+	private ValuePreviewSource source;
+	private String tmpText;
+	private float cachedTextWidth, cachedTextHeight;
+	private int cachedTextLinesCount;
 	
 	private ValueOverlayManager() {
 		super();
 		setVisible(true);
 		
+		text = new TextView();
+		prepareTextConfig();
+		
 	}
 	
 	// == TEXT API == //
-	public static AbstractColor getBackgroundColor() {
+	public AbstractColor getBackgroundColor() {
 		return text.getBackgroundColor();
 	}
 
@@ -62,56 +46,74 @@ public final class ValueOverlayManager extends View {
 		return text.setBackgroundColor(backgroundColor);
 	}
 	
-	public static AbstractColor getTextColor() {
+	public AbstractColor getTextColor() {
 		return text.getTextColor();
 	}
 	
-	public static void setTextColor(AbstractColor textColor) {
+	public void setTextColor(AbstractColor textColor) {
 		text.setTextColor(textColor);
 	}
 
-	public static float getTextSize() {
+	public float getTextSize() {
 		return text.getTextSize();
 	}
 
-	public static void setTextSize(float textSize) {
+	public void setTextSize(float textSize) {
+		if (textSize != text.getTextSize()) {
+			updateCachedTextData();
+		}
+		
 		text.setTextSize(textSize);
 	}
 
-	public static PFont getFont() {
+	public PFont getFont() {
 		return text.getFont();
 	}
 
-	public static void setFont(PFont font) {
+	public void setFont(PFont font) {
+		if (font != text.getFont()) {
+			updateCachedTextData();
+		}
+		
 		text.setFont(font);
 	}
 	
-	public static AutoResizeMode getAutoResizeMode() {
+	public AutoResizeMode getAutoResizeMode() {
 		return text.getAutoResizeMode();
 	}
 	
-	public static boolean isAutoResizeModeEnabled() {
+	public boolean isAutoResizeModeEnabled() {
 		return text.isAutoResizeModeEnabled();
 	}
 	
-	public static void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
+	public void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
+		if (autoResizeModeEnabled != text.isAutoResizeModeEnabled()) {
+			updateCachedTextData();
+		}
+		
 		text.setAutoResizeModeEnabled(autoResizeModeEnabled);
 	}
 
-	public static void setAutoResizeMode(AutoResizeMode autoResizeMode) {
+	public void setAutoResizeMode(AutoResizeMode autoResizeMode) {
+		if (autoResizeMode != text.getAutoResizeMode()) {
+			updateCachedTextData();
+		}
+		
 		text.setAutoResizeMode(autoResizeMode);
 	}
 	
-	public static void setSpatialAnimator(SpatialAnimator spatialAnimator) {
+	public void setSpatialAnimator(SpatialAnimator spatialAnimator) {
 		text.setSpatialAnimator(spatialAnimator);
 	}
 	
-	public static ValuePreviewSource getSource() {
+	
+	
+	public ValuePreviewSource getSource() {
 		return source;
 	}
 
-	public static void setSource(ValuePreviewSource source) {
-		ValueOverlayManager.source = requireNonNull(source,"source");
+	public void setSource(ValuePreviewSource source) {
+		this.source = requireNonNull(source,"source");
 	}
 
 	public static ValueOverlayManager getInstance() {
@@ -124,24 +126,29 @@ public final class ValueOverlayManager extends View {
 	
 	@Override
 	protected void render() {
-		if (source != null && source.isContentPrepared()) {
-			text.setText(source.getSource());
-			
+		if (source != null) {
+			if (source.isContentPrepared()) {
+				text.setText(source.getSource());
+			} else {
+				source = null;
+			}
 		}
 		
 		text.draw();
 	}
 	
-	private static SpatialAnimator createDefaultAnimator() {
+	private SpatialAnimator createDefaultAnimator() {
 		final SpatialState startState = new SpatialState();
 		
-		startState.setSupplierX(() -> -text.getWidth());
-		startState.setSupplierY(() -> -text.getHeight());
-		startState.setSupplierWidth(() -> text.getWidth());
-		startState.setSupplierHeight(() -> text.getHeight());
+		startState.setSupplierX(() -> -text.getAbsoluteWidth());
+		startState.setSupplierY(() -> -text.getAbsoluteHeight());
+		startState.setSupplierWidth(() -> text.getAbsoluteWidth());
+		startState.setSupplierHeight(() -> text.getAbsoluteHeight());
 		
-		final SpatialState endState = new SpatialState(10,10,0,0);
+		final SpatialState endState = new SpatialState();
 		
+		endState.setSupplierX(() -> text.getPaddingLeft());
+		endState.setSupplierY(() -> text.getPaddingTop());
 		
 		endState.setSupplierWidth(() -> {
 			text.setWidth(getTextWidth());
@@ -157,7 +164,7 @@ public final class ValueOverlayManager extends View {
 		
 	}
 	
-	private static float getTextWidth() {
+	private float getTextWidth() {
 		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
 			return cachedTextWidth;
 		} else {
@@ -168,9 +175,8 @@ public final class ValueOverlayManager extends View {
 		return cachedTextWidth;
 	}
 	
-	private static float getTextHeight() {
+	private float getTextHeight() {
 		if (tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()))) {
-			correctTextAlign();
 			return cachedTextHeight;
 		}
 		
@@ -178,12 +184,10 @@ public final class ValueOverlayManager extends View {
 		
 		tmpText = text.getText();
 		
-		correctTextAlign();
-		
 		return cachedTextHeight;
 	}
 	
-	private static void updateCachedTextData() {
+	private void updateCachedTextData() {
 		ctx.pushStyle();
 		if(getFont() != null) {
 			ctx.textFont(getFont());
@@ -194,21 +198,28 @@ public final class ValueOverlayManager extends View {
 		for(String l : lines) {
 			textWidth = Math.max(textWidth, ctx.textWidth(l));
 		}
+		cachedTextLinesCount = lines.length;
+		cachedTextHeight = (ctx.textAscent() + ctx.textDescent()) * cachedTextLinesCount;
+		cachedTextWidth = textWidth;
+		
 		ctx.popStyle();
 		
-		cachedTextWidth = textWidth * 1.1f;
+	}
+	
+	private void prepareTextConfig() {
+		final BooleanSupplier condition = () -> {
+			return source != null && source.isContentPrepared();
+		};
 		
-		cachedTextLinesCount = lines.length;
-		cachedTextHeight = getTextSize() * cachedTextLinesCount * 1.1f;
+		text.setConstrainDimensionsEnabled(false);
+		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), condition).setSpeed(.1f));
+		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, condition).setSpeed(.1f));
+		text.setAutoResizeModeEnabled(false);
+		text.setTextSize(DEFAULT_TEXT_SIZE);
+		text.setPadding(DEFAULT_PADDING_AROUND);
+		text.setAlignX(LEFT);
+		text.setAlignY(TOP);
+		text.setClipModeEnabled(false);
+		text.setSpatialAnimator(createDefaultAnimator());
 	}
-	
-	private static void correctTextAlign() {
-		if (cachedTextLinesCount > 1) {
-			text.setAlignY(TOP);
-		} else {
-			text.setAlignY(CENTER);
-		}
-	}
-	
-	
 }

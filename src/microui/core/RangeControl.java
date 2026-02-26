@@ -198,7 +198,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	@Override
 	protected void render() {
 		if (isContentPrepared()) {
-			ValueOverlayManager.setSource(this);
+			ValueOverlayManager.getInstance().setSource(this);
 		}
 	}
 
