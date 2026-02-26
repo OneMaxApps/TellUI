@@ -3,6 +3,7 @@ package microui.core.style;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * A concrete implementation of {@link AbstractLerpedColor} that uses a
@@ -21,9 +22,11 @@ import java.util.function.BooleanSupplier;
  * @see AbstractLerpedColor
  */
 public final class LerpedColor extends AbstractLerpedColor {
-
-	private final BooleanSupplier condition;
-
+	private static final float DEFAULT_SPEED_OF_PROGRESS = .025f;
+	
+	private BooleanSupplier condition;
+	private Supplier<Float> progressSupplier;
+	
 	/**
 	 * Constructs a new LerpedColor with specified start and end colors, and a
 	 * condition that controls animation direction. The animation speed is set to
@@ -41,7 +44,21 @@ public final class LerpedColor extends AbstractLerpedColor {
 
 		this.condition = requireNonNull(condition, "condition");
 
-		getAnimator().setSpeed(.025f);
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
+	}
+	
+	/**
+	 * Constructs a new LerpedColor with specified start and end colors,
+	 * supplier controlling progress of interpolation
+	 * 
+	 * @param start 	the starting color of the interpolation, cannot be null
+	 * @param end		the ending color of the interpolation, cannot be null
+	 * @param supplier the supplier witch must have result between 0 and 1
+	 */
+	public LerpedColor(AbstractColor start, AbstractColor end, Supplier<Float> progressSupplier) {
+		super(start, end);
+
+		this.progressSupplier = requireNonNull(progressSupplier, "progressSupplier");
 	}
 
 	/**
@@ -70,6 +87,12 @@ public final class LerpedColor extends AbstractLerpedColor {
 	@Override
 	protected void preApply() {
 		super.preApply();
-		getAnimator().setStartEnabled(condition.getAsBoolean());
+		if (condition != null) {
+			getAnimator().setStartEnabled(condition.getAsBoolean());
+		}
+		
+		if (progressSupplier != null) {
+			getAnimator().setProgress(progressSupplier.get());
+		}
 	}
 }

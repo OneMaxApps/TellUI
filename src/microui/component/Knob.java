@@ -13,6 +13,7 @@ import java.util.Optional;
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
+import microui.core.style.LerpedColor;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
@@ -34,7 +35,7 @@ public final class Knob extends RangeControl {
 	private static final float MIN_MANUAL_DRAGGING_SPEED = .1f;
 	private static final float MANUAL_DRAGGING_SENSITIVITY_FACTOR = .01f;
 	
-	private AbstractColor scaleStartColor,scaleEndColor, handleColor;
+	private AbstractColor scaleColor, handleColor;
 	private float scaleWeightRatio;
 	
 	private float startAngle, endAngle;
@@ -49,11 +50,10 @@ public final class Knob extends RangeControl {
 		
 		defaultValue = Optional.empty();
 		
-		startAngle = DEFAULT_START_ANGLE;
-		endAngle = DEFAULT_END_ANGLE;
+		setAngles(DEFAULT_START_ANGLE, DEFAULT_END_ANGLE);
+
+		setScaleColor(new Color(0,255,0,200), new Color(255,128,0,200));
 		
-		setScaleStartColor(new Color(0,255,0,200));
-		setScaleEndColor(new Color(255,128,0,200));
 		setHandleColor(new Color(128,128));
 		
 		setHandleSizeRatio(DEFAULT_HANDLE_SIZE_RATIO);
@@ -84,8 +84,20 @@ public final class Knob extends RangeControl {
 		final float y = ctx.height / 2 - getHeight() / 2;
 		
 		setPosition(x,y);
+	}		
+
+	public AbstractColor getScaleColor() {
+		return scaleColor;
+	}
+
+	public void setScaleColor(AbstractColor scaleColor) {
+		this.scaleColor = requireNonNull(scaleColor,"scaleColor");
 	}
 	
+	public void setScaleColor(AbstractColor startColor, AbstractColor endColor) {
+		setScaleColor(new LerpedColor(startColor, endColor, () -> convert(getValue(),getMinValue(), getMaxValue(), 0, 1)));
+	}
+
 	public float getHandleOffsetRatio() {
 		return handleOffsetRatio;
 	}
@@ -132,22 +144,6 @@ public final class Knob extends RangeControl {
 		}
 		this.scaleWeightRatio = scaleWeightRatio;
 	}
-
-	public AbstractColor getScaleStartColor() {
-		return scaleStartColor;
-	}
-
-	public void setScaleStartColor(AbstractColor scaleStartColor) {
-		this.scaleStartColor = requireNonNull(scaleStartColor,"scaleStartColor");
-	}
-
-	public AbstractColor getScaleEndColor() {
-		return scaleEndColor;
-	}
-
-	public void setScaleEndColor(AbstractColor scaleEndColor) {
-		this.scaleEndColor = requireNonNull(scaleEndColor,"scaleEndColor");
-	}
 	
 	public AbstractColor getHandleColor() {
 		return handleColor;
@@ -157,24 +153,12 @@ public final class Knob extends RangeControl {
 		this.handleColor = requireNonNull(handleColor,"handleColor");
 	}
 
-	public void setScaleColor(AbstractColor solidColor) {
-		setScaleStartColor(solidColor);
-		setScaleEndColor(solidColor);
-	}
-	
-	public void setScaleColor(AbstractColor scaleStartColor, AbstractColor scaleEndColor) {
-		setScaleStartColor(scaleStartColor);
-		setScaleEndColor(scaleEndColor);
-	}
-
 	public float getStartAngle() {
 		return startAngle;
 	}
 
 	public void setStartAngle(float startAngle) {
-		if (startAngle < 0 || startAngle > TWO_PI) {
-			throw new IllegalArgumentException("Start angle must be between 0 and " + TWO_PI);
-		}
+		validateAngle(startAngle);
 		
 		if (startAngle > endAngle) {
 			throw new IllegalArgumentException("Start angle cannot be greater than end angle");
@@ -188,9 +172,7 @@ public final class Knob extends RangeControl {
 	}
 
 	public void setEndAngle(float endAngle) {
-		if (endAngle < 0 || endAngle > TWO_PI) {
-			throw new IllegalArgumentException("End angle must be between 0 and " + TWO_PI);
-		}
+		validateAngle(endAngle);
 		
 		if (endAngle < startAngle) {
 			throw new IllegalArgumentException("End angle cannot be lower than start angle");
@@ -200,13 +182,8 @@ public final class Knob extends RangeControl {
 	}
 	
 	public void setAngles(float startAngle, float endAngle) {
-		if (startAngle < 0 || startAngle > TWO_PI) {
-			throw new IllegalArgumentException("Start angle must be between 0 and " + TWO_PI);
-		}
-		
-		if (endAngle < 0 || endAngle > TWO_PI) {
-			throw new IllegalArgumentException("End angle must be between 0 and " + TWO_PI);
-		}
+		validateAngle(startAngle);
+		validateAngle(endAngle);
 		
 		if (startAngle == endAngle) {
 			throw new IllegalArgumentException("Start and end angle cannot be equals");
@@ -218,6 +195,10 @@ public final class Knob extends RangeControl {
 		
 		this.startAngle = startAngle;
 		this.endAngle = endAngle;
+	}
+	
+	public void random() {
+		setValue(ctx.random(getMinValue(),getMaxValue() + 1));
 	}
 	
 	@Override
@@ -277,10 +258,7 @@ public final class Knob extends RangeControl {
 		ctx.translate(cachedCenterX,cachedCenterY);
 		ctx.rotate(HALF_PI);
 		
-		ctx.stroke(mapFromValue(scaleStartColor.getRed(),scaleEndColor.getRed())
-				  ,mapFromValue(scaleStartColor.getGreen(),scaleEndColor.getGreen())
-				  ,mapFromValue(scaleStartColor.getBlue(),scaleEndColor.getBlue())
-				  ,mapFromValue(scaleStartColor.getAlpha(),scaleEndColor.getAlpha()));
+		scaleColor.applyStroke();
 		
 		final float sw = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio;
 		ctx.strokeWeight(sw);
@@ -329,4 +307,11 @@ public final class Knob extends RangeControl {
 		
 		appendValue(speed);
 	}
+	
+	private void validateAngle(final float angle) {
+		if (angle < 0 || angle > TWO_PI) {
+			throw new IllegalArgumentException("Angle must be between 0 and " + TWO_PI);
+		}
+	}
+	
 }
