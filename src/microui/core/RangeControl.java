@@ -2,6 +2,8 @@ package microui.core;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import microui.core.base.Component;
@@ -9,6 +11,7 @@ import microui.core.interfaces.Scrollable;
 import microui.core.interfaces.ValuePreviewSource;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
+import microui.event.Listener;
 import microui.service.ValueOverlayManager;
 import microui.util.BoundedValue;
 import processing.event.MouseEvent;
@@ -26,7 +29,8 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	private final Scrolling scrolling;
 	private final Stroke stroke;
 	private Supplier<String> supplierOverlayText;
-
+	private List<Listener> onStartChangeValueListenerList, onChangeValueListenerList, onEndChangeValueListenerList;
+	private boolean startedChangeValue, endedChangeValue;
 	/**
 	 * Constructs a RangeControl with specified position and dimensions. Initializes
 	 * with default value range (0-100) at 0, and creates scrolling and stroke
@@ -39,10 +43,40 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 */
 	public RangeControl(float x, float y, float width, float height) {
 		super(x, y, width, height);
-
+		
+		onChangeValueListenerList = new ArrayList<Listener>();
+		onStartChangeValueListenerList = new ArrayList<Listener>();
+		onEndChangeValueListenerList = new ArrayList<Listener>();
+		
 		value = new BoundedValue(0, 100, 0);
 		scrolling = new Scrolling(this);
 		stroke = new Stroke();
+		
+	}
+	
+	public void addOnStartChangeValueListener(Listener listener) {
+		addListenerSafe(onStartChangeValueListenerList, listener);
+	}
+	
+	public void addOnChangeValueListener(Listener listener) {
+		addListenerSafe(onChangeValueListenerList, listener);
+	}
+	
+	public void addOnEndChangeValueListener(Listener listener) {
+		addListenerSafe(onEndChangeValueListenerList, listener);
+	}
+	
+	
+	public void removeOnStartChangeValueListener(Listener listener) {
+		removeListenerSafe(onStartChangeValueListenerList, listener);
+	}
+	
+	public void removeOnChangeValueListener(Listener listener) {
+		removeListenerSafe(onChangeValueListenerList, listener);
+	}
+	
+	public void removeOnEndChangeValueListener(Listener listener) {
+		removeListenerSafe(onEndChangeValueListenerList, listener);
 	}
 	
 	public void random() {
@@ -205,6 +239,22 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 			ValueOverlayManager.getInstance().setSource(this);
 		}
 	}
+	
+	protected boolean isStartedChangeValue() {
+		return startedChangeValue;
+	}
+
+	protected void setStartedChangeValue(boolean startedChangeValue) {
+		this.startedChangeValue = startedChangeValue;
+	}
+
+	protected boolean isEndedChangeValue() {
+		return endedChangeValue;
+	}
+
+	protected void setEndedChangeValue(boolean endedChangeValue) {
+		this.endedChangeValue = endedChangeValue;
+	}
 
 	/**
 	 * Checks if the minimum and maximum values are equal. Useful for detecting
@@ -251,6 +301,44 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 */
 	protected final Stroke getInternalStroke() {
 		return stroke;
+	}
+	
+	protected void updateOnChangeValueListeners() {
+		for (int i = 0; i < onChangeValueListenerList.size(); i++) {
+			onChangeValueListenerList.get(i).action();
+		}
+	}
+	
+	protected void updateOnStartChangeValueListeners() {
+		for (int i = 0; i < onStartChangeValueListenerList.size(); i++) {
+			onStartChangeValueListenerList.get(i).action();
+		}
+	}
+	
+	protected void updateOnEndChangeValueListeners() {
+		for (int i = 0; i < onEndChangeValueListenerList.size(); i++) {
+			onEndChangeValueListenerList.get(i).action();
+		}
+	}
+	
+	private void addListenerSafe(List<Listener> list, Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (list.contains(listener)) {
+			throw new IllegalArgumentException("Listener already added");
+		}
+		
+		list.add(listener);
+	}
+	
+	private void removeListenerSafe(List<Listener> list, Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (!list.contains(listener)) {
+			throw new IllegalArgumentException("Listener not found");
+		}
+		
+		list.remove(listener);
 	}
 
 	/**

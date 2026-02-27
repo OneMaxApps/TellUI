@@ -2,7 +2,6 @@ package microui.core;
 
 import microui.constants.Orientation;
 import microui.core.base.ContainerManager;
-import microui.event.Listener;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
@@ -17,8 +16,6 @@ import processing.event.MouseEvent;
  */
 public abstract class LinearRangeControl extends RangeControl {
 	private Orientation orientation;
-	private boolean valueChangeStart, valueChangeEnd;
-	private Listener onStartChangeValueListener, onChangeValueListener, onEndChangeValueListener;
 
 	/**
 	 * Constructs a LinearRangeControl with specified position and dimensions.
@@ -35,7 +32,7 @@ public abstract class LinearRangeControl extends RangeControl {
 
 		getInternalValue().setOnChangeValueListener(() -> requestUpdate());
 
-		onPress(() -> valueChangeEnd = true);
+		onPress(() -> setEndedChangeValue(true));
 
 		orientation = Orientation.HORIZONTAL;
 	}
@@ -127,60 +124,6 @@ public abstract class LinearRangeControl extends RangeControl {
 	}
 
 	/**
-	 * Gets the listener called when the value changes.
-	 *
-	 * @return the current change value listener, or null if not set
-	 */
-	public final Listener getOnChangeValueListener() {
-		return onChangeValueListener;
-	}
-
-	/**
-	 * Sets the listener to be called when the value changes.
-	 *
-	 * @param onChangeValueListener the listener for value changes
-	 */
-	public final void setOnChangeValueListener(Listener onChangeValueListener) {
-		this.onChangeValueListener = onChangeValueListener;
-	}
-
-	/**
-	 * Gets the listener called when a value change starts.
-	 *
-	 * @return the current start change value listener, or null if not set
-	 */
-	public final Listener getOnStartChangeValueListener() {
-		return onStartChangeValueListener;
-	}
-
-	/**
-	 * Sets the listener to be called when a value change starts.
-	 *
-	 * @param onStartChangeValueListener the listener for value change start
-	 */
-	public final void setOnStartChangeValueListener(Listener onStartChangeValueListener) {
-		this.onStartChangeValueListener = onStartChangeValueListener;
-	}
-
-	/**
-	 * Gets the listener called when a value change ends.
-	 *
-	 * @return the current end change value listener, or null if not set
-	 */
-	public final Listener getOnEndChangeValueListener() {
-		return onEndChangeValueListener;
-	}
-
-	/**
-	 * Sets the listener to be called when a value change ends.
-	 *
-	 * @param onEndChangeValueListener the listener for value change end
-	 */
-	public final void setOnEndChangeValueListener(Listener onEndChangeValueListener) {
-		this.onEndChangeValueListener = onEndChangeValueListener;
-	}
-
-	/**
 	 * Renders the linear range control track and handles value change events. Draws
 	 * the background track and manages the lifecycle of value change events (start,
 	 * change, end) based on user interaction.
@@ -197,19 +140,19 @@ public abstract class LinearRangeControl extends RangeControl {
 		if (getInternalScrolling().isScrolling()) {
 			getInternalValue().append(getInternalScrolling().get());
 			onChangeValue();
-			valueChangeEnd = true;
-			if (!ctx.mousePressed && !valueChangeStart) {
+			setEndedChangeValue(true);
+			if (!ctx.mousePressed && !isStartedChangeValue()) {
 				onStartChangeValue();
 			}
 		} else {
 			if (!ctx.mousePressed) {
-				valueChangeStart = false;
+				setStartedChangeValue(false);
 			}
 		}
 
-		if (!ctx.mousePressed && valueChangeEnd && !getInternalScrolling().isScrolling()) {
+		if (!ctx.mousePressed && isEndedChangeValue() && !getInternalScrolling().isScrolling()) {
 			onEndChangeValue();
-			valueChangeEnd = false;
+			setEndedChangeValue(false);
 		}
 	}
 
@@ -217,9 +160,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 * Notifies the change value listener. Called internally when the value changes.
 	 */
 	protected void onChangeValue() {
-		if (onChangeValueListener != null) {
-			onChangeValueListener.action();
-		}
+		updateOnChangeValueListeners();
 	}
 
 	/**
@@ -227,11 +168,9 @@ public abstract class LinearRangeControl extends RangeControl {
 	 * change begins. Ensures the start event is only fired once per interaction.
 	 */
 	protected void onStartChangeValue() {
-		if (!valueChangeStart) {
-			if (onStartChangeValueListener != null) {
-				onStartChangeValueListener.action();
-			}
-			valueChangeStart = true;
+		if (!isStartedChangeValue()) {
+			updateOnStartChangeValueListeners();
+			setStartedChangeValue(true);
 		}
 	}
 
@@ -240,9 +179,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 * ends.
 	 */
 	protected void onEndChangeValue() {
-		if (onEndChangeValueListener != null) {
-			onEndChangeValueListener.action();
-		}
+		updateOnEndChangeValueListeners();
 	}
 
 	/**
