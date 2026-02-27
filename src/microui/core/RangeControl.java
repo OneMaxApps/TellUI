@@ -46,7 +46,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	}
 	
 	public void random() {
-		setValue(ctx.random(getMinValue(),getMaxValue() + 1));
+		setValue(ctx.random(getMinValue(),getMaxValue()));
 	}
 
 	public Supplier<String> getSupplierOverlayText() {

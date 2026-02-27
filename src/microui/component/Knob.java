@@ -8,6 +8,8 @@ import static processing.core.PApplet.dist;
 import static processing.core.PConstants.HALF_PI;
 import static processing.core.PConstants.TWO_PI;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import microui.core.RangeControl;
@@ -15,6 +17,7 @@ import microui.core.base.ContainerManager;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
+import microui.event.Listener;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
@@ -41,13 +44,21 @@ public final class Knob extends RangeControl {
 	
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
+	private float cachedScaleWeight;
 	private float handleOffsetRatio, handleSizeRatio;
 	private boolean draggableState;
 	
 	private Optional<Float> defaultValue;
 	
+	private List<Listener> onChangeListenerList, onStartChangeListenerList, onEndChangeListenerList;
+	private boolean onStartChangeListenersUpdated, onEndChangeListenersUpdated;
+	
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
+		
+		onChangeListenerList = new ArrayList<Listener>();
+		onStartChangeListenerList = new ArrayList<Listener>();
+		onEndChangeListenerList = new ArrayList<Listener>();
 		
 		defaultValue = Optional.empty();
 		
@@ -64,10 +75,12 @@ public final class Knob extends RangeControl {
 		
 		onDragStart(() -> {
 			draggableState = mouseInsideCircle();
+			updateOnStartChangeListeners();
 		});
 		
 		onRelease(() -> {
 			draggableState = false;
+			updateOnEndChangeListeners();
 		});
 		
 		onDoubleClick(() -> {
@@ -75,6 +88,8 @@ public final class Knob extends RangeControl {
 				setDefaultValue();
 			}
 		});
+		
+		addOnChangeListener(() -> cachedScaleWeight = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio);
 		
 	}
 	
@@ -85,7 +100,31 @@ public final class Knob extends RangeControl {
 		final float y = ctx.height / 2 - getHeight() / 2;
 		
 		setPosition(x,y);
-	}		
+	}
+	
+	public void addOnChangeListener(Listener listener) {
+		addListenerSafe(onChangeListenerList, listener);
+	}
+	
+	public void addOnStartChangeListener(Listener listener) {
+		addListenerSafe(onStartChangeListenerList, listener);
+	}
+	
+	public void addOnEndChangeListener(Listener listener) {
+		addListenerSafe(onEndChangeListenerList, listener);
+	}
+	
+	public void removeOnChangeListener(Listener listener) {
+		removeListenerSafe(onChangeListenerList, listener);
+	}
+	
+	public void removeOnStartChangeListener(Listener listener) {
+		removeListenerSafe(onStartChangeListenerList, listener);
+	}
+	
+	public void removeOnEndChangeListener(Listener listener) {
+		removeListenerSafe(onEndChangeListenerList, listener);
+	}
 
 	public AbstractColor getScaleColor() {
 		return scaleColor;
@@ -238,6 +277,27 @@ public final class Knob extends RangeControl {
 		if (draggableState) {
 			if (cm.requestDrag(this)) {
 				manualDragging();
+				updateOnChangeListeners();
+			}
+		}
+		
+		if (getInternalScrolling().isScrolling()) {
+			
+			onEndChangeListenersUpdated = false;
+			
+			if (!onStartChangeListenersUpdated) {
+				updateOnStartChangeListeners();
+				onStartChangeListenersUpdated = true;
+			}
+			
+			updateOnChangeListeners();
+		} else {
+			
+			onStartChangeListenersUpdated = false;
+			
+			if (!onEndChangeListenersUpdated) {
+				updateOnEndChangeListeners();
+				onEndChangeListenersUpdated = true;
 			}
 		}
 	}
@@ -249,7 +309,47 @@ public final class Knob extends RangeControl {
 		cachedCenterX = getX() + getWidth()/2;
 		cachedCenterY = getY() + getHeight()/2;
 		
+		cachedScaleWeight = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio;
+		
 		cachedSize = Math.min(getWidth(),getHeight());
+	}
+	
+	private void addListenerSafe(List<Listener> list, Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (list.contains(listener)) {
+			throw new IllegalArgumentException("Listener already added");
+		}
+		
+		list.add(listener);
+	}
+	
+	private void removeListenerSafe(List<Listener> list, Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (!list.contains(listener)) {
+			throw new IllegalArgumentException("Listener not found");
+		}
+		
+		list.remove(listener);
+	}
+	
+	private void updateOnChangeListeners() {
+		for (int i = 0; i < onChangeListenerList.size(); i++) {
+			onChangeListenerList.get(i).action();
+		}
+	}
+	
+	private void updateOnStartChangeListeners() {
+		for (int i = 0; i < onStartChangeListenerList.size(); i++) {
+			onStartChangeListenerList.get(i).action();
+		}
+	}
+	
+	private void updateOnEndChangeListeners() {
+		for (int i = 0; i < onEndChangeListenerList.size(); i++) {
+			onEndChangeListenerList.get(i).action();
+		}
 	}
 
 	private boolean mouseInsideCircle() {
@@ -267,8 +367,7 @@ public final class Knob extends RangeControl {
 		
 		scaleColor.applyStroke();
 		
-		final float sw = mapFromValue(cachedSize * SCALE_START_WEIGHT, cachedSize * SCALE_END_WEIGHT) * scaleWeightRatio;
-		ctx.strokeWeight(sw);
+		ctx.strokeWeight(cachedScaleWeight);
 		
 		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, mapFromValue(startAngle, endAngle));
 		ctx.popMatrix();
@@ -281,7 +380,7 @@ public final class Knob extends RangeControl {
 		ctx.noStroke();
 		handleColor.apply();
 		float size = cachedSize * handleSizeRatio;
-		size = draggableState || isPressed() && mouseInsideCircle() ? size * .8f : size;
+		size = draggableState || (isPressed() && mouseInsideCircle()) ? size * .8f : size;
 		ctx.ellipse(cachedSize*handleOffsetRatio, 0, size, size);
 		
 		ctx.popMatrix();
