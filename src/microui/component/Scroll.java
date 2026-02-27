@@ -49,8 +49,11 @@ public class Scroll extends LinearRangeControl {
 		thumb.setTextVisible(false);
 		thumb.setBackgroundColor(getTheme().getPrimaryColor());
 
+		final var cm = ContainerManager.getInstance();
+		
 		thumb.onDragging(() -> {
-			if (!ContainerManager.getInstance().requestDraggableState(this)) {
+			
+			if (!cm.requestDrag(this)) {
 				return;
 			}
 			

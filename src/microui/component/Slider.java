@@ -43,14 +43,16 @@ public class Slider extends LinearRangeControl {
 
 		setValue(0, 100, 0);
 
+		final var cm = ContainerManager.getInstance();
+		
 		onDragging(() -> {
-			if (ContainerManager.getInstance().requestDraggableState(this)) {
+			if (cm.requestDrag(this)) {
 				recalculateProgressBounds();
 			}
 		});
 
 		onPress(() -> {
-			if (ContainerManager.getInstance().requestDraggableState(this)) {
+			if (cm.requestDrag(this)) {
 				recalculateProgressBounds();
 			}
 		});

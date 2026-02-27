@@ -62,7 +62,9 @@ public abstract class LinearRangeControl extends RangeControl {
 			return false;
 		}
 		
-		if (!ContainerManager.getInstance().isDraggableStateRequired(this)) {
+		final var cm = ContainerManager.getInstance();
+		
+		if (!cm.isDragOwner(this) && cm.isDraggingState()) {
 			return false;
 		}
 		

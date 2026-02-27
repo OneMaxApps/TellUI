@@ -68,12 +68,16 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		new Render();
 	}
 	
-	public boolean requestDraggableState(Component component) {
+	public boolean requestDrag(Component component) {
 		return dragManager.request(component);
 	}
 	
-	public boolean isDraggableStateRequired(Component component) {
-		return dragManager.isRequired(component);
+	public boolean isDragOwner(Component component) {
+		return dragManager.isOwner(component);
+	}
+	
+	public boolean isDraggingState() {
+		return dragManager.isDraggingState();
 	}
 
 	/**
@@ -670,22 +674,28 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 	
 	private final class DragManager {
-		private Component currentDraggingComponent;
+		private Component currentComponent;
 		
 		public boolean request(Component component) {
-			if (currentDraggingComponent == null) {
-				currentDraggingComponent = requireNonNull(component,"component");
+			if (currentComponent == null) {
+				currentComponent = requireNonNull(component,"component");
 			}
 			
-			return currentDraggingComponent == component;
+			return currentComponent == component;
 		}
 		
-		public boolean isRequired(Component component) {
-			return currentDraggingComponent == requireNonNull(component,"component");
+		public boolean isOwner(Component component) {
+			return currentComponent == requireNonNull(component,"component");
+		}
+		
+		public boolean isDraggingState() {
+			return currentComponent != null;
 		}
 		
 		public void release() {
-			currentDraggingComponent = null;
+			if (currentComponent != null) {
+				currentComponent = null;
+			}
 		}
 		
 	}

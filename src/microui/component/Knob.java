@@ -204,7 +204,9 @@ public final class Knob extends RangeControl {
 			return false;
 		}
 		
-		if (!ContainerManager.getInstance().isDraggableStateRequired(this)) {
+		final var cm = ContainerManager.getInstance();
+		
+		if (!cm.isDragOwner(this) && cm.isDraggingState()) {
 			return false;
 		}
 		
@@ -231,8 +233,10 @@ public final class Knob extends RangeControl {
 		
 		appendValue(getInternalScrolling().get());
 		
+		final var cm = ContainerManager.getInstance();
+		
 		if (draggableState) {
-			if (ContainerManager.getInstance().requestDraggableState(this)) {
+			if (cm.requestDrag(this)) {
 				manualDragging();
 			}
 		}
