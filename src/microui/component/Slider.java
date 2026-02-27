@@ -3,6 +3,7 @@ package microui.component;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.LinearRangeControl;
+import microui.core.base.ContainerManager;
 import microui.core.base.SpatialView;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
@@ -43,11 +44,15 @@ public class Slider extends LinearRangeControl {
 		setValue(0, 100, 0);
 
 		onDragging(() -> {
-			recalculateProgressBounds();
+			if (ContainerManager.getInstance().requestDraggableState(this)) {
+				recalculateProgressBounds();
+			}
 		});
 
 		onPress(() -> {
-			recalculateProgressBounds();
+			if (ContainerManager.getInstance().requestDraggableState(this)) {
+				recalculateProgressBounds();
+			}
 		});
 	}
 

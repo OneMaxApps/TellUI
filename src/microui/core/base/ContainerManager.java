@@ -39,6 +39,7 @@ import processing.event.MouseEvent;
  * @see Container
  * @see AnimatorMode
  */
+// TODO update JavaDoc
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean initialized, canDraw;
@@ -46,6 +47,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	private final Animator animator;
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
+	private final DragManager dragManager;
 	private Container prevContainer, currentContainer;
 	private boolean animatorEnabled;
 
@@ -55,7 +57,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		animator = new Animator(this);
 		tooltipManager = TooltipManager.getInstance();
 		valueOverlayManager = ValueOverlayManager.getInstance();
-
+		dragManager = new DragManager();
+		
 		setAnimatorEnabled(true);
 
 		getContext().registerMethod("keyPressed", this);
@@ -63,6 +66,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		getContext().registerMethod("mouseEvent", this);
 
 		new Render();
+	}
+	
+	public boolean requestDraggableState(Component component) {
+		return dragManager.request(component);
+	}
+	
+	public boolean isDraggableStateRequired(Component component) {
+		return dragManager.isRequired(component);
 	}
 
 	/**
@@ -81,6 +92,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		tooltipManager.draw();
 		valueOverlayManager.draw();
+		
+		if (!ctx.mousePressed) {
+			dragManager.release();
+		}
 	}
 
 	/**
@@ -652,6 +667,27 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	private void removeInternal(String textId) {
 		removeInternal(getByTextId(textId));
+	}
+	
+	private final class DragManager {
+		private Component currentDraggingComponent;
+		
+		public boolean request(Component component) {
+			if (currentDraggingComponent == null) {
+				currentDraggingComponent = requireNonNull(component,"component");
+			}
+			
+			return currentDraggingComponent == component;
+		}
+		
+		public boolean isRequired(Component component) {
+			return currentDraggingComponent == requireNonNull(component,"component");
+		}
+		
+		public void release() {
+			currentDraggingComponent = null;
+		}
+		
 	}
 
 	private static final class Animator extends View {

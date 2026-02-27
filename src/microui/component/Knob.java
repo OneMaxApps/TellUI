@@ -11,6 +11,7 @@ import static processing.core.PConstants.TWO_PI;
 import java.util.Optional;
 
 import microui.core.RangeControl;
+import microui.core.base.ContainerManager;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
@@ -197,13 +198,13 @@ public final class Knob extends RangeControl {
 		this.endAngle = endAngle;
 	}
 	
-	public void random() {
-		setValue(ctx.random(getMinValue(),getMaxValue() + 1));
-	}
-	
 	@Override
 	public boolean isContentPrepared() {
 		if (Environment.isAndroid() && mouseInsideCircle() && !isPressed()) {
+			return false;
+		}
+		
+		if (!ContainerManager.getInstance().isDraggableStateRequired(this)) {
 			return false;
 		}
 		
@@ -231,7 +232,9 @@ public final class Knob extends RangeControl {
 		appendValue(getInternalScrolling().get());
 		
 		if (draggableState) {
-			manualDragging();
+			if (ContainerManager.getInstance().requestDraggableState(this)) {
+				manualDragging();
+			}
 		}
 	}
 	

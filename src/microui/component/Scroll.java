@@ -5,6 +5,7 @@ import static microui.util.MathUtils.constrain;
 
 import microui.constants.Orientation;
 import microui.core.LinearRangeControl;
+import microui.core.base.ContainerManager;
 import microui.core.style.AbstractColor;
 import microui.util.MathUtils;
 
@@ -49,6 +50,10 @@ public class Scroll extends LinearRangeControl {
 		thumb.setBackgroundColor(getTheme().getPrimaryColor());
 
 		thumb.onDragging(() -> {
+			if (!ContainerManager.getInstance().requestDraggableState(this)) {
+				return;
+			}
+			
 			calcDistFromMouseToThumb();
 
 			switch (getOrientation()) {

@@ -1,6 +1,7 @@
 package microui.core;
 
 import microui.constants.Orientation;
+import microui.core.base.ContainerManager;
 import microui.event.Listener;
 import microui.util.Environment;
 import processing.event.MouseEvent;
@@ -58,6 +59,10 @@ public abstract class LinearRangeControl extends RangeControl {
 	@Override
 	public boolean isContentPrepared() {
 		if (Environment.isAndroid() && isHover() && !isPressed()) {
+			return false;
+		}
+		
+		if (!ContainerManager.getInstance().isDraggableStateRequired(this)) {
 			return false;
 		}
 		

@@ -21,6 +21,7 @@ import java.util.function.Supplier;
  * 
  * @see AbstractLerpedColor
  */
+// TODO update JavaDoc
 public final class LerpedColor extends AbstractLerpedColor {
 	private static final float DEFAULT_SPEED_OF_PROGRESS = .025f;
 	
