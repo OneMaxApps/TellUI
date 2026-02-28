@@ -32,6 +32,8 @@ public final class ValueOverlayManager extends View {
 		setVisible(true);
 		
 		text = new TextView();
+		text.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		
 		prepareTextConfig();
 		
 	}

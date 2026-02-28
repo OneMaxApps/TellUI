@@ -14,6 +14,7 @@ import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
+import microui.event.PointerManager;
 import microui.service.TooltipManager;
 import microui.service.ValueOverlayManager;
 import microui.util.Debugger;
@@ -47,7 +48,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	private final Animator animator;
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
-	private final DragManager dragManager;
 	private Container prevContainer, currentContainer;
 	private boolean animatorEnabled;
 
@@ -57,7 +57,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		animator = new Animator(this);
 		tooltipManager = TooltipManager.getInstance();
 		valueOverlayManager = ValueOverlayManager.getInstance();
-		dragManager = new DragManager();
 		
 		setAnimatorEnabled(true);
 
@@ -66,18 +65,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		getContext().registerMethod("mouseEvent", this);
 
 		new Render();
-	}
-	
-	public boolean requestDrag(Component component) {
-		return dragManager.request(component);
-	}
-	
-	public boolean isDragOwner(Component component) {
-		return dragManager.isOwner(component);
-	}
-	
-	public boolean isDraggingState() {
-		return dragManager.isDraggingState();
 	}
 
 	/**
@@ -97,9 +84,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		tooltipManager.draw();
 		valueOverlayManager.draw();
 		
-		if (!ctx.mousePressed) {
-			dragManager.release();
-		}
+		
 	}
 
 	/**
@@ -115,7 +100,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 		super.draw();
 		Debugger.draw();
-
+		
+		if (!ctx.mousePressed) {
+			PointerManager.release();
+		}
 	}
 
 	/**
@@ -673,33 +661,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		removeInternal(getByTextId(textId));
 	}
 	
-	private final class DragManager {
-		private Component currentComponent;
-		
-		public boolean request(Component component) {
-			if (currentComponent == null) {
-				currentComponent = requireNonNull(component,"component");
-			}
-			
-			return currentComponent == component;
-		}
-		
-		public boolean isOwner(Component component) {
-			return currentComponent == requireNonNull(component,"component");
-		}
-		
-		public boolean isDraggingState() {
-			return currentComponent != null;
-		}
-		
-		public void release() {
-			if (currentComponent != null) {
-				currentComponent = null;
-			}
-		}
-		
-	}
-
 	private static final class Animator extends View {
 		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);

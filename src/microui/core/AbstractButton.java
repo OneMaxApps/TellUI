@@ -46,6 +46,9 @@ public abstract class AbstractButton extends Component {
 		ripples = new Ripples(this);
 		hover = new Hover(this);
 		stroke = new Stroke();
+		
+		ripples.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		hover.setId(IGNORE_INTERNAL_COMPONENT_ID);
 	}
 
 	/**

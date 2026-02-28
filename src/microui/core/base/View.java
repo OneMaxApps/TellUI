@@ -47,6 +47,9 @@ public abstract class View implements Visible {
 	public static final int MIN_PRIORITY = 0;
 	/** Minimal id (0) for View objects */
 	public static final int MIN_ID = 0;
+	/** Ignoring internal components in components with this id */
+	public static final int IGNORE_INTERNAL_COMPONENT_ID = 10001;
+	
 	/** Instance of context by Processing */
 	protected static final PApplet ctx = getContext();
 

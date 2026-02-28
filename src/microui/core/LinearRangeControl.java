@@ -1,7 +1,7 @@
 package microui.core;
 
 import microui.constants.Orientation;
-import microui.core.base.ContainerManager;
+import microui.event.PointerManager;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
@@ -59,9 +59,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			return false;
 		}
 		
-		final var cm = ContainerManager.getInstance();
-		
-		if (!cm.isDragOwner(this) && cm.isDraggingState()) {
+		if (!PointerManager.isOwner(this)) {
 			return false;
 		}
 		

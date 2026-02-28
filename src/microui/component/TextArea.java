@@ -676,15 +676,20 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			scrollH.setBackgroundColor(Color.TRANSPARENT);
 			scrollH.setStrokeColor(Color.TRANSPARENT);
 			scrollH.setThumbColor(new Color(12, 64));
-
+			scrollH.setSupplierOverlayText(() -> {
+				return "";
+			});
+			
 			scrollV.setConstrainDimensionsEnabled(false);
 			scrollV.setBackgroundColor(Color.TRANSPARENT);
 			scrollV.setStrokeColor(Color.TRANSPARENT);
 			scrollV.setThumbColor(new Color(12, 64));
-
 			scrollV.setValue(0);
 			scrollV.setMaxValue(0);
 			scrollV.swapOrientation();
+			scrollV.setSupplierOverlayText(() -> {
+				return "";
+			});
 		}
 	}
 

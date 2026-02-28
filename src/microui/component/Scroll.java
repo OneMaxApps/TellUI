@@ -5,7 +5,6 @@ import static microui.util.MathUtils.constrain;
 
 import microui.constants.Orientation;
 import microui.core.LinearRangeControl;
-import microui.core.base.ContainerManager;
 import microui.core.style.AbstractColor;
 import microui.util.MathUtils;
 
@@ -28,7 +27,7 @@ import microui.util.MathUtils;
 public class Scroll extends LinearRangeControl {
 	private final Button thumb;
 	private float distToThumb, thumbSizeRatio;
-	private boolean needRecalculateDistToThumb;
+	private boolean needRecalculateDistToThumb, pressedInsideThumb;
 
 	/**
 	 * Constructs a Scroll with specified position and dimensions. The scrollbar is
@@ -44,19 +43,21 @@ public class Scroll extends LinearRangeControl {
 		super(x, y, w, h);
 
 		thumb = new Button("");
+		thumb.setId(IGNORE_INTERNAL_COMPONENT_ID);
 		thumb.setConstrainDimensionsEnabled(false);
 		thumb.setRipplesEnabled(false);
 		thumb.setTextVisible(false);
 		thumb.setBackgroundColor(getTheme().getPrimaryColor());
 
-		final var cm = ContainerManager.getInstance();
+		onDragStart(() -> {
+			pressedInsideThumb = isInsideThumb();
+		});
 		
-		thumb.onDragging(() -> {
-			
-			if (!cm.requestDrag(this)) {
+		onDragging(() -> {
+			if(!pressedInsideThumb) {
 				return;
 			}
-			
+
 			calcDistFromMouseToThumb();
 
 			switch (getOrientation()) {
@@ -77,7 +78,7 @@ public class Scroll extends LinearRangeControl {
 			onStartChangeValue();
 		});
 
-		thumb.onDragEnd(() -> needRecalculateDistToThumb = true);
+		onDragEnd(() -> needRecalculateDistToThumb = true);
 		needRecalculateDistToThumb = true;
 
 		setThumbSizeRatio(.1f);
@@ -293,6 +294,10 @@ public class Scroll extends LinearRangeControl {
 	protected void render() {
 		super.render();
 		thumb.draw();
+		
+		if (!ctx.mousePressed) {
+			pressedInsideThumb = false;
+		}
 	}
 
 	/**
@@ -352,5 +357,17 @@ public class Scroll extends LinearRangeControl {
 			thumb.setY(constrain(newY, getY(), getY() + getHeight() - ratio));
 			break;
 		}
+	}
+	
+	private boolean isInsideThumb() {
+		final float x = thumb.getPadX();
+		final float y = thumb.getPadY();
+		final float w = thumb.getPadWidth();
+		final float h = thumb.getPadHeight();
+		
+		final float mx = ctx.mouseX;
+		final float my = ctx.mouseY;
+		
+		return mx > x && mx < x+w && my > y && my < y+h;
 	}
 }

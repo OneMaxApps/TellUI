@@ -11,10 +11,10 @@ import static processing.core.PConstants.TWO_PI;
 import java.util.Optional;
 
 import microui.core.RangeControl;
-import microui.core.base.ContainerManager;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
+import microui.event.PointerManager;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
@@ -209,9 +209,7 @@ public final class Knob extends RangeControl {
 			return false;
 		}
 		
-		final var cm = ContainerManager.getInstance();
-		
-		if (!cm.isDragOwner(this) && cm.isDraggingState()) {
+		if (!PointerManager.isOwner(this)) {
 			return false;
 		}
 		
@@ -238,13 +236,9 @@ public final class Knob extends RangeControl {
 		
 		appendValue(getInternalScrolling().get());
 		
-		final var cm = ContainerManager.getInstance();
-		
 		if (draggableState) {
-			if (cm.requestDrag(this)) {
-				manualDragging();
-				updateOnChangeValueListeners();
-			}
+			manualDragging();
+			updateOnChangeValueListeners();
 		}
 		
 		if (getInternalScrolling().isScrolling()) {

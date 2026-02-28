@@ -141,7 +141,7 @@ public abstract class AbstractEventSystem {
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
 
 		private boolean hover, pressed;
-
+		// TODO test all
 		private final PressDetector pressDetector;
 		private final ReleaseDetector releaseDetector;
 		private final LongPressDetector longPressDetector;
@@ -342,7 +342,7 @@ public abstract class AbstractEventSystem {
 		}
 
 		private final class PressDetector {
-			private boolean isPressHookCalled;
+			private boolean pressHookCalled;
 			private long pressTime;
 
 			public PressDetector() {
@@ -353,13 +353,14 @@ public abstract class AbstractEventSystem {
 			public boolean isDetected() {
 				
 				if (!MicroUI.getContext().mousePressed) {
-					isPressHookCalled = false;
+					pressHookCalled = false;
 				}
 
-				if (!isPressHookCalled && hover && pressed) {
-					isPressHookCalled = true;
+				if (!pressHookCalled && hover && pressed) {
+					pressHookCalled = true;
 					pressTime = System.currentTimeMillis();
-					return true;
+					
+					return PointerManager.request(spatialView);
 				}
 				return false;
 			}
@@ -387,7 +388,8 @@ public abstract class AbstractEventSystem {
 				if (!MicroUI.getContext().mousePressed && !isReleaseHookCalled) {
 					isReleaseHookCalled = true;
 					releaseTime = System.currentTimeMillis();
-					return true;
+					
+					return PointerManager.request(spatialView);
 				}
 
 				return false;
@@ -420,7 +422,8 @@ public abstract class AbstractEventSystem {
 				if (!isLongPressHookCalled && pressed
 						&& System.currentTimeMillis() - pressDetectorInternal.getPressTime() >= longPressThreshold) {
 					isLongPressHookCalled = true;
-					return true;
+					
+					return PointerManager.request(spatialView);
 				}
 
 				return false;
@@ -585,21 +588,27 @@ public abstract class AbstractEventSystem {
 		}
 
 		private final class ClickDetector {
-			private boolean isCanCallHook;
+			private boolean canCallHook;
 
 			public boolean isDetected() {
 
-				if (isCanCallHook && !pressed && hover) {
-					isCanCallHook = false;
+				if (canCallHook && !pressed && hover) {
+					canCallHook = false;
+					
+					if (!PointerManager.isOwner(spatialView)) {
+						return false;
+					}
+					
 					return true;
 				}
 
 				if (pressed) {
-					isCanCallHook = true;
+					PointerManager.request(spatialView);
+					canCallHook = true;
 				}
 
 				if (!hover) {
-					isCanCallHook = false;
+					canCallHook = false;
 				}
 
 				return false;
@@ -632,7 +641,7 @@ public abstract class AbstractEventSystem {
 
 				if (clickCount == 2) {
 					clickCount = 0;
-					return true;
+					return PointerManager.request(spatialView);
 				}
 
 				return false;
@@ -661,7 +670,7 @@ public abstract class AbstractEventSystem {
 
 				if (!hookCalled && pressed && isMouseMoved()) {
 					hookCalled = true;
-					return true;
+					return PointerManager.request(spatialView);
 				}
 
 				return false;
@@ -696,7 +705,7 @@ public abstract class AbstractEventSystem {
 					isDragging = false;
 				}
 
-				return isDragging;
+				return isDragging && PointerManager.request(spatialView);
 			}
 
 		}
@@ -718,7 +727,7 @@ public abstract class AbstractEventSystem {
 
 				if (!dragStartDetector.isDetected() && isDragEnd && !MicroUI.getContext().mousePressed) {
 					isDragEnd = false;
-					return true;
+					return PointerManager.isOwner(spatialView);
 				}
 
 				return false;

@@ -44,10 +44,12 @@ public class Button extends AbstractButton {
 		textView.setAutoResizeModeEnabled(true);
 		textView.setAutoResizeMode(BIG);
 		textView.setTextColor(getTheme().getButtonTextColor());
+		textView.setId(IGNORE_INTERNAL_COMPONENT_ID);
 		setText(text);
 
 		image = new ImageBuffer();
 		image.setVisible(true);
+		image.setId(IGNORE_INTERNAL_COMPONENT_ID);
 	}
 
 	/**
