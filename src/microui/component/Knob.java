@@ -41,7 +41,7 @@ public final class Knob extends RangeControl {
 	
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
-	private float cachedScaleWeight;
+	private float cachedScaleWeight, cachedScaleTmpAngle;
 	private float handleOffsetRatio, handleSizeRatio;
 	private boolean draggableState;
 	
@@ -79,7 +79,10 @@ public final class Knob extends RangeControl {
 			}
 		});
 		
-		addOnChangeValueListener(() -> recalculateScaleWeight());
+		addOnChangeValueListener(() -> {
+			cachedScaleTmpAngle = mapFromValue(startAngle, endAngle);
+			recalculateScaleWeight();
+		});
 		
 	}
 	
@@ -290,7 +293,7 @@ public final class Knob extends RangeControl {
 		
 		ctx.strokeWeight(cachedScaleWeight);
 		
-		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, mapFromValue(startAngle, endAngle));
+		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, cachedScaleTmpAngle);
 		ctx.popMatrix();
 	}
 	
