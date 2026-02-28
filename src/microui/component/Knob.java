@@ -8,8 +8,6 @@ import static processing.core.PApplet.dist;
 import static processing.core.PConstants.HALF_PI;
 import static processing.core.PConstants.TWO_PI;
 
-import java.util.Optional;
-
 import microui.core.RangeControl;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
@@ -41,16 +39,14 @@ public final class Knob extends RangeControl {
 	
 	private float startAngle, endAngle;
 	private float cachedCenterX, cachedCenterY, cachedSize;
-	private float cachedScaleWeight, cachedScaleTmpAngle;
+	private float cachedScaleWeight;
 	private float handleOffsetRatio, handleSizeRatio;
 	private boolean draggableState;
 	
-	private Optional<Float> defaultValue;
+	private Float defaultValue;
 
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
-		
-		defaultValue = Optional.empty();
 		
 		setAngles(DEFAULT_START_ANGLE, DEFAULT_END_ANGLE);
 
@@ -80,7 +76,6 @@ public final class Knob extends RangeControl {
 		});
 		
 		addOnChangeValueListener(() -> {
-			cachedScaleTmpAngle = mapFromValue(startAngle, endAngle);
 			recalculateScaleWeight();
 		});
 		
@@ -131,7 +126,7 @@ public final class Knob extends RangeControl {
 		this.handleSizeRatio = handleSizeRatio;
 	}
 
-	public Optional<Float> getDefaultValue() {
+	public Float getDefaultValue() {
 		return defaultValue;
 	}
 
@@ -140,7 +135,7 @@ public final class Knob extends RangeControl {
 			throw new IllegalArgumentException(String.format("Default value must be between min(%f) and max(%f) value",getMinValue(),getMaxValue()));
 		}
 
-		this.defaultValue = Optional.of(defaultValue);
+		this.defaultValue = Float.valueOf(defaultValue);
 	}
 
 	public float getScaleWeightRatio() {
@@ -289,11 +284,12 @@ public final class Knob extends RangeControl {
 		ctx.translate(cachedCenterX,cachedCenterY);
 		ctx.rotate(HALF_PI);
 		
+		ctx.noFill();
 		scaleColor.applyStroke();
 		
 		ctx.strokeWeight(cachedScaleWeight);
 		
-		ctx.arc(0, 0, cachedSize,cachedSize, startAngle, cachedScaleTmpAngle);
+		ctx.arc(0, 0, cachedSize, cachedSize, startAngle, mapFromValue(startAngle, endAngle));
 		ctx.popMatrix();
 	}
 	
@@ -311,11 +307,11 @@ public final class Knob extends RangeControl {
 	}
 	
 	private void setDefaultValue() {
-		if (defaultValue.isEmpty()) {
+		if (defaultValue == null) {
 			return;
 		}
 		
-		setValue(defaultValue.get());
+		setValue(defaultValue);
 	}
 	
 	private void manualDragging() {

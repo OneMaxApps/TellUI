@@ -1,230 +1,196 @@
 package microui.component;
 
-import static java.lang.Math.max;
-import static java.util.Objects.requireNonNull;
-import static microui.component.CheckBox.CheckStyle.MARK;
-import static microui.core.style.theme.ThemeManager.getTheme;
 import static processing.core.PConstants.PROJECT;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import microui.core.AbstractButton;
 import microui.core.style.AbstractColor;
+import microui.core.style.Color;
+import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 
-/**
- * A CheckBox component that represents a binary state (checked or unchecked).
- * The CheckBox extends AbstractButton to provide toggle functionality with
- * three visual styles for the checked state: MARK, RECT, and DOT.
- * 
- * @see AbstractButton
- * @see CheckStyle
- */
-public class CheckBox extends AbstractButton {
-	/** Default size of CheckBox */
-	public static final int DEFAULT_SIZE = 16;
-
-	private AbstractColor markColor;
-	private Listener onStateChangedListener;
-	private CheckStyle checkStyle;
+public final class CheckBox extends AbstractButton {
+	private float cachedCenterX, cachedCenterY, cachedSize;
 	private boolean checked;
-
-	/**
-	 * Constructs a CheckBox at the specified position with default size. The
-	 * checkbox is initialized with MARK style and the theme's primary color.
-	 *
-	 * @param x the x-coordinate of the checkbox's top-left corner
-	 * @param y the y-coordinate of the checkbox's top-left corner
-	 */
-	public CheckBox(float x, float y) {
-		super(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
-		setMinMaxSize(DEFAULT_SIZE);
-		onClick(() -> toggle());
-		markColor = getTheme().getPrimaryColor();
-		setCheckStyle(MARK);
+	private List<Listener> onCheckedListenerList;
+	private AbstractColor markColor;
+	private Style style; 
+	
+	public CheckBox(float x, float y, float w, float h) {
+		super(x, y, w, h);
+		
+		onCheckedListenerList = new ArrayList<Listener>();
+		
+		setMarkColor(new LerpedLoopColor(new Color(0,255), new Color(0,132)).setSpeed(.1f));
+		
+		onClick(() -> {
+			toggle();
+			
+			if (isEnterCheckBox()) {
+				notifyOnCheckListeners();
+			}
+		});
+		
+		setStyle(Style.MARK);
 	}
-
-	/**
-	 * Default constructor with default initialization
-	 * 
-	 * @param checked the state for CheckBox
-	 */
-	public CheckBox(boolean checked) {
-		this(0, 0);
-		setPositionInCenter();
-		setChecked(checked);
-	}
-
-	/**
-	 * Default constructor with default initialization
-	 */
+	
 	public CheckBox() {
-		this(false);
+		this(0,0,0,0);
+		
+		setInCenter();
+	}
+	
+	public Style getStyle() {
+		return style;
 	}
 
-	// == PUBLIC API ==
-
-	/**
-	 * Gets the visual style used to display the checked state.
-	 *
-	 * @return the current check style
-	 */
-	public final CheckStyle getCheckStyle() {
-		return checkStyle;
+	public void setStyle(Style style) {
+		this.style = Objects.requireNonNull(style,"style");
 	}
 
-	/**
-	 * Sets the visual style for displaying the checked state.
-	 *
-	 * @param checkStyle the check style to use (MARK, RECT, or DOT)
-	 * @throws NullPointerException if checkStyle is null
-	 */
-	public final void setCheckStyle(CheckStyle checkStyle) {
-		this.checkStyle = requireNonNull(checkStyle, "checkStyle");
-	}
-
-	/**
-	 * Gets the current checked state of the checkbox.
-	 *
-	 * @return true if the checkbox is checked, false otherwise
-	 */
-	public final boolean isChecked() {
-		return checked;
-	}
-
-	/**
-	 * Sets the checked state of the checkbox. If the state changes, the
-	 * onStateChangedListener will be notified.
-	 *
-	 * @param checked true to check the checkbox, false to uncheck it
-	 */
-	public final void setChecked(boolean checked) {
-		if (this.checked == checked) {
-			return;
-		}
-		this.checked = checked;
-		notifyOnStateChanged();
-	}
-
-	/**
-	 * Toggles the checked state of the checkbox. This method is automatically
-	 * called when the checkbox is clicked.
-	 */
-	public final void toggle() {
-		setChecked(!isChecked());
-	}
-
-	/**
-	 * Gets the color used to draw the check mark or indicator.
-	 *
-	 * @return the current mark color
-	 */
-	public final AbstractColor getMarkColor() {
+	public AbstractColor getMarkColor() {
 		return markColor;
 	}
 
-	/**
-	 * Sets the color used to draw the check mark or indicator.
-	 *
-	 * @param markColor the color to use for the check mark
-	 * @throws NullPointerException if markColor is null
-	 */
-	public final void setMarkColor(AbstractColor markColor) {
-		this.markColor = requireNonNull(markColor, "markColor");
+	public void setMarkColor(AbstractColor markColor) {
+		this.markColor = Objects.requireNonNull(markColor,"markColor");
 	}
 
-	/**
-	 * Sets the listener to be called when the checkbox's state changes.
-	 *
-	 * @param onStateChangedListener the listener to call on state changes
-	 * @throws NullPointerException if the listener is null
-	 */
-	public final void setOnStateChangedListener(Listener onStateChangedListener) {
-		this.onStateChangedListener = requireNonNull(onStateChangedListener, "onStateChangedListener");
+	public void addOnCheckedListener(Listener listener) {
+		Objects.requireNonNull(listener,"listener");
+		
+		if (onCheckedListenerList.contains(listener)) {
+			throw new IllegalArgumentException("Listener already added");
+		}
+		
+		onCheckedListenerList.add(listener);
+	}
+	
+	public void removeOnCheckedListener(Listener listener) {
+		Objects.requireNonNull(listener,"listener");
+		
+		if (!onCheckedListenerList.contains(listener)) {
+			throw new IllegalArgumentException("Listener not found");
+		}
+		
+		onCheckedListenerList.remove(listener);
 	}
 
-	/**
-	 * Renders the checkbox and its visual state. The rendering includes background,
-	 * ripple effects, hover effects, and the check mark if the checkbox is checked.
-	 */
+	public boolean isChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		if (this.checked == checked) {
+			return;
+		}
+		
+		this.checked = checked;
+		
+		notifyOnCheckListeners();
+	}
+	
+	public void toggle() {
+		checked = !checked;
+		
+		notifyOnCheckListeners();
+	}
+
 	@Override
 	protected void render() {
-		super.render();
-
-		getRipplesInternal().draw();
-		getHoverInternal().draw();
-
+		getBackgroundColor().apply();
+		getStrokeColor().applyStroke();
+		ctx.rect(cachedCenterX, cachedCenterY, cachedSize, cachedSize);
+		
 		if (checked) {
-			markOnDraw();
+			markOnRender();
 		}
 	}
-
-	private void setPositionInCenter() {
-		setPosition(ctx.width / 2 - DEFAULT_SIZE / 2, ctx.height / 2 - DEFAULT_SIZE / 2);
+	
+	@Override
+	protected void onChangeBounds() {
+		super.onChangeBounds();
+		
+		updateCachedBounds();
 	}
 
-	private void notifyOnStateChanged() {
-		if (onStateChangedListener != null) {
-			onStateChangedListener.action();
+	private void setInCenter() {
+		final float x = ctx.width / 2 - getWidth() / 2;
+		final float y = ctx.height / 2 - getHeight() / 2;
+		
+		setPosition(x, y);
+	}
+	
+	private void updateCachedBounds() {
+		cachedSize = Math.min(getWidth(), getHeight());
+		cachedCenterX = getX() + getWidth()  / 2 - cachedSize / 2;
+		cachedCenterY = getY() + getHeight() / 2 - cachedSize / 2;
+	}
+	
+	private void notifyOnCheckListeners() {
+		for (int i = 0; i < onCheckedListenerList.size(); i++) {
+			onCheckedListenerList.get(i).action();
 		}
 	}
-
-	private void markOnDraw() {
-		switch (checkStyle) {
-		case MARK:
-			styleMarkOnDraw();
-			break;
-		case RECT:
-			styleRectOnDraw();
-			break;
-		case DOT:
-			styleDotOnDraw();
-			break;
+	
+	private boolean isEnterCheckBox() {
+		final float x = cachedCenterX;
+		final float y = cachedCenterY;
+		final float s = cachedSize;
+		
+		final float mx = ctx.mouseX;
+		final float my = ctx.mouseY;
+		
+		return mx > x && mx < x + s && my > y && my < y + s;
+	}
+	
+	private void markOnRender() {
+		final float x = cachedCenterX;
+		final float y = cachedCenterY;
+		final float s = cachedSize;
+		
+		final float offset = s*.12f;
+		
+		switch(style) {
+			case MARK:
+				ctx.pushStyle();
+				
+				markColor.applyStroke();
+				ctx.strokeWeight(s*.1f);
+				ctx.strokeCap(PROJECT);
+				
+				
+				
+				ctx.line(x + offset, y+s/2 + offset, x+s/2, y+s - offset);
+				ctx.line(x+s - offset, y + offset, x+s/2, y+s - offset);
+				
+				ctx.popStyle();
+				break;
+	
+			case DOT:
+				ctx.pushStyle();
+				markColor.apply();
+				markColor.applyStroke();
+				ctx.ellipse(x + s / 2, y + s / 2, s*.5f, s*.5f);
+				ctx.popStyle();
+				break;
+				
+			case RECT:
+				ctx.pushStyle();
+				markColor.apply();
+				markColor.applyStroke();
+				ctx.rect(x + offset, y + offset , s - offset*2 , s - offset*2);
+				ctx.popStyle();
+				break;	
 		}
 	}
-
-	private void styleMarkOnDraw() {
-		ctx.pushStyle();
-
-		getTheme().getPrimaryColor().applyStroke();
-		ctx.strokeWeight(max(1, getWidth() / 5));
-		ctx.strokeCap(PROJECT);
-
-		ctx.line(getX() + getWidth() * .3f, getY() + getHeight() * .6f, getX() + getWidth() / 2,
-				getY() + getHeight() * .8f);
-
-		ctx.line(getX() + getWidth() * .8f, getY() + getHeight() * .2f, getX() + getWidth() / 2,
-				getY() + getHeight() * .8f);
-
-		ctx.popStyle();
-	}
-
-	private void styleRectOnDraw() {
-		ctx.pushStyle();
-		ctx.noStroke();
-		markColor.apply();
-		ctx.rect(getX(), getY(), getWidth(), getHeight());
-		ctx.popStyle();
-	}
-
-	private void styleDotOnDraw() {
-		ctx.pushStyle();
-		ctx.noFill();
-		markColor.applyStroke();
-		ctx.strokeWeight(Math.min(getWidth() / 2, getHeight() / 2));
-		ctx.point(getX() + getWidth() / 2, getY() + getHeight() / 2);
-		ctx.popStyle();
-	}
-
-	/**
-	 * Enumeration defining the visual styles for displaying a checked checkbox.
-	 */
-	public enum CheckStyle {
-		/** Displays a check mark (✓). */
+	
+	public static enum Style {
 		MARK,
-
-		/** Displays a filled rectangle. */
-		RECT,
-
-		/** Displays a dot. */
-		DOT;
+		DOT,
+		RECT;
 	}
 }

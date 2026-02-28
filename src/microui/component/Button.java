@@ -5,6 +5,8 @@ import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.AbstractButton;
 import microui.core.ImageBuffer;
+import microui.core.effect.Hover;
+import microui.core.effect.Ripples;
 import microui.core.style.AbstractColor;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -21,6 +23,8 @@ import processing.core.PImage;
  * @see ImageBuffer
  */
 public class Button extends AbstractButton {
+	private final Ripples ripples;
+	private final Hover hover;
 	private final TextView textView;
 	private final ImageBuffer image;
 
@@ -39,6 +43,12 @@ public class Button extends AbstractButton {
 		super(x, y, w, h);
 		setMinMaxSize(20, 10, 100, 40);
 
+		ripples = new Ripples(this);
+		hover = new Hover(this);
+		
+		ripples.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		hover.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		
 		textView = new TextView(getX(), getY(), getWidth(), getHeight());
 		textView.setConstrainDimensionsEnabled(false);
 		textView.setAutoResizeModeEnabled(true);
@@ -84,6 +94,126 @@ public class Button extends AbstractButton {
 	 */
 	public Button() {
 		this("BUTTON");
+	}
+	
+	/**
+	 * Gets the color of the ripple effects.
+	 *
+	 * @return the current ripple effect color
+	 */
+	public final AbstractColor getRipplesColor() {
+		return ripples.getColor();
+	}
+
+	/**
+	 * Sets the color of the ripple effects.
+	 *
+	 * @param color the color to use for ripple effects
+	 * @return this AbstractButton instance for method chaining
+	 */
+	public final AbstractButton setRipplesColor(AbstractColor color) {
+		ripples.setColor(color);
+		return this;
+	}
+
+	/**
+	 * Checks if ripple effects are enabled.
+	 *
+	 * @return true if ripple effects are enabled, false otherwise
+	 */
+	public final boolean isRipplesEnabled() {
+		return ripples.isEnabled();
+	}
+
+	/**
+	 * Enables or disables ripple effects.
+	 *
+	 * @param isEnabled true to enable ripple effects, false to disable
+	 * @return this AbstractButton instance for method chaining
+	 */
+	public final AbstractButton setRipplesEnabled(boolean isEnabled) {
+		ripples.setEnabled(isEnabled);
+		return this;
+	}
+
+	/**
+	 * Checks if hover effects are enabled.
+	 *
+	 * @return true if hover effects are enabled, false otherwise
+	 */
+	public final boolean isHoverEnabled() {
+		return hover.isEnabled();
+	}
+
+	/**
+	 * Enables or disables hover effects.
+	 *
+	 * @param isEnabled true to enable hover effects, false to disable
+	 * @return this AbstractButton instance for method chaining
+	 */
+	public final AbstractButton setHoverEnabled(boolean isEnabled) {
+		hover.setEnabled(isEnabled);
+		return this;
+	}
+	
+	/**
+	 * Gets the internal Ripples effect instance. Protected access for use by
+	 * subclasses in their rendering.
+	 *
+	 * @return the internal Ripples instance
+	 */
+	protected final Ripples getRipplesInternal() {
+		return ripples;
+	}
+
+	/**
+	 * Gets the internal Hover effect instance. Protected access for use by
+	 * subclasses in their rendering.
+	 *
+	 * @return the internal Hover instance
+	 */
+	protected final Hover getHoverInternal() {
+		return hover;
+	}
+
+	/**
+	 * Gets the color of the hover effect.
+	 *
+	 * @return the current hover effect color
+	 */
+	public AbstractColor getHoverColor() {
+		return hover.getColor();
+	}
+
+	/**
+	 * Sets the color of the hover effect.
+	 *
+	 * @param color the color to use for hover effects
+	 * @return this AbstractButton instance for method chaining
+	 */
+	public AbstractButton setHoverColor(AbstractColor color) {
+		hover.setColor(color);
+		return this;
+	}
+
+	/**
+	 * Gets the animation speed of the hover effect.
+	 *
+	 * @return the current hover animation speed
+	 */
+	public final float getHoverSpeed() {
+		return hover.getSpeed();
+	}
+
+	/**
+	 * Sets the animation speed of the hover effect.
+	 *
+	 * @param speed the animation speed for hover effects
+	 * @return this AbstractButton instance for method chaining
+	 */
+	public final AbstractButton setHoverSpeed(float speed) {
+		hover.setSpeed(speed);
+		return this;
 	}
 
 	/**
@@ -258,7 +388,12 @@ public class Button extends AbstractButton {
 	 */
 	@Override
 	protected void render() {
-		super.render();
+		ctx.pushStyle();
+		getStrokeColor().applyStroke();
+		getBackgroundColor().apply();
+		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
+		ctx.popStyle();
+		
 		image.draw();
 		getRipplesInternal().draw();
 		getHoverInternal().draw();
