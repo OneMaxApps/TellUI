@@ -8,16 +8,13 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
 import microui.util.MathUtils;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A slider component for selecting values within a linear range. The Slider
  * extends LinearRangeControl to provide a draggable interface with a visual
  * progress indicator that fills according to the current value.
- * 
- * <p>
- * The slider supports both horizontal and vertical orientations and provides
- * visual feedback through a progress rectangle that grows/shrinks as the value
- * changes.
- * </p>
  * 
  * <p>
  * Users can click or drag anywhere on the slider track to set the value, with
@@ -125,20 +122,12 @@ public class Slider extends LinearRangeControl {
 		progress.color = color;
 	}
 
-	/**
-	 * Renders the slider and its progress indicator. The rendering includes the
-	 * track (from parent class) and the progress rectangle.
-	 */
 	@Override
 	protected void render() {
 		super.render();
 		progress.draw();
 	}
 
-	/**
-	 * Called when the slider's bounds change. Updates the progress indicator to
-	 * match the new bounds.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();

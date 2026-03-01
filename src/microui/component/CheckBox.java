@@ -12,6 +12,9 @@ import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * Component CheckBox.
  */

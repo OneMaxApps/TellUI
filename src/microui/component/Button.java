@@ -11,6 +11,9 @@ import microui.core.style.AbstractColor;
 import processing.core.PFont;
 import processing.core.PImage;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * Represents a clickable button component with text and/or image content. The
  * Button class extends AbstractButton to provide interactive button
@@ -76,9 +79,7 @@ public class Button extends AbstractButton {
 	}
 
 	/**
-	 * Constructs a Button with specified text, centered on the screen. The button
-	 * uses maximum dimensions and is positioned at the center of the current
-	 * drawing context.
+	 * Constructs a Button with specified text, centered on the screen.
 	 *
 	 * @param text the text to display on the button
 	 */
@@ -128,11 +129,11 @@ public class Button extends AbstractButton {
 	/**
 	 * Enables or disables ripple effects.
 	 *
-	 * @param isEnabled true to enable ripple effects, false to disable
+	 * @param enabled true to enable ripple effects, false to disable
 	 * @return this AbstractButton instance for method chaining
 	 */
-	public final AbstractButton setRipplesEnabled(boolean isEnabled) {
-		ripples.setEnabled(isEnabled);
+	public final AbstractButton setRipplesEnabled(boolean enabled) {
+		ripples.setEnabled(enabled);
 		return this;
 	}
 
@@ -148,34 +149,14 @@ public class Button extends AbstractButton {
 	/**
 	 * Enables or disables hover effects.
 	 *
-	 * @param isEnabled true to enable hover effects, false to disable
+	 * @param enabled true to enable hover effects, false to disable
 	 * @return this AbstractButton instance for method chaining
 	 */
-	public final AbstractButton setHoverEnabled(boolean isEnabled) {
-		hover.setEnabled(isEnabled);
+	public final AbstractButton setHoverEnabled(boolean enabled) {
+		hover.setEnabled(enabled);
 		return this;
 	}
 	
-	/**
-	 * Gets the internal Ripples effect instance. Protected access for use by
-	 * subclasses in their rendering.
-	 *
-	 * @return the internal Ripples instance
-	 */
-	protected final Ripples getRipplesInternal() {
-		return ripples;
-	}
-
-	/**
-	 * Gets the internal Hover effect instance. Protected access for use by
-	 * subclasses in their rendering.
-	 *
-	 * @return the internal Hover instance
-	 */
-	protected final Hover getHoverInternal() {
-		return hover;
-	}
-
 	/**
 	 * Gets the color of the hover effect.
 	 *
@@ -208,7 +189,7 @@ public class Button extends AbstractButton {
 	/**
 	 * Sets the animation speed of the hover effect.
 	 *
-	 * @param speed the animation speed for hover effects
+	 * @param speed the animation speed (must be greater than 0)
 	 * @return this AbstractButton instance for method chaining
 	 */
 	public final AbstractButton setHoverSpeed(float speed) {
@@ -268,8 +249,7 @@ public class Button extends AbstractButton {
 	}
 
 	/**
-	 * Sets the color of the button's text. This overrides the theme's default
-	 * button text color.
+	 * Sets the color of the button's text.
 	 *
 	 * @param color the color to use for text rendering
 	 * @return this Button instance for method chaining
@@ -310,8 +290,7 @@ public class Button extends AbstractButton {
 	}
 
 	/**
-	 * Sets an image to display on the button. The image will be drawn behind the
-	 * text (if any) and above the button's background and effects.
+	 * Sets an image to display on the button.
 	 *
 	 * @param image the image to display on the button
 	 * @return this Button instance for method chaining
@@ -331,8 +310,7 @@ public class Button extends AbstractButton {
 	}
 
 	/**
-	 * Sets the tint color to apply to the button's image. Use null or a fully
-	 * opaque white color to display the image without tinting.
+	 * Sets the tint color to apply to the button's image.
 	 *
 	 * @param color the tint color to apply to the image
 	 * @return this Button instance for method chaining
@@ -346,7 +324,7 @@ public class Button extends AbstractButton {
 	 * Sets the horizontal alignment of the button's text. This determines how text
 	 * is positioned within the button's bounds.
 	 *
-	 * @param alignX the horizontal alignment (e.g., LEFT, CENTER, RIGHT)
+	 * @param alignX the horizontal alignment (LEFT, CENTER, RIGHT)
 	 * @return this Button instance for method chaining
 	 */
 	public final Button setTextAlignX(int alignX) {
@@ -358,19 +336,22 @@ public class Button extends AbstractButton {
 	 * Sets the vertical alignment of the button's text. This determines how text is
 	 * positioned within the button's bounds.
 	 *
-	 * @param alignY the vertical alignment (e.g., TOP, CENTER, BOTTOM)
+	 * @param alignY the vertical alignment (TOP, CENTER, BOTTOM)
 	 * @return this Button instance for method chaining
 	 */
 	public final Button setTextAlignY(int alignY) {
 		textView.setAlignY(alignY);
 		return this;
 	}
+	
+	protected final Ripples getRipplesInternal() {
+		return ripples;
+	}
 
-	/**
-	 * Called when the button's bounds (position or dimensions) change. Updates the
-	 * bounds of the internal TextView and ImageBuffer components to match the
-	 * button's new bounds.
-	 */
+	protected final Hover getHoverInternal() {
+		return hover;
+	}
+
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();
@@ -382,10 +363,6 @@ public class Button extends AbstractButton {
 		}
 	}
 
-	/**
-	 * Renders the button and all its components. The rendering order is:
-	 * background, image, ripple effects, hover effects, and finally the text.
-	 */
 	@Override
 	protected void render() {
 		ctx.pushStyle();

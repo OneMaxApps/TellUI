@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import processing.core.PApplet;
 
 // Status: STABLE - Do not modify
-// Last Reviewed: 28.10.2025
+// Last Reviewed: 01.03.2026
 
 /**
  * Core initialization and metadata class for the MicroUI library.
@@ -75,10 +75,6 @@ public final class MicroUI {
 
 	/**
 	 * Returns the current version of the MicroUI library.
-	 * <p>
-	 * The version string follows semantic versioning (MAJOR.MINOR.PATCH). Useful
-	 * for debugging, logging, or conditional code based on library features.
-	 * </p>
 	 * 
 	 * @return the version string in format "MAJOR.MINOR.PATCH"
 	 */

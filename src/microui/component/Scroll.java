@@ -8,21 +8,13 @@ import microui.core.LinearRangeControl;
 import microui.core.style.AbstractColor;
 import microui.util.MathUtils;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A scrollbar component with a draggable thumb for selecting values within a
  * range. The Scroll extends LinearRangeControl to provide linear scrolling
  * functionality with both horizontal and vertical orientations.
- * 
- * <p>
- * The scrollbar consists of a track and a draggable thumb. The thumb's size is
- * determined by the thumbSizeRatio, which represents the proportion of the
- * track that the thumb occupies.
- * </p>
- * 
- * <p>
- * Users can drag the thumb along the track to change the value, and the thumb
- * provides visual feedback through hover and ripple effects.
- * </p>
  */
 public class Scroll extends LinearRangeControl {
 	private final Button thumb;
@@ -286,10 +278,6 @@ public class Scroll extends LinearRangeControl {
 		this.thumbSizeRatio = thumbSizeRatio;
 	}
 	
-	/**
-	 * Renders the scrollbar and its thumb. The rendering includes the track (from
-	 * parent class) and the draggable thumb.
-	 */
 	@Override
 	protected void render() {
 		super.render();
@@ -300,10 +288,6 @@ public class Scroll extends LinearRangeControl {
 		}
 	}
 
-	/**
-	 * Called when the scrollbar's bounds change. Updates the thumb's position and
-	 * dimensions to match the new bounds.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();

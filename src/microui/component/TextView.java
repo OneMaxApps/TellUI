@@ -16,6 +16,9 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import processing.core.PFont;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A component for displaying text with automatic resizing, alignment, and
  * clipping options. TextView provides flexible text rendering with support for
@@ -285,10 +288,6 @@ public final class TextView extends Component {
 		this.textColor = requireNonNull(textColor, "textColor");
 	}
 
-	/**
-	 * Renders the text view. Draws background, then text with configured alignment,
-	 * sizing, and clipping.
-	 */
 	@Override
 	protected void render() {
 		ctx.noStroke();
@@ -315,10 +314,6 @@ public final class TextView extends Component {
 		}
 	}
 
-	/**
-	 * Called when the text view's bounds change. Recalculates auto-text size if
-	 * auto-resize is enabled.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();

@@ -48,6 +48,9 @@ import processing.core.PGraphics;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A multi-line text editing component with support for selection, scrolling,
  * copy/paste, undo/redo, and keyboard navigation.
@@ -466,10 +469,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		keyController.keyInput(e);
 	}
 
-	/**
-	 * Renders the text area, including background, text, cursor, selection, and
-	 * scrollbars. Also handles focus loss when clicking outside the component.
-	 */
 	@Override
 	protected void render() {
 		backgroundOnDraw();
@@ -484,10 +483,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		
 	}
 
-	/**
-	 * Called when the text area's bounds change. Updates text metrics, scroll
-	 * ranges, and graphics buffer bounds.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		textMetricsPool.clearCache();

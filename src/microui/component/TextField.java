@@ -39,14 +39,12 @@ import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A single-line text input field with support for text editing, selection,
  * copy/paste, undo/redo, validation, and password masking.
- * 
- * <p>
- * The component uses off-screen buffering for efficient rendering and includes
- * sophisticated text width caching for performance.
- * </p>
  */
 public final class TextField extends Component implements KeyPressable {
 	private static final float WIDTH_RATIO_FOR_SCROLL = .8f;
@@ -587,10 +585,6 @@ public final class TextField extends Component implements KeyPressable {
 		onRegularKeyPressed(e);
 	}
 
-	/**
-	 * Called when the text field's bounds change. Updates internal components to
-	 * match the new bounds.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();
@@ -614,10 +608,6 @@ public final class TextField extends Component implements KeyPressable {
 		componentSizeChanged = true;
 	}
 
-	/**
-	 * Renders the text field, including background, text, cursor, and selection.
-	 * Also handles focus changes based on mouse interaction.
-	 */
 	@Override
 	protected void render() {
 		checkDimensions();

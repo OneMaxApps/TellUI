@@ -30,6 +30,9 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.MouseEvent;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A hierarchical menu button component that can contain both plain items and
  * sub-menus. The MenuButton extends Button to provide interactive menu
@@ -192,17 +195,17 @@ public final class MenuButton extends Button implements Scrollable {
 	/**
 	 * Opens or closes the menu.
 	 *
-	 * @param isOpen true to open the menu, false to close it
+	 * @param open true to open the menu, false to close it
 	 * @return this MenuButton instance for method chaining
 	 */
-	public MenuButton setOpen(boolean isOpen) {
-		if (this.open == isOpen) {
+	public MenuButton setOpen(boolean open) {
+		if (this.open == open) {
 			return this;
 		}
 
-		this.open = isOpen;
+		this.open = open;
 
-		if (!isOpen) {
+		if (!open) {
 			items.close();
 
 			if (getParent() == getRoot()) {
@@ -212,7 +215,7 @@ public final class MenuButton extends Button implements Scrollable {
 			}
 		}
 
-		if (!isRoot() && isOpen) {
+		if (!isRoot() && open) {
 			setActiveSubMenu(this);
 		}
 
@@ -926,11 +929,6 @@ public final class MenuButton extends Button implements Scrollable {
 		return items.getIcon(title);
 	}
 
-	/**
-	 * Renders the menu button and its hierarchy. If the menu is open, renders all
-	 * visible items and sub-menus. Handles automatic closing when clicking outside
-	 * the menu hierarchy.
-	 */
 	@Override
 	protected void render() {
 		super.render();
@@ -965,10 +963,6 @@ public final class MenuButton extends Button implements Scrollable {
 		}
 	}
 
-	/**
-	 * Called when the menu's bounds change. Updates the positions and dimensions of
-	 * internal components.
-	 */
 	@Override
 	protected void onChangeBounds() {
 		super.onChangeBounds();

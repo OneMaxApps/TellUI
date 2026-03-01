@@ -16,6 +16,9 @@ import microui.event.PointerManager;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
+//Status: STABLE - Do not modify
+//Last Reviewed: 01.03.2026
+
 /**
  * A graphical component for providing Knob
  */
@@ -175,7 +178,7 @@ public final class Knob extends RangeControl {
 	}
 
 	/**
-	 * Sets the default value for the knob. When double‑clicked, the knob will reset to this value.
+	 * Sets the default value for the knob. When double clicked, the knob will reset to this value.
 	 *
 	 * @param defaultValue the default value, must be within min and max range.
 	 * @throws IllegalArgumentException if {@code defaultValue} is out of range.
