@@ -141,7 +141,6 @@ public abstract class AbstractEventSystem {
 		private static final long DEFAULT_DOUBLE_CLICK_THRESHOLD = 200;
 
 		private boolean hover, pressed;
-		// TODO test all
 		private final PressDetector pressDetector;
 		private final ReleaseDetector releaseDetector;
 		private final LongPressDetector longPressDetector;

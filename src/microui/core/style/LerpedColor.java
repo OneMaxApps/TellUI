@@ -21,7 +21,6 @@ import java.util.function.Supplier;
  * 
  * @see AbstractLerpedColor
  */
-// TODO update JavaDoc
 public final class LerpedColor extends AbstractLerpedColor {
 	private static final float DEFAULT_SPEED_OF_PROGRESS = .025f;
 	
@@ -54,7 +53,7 @@ public final class LerpedColor extends AbstractLerpedColor {
 	 * 
 	 * @param start 	the starting color of the interpolation, cannot be null
 	 * @param end		the ending color of the interpolation, cannot be null
-	 * @param supplier the supplier witch must have result between 0 and 1
+	 * @param progressSupplier the supplier witch must have result between 0 and 1
 	 */
 	public LerpedColor(AbstractColor start, AbstractColor end, Supplier<Float> progressSupplier) {
 		super(start, end);

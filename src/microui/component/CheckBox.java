@@ -12,6 +12,9 @@ import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 
+/**
+ * Component CheckBox.
+ */
 public final class CheckBox extends AbstractButton {
 	private float cachedCenterX, cachedCenterY, cachedSize;
 	private boolean checked;
@@ -19,6 +22,13 @@ public final class CheckBox extends AbstractButton {
 	private AbstractColor markColor;
 	private Style style; 
 	
+	/**
+	 * Constructs for CheckBox bounds
+	 * @param x current position X
+	 * @param y current position Y
+	 * @param w current width
+	 * @param h current height
+	 */
 	public CheckBox(float x, float y, float w, float h) {
 		super(x, y, w, h);
 		
@@ -36,28 +46,48 @@ public final class CheckBox extends AbstractButton {
 
 	}
 	
+	/**
+	 * Constructs default CheckBox bounds in to center of screen
+	 */
 	public CheckBox() {
 		this(0,0,0,0);
 		
 		setInCenter();
 	}
 	
+	/**
+	 * @return style of mark 
+	 */
 	public Style getStyle() {
 		return style;
 	}
 
+	/**
+	 * @param style current style for mark
+	 */
 	public void setStyle(Style style) {
 		this.style = Objects.requireNonNull(style,"style");
 	}
 
+	/**
+	 * @return color of mark
+	 */
 	public AbstractColor getMarkColor() {
 		return markColor;
 	}
 
+	/**
+	 * @param markColor current color of mark
+	 */
 	public void setMarkColor(AbstractColor markColor) {
 		this.markColor = Objects.requireNonNull(markColor,"markColor");
 	}
 
+	/**
+	 * Provides setting for listeners
+	 * Listeners calling when state of CheckBox changing
+	 * @param listener current listener of change state of CheckBox
+	 */
 	public void addOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
 		
@@ -68,6 +98,10 @@ public final class CheckBox extends AbstractButton {
 		onCheckedListenerList.add(listener);
 	}
 	
+	/**
+	 * Provides removing listeners
+	 * @param listener current listener of change state of CheckBox
+	 */
 	public void removeOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
 		
@@ -78,10 +112,16 @@ public final class CheckBox extends AbstractButton {
 		onCheckedListenerList.remove(listener);
 	}
 
+	/**
+	 * @return true if checked, false if isn't
+	 */
 	public boolean isChecked() {
 		return checked;
 	}
 
+	/**
+	 * @param checked state of checked
+	 */
 	public void setChecked(boolean checked) {
 		if (this.checked == checked) {
 			return;
@@ -92,6 +132,9 @@ public final class CheckBox extends AbstractButton {
 		notifyOnCheckListeners();
 	}
 	
+	/**
+	 * change state of checked
+	 */
 	public void toggle() {
 		checked = !checked;
 		
@@ -191,9 +234,23 @@ public final class CheckBox extends AbstractButton {
 		}
 	}
 	
+	/**
+	 * Provides styles for mark
+	 */
 	public static enum Style {
+		/**
+		 * Default form of mark style
+		 */
 		MARK,
+		
+		/**
+		 * Dot form of mark style
+		 */
 		DOT,
+		
+		/**
+		 * Rectangle form of mark style
+		 */
 		RECT;
 	}
 }

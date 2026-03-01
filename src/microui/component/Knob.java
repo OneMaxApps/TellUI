@@ -16,6 +16,9 @@ import microui.event.PointerManager;
 import microui.util.Environment;
 import processing.event.MouseEvent;
 
+/**
+ * A graphical component for providing Knob
+ */
 public final class Knob extends RangeControl {
 	private static final float DEFAULT_START_ANGLE = HALF_PI/2;
 	private static final float DEFAULT_END_ANGLE = TWO_PI - HALF_PI / 2;
@@ -45,6 +48,13 @@ public final class Knob extends RangeControl {
 	
 	private Float defaultValue;
 
+	/**
+	 * Default constructor for initialization of bounds
+	 * @param x position X
+	 * @param y position Y
+	 * @param width current width
+	 * @param height current height
+	 */
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		
@@ -82,6 +92,9 @@ public final class Knob extends RangeControl {
 		
 	}
 	
+	/**
+	 * Constructs with default bounds in center of screen
+	 */
 	public Knob() {
 		this(0,0,0,0);
 		
@@ -91,22 +104,41 @@ public final class Knob extends RangeControl {
 		setPosition(x,y);
 	}
 	
+	/**
+	 * @return color of scale
+	 */
 	public AbstractColor getScaleColor() {
 		return scaleColor;
 	}
 
+	/**
+	 * Setter of scale color
+	 * @param scaleColor current color of scale
+	 */
 	public void setScaleColor(AbstractColor scaleColor) {
 		this.scaleColor = requireNonNull(scaleColor,"scaleColor");
 	}
 	
+	/**
+	 * Setter of scale color with interpolation
+	 * @param startColor current start color
+	 * @param endColor current end color
+	 */
 	public void setScaleColor(AbstractColor startColor, AbstractColor endColor) {
 		setScaleColor(new LerpedColor(startColor, endColor, () -> convert(getValue(),getMinValue(), getMaxValue(), 0, 1)));
 	}
 
+	/**
+	 * @return value of ration by offset for handle
+	 */
 	public float getHandleOffsetRatio() {
 		return handleOffsetRatio;
 	}
 
+	/**
+	 * Setter for ratio of offset by handle
+	 * @param handleOffsetRatio ratio of offset by handle
+	 */
 	public void setHandleOffsetRatio(float handleOffsetRatio) {
 		if (handleOffsetRatio < MIN_HANDLE_OFFSET_RATIO || handleOffsetRatio > MAX_HANDLE_OFFSET_RATIO) {
 			throw new IllegalArgumentException(String.format("Handle offset ratio must be between min(%f) and max(%f) value",MIN_HANDLE_OFFSET_RATIO,MAX_HANDLE_OFFSET_RATIO));
@@ -115,10 +147,18 @@ public final class Knob extends RangeControl {
 		this.handleOffsetRatio = handleOffsetRatio;
 	}
 
+	/**
+	 * 
+	 * @return ratio of size by handle
+	 */
 	public float getHandleSizeRatio() {
 		return handleSizeRatio;
 	}
 
+	/**
+	 * Setter for ratio of size by handle
+	 * @param handleSizeRatio current ratio of size by handle
+	 */
 	public void setHandleSizeRatio(float handleSizeRatio) {
 		if (handleSizeRatio < MIN_HANDLE_SIZE_RATIO || handleSizeRatio > MAX_HANDLE_SIZE_RATIO) {
 			throw new IllegalArgumentException(String.format("Handle size ratio must be between min(%f) and max(%f) value",MIN_HANDLE_SIZE_RATIO,MAX_HANDLE_SIZE_RATIO));
@@ -127,10 +167,19 @@ public final class Knob extends RangeControl {
 		this.handleSizeRatio = handleSizeRatio;
 	}
 
+	/**
+	 * @return default value if it's exist, but if it's not initialized, it's will return null
+	 */
 	public Float getDefaultValue() {
 		return defaultValue;
 	}
 
+	/**
+	 * Sets the default value for the knob. When double‑clicked, the knob will reset to this value.
+	 *
+	 * @param defaultValue the default value, must be within min and max range.
+	 * @throws IllegalArgumentException if {@code defaultValue} is out of range.
+	 */
 	public void setDefaultValue(float defaultValue) {
 		if (defaultValue < getMinValue() || defaultValue > getMaxValue()) {
 			throw new IllegalArgumentException(String.format("Default value must be between min(%f) and max(%f) value",getMinValue(),getMaxValue()));
@@ -139,10 +188,21 @@ public final class Knob extends RangeControl {
 		this.defaultValue = Float.valueOf(defaultValue);
 	}
 
+	/**
+	 * Returns the scale weight ratio, which controls the thickness of the scale arc.
+	 *
+	 * @return the scale weight ratio.
+	 */
 	public float getScaleWeightRatio() {
 		return scaleWeightRatio;
 	}
 
+	/**
+	 * Sets the scale weight ratio. The ratio influences the stroke weight of the scale arc.
+	 *
+	 * @param scaleWeightRatio the ratio, must be between 0 and 2 (inclusive).
+	 * @throws IllegalArgumentException if the ratio is out of bounds.
+	 */
 	public void setScaleWeightRatio(float scaleWeightRatio) {
 		if (scaleWeightRatio < MIN_SCALE_WEIGHT_RATIO || scaleWeightRatio > MAX_SCALE_WEIGHT_RATIO) {
 			throw new IllegalArgumentException("Scale weight ratio must be between " + MIN_SCALE_WEIGHT_RATIO + " and " + MAX_SCALE_WEIGHT_RATIO);
@@ -150,18 +210,41 @@ public final class Knob extends RangeControl {
 		this.scaleWeightRatio = scaleWeightRatio;
 	}
 	
+	/**
+	 * Returns the color used for the handle.
+	 *
+	 * @return the handle color.
+	 */
 	public AbstractColor getHandleColor() {
 		return handleColor;
 	}
 
+	/**
+	 * Sets the color for the handle.
+	 *
+	 * @param handleColor the new handle color, cannot be null.
+	 * @throws NullPointerException if {@code handleColor} is null.
+	 */
 	public void setHandleColor(AbstractColor handleColor) {
 		this.handleColor = requireNonNull(handleColor,"handleColor");
 	}
 
+	/**
+	 * Returns the start angle of the scale arc, in radians.
+	 *
+	 * @return the start angle.
+	 */
 	public float getStartAngle() {
 		return startAngle;
 	}
 
+	/**
+	 * Sets the start angle of the scale arc.
+	 *
+	 * @param startAngle the start angle in radians, must be between 0 and TWO_PI
+	 *                   and not greater than the current end angle.
+	 * @throws IllegalArgumentException if the angle is invalid or exceeds the end angle.
+	 */
 	public void setStartAngle(float startAngle) {
 		validateAngle(startAngle);
 		
@@ -172,10 +255,22 @@ public final class Knob extends RangeControl {
 		this.startAngle = startAngle;
 	}
 
+	/**
+	 * Returns the end angle of the scale arc, in radians.
+	 *
+	 * @return the end angle.
+	 */
 	public float getEndAngle() {
 		return endAngle;
 	}
 
+	/**
+	 * Sets the end angle of the scale arc.
+	 *
+	 * @param endAngle the end angle in radians, must be between 0 and TWO_PI
+	 *                 and not lower than the current start angle.
+	 * @throws IllegalArgumentException if the angle is invalid or below the start angle.
+	 */
 	public void setEndAngle(float endAngle) {
 		validateAngle(endAngle);
 		
@@ -186,6 +281,14 @@ public final class Knob extends RangeControl {
 		this.endAngle = endAngle;
 	}
 	
+	/**
+	 * Sets both start and end angles of the scale arc.
+	 *
+	 * @param startAngle the start angle in radians, must be between 0 and TWO_PI.
+	 * @param endAngle   the end angle in radians, must be between 0 and TWO_PI
+	 *                   and greater than startAngle.
+	 * @throws IllegalArgumentException if either angle is invalid or if startAngle >= endAngle.
+	 */
 	public void setAngles(float startAngle, float endAngle) {
 		validateAngle(startAngle);
 		validateAngle(endAngle);
@@ -202,6 +305,13 @@ public final class Knob extends RangeControl {
 		this.endAngle = endAngle;
 	}
 	
+	/**
+	 * Determines whether the component is ready to receive input.
+	 * The knob is considered prepared if the mouse is inside its circular area,
+	 * or if it is being dragged, or if internal scrolling is active.
+	 *
+	 * @return true if the knob should handle input, false otherwise.
+	 */
 	@Override
 	public boolean isContentPrepared() {
 		if (Environment.isAndroid() && mouseInsideCircle() && !isPressed()) {
@@ -215,6 +325,11 @@ public final class Knob extends RangeControl {
 		return mouseInsideCircle() || draggableState || getInternalScrolling().isScrolling();
 	}
 
+	/**
+	 * Handles mouse wheel events. If the mouse is inside the knob, scrolling is initiated.
+	 *
+	 * @param mouseEvent the mouse wheel event.
+	 */
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
 		if (mouseInsideCircle()) {

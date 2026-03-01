@@ -23,7 +23,6 @@ import microui.core.style.Color;
  * @see AbstractColor
  * @see View
  */
-//TODO update JavaDoc
 public abstract class AbstractShadow extends View {
 	/** Default weight of left side */
 	public static final int DEFAULT_WEIGHT_LEFT = 0;
@@ -58,6 +57,13 @@ public abstract class AbstractShadow extends View {
 		setFormMode(FormMode.RECTANGLE);
 	}
 
+	/**
+	 * Setter for custom spatial
+	 * @param x position X of shadow
+	 * @param y position Y of shadow
+	 * @param width current width of shadow
+	 * @param height current height of shadow
+	 */
 	public void setCustomBounds(float x, float y, float width, float height) {
 		if (customTarget == null) {
 			customTarget = new ContentView() {
@@ -408,6 +414,9 @@ public abstract class AbstractShadow extends View {
 		this.formMode = formMode;
 	}
 	
+	/**
+	 * Provides setting for type of shadow
+	 */
 	protected static enum FormMode {
 		ELLIPSE,
 		RECTANGLE;

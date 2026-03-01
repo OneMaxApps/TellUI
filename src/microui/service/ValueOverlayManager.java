@@ -18,6 +18,9 @@ import microui.core.style.LerpedColor;
 import microui.util.SpatialState;
 import processing.core.PFont;
 
+/**
+ * Manager for value overlay 
+ */
 public final class ValueOverlayManager extends View {
 	private static final int DEFAULT_TEXT_SIZE = 24;
 	private static final int DEFAULT_PADDING_AROUND = 10;
@@ -39,26 +42,59 @@ public final class ValueOverlayManager extends View {
 	}
 	
 	// == TEXT API == //
+
+	/**
+	 * Returns the background color of the value overlay.
+	 *
+	 * @return the background color.
+	 */
 	public AbstractColor getBackgroundColor() {
 		return text.getBackgroundColor();
 	}
 
+	/**
+	 * Sets the background color of the value overlay.
+	 *
+	 * @param backgroundColor the new background color.
+	 * @return this component for chaining.
+	 */
 	public Component setBackgroundColor(AbstractColor backgroundColor) {
 		return text.setBackgroundColor(backgroundColor);
 	}
 	
+	/**
+	 * Returns the text color.
+	 *
+	 * @return the text color.
+	 */
 	public AbstractColor getTextColor() {
 		return text.getTextColor();
 	}
 	
+	/**
+	 * Sets the text color.
+	 *
+	 * @param textColor the new text color.
+	 */
 	public void setTextColor(AbstractColor textColor) {
 		text.setTextColor(textColor);
 	}
 
+	/**
+	 * Returns the text size.
+	 *
+	 * @return the text size in pixels.
+	 */
 	public float getTextSize() {
 		return text.getTextSize();
 	}
 
+	/**
+	 * Sets the text size. If the size differs from the current one,
+	 * cached text dimensions are updated.
+	 *
+	 * @param textSize the new text size in pixels.
+	 */
 	public void setTextSize(float textSize) {
 		if (textSize != text.getTextSize()) {
 			text.setTextSize(textSize);
@@ -66,10 +102,21 @@ public final class ValueOverlayManager extends View {
 		}
 	}
 
+	/**
+	 * Returns the font used for text.
+	 *
+	 * @return the current PFont, or null if default.
+	 */
 	public PFont getFont() {
 		return text.getFont();
 	}
 
+	/**
+	 * Sets the font for text. If the font differs from the current one,
+	 * cached text dimensions are updated.
+	 *
+	 * @param font the new PFont.
+	 */
 	public void setFont(PFont font) {
 		if (font != text.getFont()) {
 			text.setFont(font);
@@ -77,14 +124,30 @@ public final class ValueOverlayManager extends View {
 		}
 	}
 	
+	/**
+	 * Returns the current auto-resize mode.
+	 *
+	 * @return the auto-resize mode.
+	 */
 	public AutoResizeMode getAutoResizeMode() {
 		return text.getAutoResizeMode();
 	}
 	
+	/**
+	 * Checks whether auto-resize mode is enabled.
+	 *
+	 * @return true if auto-resize is enabled, false otherwise.
+	 */
 	public boolean isAutoResizeModeEnabled() {
 		return text.isAutoResizeModeEnabled();
 	}
 	
+	/**
+	 * Enables or disables auto-resize mode. If the state changes,
+	 * cached text dimensions are updated.
+	 *
+	 * @param autoResizeModeEnabled true to enable, false to disable.
+	 */
 	public void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
 		if (autoResizeModeEnabled != text.isAutoResizeModeEnabled()) {
 			text.setAutoResizeModeEnabled(autoResizeModeEnabled);
@@ -92,6 +155,12 @@ public final class ValueOverlayManager extends View {
 		}
 	}
 
+	/**
+	 * Sets the auto-resize mode. If the mode differs from the current one,
+	 * cached text dimensions are updated.
+	 *
+	 * @param autoResizeMode the new auto-resize mode.
+	 */
 	public void setAutoResizeMode(AutoResizeMode autoResizeMode) {
 		if (autoResizeMode != text.getAutoResizeMode()) {
 			text.setAutoResizeMode(autoResizeMode);
@@ -99,20 +168,39 @@ public final class ValueOverlayManager extends View {
 		}
 	}
 	
+	/**
+	 * Sets the spatial animator for the underlying text view.
+	 *
+	 * @param spatialAnimator the animator to use.
+	 */
 	public void setSpatialAnimator(SpatialAnimator spatialAnimator) {
 		text.setSpatialAnimator(spatialAnimator);
 	}
 	
-	
-	
+	/**
+	 * Returns the current value preview source.
+	 *
+	 * @return the source, or null if not set.
+	 */
 	public ValuePreviewSource getSource() {
 		return source;
 	}
 
+	/**
+	 * Sets the value preview source. The source provides the text to display.
+	 *
+	 * @param source the source, cannot be null.
+	 * @throws NullPointerException if source is null.
+	 */
 	public void setSource(ValuePreviewSource source) {
 		this.source = requireNonNull(source,"source");
 	}
 
+	/**
+	 * Returns the singleton instance of ValueOverlayManager.
+	 *
+	 * @return the instance.
+	 */
 	public static ValueOverlayManager getInstance() {
 		if (instance == null) {
 			instance = new ValueOverlayManager();

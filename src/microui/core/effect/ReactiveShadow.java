@@ -84,8 +84,6 @@ public class ReactiveShadow extends AbstractShadow {
 		final float w = getTargetWidth();
 		final float h = getTargetHeight();
 
-		ctx.rectMode(PApplet.CORNERS);
-
 		for (int i = 0; i < MAX_WEIGHT; i++) {
 			ctx.stroke(getColor().getRed(), getColor().getGreen(), getColor().getBlue(),
 					convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));

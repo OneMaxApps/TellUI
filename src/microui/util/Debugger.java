@@ -96,7 +96,7 @@ public final class Debugger {
 	 * Enables or disables hotkey switching of debug mode.
 	 * 
 	 * <p>
-	 * When enabled, allows debug mode to be toggled via a hotkey (typically F3).
+	 * When enabled, allows debug mode to be toggled via a hotkey (ALT).
 	 * When disabled, debug mode can only be changed programmatically.
 	 * </p>
 	 * 

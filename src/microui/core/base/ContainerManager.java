@@ -40,7 +40,6 @@ import processing.event.MouseEvent;
  * @see Container
  * @see AnimatorMode
  */
-// TODO update JavaDoc
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean initialized, canDraw;

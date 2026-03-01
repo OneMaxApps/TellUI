@@ -8,12 +8,24 @@ import microui.core.base.Component;
 import microui.core.base.SpatialView;
 import processing.core.PApplet;
 
+/**
+ * Manages pointer (mouse/touch) ownership for UI components.
+ * Ensures that only one component can claim pointer focus at a time.
+ */
 public final class PointerManager {
 	private static SpatialView owner;
 	
 	private PointerManager() {
 	}
 	
+	/**
+	 * Requests pointer ownership for the given spatial view.
+	 * Ownership is granted if:
+	 *
+	 * @param spatialView the view requesting ownership, cannot be null.
+	 * @return true if the view now owns the pointer, false otherwise.
+	 * @throws NullPointerException if spatialView is null.
+	 */
 	public static boolean request(SpatialView spatialView) {
 		requireNonNull(spatialView,"spatialView");
 		
@@ -51,14 +63,29 @@ public final class PointerManager {
 		return owner == spatialView;
 	}
 	
+	/**
+	 * Checks whether any view currently owns the pointer.
+	 *
+	 * @return true if an owner exists, false otherwise.
+	 */
 	public static boolean hasOwner() {
 		return owner != null;
 	}
 	
+	/**
+	 * Checks whether the given view is the current pointer owner.
+	 *
+	 * @param spatialView the view to check, cannot be null.
+	 * @return true if the view is the owner, false otherwise.
+	 * @throws NullPointerException if spatialView is null.
+	 */
 	public static boolean isOwner(SpatialView spatialView) {
 		return owner == requireNonNull(spatialView,"spatialView");
 	}
 	
+	/**
+	 * Releases pointer ownership. After calling this, no view owns the pointer.
+	 */
 	public static void release() {
 		owner = null;
 	}

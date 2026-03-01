@@ -193,43 +193,44 @@ public class PlainShadow extends AbstractShadow {
 
 		ctx.rectMode(PApplet.CORNERS);
 
-		if (isAlphaFadeOutEnabled()) {
-			for (int i = 0; i < MAX_WEIGHT; i++) {
-				ctx.stroke(getColor().getRed(), getColor().getGreen(), getColor().getBlue(),
-						convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
+		for (int i = 0; i < MAX_WEIGHT; i++) {
+			ctx.stroke(getColor().getRed(),
+					   getColor().getGreen(),
+					   getColor().getBlue(),
+					   isAlphaFadeOutEnabled() ? convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0) : getColor().getAlpha());
+			
+			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
+			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
+			final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
+			final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
 
-				final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
-				final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
-				final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
-				final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
-
-				ctx.rect(newX, newY, newX1, newY1);
-			}
-
-		} else {
-			getColor().applyStroke();
-			ctx.rect(x - getWeightLeft(), y - getWeightTop(), x1 + getWeightRight(), y1 + getWeightBottom());
+			ctx.rect(newX, newY, newX1, newY1);
 		}
 	}
 	
 	private void ellipseModeOnRender() {
 		float x = getTargetX();
 		float y = getTargetY();
-		float w = getTargetWidth();
-		float h = getTargetHeight();
-
-		if (isAlphaFadeOutEnabled()) {
-			for (int i = 0; i < MAX_WEIGHT; i++) {
-				ctx.stroke(getColor().getRed(),
-						   getColor().getGreen(),
-						   getColor().getBlue(),
-						   convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
-				ctx.ellipse(x,y,w+i,h+i);
-			}
-
-		} else {
-			getColor().applyStroke();
-			ctx.ellipse(x,y,w,h);
+		float x1 = getTargetX() + getTargetWidth();
+		float y1 = getTargetY() + getTargetHeight();
+		
+		final float w = getTargetWidth();
+		final float h = getTargetHeight();
+		
+		ctx.ellipseMode(PApplet.CORNERS);
+		
+		for (int i = 0; i < MAX_WEIGHT; i++) {
+			ctx.stroke(getColor().getRed(),
+					   getColor().getGreen(),
+					   getColor().getBlue(),
+					   isAlphaFadeOutEnabled() ? convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0) : getColor().getAlpha());
+			
+			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
+			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
+			final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
+			final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
+			
+			ctx.ellipse(newX - w/2, newY - h/2, newX1 - w/2, newY1 - h/2);
 		}
 	}
 }

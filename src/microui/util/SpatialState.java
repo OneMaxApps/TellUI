@@ -47,22 +47,49 @@ public final class SpatialState {
 		this(requireNonNull(source, "source").getX(), source.getY(), source.getWidth(), source.getHeight());
 	}
 	
+	/**
+	 * Constructs a SpatialState with zero bounds.
+	 */
 	public SpatialState() {
 		this(0,0,0,0);
 	}
 
+	/**
+	 * Sets a supplier for the X coordinate. When present, {@link #getX()} will use this supplier.
+	 *
+	 * @param supplierX the supplier for X, cannot be null.
+	 * @throws NullPointerException if supplierX is null.
+	 */
 	public void setSupplierX(Supplier<Float> supplierX) {
 		this.supplierX = requireNonNull(supplierX);
 	}
 
+	/**
+	 * Sets a supplier for the Y coordinate. When present, {@link #getY()} will use this supplier.
+	 *
+	 * @param supplierY the supplier for Y, cannot be null.
+	 * @throws NullPointerException if supplierY is null.
+	 */
 	public void setSupplierY(Supplier<Float> supplierY) {
 		this.supplierY = requireNonNull(supplierY);
 	}
 
+	/**
+	 * Sets a supplier for the width. When present, {@link #getWidth()} will use this supplier.
+	 *
+	 * @param supplierWidth the supplier for width, cannot be null.
+	 * @throws NullPointerException if supplierWidth is null.
+	 */
 	public void setSupplierWidth(Supplier<Float> supplierWidth) {
 		this.supplierWidth = requireNonNull(supplierWidth);
 	}
 
+	/**
+	 * Sets a supplier for the height. When present, {@link #getHeight()} will use this supplier.
+	 *
+	 * @param supplierHeight the supplier for height, cannot be null.
+	 * @throws NullPointerException if supplierHeight is null.
+	 */
 	public void setSupplierHeight(Supplier<Float> supplierHeight) {
 		this.supplierHeight = requireNonNull(supplierHeight);
 	}
