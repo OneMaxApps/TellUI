@@ -2,6 +2,7 @@ package microui.core.effect;
 
 import static java.util.Objects.requireNonNull;
 
+import microui.component.Knob;
 import microui.core.base.ContentView;
 import microui.core.base.View;
 import microui.core.style.AbstractColor;
@@ -22,6 +23,7 @@ import microui.core.style.Color;
  * @see AbstractColor
  * @see View
  */
+//TODO update JavaDoc
 public abstract class AbstractShadow extends View {
 	/** Default weight of left side */
 	public static final int DEFAULT_WEIGHT_LEFT = 0;
@@ -37,10 +39,12 @@ public abstract class AbstractShadow extends View {
 	public static final int MAX_WEIGHT = 10;
 
 	private AbstractColor color;
-	private ContentView target;
+	private ContentView target, customTarget;
 
+	private FormMode formMode;
+	
 	private int weightLeft, weightTop, weightRight, weightBottom;
-
+	
 	/**
 	 * Constructs an AbstractShadow with default properties. Default shadow has
 	 * right and bottom weight with transparent black color.
@@ -50,6 +54,25 @@ public abstract class AbstractShadow extends View {
 		setVisible(true);
 		setWeight(DEFAULT_WEIGHT_LEFT, DEFAULT_WEIGHT_TOP, DEFAULT_WEIGHT_RIGHT, DEFAULT_WEIGHT_BOTTOM);
 		setColor(new Color(0, 10));
+		
+		setFormMode(FormMode.RECTANGLE);
+	}
+
+	public void setCustomBounds(float x, float y, float width, float height) {
+		if (customTarget == null) {
+			customTarget = new ContentView() {
+				{
+					setConstrainDimensionsEnabled(false);
+				}
+				@Override
+				protected void render() {
+				}
+			};
+
+			target = customTarget;
+		}
+		
+		customTarget.setBounds(x, y, width, height);
 	}
 
 	/**
@@ -72,6 +95,10 @@ public abstract class AbstractShadow extends View {
 	public AbstractShadow setTarget(ContentView target) {
 		this.target = requireNonNull(target, "target");
 
+		if (target instanceof Knob) {
+			setFormMode(FormMode.ELLIPSE);
+		}
+		
 		return this;
 	}
 
@@ -370,5 +397,19 @@ public abstract class AbstractShadow extends View {
 		weightRight = right;
 		weightBottom = bottom;
 		return this;
+	}
+	
+	protected FormMode getFormMode() {
+		return formMode;
+	
+	}
+	
+	private void setFormMode(FormMode formMode) {
+		this.formMode = formMode;
+	}
+	
+	protected static enum FormMode {
+		ELLIPSE,
+		RECTANGLE;
 	}
 }

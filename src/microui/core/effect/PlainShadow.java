@@ -173,6 +173,19 @@ public class PlainShadow extends AbstractShadow {
 	protected void render() {
 		getColor().apply();
 
+		switch(getFormMode()) {
+			case ELLIPSE:
+				ellipseModeOnRender();
+				break;
+				
+			case RECTANGLE: 
+				rectangleModeOnRender();
+				break;	
+		}
+
+	}
+	
+	private void rectangleModeOnRender() {
 		float x = getTargetX();
 		float y = getTargetY();
 		float x1 = getTargetX() + getTargetWidth();
@@ -197,6 +210,26 @@ public class PlainShadow extends AbstractShadow {
 			getColor().applyStroke();
 			ctx.rect(x - getWeightLeft(), y - getWeightTop(), x1 + getWeightRight(), y1 + getWeightBottom());
 		}
+	}
+	
+	private void ellipseModeOnRender() {
+		float x = getTargetX();
+		float y = getTargetY();
+		float w = getTargetWidth();
+		float h = getTargetHeight();
 
+		if (isAlphaFadeOutEnabled()) {
+			for (int i = 0; i < MAX_WEIGHT; i++) {
+				ctx.stroke(getColor().getRed(),
+						   getColor().getGreen(),
+						   getColor().getBlue(),
+						   convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
+				ctx.ellipse(x,y,w+i,h+i);
+			}
+
+		} else {
+			getColor().applyStroke();
+			ctx.ellipse(x,y,w,h);
+		}
 	}
 }

@@ -66,6 +66,40 @@ public class ReactiveShadow extends AbstractShadow {
 
 		ctx.noFill();
 
+		switch(getFormMode()) {
+		case ELLIPSE:
+			ellipseModeOnRender();
+			break;
+			
+		case RECTANGLE: 
+			rectangleModeOnRender();
+			break;	
+		}
+
+	}
+	
+	private void ellipseModeOnRender() {
+		final float x = getTargetX();
+		final float y = getTargetY();
+		final float w = getTargetWidth();
+		final float h = getTargetHeight();
+
+		ctx.rectMode(PApplet.CORNERS);
+
+		for (int i = 0; i < MAX_WEIGHT; i++) {
+			ctx.stroke(getColor().getRed(), getColor().getGreen(), getColor().getBlue(),
+					convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
+
+			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
+			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
+			final float newX1 = w + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
+			final float newY1 = h + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
+
+			ctx.ellipse(newX, newY, newX1, newY1);
+		}
+	}
+
+	private void rectangleModeOnRender() {
 		final float x = getTargetX();
 		final float y = getTargetY();
 		final float x1 = getTargetX() + getTargetWidth();
@@ -84,7 +118,6 @@ public class ReactiveShadow extends AbstractShadow {
 
 			ctx.rect(newX, newY, newX1, newY1);
 		}
-
 	}
 
 	private void updateWeights() {

@@ -82,6 +82,8 @@ public final class MenuButton extends Button implements Scrollable {
 		itemDimensions = new ItemDimensions(items, DEFAULT_ITEM_WIDTH, DEFAULT_ITEM_HEIGHT);
 		setRootMode(true);
 		setDirectionMode(DirectionMode.AUTO);
+		
+		setPriority(1);
 	}
 
 	/**

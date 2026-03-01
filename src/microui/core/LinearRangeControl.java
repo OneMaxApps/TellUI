@@ -59,7 +59,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			return false;
 		}
 		
-		if (!PointerManager.isOwner(this)) {
+		if (!PointerManager.isOwner(this) && PointerManager.hasOwner()) {
 			return false;
 		}
 		

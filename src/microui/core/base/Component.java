@@ -57,6 +57,7 @@ public abstract class Component extends ContentView {
 		event = new Event(this);
 		interactionHandler = new InteractionHandler(this);
 		tooltip = new Tooltip(this);
+		
 	}
 
 	/**

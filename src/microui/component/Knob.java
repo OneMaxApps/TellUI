@@ -79,6 +79,7 @@ public final class Knob extends RangeControl {
 			recalculateScaleWeight();
 		});
 		
+		
 	}
 	
 	public Knob() {
@@ -207,7 +208,7 @@ public final class Knob extends RangeControl {
 			return false;
 		}
 		
-		if (!PointerManager.isOwner(this)) {
+		if (!PointerManager.isOwner(this) && PointerManager.hasOwner()) {
 			return false;
 		}
 		
@@ -224,6 +225,10 @@ public final class Knob extends RangeControl {
 	@Override
 	protected void render() {
 		super.render();
+		
+		if (getShadow() != null) {
+			getShadow().setCustomBounds(cachedCenterX, cachedCenterY, cachedSize, cachedSize);
+		}
 		
 		getInternalStroke().apply();
 		getBackgroundColor().apply();

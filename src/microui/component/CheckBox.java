@@ -27,14 +27,13 @@ public final class CheckBox extends AbstractButton {
 		setMarkColor(new LerpedLoopColor(new Color(0,255), new Color(0,132)).setSpeed(.1f));
 		
 		onClick(() -> {
-			toggle();
-			
 			if (isEnterCheckBox()) {
-				notifyOnCheckListeners();
+				toggle();
 			}
 		});
 		
 		setStyle(Style.MARK);
+
 	}
 	
 	public CheckBox() {
@@ -101,6 +100,10 @@ public final class CheckBox extends AbstractButton {
 
 	@Override
 	protected void render() {
+		if (getShadow() != null) {
+			getShadow().setCustomBounds(cachedCenterX, cachedCenterY, cachedSize, cachedSize);
+		}
+		
 		getBackgroundColor().apply();
 		getStrokeColor().applyStroke();
 		ctx.rect(cachedCenterX, cachedCenterY, cachedSize, cachedSize);
