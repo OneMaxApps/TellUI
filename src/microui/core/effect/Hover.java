@@ -13,16 +13,6 @@ import microui.util.MathUtils;
  * Visual hover effect for Component elements with smooth fade-in/fade-out
  * animation. Provides a translucent overlay that appears when the component is
  * hovered over, with separate visual states for hover and press interactions.
- * <p>
- * The Hover effect creates a smooth animated overlay that responds to mouse
- * interactions. It fades in when the component is hovered and fades out when
- * the hover ends, with accelerated fade-out for better responsiveness. When the
- * component is pressed, the effect switches to a black overlay for visual
- * feedback.
- * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 16.09.2025
- * </p>
  * 
  * @see Component
  * @see View
@@ -32,7 +22,7 @@ public final class Hover extends View {
 	private final Component component;
 	private AbstractColor color;
 	private float timer, timerMax, speed;
-	private boolean isEnabled;
+	private boolean enabled;
 
 	/**
 	 * Constructs a Hover effect for the specified component. Initializes with
@@ -62,7 +52,7 @@ public final class Hover extends View {
 	 */
 	@Override
 	public void draw() {
-		if (!isEnabled) {
+		if (!enabled) {
 			return;
 		}
 		super.draw();
@@ -140,7 +130,7 @@ public final class Hover extends View {
 	 */
 	public void setSpeed(float speed) {
 		if (speed <= 0) {
-			throw new IllegalArgumentException("speed for hover animation cannot be less or equal to zero");
+			throw new IllegalArgumentException("Speed for hover animation cannot be less or equal to zero");
 		}
 		this.speed = speed;
 	}
@@ -151,16 +141,16 @@ public final class Hover extends View {
 	 * @return true if enabled, false if disabled
 	 */
 	public boolean isEnabled() {
-		return isEnabled;
+		return enabled;
 	}
 
 	/**
 	 * Enables or disables the hover effect.
 	 * 
-	 * @param isEnabled true to enable the hover effect, false to disable
+	 * @param enabled true to enable the hover effect, false to disable
 	 */
-	public void setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	private float getAlpha() {

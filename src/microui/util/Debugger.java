@@ -58,10 +58,10 @@ public final class Debugger {
 	/**
 	 * Enables or disables debug mode.
 	 * 
-	 * @param isDebugModeEnabled true to enable debug mode, false to disable
+	 * @param enabled true to enable debug mode, false to disable
 	 */
-	public static void setEnabled(boolean isDebugModeEnabled) {
-		Debugger.enabled = isDebugModeEnabled;
+	public static void setEnabled(boolean enabled) {
+		Debugger.enabled = enabled;
 	}
 
 	/**

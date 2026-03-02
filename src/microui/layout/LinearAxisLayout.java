@@ -23,15 +23,6 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	 * weights.
 	 * 
 	 * <p>
-	 * The layout supports two modes:
-	 * <ul>
-	 * <li>IGNORE_CONSTRAINTS: Ignores component constraints and positions them
-	 * based solely on weight</li>
-	 * <li>RESPECT_CONSTRAINTS: Positions components with respect to their alignment
-	 * parameters</li>
-	 * </ul>
-	 * 
-	 * <p>
 	 * In vertical mode, components are stacked vertically with heights proportional
 	 * to their weights. In horizontal mode, components are arranged horizontally
 	 * with widths proportional to their weights.
@@ -47,8 +38,8 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		float containerH = getContainer().getHeight();
 
 		for (Entry entry : getEntryList()) {
-			ContentView contentView = entry.contentView();
-			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
+			ContentView contentView = entry.getContentView();
+			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.getLayoutParams();
 
 			float usedSpace = verticalMode ? containerH * usedWeight : containerW * usedWeight;
 
@@ -103,8 +94,8 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		ctx.fill(200, 0, 0, 32);
 
 		getEntryList().forEach(entry -> {
-			ContentView contentView = entry.contentView();
-			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
+			ContentView contentView = entry.getContentView();
+			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.getLayoutParams();
 			if (verticalMode) {
 				ctx.rect(getContainer().getX(), contentView.getAbsoluteY(), getContainer().getWidth(),
 						getContainer().getHeight() * params.getWeight());
@@ -172,7 +163,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	protected boolean isOutOfSpace() {
 		float usedWeight = 0;
 		for (Entry entry : getEntryList()) {
-			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.layoutParams();
+			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.getLayoutParams();
 			usedWeight += params.getWeight();
 		}
 		if (usedWeight - TOTAL_WEIGHT > EPSILON) {

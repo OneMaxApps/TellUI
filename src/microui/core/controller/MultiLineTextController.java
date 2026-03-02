@@ -16,12 +16,6 @@ import microui.event.Listener;
  * undo/redo functionality. Provides comprehensive text manipulation
  * capabilities across multiple lines, including line insertion, removal,
  * splitting, merging, and character-level editing.
- * <p>
- * This controller manages a collection of {@link SingleLineTextController}
- * instances, each representing a single line of text. It supports undo/redo
- * operations with configurable update speed to prevent excessive history
- * entries during rapid typing.
- * </p>
  * 
  * @see SingleLineTextController
  * @see Listener

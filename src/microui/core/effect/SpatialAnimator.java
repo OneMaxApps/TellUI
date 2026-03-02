@@ -264,12 +264,12 @@ public final class SpatialAnimator {
 
 		switch (getReactionMode()) {
 		case REACTIVE:
-			timer.setIncrementing(condition.getAsBoolean());
+			timer.setIncrementingEnabled(condition.getAsBoolean());
 			break;
 
 		case TRIGGER:
 			if (timer.isComplete()) {
-				timer.setIncrementing(condition.getAsBoolean());
+				timer.setIncrementingEnabled(condition.getAsBoolean());
 			}
 			break;
 		}
@@ -277,29 +277,13 @@ public final class SpatialAnimator {
 		timer.update();
 
 		if (isPositionEnabled()) {
-			final float startX = startContentView != null ? startContentView.getAbsoluteX() : startSpatialState.getX();
-			final float endX = endContentView != null ? endContentView.getAbsoluteX() : endSpatialState.getX();
-
-			final float startY = startContentView != null ? startContentView.getAbsoluteY() : startSpatialState.getY();
-			final float endY = endContentView != null ? endContentView.getAbsoluteY() : endSpatialState.getY();
-
-			targetSpatialView.setX(lerp(startX, endX));
-			targetSpatialView.setY(lerp(startY, endY));
+			targetSpatialView.setX(lerp(getStartX(), getEndX()));
+			targetSpatialView.setY(lerp(getStartY(), getEndY()));
 		}
 
 		if (isDimensionsEnabled()) {
-
-			final float startWidth = startContentView != null ? startContentView.getAbsoluteWidth()
-					: startSpatialState.getWidth();
-			final float endWidth = endContentView != null ? endContentView.getAbsoluteWidth() : endSpatialState.getWidth();
-
-			final float startHeight = startContentView != null ? startContentView.getAbsoluteHeight()
-					: startSpatialState.getHeight();
-			final float endHeight = endContentView != null ? endContentView.getAbsoluteHeight()
-					: endSpatialState.getHeight();
-
-			targetSpatialView.setWidth(lerp(startWidth, endWidth));
-			targetSpatialView.setHeight(lerp(startHeight, endHeight));
+			targetSpatialView.setWidth(lerp(getStartWidth(), getEndWidth()));
+			targetSpatialView.setHeight(lerp(getStartHeight(), getEndHeight()));
 		}
 
 	}
@@ -312,6 +296,38 @@ public final class SpatialAnimator {
 		REACTIVE,
 		/** Animation direction only changes when current animation completes. */
 		TRIGGER;
+	}
+	
+	private float getStartX() {
+		return startContentView != null ? startContentView.getAbsoluteX() : startSpatialState.getX();
+	}
+	
+	private float getStartY() {
+		return startContentView != null ? startContentView.getAbsoluteY() : startSpatialState.getY();
+	}
+	
+	private float getStartWidth() {
+		return startContentView != null ? startContentView.getAbsoluteWidth(): startSpatialState.getWidth();
+	}
+	
+	private float getStartHeight() {
+		return startContentView != null ? startContentView.getAbsoluteHeight() : startSpatialState.getHeight();
+	}
+	
+	private float getEndX() {
+		return endContentView != null ? endContentView.getAbsoluteX() : endSpatialState.getX();
+	}
+	
+	private float getEndY() {
+		return endContentView != null ? endContentView.getAbsoluteY() : endSpatialState.getY();
+	}
+	
+	private float getEndWidth() {
+		return endContentView != null ? endContentView.getAbsoluteWidth(): endSpatialState.getWidth();
+	}
+	
+	private float getEndHeight() {
+		return endContentView != null ? endContentView.getAbsoluteHeight() : endSpatialState.getHeight();
 	}
 
 	private float lerp(float start, float end) {

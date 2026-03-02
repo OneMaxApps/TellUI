@@ -25,13 +25,6 @@ import processing.core.PApplet;
  * </p>
  * 
  * <p>
- * Key features include: - Visibility management (show/hide) - Rendering
- * priority control (z-order) - Numeric and text-based identification -
- * Integration with MicroUI's rendering system - Automatic style management via
- * push/pop
- * </p>
- * 
- * <p>
  * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
  * </p>
  * 
@@ -49,6 +42,7 @@ public abstract class View implements Visible {
 	public static final int MIN_ID = 0;
 	/** Ignoring internal components in components with this id */
 	public static final int IGNORE_INTERNAL_COMPONENT_ID = Integer.MAX_VALUE;
+	/** Id for items of modal components */
 	public static final int MODAL_ITEM_VIEW_ID = Integer.MAX_VALUE-1;
 	
 	/** Instance of context by Processing */
@@ -84,7 +78,7 @@ public abstract class View implements Visible {
 	 * @param visible true to show the element, false to hide
 	 */
 	@Override
-	public final void setVisible(final boolean visible) {
+	public final void setVisible(boolean visible) {
 		this.visible = visible;
 	}
 
@@ -107,7 +101,7 @@ public abstract class View implements Visible {
 	 */
 	public final View setPriority(int priority) {
 		if (priority < MIN_PRIORITY) {
-			throw new IllegalArgumentException("Priority cannot be less than zero");
+			throw new IllegalArgumentException("Priority cannot be less than " + MIN_PRIORITY);
 		}
 		this.priority = priority;
 
@@ -213,7 +207,7 @@ public abstract class View implements Visible {
 			}
 
 			if (!canDraw()) {
-				throw new RenderException("Cannot draw outside from ContainerManager");
+				throw new RenderException("Cannot call draw() outside from ContainerManager");
 			}
 		}
 

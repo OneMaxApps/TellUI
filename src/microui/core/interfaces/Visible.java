@@ -2,11 +2,6 @@ package microui.core.interfaces;
 
 /**
  * Interface for components that have visibility states.
- * <p>
- * Implementing this interface allows components to be shown or hidden
- * dynamically. This is a fundamental interface for all visual elements in the
- * MicroUI framework that need visibility control.
- * </p>
  */
 public interface Visible {
 

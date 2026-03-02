@@ -29,7 +29,7 @@ public final class ColumnLayout extends LinearAxisLayout {
 	public void onAdd(Entry contentViewEntry) {
 		super.onAdd(contentViewEntry);
 		if (isOutOfSpace()) {
-			throw new IllegalStateException("weight limit out of bounds in ColumnLayout");
+			throw new IllegalStateException("Weight limit out of bounds in ColumnLayout");
 		}
 	}
 
@@ -52,7 +52,7 @@ public final class ColumnLayout extends LinearAxisLayout {
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof ColumnLayoutParams)) {
-			throw new IllegalArgumentException("using not correct layout params for ColumnLayout");
+			throw new IllegalArgumentException("Using not correct layout params for ColumnLayout");
 		}
 	}
 

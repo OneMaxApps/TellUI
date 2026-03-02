@@ -6,7 +6,7 @@ import microui.core.base.ContentView;
 import processing.core.PApplet;
 
 /**
- * A simple shadow effect that creates a solid or gradient outline around a
+ * A simple shadow effect that creates a solid outline around a
  * ContentView. Extends AbstractShadow to provide a basic shadow implementation
  * with optional alpha fade-out.
  * <p>

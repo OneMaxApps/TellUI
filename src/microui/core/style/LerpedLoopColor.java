@@ -53,12 +53,12 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	 * back-and-forth transition. When disabled, the animation stops at the current
 	 * progress until loop mode is re-enabled.
 	 * 
-	 * @param loopEnabled true to enable continuous looping, false to pause at
+	 * @param enabled true to enable continuous looping, false to pause at
 	 *                    current progress
 	 */
-	public final void setLoopEnabled(boolean loopEnabled) {
-		getAnimator().setLoopEnabled(loopEnabled);
-		this.loopEnabled = loopEnabled;
+	public final void setLoopEnabled(boolean enabled) {
+		getAnimator().setLoopEnabled(enabled);
+		this.loopEnabled = enabled;
 	}
 
 	/**

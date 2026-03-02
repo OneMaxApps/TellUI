@@ -172,10 +172,6 @@ public final class TextTooltipContent extends TooltipContent {
 		this.text = text;
 	}
 
-	/**
-	 * Renders the text tooltip with background and text. Applies styling and draws
-	 * both background rectangle and text content.
-	 */
 	@Override
 	protected void render() {
 		backgroundColor.apply();

@@ -21,18 +21,27 @@ public final class PointerManager {
 	private PointerManager() {
 	}
 	
+	/**
+	 * Checks is modal component is open.
+	 * 
+	 * @return true if modal view component is open, false if not.
+	 */
 	public static boolean isModalViewOpen() {
 		return modalViewOpen;
 	}
 
+	/**
+	 * Setter for components which implements ModalParent interface.
+	 * 
+	 * @param modalViewOpen true if open, false if not.
+	 */
 	public static void setModalViewOpen(boolean modalViewOpen) {
 		PointerManager.modalViewOpen = modalViewOpen;
 	}
 
 	/**
 	 * Requests pointer ownership for the given spatial view.
-	 * Ownership is granted if:
-	 *
+	 * 
 	 * @param spatialView the view requesting ownership, cannot be null.
 	 * @return true if the view now owns the pointer, false otherwise.
 	 * @throws NullPointerException if spatialView is null.

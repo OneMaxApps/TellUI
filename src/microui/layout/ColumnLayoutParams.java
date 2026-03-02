@@ -18,10 +18,8 @@ public final class ColumnLayoutParams extends LinearAxisLayoutParams {
 	/**
 	 * Constructs ColumnLayoutParams with specified weight and horizontal alignment.
 	 * 
-	 * @param weight the weight factor for vertical space allocation (determines
-	 *               height proportion)
-	 * @param alignX the horizontal alignment within the column (typically 0=left,
-	 *               1=center, 2=right)
+	 * @param weight the weight factor for vertical space allocation
+	 * @param alignX the horizontal alignment within the column
 	 */
 	public ColumnLayoutParams(float weight, int alignX) {
 		super(weight, alignX, 0);

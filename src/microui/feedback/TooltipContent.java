@@ -55,7 +55,7 @@ public abstract class TooltipContent extends ContentView {
 	 */
 	protected final Tooltip getTooltip() {
 		if (tooltip == null) {
-			throw new IllegalStateException("tooltip is not initialized");
+			throw new IllegalStateException("Tooltip is not initialized");
 		}
 		return tooltip;
 	}

@@ -100,7 +100,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 		for (int i = 0; i < entryList.size(); i++) {
-			ContentView contentView = entryList.get(i).contentView();
+			ContentView contentView = entryList.get(i).getContentView();
 			if (contentView instanceof Scrollable scrollable) {
 				scrollable.mouseWheel(event);
 			}
@@ -119,7 +119,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 		for (int i = 0; i < entryList.size(); i++) {
-			ContentView contentView = entryList.get(i).contentView();
+			ContentView contentView = entryList.get(i).getContentView();
 			if (contentView instanceof KeyPressable pressable) {
 				pressable.keyPressed();
 			}
@@ -140,7 +140,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 		for (int i = 0; i < entryList.size(); i++) {
-			ContentView contentView = entryList.get(i).contentView();
+			ContentView contentView = entryList.get(i).getContentView();
 			if (contentView instanceof KeyPressable pressable) {
 				pressable.keyPressed(e);
 			}
@@ -155,7 +155,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 */
 	public ContentView findById(final int id) {
 		for (int i = 0; i < entryList.size(); i++) {
-			final ContentView contentView = entryList.get(i).contentView();
+			final ContentView contentView = entryList.get(i).getContentView();
 			if (contentView.getId() == id) {
 				return contentView;
 			}
@@ -175,7 +175,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		requireNonNull(textId, "textId");
 
 		for (int i = 0; i < entryList.size(); i++) {
-			ContentView contentView = entryList.get(i).contentView();
+			ContentView contentView = entryList.get(i).getContentView();
 			if (contentView.getTextId().equals(textId)) {
 				return contentView;
 			}
@@ -485,7 +485,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 		for (int i = 0; i < entryList.size(); i++) {
-			ContentView c = entryList.get(i).contentView();
+			ContentView c = entryList.get(i).getContentView();
 			if (c == contentView) {
 				entryList.remove(i);
 				break;
@@ -503,7 +503,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 		for (int priority = 0; priority <= priorityManager.getMax(); priority++) {
 			for (int i = 0; i < entryList.size(); i++) {
-				final ContentView c = entryList.get(i).contentView();
+				final ContentView c = entryList.get(i).getContentView();
 				if (c.getPriority() == priority) {
 					c.draw();
 				}
@@ -527,7 +527,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 
 	private boolean checkListContains(ContentView contentView) {
 		for (int i = 0; i < entryList.size(); i++) {
-			if (entryList.get(i).contentView() == contentView) {
+			if (entryList.get(i).getContentView() == contentView) {
 				return true;
 			}
 		}
@@ -562,7 +562,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		public void recalculateMax() {
 			setMax(0);
 			for (int i = 0; i < list.size(); i++) {
-				final int priority = list.get(i).contentView().getPriority();
+				final int priority = list.get(i).getContentView().getPriority();
 				setMax(Math.max(max, priority));
 			}
 		}
@@ -608,7 +608,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		 * 
 		 * @return the current contentView object
 		 */
-		public ContentView contentView() {
+		public ContentView getContentView() {
 			return contentView;
 		}
 		
@@ -617,7 +617,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		 * 
 		 * @return the current LayoutParams object
 		 */
-		public LayoutParams layoutParams() {
+		public LayoutParams getLayoutParams() {
 			return layoutParams;
 		}
 		

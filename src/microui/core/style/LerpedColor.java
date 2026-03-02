@@ -7,15 +7,8 @@ import java.util.function.Supplier;
 
 /**
  * A concrete implementation of {@link AbstractLerpedColor} that uses a
- * condition to control the direction of color interpolation.
+ * condition (or progress supplier) to control the direction of color interpolation.
  * 
- * <p>
- * This class automatically enables or disables forward animation progression
- * based on the result of a boolean condition evaluated during each update. When
- * the condition returns true, the animation progresses from start to end color.
- * When false, it progresses back from end to start color.
- * 
- * <p>
  * This is useful for creating color transitions that respond to application
  * state, such as hover effects, selection states, or enabled/disabled states.
  * 

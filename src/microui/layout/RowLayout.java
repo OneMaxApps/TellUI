@@ -36,7 +36,7 @@ public final class RowLayout extends LinearAxisLayout {
 	public void onAdd(Entry contentViewEntry) {
 		super.onAdd(contentViewEntry);
 		if (isOutOfSpace()) {
-			throw new IllegalStateException("weight limit out of bounds in RowLayout");
+			throw new IllegalStateException("Weight limit out of bounds in RowLayout");
 		}
 	}
 
@@ -62,7 +62,7 @@ public final class RowLayout extends LinearAxisLayout {
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof RowLayoutParams)) {
-			throw new IllegalArgumentException("using not correct layout params for RowLayout");
+			throw new IllegalArgumentException("Using not correct layout params for RowLayout");
 		}
 	}
 }

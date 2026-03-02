@@ -31,7 +31,7 @@ public interface KeyPressable {
 	 * including key code, modifiers, and timing.
 	 * </p>
 	 * 
-	 * @param e the KeyEvent containing detailed information about the key press
+	 * @param keyEvent the KeyEvent containing detailed information about the key press
 	 */
-	void keyPressed(KeyEvent e);
+	void keyPressed(KeyEvent keyEvent);
 }

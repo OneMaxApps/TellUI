@@ -1,7 +1,7 @@
 package microui.event;
 
 /**
- * Functional interface for event listeners in the MicroUI framework.
+ * Functional interface for event listeners.
  * <p>
  * Listeners are callback objects that can be registered with event handlers to
  * respond to specific events. When an event occurs, the {@link #action()}

@@ -242,10 +242,10 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	/**
 	 * Enables or disables easing for animations.
 	 * 
-	 * @param easing true to enable easing, false to disable
+	 * @param enabled true to enable easing, false to disable
 	 */
-	public void setAnimatorEasingEnabled(boolean easing) {
-		animator.setEasingEnabled(easing);
+	public void setAnimatorEasingEnabled(boolean enabled) {
+		animator.setEasingEnabled(enabled);
 	}
 
 	/**
@@ -503,7 +503,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @return true if initialized, false otherwise
 	 */
-	public static final boolean isInitialized() {
+	public static boolean isInitialized() {
 		return initialized;
 	}
 
@@ -512,7 +512,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @return true if manual drawing is allowed, false otherwise
 	 */
-	public static final boolean canDraw() {
+	public static boolean canDraw() {
 		return canDraw;
 	}
 

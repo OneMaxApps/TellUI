@@ -36,19 +36,19 @@ public class LinearLayout extends LinearAxisLayout {
 	public void onAdd(Entry contentViewEntry) {
 		super.onAdd(contentViewEntry);
 		if (isOutOfSpace()) {
-			throw new IllegalStateException("weight limit out of bounds in LinearLayout");
+			throw new IllegalStateException("Weight limit out of bounds in LinearLayout");
 		}
 	}
 
 	/**
 	 * Constructs a LinearLayout with specified orientation.
 	 * 
-	 * @param isVerticalMode true for vertical layout (components stacked), false
+	 * @param verticalModeEnabled true for vertical layout (components stacked), false
 	 *                       for horizontal layout (components side by side)
 	 */
-	public LinearLayout(boolean isVerticalMode) {
+	public LinearLayout(boolean verticalModeEnabled) {
 		super();
-		setVerticalMode(isVerticalMode);
+		setVerticalMode(verticalModeEnabled);
 	}
 
 	/**

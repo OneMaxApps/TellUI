@@ -71,8 +71,8 @@ public final class GridLayout extends LayoutManager {
 		float rowHeight = containerH / getRows();
 
 		for (int i = 0; i < getEntryList().size(); i++) {
-			ContentView contentView = getEntryList().get(i).contentView();
-			GridLayoutParams params = (GridLayoutParams) getEntryList().get(i).layoutParams();
+			ContentView contentView = getEntryList().get(i).getContentView();
+			GridLayoutParams params = (GridLayoutParams) getEntryList().get(i).getLayoutParams();
 
 			checkOutOfGrid(params);
 
@@ -186,11 +186,11 @@ public final class GridLayout extends LayoutManager {
 	private void checkContentViewsForOverlap() {
 		for (Entry entry : getEntryList()) {
 
-			final GridLayoutParams params = (GridLayoutParams) entry.layoutParams();
+			final GridLayoutParams params = (GridLayoutParams) entry.getLayoutParams();
 
 			for (Entry otherEntry : getEntryList()) {
 
-				GridLayoutParams paramsOther = (GridLayoutParams) otherEntry.layoutParams();
+				GridLayoutParams paramsOther = (GridLayoutParams) otherEntry.getLayoutParams();
 
 				int pc = params.getColumn(), pcs = params.getColumnSpan(), pr = params.getRow(),
 						prs = params.getRowSpan();

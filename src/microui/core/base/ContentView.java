@@ -285,11 +285,11 @@ public abstract class ContentView extends SpatialView {
 	/**
 	 * Enables or disables padding.
 	 * 
-	 * @param isEnabled true to enable padding, false to disable
+	 * @param enabled true to enable padding, false to disable
 	 * @return this ContentView for method chaining
 	 */
-	public final ContentView setPaddingEnabled(boolean isEnabled) {
-		padding.setEnabled(isEnabled);
+	public final ContentView setPaddingEnabled(boolean enabled) {
+		padding.setEnabled(enabled);
 		return this;
 	}
 

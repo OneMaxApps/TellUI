@@ -13,8 +13,8 @@ import microui.feedback.Tooltip;
 import microui.feedback.TooltipContent;
 
 /**
- * Abstract base class for all interactive UI components in the microui
- * framework. Component provides comprehensive interaction handling, event
+ * Abstract base class for all interactive UI components.
+ * Component provides comprehensive interaction handling, event
  * management, tooltip support, and visual styling for UI elements.
  * 
  * <p>

@@ -91,9 +91,6 @@ public final class Tooltip extends View {
 		content.setTooltip(this);
 	}
 
-	/**
-	 * Renders the tooltip by delegating to the content's draw method.
-	 */
 	@Override
 	protected void render() {
 		if (content != null) {

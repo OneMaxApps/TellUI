@@ -13,15 +13,6 @@ import processing.core.PGraphics;
  * outlines. Provides methods for applying stroke settings to both the main
  * Processing context and PGraphics objects, with validation and default theme
  * integration.
- * <p>
- * The Stroke class encapsulates all stroke-related drawing properties including
- * color, weight (thickness), and stroke cap style (always SQUARE). It
- * integrates with the Metrics system for resource tracking and supports copying
- * from other Stroke objects.
- * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 27.10.2025
- * </p>
  * 
  * @see AbstractColor
  * @see Metrics

@@ -16,11 +16,6 @@ import microui.util.Debugger;
  * features. Provides text validation, constraint management, password mode,
  * undo/redo functionality, and event listeners for text manipulation
  * operations.
- * <p>
- * This controller is designed for robust text input management in GUI
- * applications, supporting features like character validation, length
- * constraints, password masking, and history tracking for undo/redo operations.
- * </p>
  * 
  * @see ValidationMode
  * @see Listener
@@ -364,8 +359,7 @@ public class FullSingleLineTextController {
 	/**
 	 * Removes a character at the specified position.
 	 * 
-	 * @param pos the position of the character to remove (will be constrained to
-	 *            valid range)
+	 * @param pos the position of the character to remove (will be constrained to valid range)
 	 */
 	public final void removeCharAt(final int pos) {
 		if (isEmpty()) {
@@ -443,10 +437,10 @@ public class FullSingleLineTextController {
 	/**
 	 * Enables or disables text validation.
 	 * 
-	 * @param validation true to enable validation, false to disable
+	 * @param enabled true to enable validation, false to disable
 	 */
-	public final void setValidationEnabled(boolean validation) {
-		this.validationEnabled = validation;
+	public final void setValidationEnabled(boolean enabled) {
+		this.validationEnabled = enabled;
 	}
 
 	/**

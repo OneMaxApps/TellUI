@@ -101,11 +101,11 @@ public final class Timer {
 	/**
 	 * Sets the direction of the timer.
 	 * 
-	 * @param isIncrementing true to make the timer increment (START → END), false
+	 * @param enabled true to make the timer increment (START → END), false
 	 *                       to make it decrement (END → START)
 	 */
-	public void setIncrementing(boolean isIncrementing) {
-		this.incrementing = isIncrementing;
+	public void setIncrementingEnabled(boolean enabled) {
+		this.incrementing = enabled;
 	}
 
 	/**

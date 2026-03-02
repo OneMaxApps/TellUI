@@ -15,13 +15,6 @@ import microui.util.MathUtils;
  * tooltips. Tooltips follow the mouse cursor and are constrained to stay within
  * the application window.
  * </p>
- * 
- * <p>
- * Status: STABLE - Do not modify
- * </p>
- * <p>
- * Last Reviewed: 24.02.2026
- * </p>
  */
 public final class TooltipManager extends View {
 	private static final TooltipManager INSTANCE = new TooltipManager();

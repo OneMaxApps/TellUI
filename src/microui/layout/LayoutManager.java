@@ -56,7 +56,7 @@ public abstract class LayoutManager {
 	 * @param entry the entry that was added to the container
 	 */
 	public void onAdd(Entry entry) {
-		checkCorrectParams(entry.layoutParams());
+		checkCorrectParams(entry.getLayoutParams());
 		recalculate();
 	}
 

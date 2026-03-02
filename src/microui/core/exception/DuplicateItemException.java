@@ -1,7 +1,7 @@
 package microui.core.exception;
 
 /**
- * Exception thrown when attempting to add a duplicate item to a collection or
+ * Exception thrown when attempting to add a duplicate item to a MenuButton or
  * container that does not allow duplicates.
  * <p>
  * This exception is used throughout the MicroUI framework to indicate that an
