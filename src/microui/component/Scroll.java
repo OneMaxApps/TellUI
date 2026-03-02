@@ -66,7 +66,7 @@ public class Scroll extends LinearRangeControl {
 				break;
 			}
 
-			onChangeValue();
+			notifyOnChangeValueListeners();
 			onStartChangeValue();
 		});
 
@@ -77,6 +77,7 @@ public class Scroll extends LinearRangeControl {
 
 		updateThumbTransforms();
 		setValue(0, 100, 50);
+		
 	}
 
 	/**

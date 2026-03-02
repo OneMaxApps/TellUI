@@ -5,8 +5,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import microui.core.base.SpatialView;
+import microui.core.exception.DuplicateItemException;
 import processing.core.PGraphics;
 
 /**
@@ -107,13 +109,13 @@ public class GraphicsBuffer extends SpatialView {
 	 *
 	 * @param bufferedView the BufferedView to add
 	 * @throws NullPointerException     if bufferedView is null
-	 * @throws IllegalArgumentException if bufferedView is already added
+	 * @throws DuplicateItemException if bufferedView is already added
 	 */
 	public final void addBufferedView(BufferedView bufferedView) {
 		requireNonNull(bufferedView, "bufferedView");
 
 		if (viewList.contains(bufferedView)) {
-			throw new IllegalArgumentException("BufferedView cannot be added twice");
+			throw new DuplicateItemException("BufferedView cannot be added twice");
 		}
 
 		viewList.add(bufferedView);
@@ -124,22 +126,18 @@ public class GraphicsBuffer extends SpatialView {
 	 *
 	 * @param bufferedView the BufferedView to remove
 	 * @throws NullPointerException     if bufferedView is null
-	 * @throws IllegalArgumentException if bufferedView is not in the list
+	 * @throws NoSuchElementException if bufferedView is not in the list
 	 */
 	public final void removeBufferedView(BufferedView bufferedView) {
 		requireNonNull(bufferedView, "bufferedView");
 
 		if (!viewList.contains(bufferedView)) {
-			throw new IllegalArgumentException("BufferedView not found");
+			throw new NoSuchElementException("BufferedView not found");
 		}
 
 		viewList.remove(bufferedView);
 	}
 
-	/**
-	 * Renders the graphics buffer and all its BufferedView components. The buffer
-	 * is drawn to the main Processing sketch at the buffer's position.
-	 */
 	@Override
 	protected void render() {
 		if (graphics != null) {
@@ -155,10 +153,6 @@ public class GraphicsBuffer extends SpatialView {
 		}
 	}
 
-	/**
-	 * Called when the buffer's dimensions change. Recreates the graphics buffer
-	 * with the new dimensions.
-	 */
 	@Override
 	protected void onChangeDimensions() {
 		super.onChangeDimensions();

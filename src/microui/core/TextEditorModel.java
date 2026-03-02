@@ -12,11 +12,6 @@ import microui.event.Listener;
  * A comprehensive text editor model that manages multi-line text editing
  * operations, cursor positioning, and text selection. Provides a complete API
  * for text manipulation in a multi-line editing environment.
- * 
- * <p>
- * This model is designed to be used by text editing UI components that need
- * sophisticated text manipulation capabilities.
- * </p>
  */
 public final class TextEditorModel {
 	private final MultiLineTextController controller;

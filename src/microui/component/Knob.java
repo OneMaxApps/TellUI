@@ -74,12 +74,12 @@ public final class Knob extends RangeControl {
 		
 		onDragStart(() -> {
 			draggableState = mouseInsideCircle();
-			updateOnStartChangeValueListeners();
+			notifyOnStartChangeValueListeners();
 		});
 		
 		onRelease(() -> {
 			draggableState = false;
-			updateOnEndChangeValueListeners();
+			notifyOnEndChangeValueListeners();
 		});
 		
 		onDoubleClick(() -> {
@@ -358,7 +358,7 @@ public final class Knob extends RangeControl {
 		
 		if (draggableState) {
 			manualDragging();
-			updateOnChangeValueListeners();
+			notifyOnChangeValueListeners();
 		}
 		
 		if (getInternalScrolling().isScrolling()) {
@@ -366,16 +366,16 @@ public final class Knob extends RangeControl {
 			setEndedChangeValue(false);
 			
 			if (!isStartedChangeValue()) {
-				updateOnStartChangeValueListeners();
+				notifyOnStartChangeValueListeners();
 				setStartedChangeValue(true);
 			}
 			
-			updateOnChangeValueListeners();
+			notifyOnChangeValueListeners();
 		} else {
 			setStartedChangeValue(false);
 			
 			if (!isEndedChangeValue()) {
-				updateOnEndChangeValueListeners();
+				notifyOnEndChangeValueListeners();
 				setEndedChangeValue(true);
 			}
 		}

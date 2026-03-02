@@ -3,35 +3,20 @@ package microui.core;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
 import microui.core.base.Component;
-import microui.core.effect.Hover;
-import microui.core.effect.Ripples;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
 
 /**
- * Abstract base class for all button-like components in the microui framework.
- * Provides common button functionality including ripple effects, hover effects,
- * stroke/border styling, and visual feedback.
- * 
- * <p>
- * <strong>Status:</strong> STABLE - Do not modify
- * </p>
- * <p>
- * <strong>Last Reviewed:</strong> 21.10.2025
- * </p>
+ * Abstract base class for all button-like components.
  * 
  * @see Component
- * @see Ripples
- * @see Hover
- * @see Stroke
  */
 public abstract class AbstractButton extends Component {
 	private final Stroke stroke;
 
 	/**
 	 * Constructs an AbstractButton with specified position and dimensions.
-	 * Initializes with default theme styling and creates ripple, hover, and stroke
-	 * effects.
+	 * Initializes with default theme styling.
 	 *
 	 * @param x the x-coordinate of the button's top-left corner
 	 * @param y the y-coordinate of the button's top-left corner
@@ -43,8 +28,6 @@ public abstract class AbstractButton extends Component {
 		setBackgroundColor(getTheme().getBackgroundColor());
 		
 		stroke = new Stroke();
-		
-		
 	}
 
 	/**
@@ -87,12 +70,6 @@ public abstract class AbstractButton extends Component {
 		return this;
 	}
 
-	/**
-	 * Gets the internal Stroke styling instance. Protected access for use by
-	 * subclasses in their rendering.
-	 *
-	 * @return the internal Stroke instance
-	 */
 	protected final Stroke getStrokeInternal() {
 		return stroke;
 	}

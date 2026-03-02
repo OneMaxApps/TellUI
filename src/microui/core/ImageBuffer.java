@@ -14,13 +14,6 @@ import processing.core.PImage;
  * applying color tints to PImage objects, with automatic dimension clamping to
  * prevent oversized images.
  * 
- * <p>
- * <strong>Status:</strong> Stable - Do not modify
- * </p>
- * <p>
- * <strong>Last Reviewed:</strong> 13.09.2025
- * </p>
- * 
  * @see SpatialView
  * @see AbstractColor
  */
@@ -29,8 +22,7 @@ public class ImageBuffer extends SpatialView {
 	private PImage image;
 
 	/**
-	 * Constructs an ImageBuffer with default properties. The buffer is initially
-	 * visible with white tint color and no loaded image.
+	 * Constructs an ImageBuffer with default properties.
 	 */
 	public ImageBuffer() {
 		setVisible(true);
@@ -118,10 +110,6 @@ public class ImageBuffer extends SpatialView {
 		image = null;
 	}
 
-	/**
-	 * Renders the image with applied color tint at the buffer's position and
-	 * dimensions. Only called when an image is loaded.
-	 */
 	@Override
 	protected void render() {
 		if (isLoaded()) {

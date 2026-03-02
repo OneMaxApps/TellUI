@@ -146,7 +146,7 @@ public class Slider extends LinearRangeControl {
 		updateProgressBounds();
 
 		onStartChangeValue();
-		onChangeValue();
+		notifyOnChangeValueListeners();
 	}
 
 	private final class Rect extends SpatialView {

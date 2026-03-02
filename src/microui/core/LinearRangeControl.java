@@ -50,7 +50,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			getInternalValue().append(getInternalScrolling().get());
 		}
 
-		onChangeValue();
+		notifyOnChangeValueListeners();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			getInternalScrolling().init(event);
 			getInternalValue().append(getInternalScrolling().get());
 		}
-		onChangeValue();
+		notifyOnChangeValueListeners();
 	}
 
 	/**
@@ -119,13 +119,10 @@ public abstract class LinearRangeControl extends RangeControl {
 		} else {
 			orientation = Orientation.HORIZONTAL;
 		}
+		
+		setOrientation(orientation);
 	}
 
-	/**
-	 * Renders the linear range control track and handles value change events. Draws
-	 * the background track and manages the lifecycle of value change events (start,
-	 * change, end) based on user interaction.
-	 */
 	@Override
 	protected void render() {
 		super.render();
@@ -135,57 +132,35 @@ public abstract class LinearRangeControl extends RangeControl {
 		ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 		ctx.popStyle();
 
-		if (getInternalScrolling().isScrolling()) {
-			getInternalValue().append(getInternalScrolling().get());
-			onChangeValue();
+		final boolean pressed = ctx.mousePressed;
+		final var 	  scroll = getInternalScrolling();
+		final boolean scrolling = scroll.isScrolling();
+		final float   scrollSpeed = scroll.get();
+		final var 	  value = getInternalValue();
+		
+		if (scrolling) {
+			value.append(scrollSpeed);
+			notifyOnChangeValueListeners();
 			setEndedChangeValue(true);
-			if (!ctx.mousePressed && !isStartedChangeValue()) {
+			if (!pressed && !isStartedChangeValue()) {
 				onStartChangeValue();
 			}
 		} else {
-			if (!ctx.mousePressed) {
+			if (!pressed) {
 				setStartedChangeValue(false);
 			}
 		}
 
-		if (!ctx.mousePressed && isEndedChangeValue() && !getInternalScrolling().isScrolling()) {
-			onEndChangeValue();
+		if (!pressed && isEndedChangeValue() && !scrolling) {
+			notifyOnEndChangeValueListeners();
 			setEndedChangeValue(false);
 		}
 	}
 
-	/**
-	 * Notifies the change value listener. Called internally when the value changes.
-	 */
-	protected void onChangeValue() {
-		updateOnChangeValueListeners();
-	}
-
-	/**
-	 * Notifies the start change value listener. Called internally when a value
-	 * change begins. Ensures the start event is only fired once per interaction.
-	 */
 	protected void onStartChangeValue() {
 		if (!isStartedChangeValue()) {
-			updateOnStartChangeValueListeners();
+			notifyOnStartChangeValueListeners();
 			setStartedChangeValue(true);
 		}
-	}
-
-	/**
-	 * Notifies the end change value listener. Called internally when a value change
-	 * ends.
-	 */
-	protected void onEndChangeValue() {
-		updateOnEndChangeValueListeners();
-	}
-
-	/**
-	 * Performs automatic scrolling by appending the current scrolling delta to the
-	 * value. Also triggers the change value notification.
-	 */
-	protected final void autoScroll() {
-		getInternalValue().append(getInternalScrolling().get());
-		onChangeValue();
 	}
 }

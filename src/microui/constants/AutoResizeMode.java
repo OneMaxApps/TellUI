@@ -1,15 +1,10 @@
 package microui.constants;
 
 /**
- * Enumeration defining the scaling factors for automatic text resizing in UI
- * components. The AutoResizeMode determines how aggressively text is scaled to
+ * Enumeration defining the scaling factors for automatic text resizing in TextView.
+ * The AutoResizeMode determines how aggressively text is scaled to
  * fit within its bounds, with lower values resulting in larger text and higher
  * values resulting in smaller text.
- * 
- * <p>
- * The scaling factor is used as a divisor when calculating automatic text size:
- * <code>textSize = min(width, height) / mode.getValue()</code>
- * </p>
  * 
  * <p>
  * Available modes range from FULL (largest text) to TINY (smallest text).
@@ -61,7 +56,6 @@ public enum AutoResizeMode {
 	/**
 	 * Gets the scaling factor divisor for this resize mode. The divisor is used to
 	 * calculate automatic text size:
-	 * <code>textSize = min(componentWidth, componentHeight) / getValue()</code>
 	 *
 	 * @return the scaling factor divisor
 	 */

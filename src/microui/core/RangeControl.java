@@ -24,13 +24,14 @@ import processing.event.MouseEvent;
  * @see Scrollable
  * @see BoundedValue
  */
-public abstract class RangeControl extends Component implements Scrollable, ValuePreviewSource{
+public abstract class RangeControl extends Component implements Scrollable, ValuePreviewSource {
 	private final BoundedValue value;
 	private final Scrolling scrolling;
 	private final Stroke stroke;
 	private Supplier<String> supplierOverlayText;
 	private List<Listener> onStartChangeValueListenerList, onChangeValueListenerList, onEndChangeValueListenerList;
 	private boolean startedChangeValue, endedChangeValue;
+	
 	/**
 	 * Constructs a RangeControl with specified position and dimensions. Initializes
 	 * with default value range (0-100) at 0, and creates scrolling and stroke
@@ -51,7 +52,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 		value = new BoundedValue(0, 100, 0);
 		scrolling = new Scrolling(this);
 		stroke = new Stroke();
-		
 	}
 	
 	/**
@@ -146,6 +146,17 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 */
 	public void setSupplierOverlayText(Supplier<String> supplierOverlayText) {
 		this.supplierOverlayText = requireNonNull(supplierOverlayText);
+	}
+	
+	/**
+	 * Sets a prefix text for supplier overlay text
+	 *
+	 * @param prefix the prefix text, cannot be null.
+	 * @throws NullPointerException if supplier is null.
+	 */
+	public void setPrefixOverlayText(String prefix) {
+		requireNonNull(prefix,"prefix");
+		supplierOverlayText = () -> prefix + (int) getValue();
 	}
 
 	/**
@@ -302,111 +313,55 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 		}
 	}
 	
-	/**
-	 * Checks whether a value change has started.
-	 *
-	 * @return true if started, false otherwise.
-	 */
 	protected boolean isStartedChangeValue() {
 		return startedChangeValue;
 	}
 
-	/**
-	 * Sets the flag indicating that a value change has started.
-	 *
-	 * @param startedChangeValue true to mark as started.
-	 */
 	protected void setStartedChangeValue(boolean startedChangeValue) {
 		this.startedChangeValue = startedChangeValue;
 	}
 
-	/**
-	 * Checks whether a value change has ended.
-	 *
-	 * @return true if ended, false otherwise.
-	 */
 	protected boolean isEndedChangeValue() {
 		return endedChangeValue;
 	}
 
-	/**
-	 * Sets the flag indicating that a value change has ended.
-	 *
-	 * @param endedChangeValue true to mark as ended.
-	 */
 	protected void setEndedChangeValue(boolean endedChangeValue) {
 		this.endedChangeValue = endedChangeValue;
 	}
 
-	/**
-	 * Checks if the minimum and maximum values are equal. Useful for detecting
-	 * degenerate ranges where no selection is possible.
-	 *
-	 * @return true if min == max, false otherwise
-	 */
 	protected final boolean hasEqualMinMax() {
 		return value.hasEqualMinMax();
 	}
 
-	/**
-	 * Sets the value without triggering any change listeners. Useful for
-	 * programmatic updates that shouldn't fire events.
-	 *
-	 * @param value the value to set silently
-	 */
 	protected final void setValueWithoutActions(float value) {
 		this.value.setSilently(value);
 	}
 
-	/**
-	 * Gets the internal BoundedValue instance for internal manipulation.
-	 *
-	 * @return the internal BoundedValue instance
-	 */
 	protected final BoundedValue getInternalValue() {
 		return value;
 	}
 
-	/**
-	 * Gets the internal Scrolling instance for internal manipulation.
-	 *
-	 * @return the internal Scrolling instance
-	 */
 	protected final Scrolling getInternalScrolling() {
 		return scrolling;
 	}
 
-	/**
-	 * Gets the internal Stroke instance for internal manipulation.
-	 *
-	 * @return the internal Stroke instance
-	 */
 	protected final Stroke getInternalStroke() {
 		return stroke;
 	}
 	
-	/**
-	 * Notifies all registered change listeners that the value has changed.
-	 */
-	protected void updateOnChangeValueListeners() {
+	protected void notifyOnChangeValueListeners() {
 		for (int i = 0; i < onChangeValueListenerList.size(); i++) {
 			onChangeValueListenerList.get(i).action();
 		}
 	}
 	
-	/**
-	 * Notifies all registered start-change listeners that a value change has begun.
-	 */
-	protected void updateOnStartChangeValueListeners() {
+	protected void notifyOnStartChangeValueListeners() {
 		for (int i = 0; i < onStartChangeValueListenerList.size(); i++) {
 			onStartChangeValueListenerList.get(i).action();
 		}
 	}
 	
-	/**
-	 * Notifies all registered end-change listeners that a value change has ended.
-	 */
-	protected void updateOnEndChangeValueListeners() {
+	protected void notifyOnEndChangeValueListeners() {
 		for (int i = 0; i < onEndChangeValueListenerList.size(); i++) {
 			onEndChangeValueListenerList.get(i).action();
 		}
@@ -432,32 +387,16 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 		list.remove(listener);
 	}
 
-	/**
-	 * Internal class for handling scrolling inertia and mouse wheel interaction.
-	 * Provides smooth scrolling with configurable velocity and reverse scrolling
-	 * options.
-	 */
 	protected final class Scrolling {
 		private final Component component;
 		private float speed, velocity;
 		private boolean isScrolling, reverse;
 
-		/**
-		 * Constructs a Scrolling instance for the parent component.
-		 *
-		 * @param component the parent component that owns this scrolling
-		 */
 		public Scrolling(Component component) {
 			this.component = component;
 			velocity = .01f;
 		}
 
-		/**
-		 * Initializes scrolling based on a mouse wheel event. Accumulates speed based
-		 * on the wheel direction and count.
-		 *
-		 * @param e the mouse wheel event
-		 */
 		public void init(final MouseEvent e) {
 			if (reverse) {
 				if (e.getCount() < 0) {
@@ -486,12 +425,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 			}
 		}
 
-		/**
-		 * Gets the current scrolling delta and updates scrolling state. Applies
-		 * velocity-based decay to the scrolling speed.
-		 *
-		 * @return the current scrolling delta, or 0 if not scrolling
-		 */
 		public float get() {
 			if (speed > .01f) {
 				speed -= velocity;
@@ -512,49 +445,23 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 			return 0f;
 		}
 
-		/**
-		 * Checks if scrolling is currently active.
-		 *
-		 * @return true if scrolling is active, false otherwise
-		 */
 		public boolean isScrolling() {
 			return isScrolling;
 		}
 
-		/**
-		 * Gets the scrolling velocity (decay rate).
-		 *
-		 * @return the current scrolling velocity
-		 */
+
 		public final float getVelocity() {
 			return velocity;
 		}
 
-		/**
-		 * Sets the scrolling velocity (decay rate). Higher values cause scrolling to
-		 * stop faster.
-		 *
-		 * @param velocity the scrolling velocity to set
-		 */
 		public final void setVelocity(float velocity) {
 			this.velocity = velocity;
 		}
 
-		/**
-		 * Checks if scrolling direction is reversed.
-		 *
-		 * @return true if scrolling is reversed, false for normal scrolling
-		 */
 		public final boolean isReverse() {
 			return reverse;
 		}
 
-		/**
-		 * Sets whether scrolling direction is reversed.
-		 *
-		 * @param reverse true to reverse scrolling direction, false for normal
-		 *                scrolling
-		 */
 		public final void setReverse(boolean reverse) {
 			this.reverse = reverse;
 		}
