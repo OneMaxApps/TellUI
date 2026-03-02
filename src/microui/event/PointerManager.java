@@ -6,6 +6,8 @@ import static microui.core.base.View.IGNORE_INTERNAL_COMPONENT_ID;
 import microui.MicroUI;
 import microui.core.base.Component;
 import microui.core.base.SpatialView;
+import microui.core.base.View;
+import microui.core.interfaces.ModalParent;
 import processing.core.PApplet;
 
 /**
@@ -14,10 +16,19 @@ import processing.core.PApplet;
  */
 public final class PointerManager {
 	private static SpatialView owner;
+	private static boolean modalViewOpen;
 	
 	private PointerManager() {
 	}
 	
+	public static boolean isModalViewOpen() {
+		return modalViewOpen;
+	}
+
+	public static void setModalViewOpen(boolean modalViewOpen) {
+		PointerManager.modalViewOpen = modalViewOpen;
+	}
+
 	/**
 	 * Requests pointer ownership for the given spatial view.
 	 * Ownership is granted if:
@@ -42,6 +53,12 @@ public final class PointerManager {
 		
 		if (owner == spatialView) {
 			return true;
+		}
+		
+		if(modalViewOpen) {
+			if(!(spatialView instanceof ModalParent) && spatialView.getId() != View.MODAL_ITEM_VIEW_ID) {
+				return false;
+			}
 		}
 		
 		final float mx = p.mouseX;

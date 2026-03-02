@@ -17,6 +17,7 @@ import microui.core.effect.AbstractShadow;
 import microui.core.effect.ReactiveShadow;
 import microui.core.effect.SpatialAnimator;
 import microui.core.exception.DuplicateItemException;
+import microui.core.interfaces.ModalParent;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
@@ -24,6 +25,7 @@ import microui.core.style.LerpedColor;
 import microui.core.style.LerpedLoopColor;
 import microui.core.style.Stroke;
 import microui.event.Listener;
+import microui.event.PointerManager;
 import microui.util.Debugger;
 import microui.util.SpatialState;
 import processing.core.PApplet;
@@ -48,7 +50,7 @@ import processing.event.MouseEvent;
  * @see Button
  * @see Scrollable
  */
-public final class MenuButton extends Button implements Scrollable {
+public final class MenuButton extends Button implements Scrollable, ModalParent {
 	private static final int DEFAULT_MAX_WIDTH = 100;
 	private static final int DEFAULT_MAX_HEIGHT = 24;
 	private static final int DEFAULT_ITEM_WIDTH = 200;
@@ -76,6 +78,7 @@ public final class MenuButton extends Button implements Scrollable {
 	public MenuButton(String title, float x, float y, float w, float h) {
 		super(title, x, y, w, h);
 		setMaxSize(DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
+		setPriority(1);
 
 		items = new Items(this);
 		indicator = new OpenStateIndicator(this);
@@ -86,7 +89,6 @@ public final class MenuButton extends Button implements Scrollable {
 		setRootMode(true);
 		setDirectionMode(DirectionMode.AUTO);
 		
-		setPriority(1);
 	}
 
 	/**
@@ -932,7 +934,9 @@ public final class MenuButton extends Button implements Scrollable {
 	@Override
 	protected void render() {
 		super.render();
-
+		
+		PointerManager.setModalViewOpen(isOpen());
+	
 		if (isEmpty()) {
 			return;
 		}
@@ -1426,7 +1430,9 @@ public final class MenuButton extends Button implements Scrollable {
 
 		private void addInternal(Button button) {
 			requireNonNull(button, "button");
-
+			
+			button.setId(MODAL_ITEM_VIEW_ID);
+			
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
 				if (b.getText().equals(button.getText())) {

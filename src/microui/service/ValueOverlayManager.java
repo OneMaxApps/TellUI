@@ -15,6 +15,7 @@ import microui.core.interfaces.ValuePreviewSource;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
+import microui.core.style.LerpedLoopColor;
 import microui.util.SpatialState;
 import processing.core.PFont;
 
@@ -35,7 +36,7 @@ public final class ValueOverlayManager extends View {
 		setVisible(true);
 		
 		text = new TextView();
-		text.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		
 		
 		prepareTextConfig();
 		
@@ -223,12 +224,12 @@ public final class ValueOverlayManager extends View {
 	}
 	
 	private SpatialAnimator createDefaultAnimator() {
-		final SpatialState startState = new SpatialState();
+		final SpatialState startState = new SpatialState(0,0,0,0);
 		
 		startState.setSupplierX(() -> -text.getAbsoluteWidth());
-		startState.setSupplierY(() -> -text.getAbsoluteHeight());
-		startState.setSupplierWidth(() -> text.getAbsoluteWidth());
-		startState.setSupplierHeight(() -> text.getAbsoluteHeight());
+		startState.setSupplierY(() -> text.getPaddingTop());
+		startState.setSupplierWidth(() -> text.getWidth());
+		startState.setSupplierHeight(() -> text.getHeight());
 		
 		final SpatialState endState = new SpatialState();
 		
@@ -245,8 +246,10 @@ public final class ValueOverlayManager extends View {
 			return text.getHeight();
 		});
 		
-		return new SpatialAnimator(startState, endState, () -> source != null && source.isContentPrepared());
+		final var animator = new SpatialAnimator(startState, endState, () -> source != null && source.isContentPrepared());
+		animator.setSpeed(.05f);
 		
+		return animator;
 	}
 	
 	private float getTextWidth() {
@@ -293,8 +296,11 @@ public final class ValueOverlayManager extends View {
 		};
 		
 		text.setConstrainDimensionsEnabled(false);
+		text.setId(IGNORE_INTERNAL_COMPONENT_ID);
+		
+		text.setConstrainDimensionsEnabled(false);
 		text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), condition).setSpeed(.1f));
-		text.setTextColor(new LerpedColor(Color.TRANSPARENT, Color.WHITE, condition).setSpeed(.1f));
+		text.setTextColor(new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.WHITE, new Color(255,200)).setSpeed(.1f), condition).setSpeed(.1f));
 		text.setAutoResizeModeEnabled(false);
 		text.setTextSize(DEFAULT_TEXT_SIZE);
 		text.setPadding(DEFAULT_PADDING_AROUND);

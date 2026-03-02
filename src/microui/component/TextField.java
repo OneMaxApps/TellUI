@@ -111,6 +111,18 @@ public final class TextField extends Component implements KeyPressable {
 				selection.reset();
 			}
 		});
+		
+		onDragging(() -> {
+			setFocused(true);
+			cursor.blink.reset();
+			cursor.column.set(getRecalculatedColumnPositionFromMouse());
+		});
+		
+		onClick(() -> {
+			setFocused(true);
+			cursor.blink.reset();
+			cursor.column.set(getRecalculatedColumnPositionFromMouse());
+		});
 	}
 
 	/**
@@ -828,12 +840,6 @@ public final class TextField extends Component implements KeyPressable {
 	// == PRIVATE MOUSE CONTROL API ==
 
 	private void mouseEventsUpdateState() {
-		if (isDragging() || isPressed()) {
-			setFocused(true);
-			cursor.blink.reset();
-			cursor.column.set(getRecalculatedColumnPositionFromMouse());
-		}
-
 		if (mustLostFocus()) {
 			setFocused(false);
 			selection.reset();

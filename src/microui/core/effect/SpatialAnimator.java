@@ -35,8 +35,8 @@ public final class SpatialAnimator {
 	private final BooleanSupplier condition;
 	private SpatialView targetSpatialView;
 	private ReactionMode reactionMode;
-	private boolean isEnabled;
-	private boolean isPositionEnabled, isDimensionsEnabled;
+	private boolean enabled;
+	private boolean positionEnabled, dimensionsEnabled;
 
 	/**
 	 * Constructs a SpatialAnimator with SpatialState objects and a condition.
@@ -110,6 +110,39 @@ public final class SpatialAnimator {
 		startContentView = start;
 		endContentView = end;
 	}
+	
+	/**
+	 * Returns the current speed of the timer.
+	 * 
+	 * @return speed value between 0 and 1
+	 */
+	public float getSpeed() {
+		return timer.getSpeed();
+	}
+
+	/**
+	 * Sets the speed of the SpatialAnimator.
+	 * 
+	 * <p>
+	 * The speed determines how much the timer advances or retreats per update call.
+	 * Valid values are between 0 and 1 inclusive.
+	 * </p>
+	 * 
+	 * @param speed the new speed value, must be between 0 and 1
+	 * @throws IllegalArgumentException if speed is outside the range [0, 1]
+	 */
+	public void setSpeed(float speed) {
+		timer.setSpeed(speed);
+	}
+
+	/**
+	 * Checks if the SpatialAnimator has reached either endpoint.
+	 * 
+	 * @return true if current time equals either START or END, false otherwise
+	 */
+	public boolean isComplete() {
+		return timer.isComplete();
+	}
 
 	/**
 	 * Returns the current reaction mode.
@@ -139,17 +172,17 @@ public final class SpatialAnimator {
 	 * @return true if position animation is enabled, false otherwise
 	 */
 	public boolean isPositionEnabled() {
-		return isPositionEnabled;
+		return positionEnabled;
 	}
 
 	/**
 	 * Enables or disables position animation.
 	 * 
-	 * @param isPositionEnabled true to enable position animation, false to disable
+	 * @param positionEnabled true to enable position animation, false to disable
 	 * @return this SpatialAnimator for method chaining
 	 */
-	public SpatialAnimator setPositionEnabled(boolean isPositionEnabled) {
-		this.isPositionEnabled = isPositionEnabled;
+	public SpatialAnimator setPositionEnabled(boolean positionEnabled) {
+		this.positionEnabled = positionEnabled;
 
 		return this;
 	}
@@ -160,18 +193,18 @@ public final class SpatialAnimator {
 	 * @return true if dimension animation is enabled, false otherwise
 	 */
 	public boolean isDimensionsEnabled() {
-		return isDimensionsEnabled;
+		return dimensionsEnabled;
 	}
 
 	/**
 	 * Enables or disables dimension animation.
 	 * 
-	 * @param isDimensionsEnabled true to enable dimension animation, false to
+	 * @param dimensionsEnabled true to enable dimension animation, false to
 	 *                            disable
 	 * @return this SpatialAnimator for method chaining
 	 */
-	public SpatialAnimator setDimensionsEnabled(boolean isDimensionsEnabled) {
-		this.isDimensionsEnabled = isDimensionsEnabled;
+	public SpatialAnimator setDimensionsEnabled(boolean dimensionsEnabled) {
+		this.dimensionsEnabled = dimensionsEnabled;
 
 		return this;
 	}
@@ -204,17 +237,17 @@ public final class SpatialAnimator {
 	 * @return true if enabled, false if disabled
 	 */
 	public boolean isEnabled() {
-		return isEnabled;
+		return enabled;
 	}
 
 	/**
 	 * Enables or disables the animator.
 	 * 
-	 * @param isEnabled true to enable the animator, false to disable
+	 * @param enabled true to enable the animator, false to disable
 	 * @return this SpatialAnimator for method chaining
 	 */
-	public SpatialAnimator setEnabled(boolean isEnabled) {
-		this.isEnabled = isEnabled;
+	public SpatialAnimator setEnabled(boolean enabled) {
+		this.enabled = enabled;
 
 		return this;
 	}

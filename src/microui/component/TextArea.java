@@ -61,7 +61,7 @@ import processing.event.MouseEvent;
  * </p>
  */
 public final class TextArea extends Component implements KeyPressable, Scrollable {
-	private static final int MIN_SIZE = 100;
+	private static final int MIN_SIZE = 40;
 	private static final int MAX_SIZE = 1000;
 
 	private final TextEditorModel textEditorModel;

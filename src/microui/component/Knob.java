@@ -92,7 +92,6 @@ public final class Knob extends RangeControl {
 			recalculateScaleWeight();
 		});
 		
-		
 	}
 	
 	/**
