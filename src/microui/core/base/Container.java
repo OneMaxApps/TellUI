@@ -468,6 +468,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		if (contentView == this) {
 			throw new IllegalArgumentException("Cannot add in container itself");
 		}
+		
+		contentView.addOnChangePriorityListener(() -> priorityManager.recalculateMax());
 
 		final Entry entry = new Entry(contentView, layoutParams);
 

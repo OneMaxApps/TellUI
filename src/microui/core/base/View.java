@@ -7,8 +7,13 @@ import static microui.RendererConfig.Mode.STRICT;
 import static microui.core.base.ContainerManager.canDraw;
 import static microui.core.base.ContainerManager.isInitialized;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.Visible;
+import microui.event.Listener;
 import microui.util.Metrics;
 import processing.core.PApplet;
 
@@ -48,6 +53,8 @@ public abstract class View implements Visible {
 	/** Instance of context by Processing */
 	protected static final PApplet ctx = getContext();
 
+	private final List<Listener> onChangePriorityListenerList;
+	
 	private String textId;
 	private int priority, id;
 	private boolean visible;
@@ -58,8 +65,41 @@ public abstract class View implements Visible {
 	 */
 	public View() {
 		Metrics.register(this);
+		
+		onChangePriorityListenerList = new ArrayList<Listener>();
+		
 		id = DEFAULT_ID;
 		textId = DEFAULT_TEXT_ID;
+	}
+	
+	/**
+	 * Setter for a new listener for priority.
+	 *  
+	 * @param listener a new listener for priority (cannot be {@code null}).
+	 */
+	public final void addOnChangePriorityListener(Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (onChangePriorityListenerList.contains(listener)) {
+			throw new DuplicateItemException("Listener already added");
+		}
+		
+		onChangePriorityListenerList.add(listener);
+	}
+	
+	/**
+	 * Remover for priority listeners.
+	 * 
+	 * @param listener a listener for remove (cannot be {@code null}).
+	 */
+	public final void removeOnChangePriorityListener(Listener listener) {
+		requireNonNull(listener,"listener");
+		
+		if (!onChangePriorityListenerList.contains(listener)) {
+			throw new DuplicateItemException("Listener not found");
+		}
+		
+		onChangePriorityListenerList.remove(listener);
 	}
 
 	/**
@@ -100,11 +140,18 @@ public abstract class View implements Visible {
 	 * @throws IllegalArgumentException if priority is less than 0
 	 */
 	public final View setPriority(int priority) {
+		if (this.priority == priority) {
+			return this;
+		}
+		
 		if (priority < MIN_PRIORITY) {
 			throw new IllegalArgumentException("Priority cannot be less than " + MIN_PRIORITY);
 		}
+		
 		this.priority = priority;
 
+		notifyOnChangePriority();
+		
 		return this;
 	}
 
@@ -231,4 +278,9 @@ public abstract class View implements Visible {
 	 */
 	protected abstract void render();
 
+	private void notifyOnChangePriority() {
+		for (int i = 0; i < onChangePriorityListenerList.size(); i++) {
+			onChangePriorityListenerList.get(i).action();
+		}
+	}
 }
