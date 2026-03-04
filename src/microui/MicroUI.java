@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import microui.core.base.Container;
 import microui.core.base.ContainerManager;
+import microui.layout.LayoutManager;
 import microui.util.Debugger;
 import processing.core.PApplet;
 
@@ -103,29 +104,43 @@ public final class MicroUI {
 	}
 	
 	/**
-	 * Adds a container with a string identifier to the UI management system.
+	 * Creates a new container with the given layout manager and adds it to the UI system.
 	 *
-	 * @param container the container to add.
-	 * @param textId    the string identifier for the container.
-	 * @return the added container for chaining.
+	 * @param layoutManager the layout manager for the new container.
+	 * @return the newly created container.
 	 */
-	public Container addContainer(Container container, String textId) {
-		containerManager.add(container,textId);
-		
-		return container;
+	public Container addContainer(LayoutManager layoutManager) {
+		final var c = new Container(layoutManager);
+		containerManager.add(c);
+		return c;
 	}
 	
 	/**
-	 * Adds a container with a numeric identifier to the UI management system.
+	 * Creates a new container with the given layout manager and string identifier,
+	 * and adds it to the UI system.
 	 *
-	 * @param container the container to add.
-	 * @param id        the numeric identifier for the container.
-	 * @return the added container for chaining.
+	 * @param layoutManager the layout manager for the new container.
+	 * @param textId        the string identifier for the container.
+	 * @return the newly created container.
 	 */
-	public Container addContainer(Container container, int id) {
-		containerManager.add(container,id);
-		
-		return container;
+	public Container addContainer(LayoutManager layoutManager, String textId) {
+		final var c = new Container(layoutManager);
+		containerManager.add(c,textId);
+		return c;
+	}
+
+	/**
+	 * Creates a new container with the given layout manager and numeric identifier,
+	 * and adds it to the UI system.
+	 *
+	 * @param layoutManager the layout manager for the new container.
+	 * @param id            the numeric identifier for the container.
+	 * @return the newly created container.
+	 */
+	public Container addContainer(LayoutManager layoutManager, int id) {
+		final var c = new Container(layoutManager);
+		containerManager.add(c,id);
+		return c;
 	}
 	
 	/**
