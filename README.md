@@ -36,7 +36,7 @@ Below is the standard code for initializing MicroUI and adding a button to a con
 ```java
 void setup() {
 fullScreen();
-MicroUI ui = MicroUi.inits(this);
+MicroUI ui = MicroUi.init(this);
 
 // Adding a new container with the ID "main" using GridLayout
 ui.addContainer(new GridLayout(3,3),"main");
