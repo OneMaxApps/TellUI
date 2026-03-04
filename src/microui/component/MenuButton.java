@@ -205,6 +205,10 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 			return this;
 		}
 		
+		if (open && isEmpty()) {
+			return this;
+		}
+		
 		PointerManager.setModalViewOpen(open);
 
 		this.open = open;

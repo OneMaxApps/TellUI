@@ -515,7 +515,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	private void debugOnDraw() {
-		if (Debugger.isEnabled()) {
+		if (Debugger.isEnabled() && Debugger.isShowLayoutBoundsEnabled()) {
 
 			ctx.pushStyle();
 			ctx.noStroke();

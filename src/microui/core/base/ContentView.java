@@ -670,23 +670,24 @@ public abstract class ContentView extends SpatialView {
 			ctx.noFill();
 			ctx.strokeWeight(4);
 
-			if (hasMargin()) {
+			if (hasMargin() && Debugger.isShowMarginBoundsEnabled()) {
 				// for showing margin area (Red rectangle)
 				ctx.stroke(200, 0, 0, 100);
 				ctx.rect(getAbsoluteX(), getAbsoluteY(), getAbsoluteWidth(), getAbsoluteHeight());
 			}
 
-			if (hasPadding()) {
+			if (hasPadding() && Debugger.isShowPaddingBoundsEnabled()) {
 				// for showing pad area (Green rectangle)
 				ctx.stroke(0, 200, 0, 100);
 				ctx.rect(getPadX(), getPadY(), getPadWidth(), getPadHeight());
 			}
 
+			if (Debugger.isShowContentBoundsEnabled()) {
 			// for showing content area (Blue rectangle)
 			ctx.stroke(0, 0, 200, 100);
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
-
-			ctx.noStroke();
+			}
+			
 			ctx.popStyle();
 		}
 	}

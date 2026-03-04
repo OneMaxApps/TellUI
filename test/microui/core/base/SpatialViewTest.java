@@ -12,7 +12,7 @@ class SpatialViewTest {
 
 	@BeforeAll
 	static void initMicroUI() {
-		MicroUI.setContext(new PApplet());
+		MicroUI.init(new PApplet());
 	}
 
 	@Test

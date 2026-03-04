@@ -21,10 +21,152 @@ public final class Debugger {
 	private static String additionalInfo = "";
 	private static boolean enabled;
 	private static boolean hotKeyEnabled;
+	private static boolean showLayoutBoundsEnabled,
+						   showMarginBoundsEnabled,
+						   showPaddingBoundsEnabled,
+						   showContentBoundsEnabled,
+						   showUpdateBoundsEnabled,
+						   showFpsEnabled;
+	
+	static {
+		showAllLayers();
+	}
 
 	private Debugger() {
 	}
+
+	/**
+	 * Checks whether layout bounds visualization is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowLayoutBoundsEnabled() {
+		return showLayoutBoundsEnabled;
+	}
+
+	/**
+	 * Enables or disables layout bounds visualization.
+	 *
+	 * @param showLayoutBoundsEnabled true to enable, false to disable.
+	 */
+	public static void setShowLayoutBoundsEnabled(boolean showLayoutBoundsEnabled) {
+		Debugger.showLayoutBoundsEnabled = showLayoutBoundsEnabled;
+	}
+
+	/**
+	 * Checks whether margin bounds visualization is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowMarginBoundsEnabled() {
+		return showMarginBoundsEnabled;
+	}
+
+	/**
+	 * Enables or disables margin bounds visualization.
+	 *
+	 * @param showMarginBoundsEnabled true to enable, false to disable.
+	 */
+	public static void setShowMarginBoundsEnabled(boolean showMarginBoundsEnabled) {
+		Debugger.showMarginBoundsEnabled = showMarginBoundsEnabled;
+	}
+
+	/**
+	 * Checks whether padding bounds visualization is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowPaddingBoundsEnabled() {
+		return showPaddingBoundsEnabled;
+	}
+
+	/**
+	 * Enables or disables padding bounds visualization.
+	 *
+	 * @param showPaddingBoundsEnabled true to enable, false to disable.
+	 */
+	public static void setShowPaddingBoundsEnabled(boolean showPaddingBoundsEnabled) {
+		Debugger.showPaddingBoundsEnabled = showPaddingBoundsEnabled;
+	}
+
+	/**
+	 * Checks whether content bounds visualization is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowContentBoundsEnabled() {
+		return showContentBoundsEnabled;
+	}
+
+	/**
+	 * Enables or disables content bounds visualization.
+	 *
+	 * @param showContentBoundsEnabled true to enable, false to disable.
+	 */
+	public static void setShowContentBoundsEnabled(boolean showContentBoundsEnabled) {
+		Debugger.showContentBoundsEnabled = showContentBoundsEnabled;
+	}
+
+	/**
+	 * Checks whether update bounds visualization is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowUpdateBoundsEnabled() {
+		return showUpdateBoundsEnabled;
+	}
+
+	/**
+	 * Enables or disables update bounds visualization.
+	 *
+	 * @param showUpdateBoundsEnabled true to enable, false to disable.
+	 */
+	public static void setShowUpdateBoundsEnabled(boolean showUpdateBoundsEnabled) {
+		Debugger.showUpdateBoundsEnabled = showUpdateBoundsEnabled;
+	}
 	
+	/**
+	 * Checks whether FPS display is enabled.
+	 *
+	 * @return true if enabled, false otherwise.
+	 */
+	public static boolean isShowFpsEnabled() {
+		return showFpsEnabled;
+	}
+
+	/**
+	 * Enables or disables FPS display.
+	 *
+	 * @param showFpsEnabled true to enable, false to disable.
+	 */
+	public static void setShowFpsEnabled(boolean showFpsEnabled) {
+		Debugger.showFpsEnabled = showFpsEnabled;
+	}
+
+	/**
+	 * Enables all debug visualization layers.
+	 */
+	public static void showAllLayers() {
+		showLayoutBoundsEnabled = 
+		showMarginBoundsEnabled = 
+		showPaddingBoundsEnabled = 
+		showContentBoundsEnabled = 
+		showUpdateBoundsEnabled =
+		showFpsEnabled = true;
+	}
+	
+	/**
+	 * Disables all debug visualization layers.
+	 */
+	public static void hideAllLayers() {
+		showLayoutBoundsEnabled = 
+		showMarginBoundsEnabled = 
+		showPaddingBoundsEnabled = 
+		showContentBoundsEnabled = 
+		showUpdateBoundsEnabled = 
+		showFpsEnabled = false;
+	}
+
 	/**
 	 * Drawing text about frame rate and additional information if that typed
 	 */
@@ -33,17 +175,9 @@ public final class Debugger {
 			return;
 		}
 		
-		final String text = "fps: " + (int) getContext().frameRate + "\n" + getAdditionalInfo();
-		final AbstractColor c = TextConfig.getColor();
-		final int x = TextConfig.getX();
-		final int y = TextConfig.getY();
-		final int textSize = TextConfig.getSize();
-		
-		getContext().push();
-		c.apply();
-		getContext().textSize(textSize);
-		getContext().text(text, x, y);
-		getContext().pop();
+		if (isShowFpsEnabled()) {
+			fpsOnDraw();
+		}
 	}
 
 	/**
@@ -105,6 +239,20 @@ public final class Debugger {
 	 */
 	public static void setHotKeyEnabled(boolean hotKeyEnabled) {
 		Debugger.hotKeyEnabled = hotKeyEnabled;
+	}
+	
+	private static void fpsOnDraw() {
+		final String text = "fps: " + (int) getContext().frameRate + "\n" + getAdditionalInfo();
+		final AbstractColor c = TextConfig.getColor();
+		final int x = TextConfig.getX();
+		final int y = TextConfig.getY();
+		final int textSize = TextConfig.getSize();
+		
+		getContext().push();
+		c.apply();
+		getContext().textSize(textSize);
+		getContext().text(text, x, y);
+		getContext().pop();
 	}
 	
 	/**
@@ -203,8 +351,8 @@ public final class Debugger {
 		 * @param size for text size
 		 */
 		public static void setSize(int size) {
-			if (size <= 2) {
-				throw new IllegalArgumentException("Text size must be greater that 2");
+			if (size <= 1) {
+				throw new IllegalArgumentException("Text size must be greater that 1");
 			}
 			TextConfig.size = size;
 		}

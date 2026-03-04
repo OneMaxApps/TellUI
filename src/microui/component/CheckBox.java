@@ -34,6 +34,7 @@ public final class CheckBox extends AbstractButton {
 	 */
 	public CheckBox(float x, float y, float w, float h) {
 		super(x, y, w, h);
+		setMinMaxSize(20, 20, 50, 50);
 		
 		onCheckedListenerList = new ArrayList<Listener>();
 		

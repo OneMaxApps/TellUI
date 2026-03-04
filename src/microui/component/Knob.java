@@ -60,6 +60,7 @@ public final class Knob extends RangeControl {
 	 */
 	public Knob(float x, float y, float width, float height) {
 		super(x, y, width, height);
+		setMinMaxSize(20, 20, 100, 100);
 		
 		setAngles(DEFAULT_START_ANGLE, DEFAULT_END_ANGLE);
 
@@ -100,6 +101,8 @@ public final class Knob extends RangeControl {
 	public Knob() {
 		this(0,0,0,0);
 		
+		setSize(getMaxWidth(), getMaxHeight());
+
 		final float x = ctx.width / 2 - getWidth() / 2;
 		final float y = ctx.height / 2 - getHeight() / 2;
 		

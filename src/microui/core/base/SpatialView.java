@@ -932,7 +932,7 @@ public abstract class SpatialView extends View {
 	}
 
 	private void debugOnDraw() {
-		if (Debugger.isEnabled()) {
+		if (Debugger.isEnabled() && Debugger.isShowUpdateBoundsEnabled()) {
 			ctx.fill(255, 0, 0, 64);
 			ctx.rect(getX(), getY(), getWidth(), getHeight());
 		}
