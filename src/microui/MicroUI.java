@@ -185,7 +185,7 @@ public final class MicroUI {
 	 * @param container the container to activate.
 	 * @return this MicroUI instance for chaining.
 	 */
-	public MicroUI switchContainer(Container container) {
+	public MicroUI switchContainerOn(Container container) {
 		containerManager.switchOn(container);
 		
 		return this;
@@ -197,7 +197,7 @@ public final class MicroUI {
 	 * @param textId the string identifier of the container to activate.
 	 * @return this MicroUI instance for chaining.
 	 */
-	public MicroUI switchContainer(String textId) {
+	public MicroUI switchContainerOn(String textId) {
 		containerManager.switchOn(textId);
 		
 		return this;
@@ -209,7 +209,7 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the container to activate.
 	 * @return this MicroUI instance for chaining.
 	 */
-	public MicroUI switchContainer(int id) {
+	public MicroUI switchContainerOn(int id) {
 		containerManager.switchOn(id);
 		
 		return this;
