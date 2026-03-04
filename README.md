@@ -15,20 +15,19 @@ The library provides four built-in layout systems that allow flexible placement 
 3. RowLayout;
 4. ColumnLayout;
 
-### III. Control Components (10 Elements)
+### III. Control Components (9 Elements)
 
 MicroUI includes ten main components, each with specific capabilities:
 
 1. **Button** A basic control that inherits from AbstractButton. It contains a TextView.
 2. **CheckBox** Also inherits from AbstractButton. It is used to control a Boolean state (isChecked).
-3. **LabeledCheckBox** A composite component that combines a CheckBox and a TextView in a single Container, using RowLayout to position them together.
-4. **TextView** (Text View): A component for displaying text. It supports various AutoResizeMode modes, including FULL, BIG, MIDDLE, SMALL, and TINY.
-5. **TextField** (Input Field): A component for single-line text input that implements the KeyPressable interface. It manages the cursor position and selection, and supports horizontal scrolling for long text. It supports standard keyboard shortcuts such as CTRL+C, CTRL+V, CTRL+X, and CTRL+A.
-6. **TextArea** (Multi-Line Text Editor): A more complex component for multi-line editing that implements the Scrollable and KeyPressable interfaces.  It includes built-in vertical and horizontal scrollbars, as well as complex internal classes for managing text, cursor, and selection.
-7. **Slider** (`Slider`): A linear range control (`LinearRangeControl`). It allows the value to change based on the mouse position while holding the component down.
-8. **Scroll** (`Scrollbar`): Also a linear range control (`LinearRangeControl`). Includes a movable thumb, which is implemented as a separate `Button` component and is used to navigate through the content.
-9. **Knob** (`Rotary`): A range control (`RangeControl`) that changes its value when rotated with the mouse. It uses an arc to visualize the current value.
- 10. **MenuButton** (`Menu Button`): Extends the functionality of a standard button by allowing it to display a drop-down list of other buttons or nested submenus (`subMenu`). The component implements the `Scrollable` interface, allowing scrolling of menu items if there are many.
+3. **TextView** (Text View): A component for displaying text. It supports various AutoResizeMode modes, including FULL, BIG, MIDDLE, SMALL, and TINY.
+4. **TextField** (Input Field): A component for single-line text input that implements the KeyPressable interface. It manages the cursor position and selection, and supports horizontal scrolling for long text. It supports standard keyboard shortcuts such as CTRL+C, CTRL+V, CTRL+X, and CTRL+A.
+5. **TextArea** (Multi-Line Text Editor): A more complex component for multi-line editing that implements the Scrollable and KeyPressable interfaces.  It includes built-in vertical and horizontal scrollbars, as well as complex internal classes for managing text, cursor, and selection.
+6. **Slider** (`Slider`): A linear range control (`LinearRangeControl`). It allows the value to change based on the mouse position while holding the component down.
+7. **Scroll** (`Scrollbar`): Also a linear range control (`LinearRangeControl`). Includes a movable thumb, which is implemented as a separate `Button` component and is used to navigate through the content.
+8. **Knob** (`Rotary`): A range control (`RangeControl`) that changes its value when rotated with the mouse. It uses an arc to visualize the current value.
+ 9. **MenuButton** (`Menu Button`): Extends the functionality of a standard button by allowing it to display a drop-down list of other buttons or nested submenus (`subMenu`). The component implements the `Scrollable` interface, allowing scrolling of menu items if there are many.
 
 ### IV. Initialization Example
 
@@ -37,15 +36,14 @@ Below is the standard code for initializing MicroUI and adding a button to a con
 ```java
 void setup() {
 fullScreen();
-MicroUI.setContext(this);
-final var cm = ContainerManager.getInstance();
+MicroUI ui = MicroUi.inits(this);
 
 // Adding a new container with the ID "main" using GridLayout
-cm.add(new Container(new GridLayout(3,3),"main");
+ui.addContainer(new GridLayout(3,3),"main");
 
 // Getting the container by ID and adding a Button component to it
 // The component is placed in cell (1,1) using GridLayoutParams
-cm.get("main").add(new Button(), new GridLayoutParams(1,1));
+ui.getContainer("main").add(new Button(), new GridLayoutParams(1,1));
 
 }
 
