@@ -9,7 +9,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void insertChar() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, '1');
 		assertEquals("1", controller.getAsString());
@@ -26,7 +26,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void insertString() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, "str");
 		assertEquals("str", controller.getAsString());
@@ -40,7 +40,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void insertInt() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, 1);
 		assertEquals("1", controller.getAsString());
@@ -54,7 +54,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void removeChar() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, "string");
 
@@ -67,7 +67,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void removeString() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, "string");
 
@@ -80,7 +80,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void getAsString() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, "string");
 		assertEquals("string", controller.getAsString());
@@ -88,7 +88,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void clear() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.insert(0, "string");
 		controller.clear();
@@ -98,7 +98,7 @@ public class SingleLineTextControllerTest {
 
 	@Test
 	public void set() {
-		var controller = new SingleLineTextController();
+		var controller = new SingleLineTextController((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 
 		controller.set("string");
 		assertEquals("string", controller.getAsString());

@@ -8,6 +8,7 @@ import static microui.util.MathUtils.constrain;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import microui.core.interfaces.InputFilter;
 import microui.event.Listener;
 import microui.util.Debugger;
 
@@ -17,11 +18,10 @@ import microui.util.Debugger;
  * undo/redo functionality, and event listeners for text manipulation
  * operations.
  * 
- * @see ValidationMode
+ * @see FilterMode
  * @see Listener
  */
 public class FullSingleLineTextController {
-	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 	private static final int DEFAULT_MAX_CHARS = 4;
 	private static final int MIN_CONSTRAIN_VALUE = 1;
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
@@ -29,13 +29,14 @@ public class FullSingleLineTextController {
 
 	private final UndoRedoManager undoRedoManager;
 	private final StringBuilder sb;
+	private InputFilter inputFilter;
 	private StringBuilder adapterSb;
 	private String cachedText, cachedPasswordText;
 	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener;
 	private boolean validationEnabled, constrainEnabled, passwordModeEnabled;
 	private int maxChars;
 	private char passwordChar;
-	private ValidationMode validationMode;
+	private FilterMode filterMode;
 
 	/**
 	 * Constructs a FullSingleLineTextController with initial text.
@@ -45,12 +46,13 @@ public class FullSingleLineTextController {
 	 */
 	public FullSingleLineTextController(final String text) {
 		undoRedoManager = new UndoRedoManager(this);
-		sb = new StringBuilder(requireNonNull(text, "text"));
+		setInputFilter((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
+		sb = new StringBuilder(getFilteredString(requireNonNull(text, "text"))); // FIXME its not validated
 		updateCachedStrings();
 
 		validationEnabled = true;
 		maxChars = DEFAULT_MAX_CHARS;
-		validationMode = ValidationMode.ALL;
+		filterMode = FilterMode.DEFAULT;
 
 		setPasswordChar(DEFAULT_PASSWORD_CHAR);
 	}
@@ -60,6 +62,14 @@ public class FullSingleLineTextController {
 	 */
 	public FullSingleLineTextController() {
 		this("");
+	}
+
+	public InputFilter getInputFilter() {
+		return inputFilter;
+	}
+
+	public void setInputFilter(InputFilter inputFilter) {
+		this.inputFilter = requireNonNull(inputFilter,"inputFilter");
 	}
 
 	/**
@@ -164,29 +174,18 @@ public class FullSingleLineTextController {
 		updateCachedStrings();
 	}
 
-	/**
-	 * Returns the current validation mode.
-	 * 
-	 * @return the current validation mode
-	 */
-	public final ValidationMode getValidationMode() {
-		return validationMode;
+	public final FilterMode getFilterMode() {
+		return filterMode;
 	}
 
-	/**
-	 * Sets the validation mode for text input.
-	 * 
-	 * @param validationMode the validation mode to set (cannot be null)
-	 * @throws NullPointerException if validationMode is null
-	 */
-	public final void setValidationMode(ValidationMode validationMode) {
-		if (this.validationMode == validationMode) {
+	public final void setFilterMode(FilterMode filterMode) {
+		if (this.filterMode == filterMode) {
 			return;
 		}
 
-		this.validationMode = requireNonNull(validationMode, "validationMode");
+		this.filterMode = requireNonNull(filterMode, "filterMode");
 
-		setInternal(getValidatedString(cachedText));
+		setInternal(getFilteredString(cachedText));
 	}
 
 	/**
@@ -451,10 +450,10 @@ public class FullSingleLineTextController {
 	 */
 	public final boolean isValidChar(final char ch) {
 
-		switch (validationMode) {
+		switch (filterMode) {
 
-		case ALL:
-			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
+		case DEFAULT:
+			return inputFilter.allow(ch);
 
 		case ONLY_DIGITS:
 			return Character.isDigit(ch);
@@ -463,7 +462,7 @@ public class FullSingleLineTextController {
 			return Character.isLetter(ch);
 
 		default:
-			return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
+			return inputFilter.allow(ch);
 
 		}
 
@@ -487,7 +486,7 @@ public class FullSingleLineTextController {
 		}
 	}
 
-	private String getValidatedString(String src) {
+	private String getFilteredString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
 		} else {
@@ -555,7 +554,7 @@ public class FullSingleLineTextController {
 		}
 
 		if (validationEnabled) {
-			str = getValidatedString(str);
+			str = getFilteredString(str);
 		}
 
 		pos = (int) constrain(pos, 0, length());
@@ -579,7 +578,7 @@ public class FullSingleLineTextController {
 
 		clear();
 
-		sb.append(validationEnabled ? getValidatedString(text) : text);
+		sb.append(validationEnabled ? getFilteredString(text) : text);
 
 		if (constrainEnabled) {
 			updateConstrainedValue();
@@ -589,11 +588,11 @@ public class FullSingleLineTextController {
 	}
 
 	/**
-	 * Validation modes for text input.
+	 * Filter modes for text input.
 	 */
-	public static enum ValidationMode {
-		/** Allow letters, digits, and standard special characters. */
-		ALL,
+	public static enum FilterMode {
+		/** Allow letters, digits, and standard special characters (and custom). */
+		DEFAULT,
 		/** Allow only digit characters (0-9). */
 		ONLY_DIGITS,
 		/** Allow only letter characters (a-z, A-Z). */

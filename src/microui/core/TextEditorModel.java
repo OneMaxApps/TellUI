@@ -6,6 +6,7 @@ import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
 import microui.core.controller.MultiLineTextController;
+import microui.core.interfaces.InputFilter;
 import microui.event.Listener;
 
 /**
@@ -35,6 +36,14 @@ public final class TextEditorModel {
 
 	// == TEXT CONTROL ==
 
+	public InputFilter getInputFilter() {
+		return controller.getInputFilter();
+	}
+
+	public void setInputFilter(InputFilter inputFilter) {
+		controller.setInputFilter(inputFilter);
+	}
+	
 	/**
 	 * Undoes the last text modification.
 	 */

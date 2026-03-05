@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
+import microui.core.interfaces.InputFilter;
 import microui.event.Listener;
 
 /**
@@ -20,29 +21,39 @@ import microui.event.Listener;
  * @see Listener
  */
 public final class SingleLineTextController {
-	private static final String STANDARD_VALIDATION = "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*";
 	private static final int MAX_CAPACITY_FOR_CLEAR = 100;
 	private final StringBuilder sb;
 	private StringBuilder adapterSb;
 	private String cachedText;
 	private Listener onAfterCharInsertListener, onAfterStringInsertListener, onTextChangedListener;
-
+	private InputFilter inputFilter;
+	
 	/**
 	 * Constructs a SingleLineTextController with initial text.
 	 * 
 	 * @param text the initial text content (cannot be null)
 	 * @throws NullPointerException if text is null
 	 */
-	public SingleLineTextController(final String text) {
-		sb = new StringBuilder(requireNonNull(text, "text"));
+	public SingleLineTextController(final String text, InputFilter inputFilter) {
+		setInputFilter(inputFilter);
+		sb = new StringBuilder(getFilteredString(requireNonNull(text, "text")));
 		updateCachedString();
+		
 	}
 
 	/**
 	 * Constructs a SingleLineTextController with empty initial text.
 	 */
-	public SingleLineTextController() {
-		this("");
+	public SingleLineTextController(InputFilter inputFilter) {
+		this("",inputFilter);
+	}
+
+	public InputFilter getInputFilter() {
+		return inputFilter;
+	}
+
+	public void setInputFilter(InputFilter inputFilter) {
+		this.inputFilter = requireNonNull(inputFilter,"inputFilter");
 	}
 
 	/**
@@ -229,11 +240,11 @@ public final class SingleLineTextController {
 	 * @param ch the character to validate
 	 * @return true if the character is valid, false otherwise
 	 */
-	public boolean isValidChar(final char ch) {
-		return STANDARD_VALIDATION.indexOf(ch) >= 0 || Character.isLetterOrDigit(ch);
+	public boolean isValidChar(char ch) {
+		return inputFilter.allow(ch);
 	}
 
-	private String getValidatedString(String src) {
+	private String getFilteredString(String src) {
 		if (adapterSb == null) {
 			adapterSb = new StringBuilder();
 		} else {
@@ -274,7 +285,7 @@ public final class SingleLineTextController {
 	private void insertInternal(int pos, String str) {
 		requireNonNull(str, "str");
 
-		str = getValidatedString(str);
+		str = getFilteredString(str);
 
 		pos = (int) constrain(pos, 0, length());
 
@@ -293,7 +304,7 @@ public final class SingleLineTextController {
 
 		clear();
 
-		sb.append(getValidatedString(text));
+		sb.append(getFilteredString(text));
 
 		updateCachedString();
 	}

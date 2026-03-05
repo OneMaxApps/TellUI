@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import microui.core.interfaces.InputFilter;
 import microui.event.Listener;
 
 /**
@@ -25,6 +26,7 @@ public final class MultiLineTextController {
 	private static final byte MIN_LINES_COUNT;
 	private final List<SingleLineTextController> list;
 	private final UndoRedoManager undoRedoManager;
+	private InputFilter inputFilter;
 	private StringBuilder adapterSb;
 	private String cachedText;
 	private Listener onTextChangedListener;
@@ -46,17 +48,35 @@ public final class MultiLineTextController {
 		super();
 		list = new ArrayList<SingleLineTextController>();
 		undoRedoManager = new UndoRedoManager(this);
+		setInputFilter((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
 		addLine(EMPTY_TEXT);
+		
 	}
 
 	// == PUBLIC API ==
+	
+	public InputFilter getInputFilter() {
+		return inputFilter;
+	}
+
+	public void setInputFilter(InputFilter inputFilter) {
+		if (this.inputFilter == inputFilter) {
+			return;
+		}
+		
+		this.inputFilter = requireNonNull(inputFilter,"inputFilter");
+		
+		for(int i = 0; i < list.size(); i++) {
+			list.get(i).setInputFilter(inputFilter);
+		}
+	}
 
 	/**
 	 * Performs an undo operation, reverting to the previous text state.
 	 */
 	public void undo() {
 		undoRedoManager.undo();
-	}
+	}	
 
 	/**
 	 * Performs a redo operation, reapplying the next text state.
@@ -123,7 +143,7 @@ public final class MultiLineTextController {
 	public void insertLine(int index, String text) {
 		index = (int) constrain(index, 0, getLinesCount());
 
-		list.add(index, new SingleLineTextController(text));
+		list.add(index, new SingleLineTextController(text,getInputFilter()));
 		list.get(index).setOnTextChangedListener(this::notifyTextChanged);
 
 		notifyTextChanged();
@@ -365,7 +385,7 @@ public final class MultiLineTextController {
 	private void addLineSilently(String text) {
 		requireNonNull(text, "text");
 
-		final SingleLineTextController line = new SingleLineTextController(text);
+		final SingleLineTextController line = new SingleLineTextController(text,getInputFilter());
 		list.add(line);
 		line.setOnTextChangedListener(this::notifyTextChanged);
 

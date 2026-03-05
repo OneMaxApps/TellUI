@@ -25,7 +25,8 @@ import java.util.HashMap;
 
 import microui.core.base.Component;
 import microui.core.controller.FullSingleLineTextController;
-import microui.core.controller.FullSingleLineTextController.ValidationMode;
+import microui.core.controller.FullSingleLineTextController.FilterMode;
+import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
@@ -132,6 +133,16 @@ public final class TextField extends Component implements KeyPressable {
 	public TextField() {
 		this(0, 0, 0, 0);
 		prepareBoundsInCenter();
+	}
+	
+	public InputFilter getInputFilter() {
+		return text.controller.getInputFilter();
+	}
+
+	public TextField setInputFilter(InputFilter inputFilter) {
+		text.controller.setInputFilter(inputFilter);
+		
+		return this;
 	}
 
 	/**
@@ -240,23 +251,12 @@ public final class TextField extends Component implements KeyPressable {
 		return this;
 	}
 
-	/**
-	 * Gets the current validation mode for text input.
-	 *
-	 * @return the current validation mode
-	 */
-	public ValidationMode getValidationMode() {
-		return text.getValidationMode();
+	public FilterMode getFilterMode() {
+		return text.getFilterMode();
 	}
 
-	/**
-	 * Sets the validation mode for text input.
-	 *
-	 * @param validationMode the validation mode to use
-	 * @return this TextField instance for method chaining
-	 */
-	public TextField setValidationMode(ValidationMode validationMode) {
-		text.setValidationMode(validationMode);
+	public TextField setFilterModeMode(FilterMode validationMode) {
+		text.setFilterMode(validationMode);
 		return this;
 	}
 
@@ -1221,12 +1221,12 @@ public final class TextField extends Component implements KeyPressable {
 			controller.setPasswordModeEnabled(passwordModeEnabled);
 		}
 
-		public final ValidationMode getValidationMode() {
-			return controller.getValidationMode();
+		public final FilterMode getFilterMode() {
+			return controller.getFilterMode();
 		}
 
-		public final void setValidationMode(ValidationMode validationMode) {
-			controller.setValidationMode(validationMode);
+		public final void setFilterMode(FilterMode filterMode) {
+			controller.setFilterMode(filterMode);
 		}
 
 		public final boolean isConstrainEnabled() {

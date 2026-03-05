@@ -36,6 +36,7 @@ import microui.core.GraphicsBuffer;
 import microui.core.TextEditorModel;
 import microui.core.TextEditorModel.Direction;
 import microui.core.base.Component;
+import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
@@ -91,7 +92,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		super(x, y, width, height);
 		setMinMaxSize(MIN_SIZE, MAX_SIZE);
 		setBackgroundColor(getTheme().getEditableBackgroundColor());
-
+		
 		textEditorModel = new TextEditorModel();
 		textMetricsPool = new TextMetricsPool(this);
 		textStyle = new TextStyle();
@@ -106,7 +107,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		handleDraggingConfig = new HandleDraggingConfig();
 		cursorSearch = new CursorSearch(this);
 		stateConfig = new StateConfig();
-
+		
 		textStyle.setOnStyleChangedListener(() -> {
 			textMetricsPool.clearCache();
 			scrollManager.recalculateRanges();
@@ -163,6 +164,16 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 */
 	public TextArea() {
 		this(0, 0, 1, 1);
+	}
+	
+	public InputFilter getInputFilter() {
+		return textEditorModel.getInputFilter();
+	}
+
+	public TextArea setInputFilter(InputFilter inputFilter) {
+		textEditorModel.setInputFilter(inputFilter);
+		
+		return this;
 	}
 
 	/**

@@ -179,50 +179,27 @@ public final class MicroUI {
 		return this;
 	}
 	
-	/**
-	 * Switches the active container to the specified one.
-	 *
-	 * @param container the container to activate.
-	 * @return this MicroUI instance for chaining.
-	 */
-	public MicroUI switchContainerOn(Container container) {
-		containerManager.switchOn(container);
+	public MicroUI navigateTo(Container container) {
+		containerManager.navigateTo(container);
 		
 		return this;
 	}
 	
-	/**
-	 * Switches to the container identified by its string identifier.
-	 *
-	 * @param textId the string identifier of the container to activate.
-	 * @return this MicroUI instance for chaining.
-	 */
-	public MicroUI switchContainerOn(String textId) {
-		containerManager.switchOn(textId);
+
+	public MicroUI navigateTo(String textId) {
+		containerManager.navigateTo(textId);
 		
 		return this;
 	}
 	
-	/**
-	 * Switches to the container identified by its numeric identifier.
-	 *
-	 * @param id the numeric identifier of the container to activate.
-	 * @return this MicroUI instance for chaining.
-	 */
-	public MicroUI switchContainerOn(int id) {
-		containerManager.switchOn(id);
+	public MicroUI navigateTo(int id) {
+		containerManager.navigateTo(id);
 		
 		return this;
 	}
 	
-	/**
-	 * Enables or disables the container animator.
-	 *
-	 * @param enabled true to enable animations, false to disable.
-	 * @return this MicroUI instance for chaining.
-	 */
-	public MicroUI setAnimatorEnabled(boolean enabled) {
-		containerManager.setAnimatorEnabled(enabled);
+	public MicroUI setTransitionEnabled(boolean enabled) {
+		containerManager.setTransitionEnabled(enabled);
 		
 		return this;
 	}

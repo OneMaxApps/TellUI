@@ -38,26 +38,25 @@ import processing.event.MouseEvent;
  * </p>
  * 
  * @see Container
- * @see AnimatorMode
+ * @see TransitionMode
  */
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean initialized, canDraw;
 	private final List<Container> list;
-	private final Animator animator;
+	private final TransitionManager transitionManager;
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
 	private Container prevContainer, currentContainer;
-	private boolean animatorEnabled;
 
 	private ContainerManager() {
 		setVisible(true);
 		list = new ArrayList<Container>();
-		animator = new Animator(this);
+		transitionManager = new TransitionManager(this);
 		tooltipManager = TooltipManager.getInstance();
 		valueOverlayManager = ValueOverlayManager.getInstance();
 		
-		setAnimatorEnabled(true);
+		setTransitionEnabled(true);
 
 		getContext().registerMethod("keyPressed", this);
 		getContext().registerMethod("keyEvent", this);
@@ -67,13 +66,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	/**
-	 * Renders the current state of the ContainerManager. If animator is enabled,
-	 * uses animator for drawing; otherwise draws current container directly.
+	 * Renders the current state of the ContainerManager. If transition is enabled,
+	 * uses TransitionManager for drawing; otherwise draws current container directly.
 	 */
 	@Override
 	public void render() {
-		if (isAnimatorEnabled()) {
-			animator.draw();
+		if (isTransitionEnabled()) {
+			transitionManager.draw();
 		} else {
 			if (currentContainer != null) {
 				currentContainer.draw();
@@ -193,22 +192,12 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return currentContainer;
 	}
 
-	/**
-	 * Returns the current animator mode.
-	 * 
-	 * @return the current animator mode
-	 */
-	public AnimatorMode getAnimatorMode() {
-		return animator.getAnimatorMode();
+	public TransitionMode getTransitionMode() {
+		return transitionManager.getMode();
 	}
 
-	/**
-	 * Sets the animator mode for container transitions.
-	 * 
-	 * @param animatorMode the animator mode to set
-	 */
-	public void setAnimatorMode(AnimatorMode animatorMode) {
-		animator.setAnimatorMode(animatorMode);
+	public void setTransitionMode(TransitionMode mode) {
+		transitionManager.setMode(mode);
 	}
 
 	/**
@@ -216,8 +205,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @return the raw animation speed value
 	 */
-	public float getAnimatorSpeed() {
-		return animator.getRawSpeed();
+	public float getTransitionSpeed() {
+		return transitionManager.getRawSpeed();
 	}
 
 	/**
@@ -226,8 +215,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * @param speed the speed to set (must be greater than 0)
 	 * @throws IllegalArgumentException if speed is less than or equal to 0
 	 */
-	public void setAnimatorSpeed(float speed) {
-		animator.setSpeed(speed);
+	public void setTransitionSpeed(float speed) {
+		transitionManager.setSpeed(speed);
 	}
 
 	/**
@@ -235,8 +224,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @return true if easing is enabled, false otherwise
 	 */
-	public boolean isAnimatorEasingEnabled() {
-		return animator.isEasingEnabled();
+	public boolean isTransitionEasingEnabled() {
+		return transitionManager.isEasingEnabled();
 	}
 
 	/**
@@ -244,26 +233,26 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	 * 
 	 * @param enabled true to enable easing, false to disable
 	 */
-	public void setAnimatorEasingEnabled(boolean enabled) {
-		animator.setEasingEnabled(enabled);
+	public void setTransitionEasingEnabled(boolean enabled) {
+		transitionManager.setEasingEnabled(enabled);
 	}
 
 	/**
-	 * Checks if the animator is enabled.
+	 * Checks if the transition is enabled.
 	 * 
-	 * @return true if animator is enabled, false otherwise
+	 * @return true if transition is enabled, false otherwise
 	 */
-	public boolean isAnimatorEnabled() {
-		return animatorEnabled;
+	public boolean isTransitionEnabled() {
+		return transitionManager.isEnabled();
 	}
 
 	/**
-	 * Enables or disables the animator for container transitions.
+	 * Enables or disables the transition for container transitions.
 	 * 
-	 * @param animatorEnabled true to enable animator, false to disable
+	 * @param enabled true to enable transition, false to disable
 	 */
-	public void setAnimatorEnabled(boolean animatorEnabled) {
-		this.animatorEnabled = animatorEnabled;
+	public void setTransitionEnabled(boolean enabled) {
+		transitionManager.setEnabled(enabled);
 	}
 
 	/**
@@ -343,86 +332,53 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	/**
-	 * Switches to the specified container with animation.
-	 * 
-	 * @param container the container to switch to
-	 */
-	public void switchOn(Container container) {
-		launchContainer(container);
+	public void navigateTo(Container container) {
+		perfomNavigation(container);
 	}
 
-	/**
-	 * Switches to the specified container with a specific animation mode.
-	 * 
-	 * @param container    the container to switch to
-	 * @param animatorMode the animation mode to use
-	 */
-	public void switchOn(Container container, AnimatorMode animatorMode) {
-		setAnimatorMode(animatorMode);
-		switchOn(container);
+	public void navigateTo(Container container, TransitionMode transitionMode) {
+		setTransitionMode(transitionMode);
+		navigateTo(container);
 	}
 
-	/**
-	 * Switches to a container by its numeric ID.
-	 * 
-	 * @param id the numeric ID of the container to switch to
-	 */
-	public void switchOn(int id) {
-		launchContainer(getById(id));
+	public void navigateTo(int id) {
+		perfomNavigation(getById(id));
 	}
 
-	/**
-	 * Switches to a container by its numeric ID with a specific animation mode.
-	 * 
-	 * @param id           the numeric ID of the container to switch to
-	 * @param animatorMode the animation mode to use
-	 */
-	public void switchOn(int id, AnimatorMode animatorMode) {
-		setAnimatorMode(animatorMode);
-		switchOn(id);
+	public void navigateTo(int id, TransitionMode transitionMode) {
+		setTransitionMode(transitionMode);
+		navigateTo(id);
 	}
 
-	/**
-	 * Switches to a container by its text ID.
-	 * 
-	 * @param textId the text ID of the container to switch to
-	 */
-	public void switchOn(String textId) {
-		launchContainer(getByTextId(textId));
+	public void navigateTo(String textId) {
+		perfomNavigation(getByTextId(textId));
 	}
 
-	/**
-	 * Switches to a container by its text ID with a specific animation mode.
-	 * 
-	 * @param textId       the text ID of the container to switch to
-	 * @param animatorMode the animation mode to use
-	 */
-	public void switchOn(String textId, AnimatorMode animatorMode) {
-		setAnimatorMode(animatorMode);
-		switchOn(textId);
+	public void navigateTo(String textId, TransitionMode transitionMode) {
+		setTransitionMode(transitionMode);
+		navigateTo(textId);
 	}
 
 	/**
 	 * Switches to the previous container in the list (circular navigation).
 	 */
 	public void switchOnPrevious() {
-		if (animator.isAnimating()) {
+		if (transitionManager.isAnimating()) {
 			return;
 		}
 
-		switchOn(getPreviousContainer());
+		navigateTo(getPreviousContainer());
 	}
 
 	/**
 	 * Switches to the next container in the list (circular navigation).
 	 */
 	public void switchOnNext() {
-		if (animator.isAnimating()) {
+		if (transitionManager.isAnimating()) {
 			return;
 		}
 
-		switchOn(getNextContainer());
+		navigateTo(getNextContainer());
 	}
 
 	/**
@@ -531,10 +487,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return instance;
 	}
 
-	/**
-	 * Animation modes for container transitions.
-	 */
-	public static enum AnimatorMode {
+	
+	public static enum TransitionMode {
 		/** Slide animation from left to right. */
 		SLIDE_LEFT,
 		/** Slide animation from right to left. */
@@ -599,7 +553,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return list.get(getNextContainerIndex());
 	}
 
-	private void launchContainer(Container container) {
+	private void perfomNavigation(Container container) {
 		requireNonNull(container, "container");
 
 		if (list.size() < 2) {
@@ -613,7 +567,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		prevContainer = currentContainer;
 		currentContainer = container;
-		animator.setAnimating(true);
+		transitionManager.setAnimatingEnabled(true);
 	}
 
 	private void addInternal(Container container) {
@@ -660,17 +614,17 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		removeInternal(getByTextId(textId));
 	}
 	
-	private static final class Animator extends View {
+	private static final class TransitionManager extends View {
 		private final ContainerManager manager;
 		private static final float MAX_DIST = MathUtils.dist(0, 0, ctx.width, ctx.height);
 		private final ImageBuffer prevImage, currentImage;
 		private static final byte[][] DIRECTIONS = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
-		private AnimatorMode animatorMode;
+		private TransitionMode transitionMode;
 		private float speed;
 		private byte randDirX, randDirY;
-		private boolean animating, newContainerPrepared, easing;
+		private boolean animating, newContainerPrepared, easing, enabled;
 
-		private Animator(ContainerManager manager) {
+		private TransitionManager(ContainerManager manager) {
 			super();
 			setVisible(true);
 
@@ -683,16 +637,24 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 			currentImage.setSize(ctx.width, ctx.height);
 
 			setSpeed(max(1, ctx.width * .1f));
-			setAnimatorMode(AnimatorMode.SLIDE_RANDOM);
+			setMode(TransitionMode.SLIDE_RANDOM);
 			setEasingEnabled(true);
+		}		
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 
 		public boolean isAnimating() {
 			return animating;
 		}
 
-		public void setAnimating(boolean animating) {
-			this.animating = animating;
+		public void setAnimatingEnabled(boolean enabled) {
+			this.animating = enabled;
 		}
 
 		public float getRawSpeed() {
@@ -701,17 +663,17 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		public void setSpeed(float speed) {
 			if (speed <= 0) {
-				throw new IllegalArgumentException("Animator speed must be greater than 0");
+				throw new IllegalArgumentException("Speed of transition must be greater than 0");
 			}
 			this.speed = speed;
 		}
 
-		public AnimatorMode getAnimatorMode() {
-			return animatorMode;
+		public TransitionMode getMode() {
+			return transitionMode;
 		}
 
-		public void setAnimatorMode(AnimatorMode animatorMode) {
-			this.animatorMode = requireNonNull(animatorMode, "animatorMode");
+		public void setMode(TransitionMode transitionMode) {
+			this.transitionMode = requireNonNull(transitionMode, "transitionMode");
 		}
 
 		public boolean isEasingEnabled() {
@@ -751,7 +713,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 				return;
 			}
 
-			switch (animatorMode) {
+			switch (transitionMode) {
 			case SLIDE_LEFT:
 				slideDirection(-1, 0);
 				break;
@@ -801,7 +763,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		private void complete() {
 			prevImage.setBounds(0, 0, ctx.width, ctx.height);
 			currentImage.setBoundsFrom(prevImage);
-			setAnimating(false);
+			setAnimatingEnabled(false);
 			newContainerPrepared = false;
 		}
 
