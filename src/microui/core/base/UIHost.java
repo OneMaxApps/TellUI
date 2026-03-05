@@ -1,11 +1,15 @@
 package microui.core.base;
 
+import static processing.core.PApplet.map;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import microui.MicroUI;
+import microui.core.ImageBuffer;
+import microui.core.effect.Transition;
 import microui.core.exception.DuplicateItemException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
@@ -14,6 +18,7 @@ import microui.layout.LayoutManager;
 import microui.service.TooltipManager;
 import microui.service.ValueOverlayManager;
 import microui.util.Debugger;
+import microui.util.SpatialState;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -109,19 +114,27 @@ public final class UIHost extends View {
 	
 	public static final class ContainerManager extends View implements Scrollable, KeyPressable {
 		private final List<Container> list;
+		private final TransitionManager transitionManager;
 		private Container current, previous;
 		
 		private ContainerManager() {
 			setVisible(true);
 			list = new ArrayList<Container>();
+			transitionManager = new TransitionManager();
 			ctx.registerMethod("keyEvent", this);
 			ctx.registerMethod("mouseEvent", this);
 		}
 		
 		@Override
 		protected void render() {
-			if (current != null) {
-				current.draw();
+			transitionManager.update();
+			
+			if (transitionManager.isActivated()) {
+				transitionManager.draw();
+			} else {
+				if (current != null) {
+					current.draw();
+				}
 			}
 		}
 		
@@ -186,6 +199,8 @@ public final class UIHost extends View {
 			
 			previous = current;
 			current = container;
+			
+			transitionManager.activate();
 		}
 		
 		@Override
@@ -230,8 +245,6 @@ public final class UIHost extends View {
 			
 			if (current == null) {
 				current = container;
-			} else {
-				previous = current;
 			}
 			
 			list.add(container);
@@ -253,6 +266,131 @@ public final class UIHost extends View {
 			}
 			
 			list.remove(container);
+		}
+		
+		private final class TransitionManager extends View {
+			private static final int TIMER_START = 0;
+			private static final int TIMER_END = 1;
+			private static final int MIN_SPEED = 0;
+			private static final int MAX_SPEED = 1;
+			private static final float DEFAULT_SPEED = .01f;
+			
+			
+			private ImageBuffer currentImage, previousImage;
+			private Transition transition;
+			private float timer, speed;
+			private boolean enabled, activated;
+			
+			public TransitionManager() {
+				setVisible(true);
+				
+				setEnabled(true);
+				setSpeed(DEFAULT_SPEED);
+				
+				currentImage = new ImageBuffer();
+				previousImage = new ImageBuffer();
+				
+				transition = new Transition();
+				
+				transition.setPreviousStart(new SpatialState(0,0,ctx.width,ctx.height));
+				transition.setPreviousEnd(new SpatialState(-ctx.width,0,ctx.width,ctx.height));
+				transition.setCurrentStart(new SpatialState(ctx.width,0,ctx.width,ctx.height));
+				transition.setCurrentEnd(new SpatialState(0,0,ctx.width,ctx.height));
+			}
+			
+			@Override
+			protected void render() {
+				if (!enabled) {
+					return;
+				}
+				
+				if (activated) {
+					if (currentImage.isLoaded() && previousImage.isLoaded()) {
+						currentImage.draw();
+						previousImage.draw();
+					}
+				} else {
+					currentImage.removeTexture();
+					previousImage.removeTexture();
+				}
+			}
+			
+			public void update() {
+				if (!enabled) {
+					return;
+				}
+				
+				if (activated) {
+					if (!previousImage.isLoaded()) {
+						previous.draw();
+						previousImage.set(ctx.get(0,0,ctx.width,ctx.height));
+					}
+					
+					if (!currentImage.isLoaded()) {
+						current.draw();
+						currentImage.set(ctx.get(0,0,ctx.width,ctx.height));
+					}
+					
+					if(timer < TIMER_END) {
+						timer += speed;
+					} else {
+						activated = false;
+						timer = TIMER_START;
+					}
+					
+					final var t = transition;
+					
+					final float cx = lerpFromTime(t.getCurrentStart().getX(), t.getCurrentEnd().getX());
+					final float cy = lerpFromTime(t.getCurrentStart().getY(), t.getCurrentEnd().getY());
+					final float cw = lerpFromTime(t.getCurrentStart().getWidth(), t.getCurrentEnd().getWidth());
+					final float ch = lerpFromTime(t.getCurrentStart().getHeight(), t.getCurrentEnd().getHeight());
+					
+					currentImage.setBounds(cx, cy, cw, ch);
+					
+					final float px = lerpFromTime(t.getPreviousStart().getX(), t.getPreviousEnd().getX());
+					final float py = lerpFromTime(t.getPreviousStart().getY(), t.getPreviousEnd().getY());
+					final float pw = lerpFromTime(t.getPreviousStart().getWidth(), t.getPreviousEnd().getWidth());
+					final float ph = lerpFromTime(t.getPreviousStart().getHeight(), t.getPreviousEnd().getHeight());
+					
+					previousImage.setBounds(px, py, pw, ph);
+				}
+			}
+
+
+			public final float getSpeed() {
+				return speed;
+			}
+
+			public final void setSpeed(float speed) {
+				if (speed < 0 || speed > 1) {
+					throw new IllegalArgumentException("Speed must be between " + MIN_SPEED + " and " + MAX_SPEED);
+				}
+				this.speed = speed;
+			}
+
+			public boolean isActivated() {
+				return activated;
+			}
+			
+			public void activate() {
+				activated = true;
+			}
+			
+			public void setTransition(Transition transition) {
+				this.transition = Objects.requireNonNull(transition,"transition");
+			}
+
+			public final boolean isEnabled() {
+				return enabled;
+			}
+
+			public final void setEnabled(boolean enabled) {
+				this.enabled = enabled;
+			}
+		
+			private float lerpFromTime(float start, float end) {
+				return map(timer,TIMER_START, TIMER_END, start, end);
+			}
 		}
 	}
 }
