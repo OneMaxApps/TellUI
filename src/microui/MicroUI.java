@@ -3,13 +3,10 @@ package microui;
 import static java.util.Objects.requireNonNull;
 
 import microui.core.base.Container;
-import microui.core.base.ContainerManager;
+import microui.core.base.UIHost;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
 import processing.core.PApplet;
-
-// Status: STABLE - Do not modify
-// Last Reviewed: 04.03.2026
 
 /**
  * Core initialization and metadata class for the MicroUI library.
@@ -32,12 +29,15 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	private final ContainerManager containerManager;
+	//private final ContainerManager containerManager;
+	private final UIHost uiHost;
+	
 	
 	private MicroUI(PApplet pApplet) {
 		setContext(pApplet);
 		
-		containerManager = ContainerManager.getInstance();
+		//containerManager = ContainerManager.getInstance();
+		uiHost = UIHost.getInstance();
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public final class MicroUI {
 	 * @return the added container for chaining.
 	 */
 	public Container addContainer(Container container) {
-		containerManager.add(container);
+		uiHost.addContainer(container);
 		
 		return container;
 	}
@@ -111,7 +111,7 @@ public final class MicroUI {
 	 */
 	public Container addContainer(LayoutManager layoutManager) {
 		final var c = new Container(layoutManager);
-		containerManager.add(c);
+		uiHost.addContainer(c);
 		return c;
 	}
 	
@@ -125,7 +125,8 @@ public final class MicroUI {
 	 */
 	public Container addContainer(LayoutManager layoutManager, String textId) {
 		final var c = new Container(layoutManager);
-		containerManager.add(c,textId);
+		c.setTextId(textId);
+		uiHost.addContainer(c);
 		return c;
 	}
 
@@ -139,7 +140,8 @@ public final class MicroUI {
 	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		final var c = new Container(layoutManager);
-		containerManager.add(c,id);
+		c.setId(id);
+		uiHost.addContainer(c);
 		return c;
 	}
 	
@@ -150,7 +152,7 @@ public final class MicroUI {
 	 * @return this MicroUI instance for chaining.
 	 */
 	public MicroUI removeContainer(Container container) {
-		containerManager.remove(container);
+		uiHost.removeContainer(container);
 		
 		return this;
 	}
@@ -162,7 +164,7 @@ public final class MicroUI {
 	 * @return this MicroUI instance for chaining.
 	 */
 	public MicroUI removeContainer(String textId) {
-		containerManager.removeByTextId(textId);
+		uiHost.removeContainer(textId);
 		
 		return this;
 	}
@@ -174,32 +176,32 @@ public final class MicroUI {
 	 * @return this MicroUI instance for chaining.
 	 */
 	public MicroUI removeContainer(int id) {
-		containerManager.removeById(id);
+		uiHost.removeContainer(id);
 		
 		return this;
 	}
 	
 	public MicroUI navigateTo(Container container) {
-		containerManager.navigateTo(container);
+		uiHost.navigateTo(container);
 		
 		return this;
 	}
 	
 
 	public MicroUI navigateTo(String textId) {
-		containerManager.navigateTo(textId);
+		uiHost.navigateTo(textId);
 		
 		return this;
 	}
 	
 	public MicroUI navigateTo(int id) {
-		containerManager.navigateTo(id);
+		uiHost.navigateTo(id);
 		
 		return this;
 	}
 	
 	public MicroUI setTransitionEnabled(boolean enabled) {
-		containerManager.setTransitionEnabled(enabled);
+		//containerManager.setTransitionEnabled(enabled);
 		
 		return this;
 	}
@@ -223,9 +225,9 @@ public final class MicroUI {
 	 *
 	 * @return the container manager.
 	 */
-	public ContainerManager getContainerManager() {
-		return containerManager;
-	}
+//	public ContainerManager getContainerManager() {
+//		return containerManager;
+//	}
 
 	// == INTERNAL API == //
 	private void setContext(PApplet context) {

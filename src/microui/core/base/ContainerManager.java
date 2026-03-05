@@ -23,23 +23,6 @@ import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
-/**
- * Singleton manager for handling multiple Container instances and providing
- * animation transitions between them. Manages the lifecycle, rendering, and
- * event handling for containers in a GUI application.
- * <p>
- * This class implements the Singleton pattern and is responsible for: -
- * Managing a collection of Container objects - Handling transitions between
- * containers with various animation effects - Propagating keyboard and mouse
- * events to the active container - Managing tooltips and debug information
- * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 18.01.2026
- * </p>
- * 
- * @see Container
- * @see TransitionMode
- */
 public final class ContainerManager extends View implements Scrollable, KeyPressable {
 	private static ContainerManager instance;
 	private static boolean initialized, canDraw;
@@ -58,17 +41,13 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		
 		setTransitionEnabled(true);
 
-		getContext().registerMethod("keyPressed", this);
-		getContext().registerMethod("keyEvent", this);
-		getContext().registerMethod("mouseEvent", this);
+//		getContext().registerMethod("keyPressed", this);
+//		getContext().registerMethod("keyEvent", this);
+//		getContext().registerMethod("mouseEvent", this);
 
 		new Render();
 	}
 
-	/**
-	 * Renders the current state of the ContainerManager. If transition is enabled,
-	 * uses TransitionManager for drawing; otherwise draws current container directly.
-	 */
 	@Override
 	public void render() {
 		if (isTransitionEnabled()) {
@@ -81,16 +60,8 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 		tooltipManager.draw();
 		valueOverlayManager.draw();
-		
-		
 	}
 
-	/**
-	 * Draws the ContainerManager and debug information if enabled.
-	 * 
-	 * @throws RenderException if draw() is called manually without FLEXIBLE render
-	 *                         mode
-	 */
 	@Override
 	public void draw() {
 		if (!canDraw) {
@@ -104,24 +75,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		}
 	}
 
-	/**
-	 * Handles key press events by propagating them to the current container.
-	 */
-	@Override
-	public void keyPressed() {
-		if (currentContainer == null) {
-			return;
-		}
-
-		currentContainer.keyPressed();
-	}
-
-	/**
-	 * Handles key press events with KeyEvent details by propagating them to the
-	 * current container.
-	 * 
-	 * @param e the key event
-	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (currentContainer == null) {
@@ -131,13 +84,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		currentContainer.keyPressed(e);
 	}
 
-	/**
-	 * Processes key events from the Processing environment. Handles debug hotkeys
-	 * and propagates events to keyboard manager and containers.
-	 * 
-	 * @param keyEvent the key event from Processing
-	 * @throws NullPointerException if keyEvent is null
-	 */
 	public void keyEvent(KeyEvent keyEvent) {
 		requireNonNull(keyEvent, "keyEvent");
 
@@ -148,17 +94,11 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 					Debugger.setEnabled(!Debugger.isEnabled());
 				}
 			}
-
-			keyPressed();
+			
 			keyPressed(keyEvent);
 		}
 	}
 
-	/**
-	 * Handles mouse wheel events by propagating them to the current container.
-	 * 
-	 * @param mouseEvent the mouse wheel event
-	 */
 	@Override
 	public void mouseWheel(MouseEvent mouseEvent) {
 		requireNonNull(mouseEvent, "mouseEvent");
@@ -173,22 +113,11 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	/**
-	 * Processes mouse events from the Processing environment. Currently only
-	 * handles mouse wheel events.
-	 * 
-	 * @param mouseEvent the mouse event from Processing
-	 */
 	public void mouseEvent(MouseEvent mouseEvent) {
 		mouseWheel(mouseEvent);
 	}
 
-	/**
-	 * Returns the current active container.
-	 * 
-	 * @return the current container (can return null if not have active container)
-	 */
-	public Container getActiveContainer() {
+	public Container getActive() {
 		return currentContainer;
 	}
 
@@ -200,99 +129,45 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		transitionManager.setMode(mode);
 	}
 
-	/**
-	 * Returns the raw animation speed.
-	 * 
-	 * @return the raw animation speed value
-	 */
 	public float getTransitionSpeed() {
 		return transitionManager.getRawSpeed();
 	}
 
-	/**
-	 * Sets the animation speed.
-	 * 
-	 * @param speed the speed to set (must be greater than 0)
-	 * @throws IllegalArgumentException if speed is less than or equal to 0
-	 */
 	public void setTransitionSpeed(float speed) {
 		transitionManager.setSpeed(speed);
 	}
 
-	/**
-	 * Checks if easing is enabled for animations.
-	 * 
-	 * @return true if easing is enabled, false otherwise
-	 */
 	public boolean isTransitionEasingEnabled() {
 		return transitionManager.isEasingEnabled();
 	}
 
-	/**
-	 * Enables or disables easing for animations.
-	 * 
-	 * @param enabled true to enable easing, false to disable
-	 */
 	public void setTransitionEasingEnabled(boolean enabled) {
 		transitionManager.setEasingEnabled(enabled);
 	}
 
-	/**
-	 * Checks if the transition is enabled.
-	 * 
-	 * @return true if transition is enabled, false otherwise
-	 */
 	public boolean isTransitionEnabled() {
 		return transitionManager.isEnabled();
 	}
 
-	/**
-	 * Enables or disables the transition for container transitions.
-	 * 
-	 * @param enabled true to enable transition, false to disable
-	 */
 	public void setTransitionEnabled(boolean enabled) {
 		transitionManager.setEnabled(enabled);
 	}
 
-	/**
-	 * Adds a container to the manager.
-	 * 
-	 * @param container the container to add
-	 */
 	public void add(Container container) {
 		addInternal(container);
 	}
 
-	/**
-	 * Adds a container to the manager with a text ID.
-	 * 
-	 * @param container the container to add
-	 * @param textId    the text identifier for the container
-	 */
 	public void add(Container container, String textId) {
 		addInternal(container);
 
 		container.setTextId(textId);
 	}
 
-	/**
-	 * Adds a container to the manager with a numeric ID.
-	 * 
-	 * @param container the container to add
-	 * @param id        the numeric identifier for the container
-	 */
 	public void add(Container container, int id) {
 		addInternal(container);
 		container.setId(id);
 	}
 
-	/**
-	 * Removes one or more containers from the manager.
-	 * 
-	 * @param containers the containers to remove
-	 * @throws NullPointerException if containers is null
-	 */
 	public void remove(Container... containers) {
 		requireNonNull(containers, "containers");
 
@@ -302,12 +177,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	/**
-	 * Removes containers by their numeric IDs.
-	 * 
-	 * @param ids the numeric IDs of containers to remove
-	 * @throws NullPointerException if ids is null
-	 */
 	public void removeById(int... ids) {
 		requireNonNull(ids, "Ids");
 
@@ -317,12 +186,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 
 	}
 
-	/**
-	 * Removes containers by their text IDs.
-	 * 
-	 * @param textIds the text IDs of containers to remove
-	 * @throws NullPointerException if textIds is null
-	 */
 	public void removeByTextId(final String... textIds) {
 		requireNonNull(textIds, "textIds");
 
@@ -333,7 +196,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void navigateTo(Container container) {
-		perfomNavigation(container);
+		performNavigation(container);
 	}
 
 	public void navigateTo(Container container, TransitionMode transitionMode) {
@@ -342,7 +205,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void navigateTo(int id) {
-		perfomNavigation(getById(id));
+		performNavigation(getById(id));
 	}
 
 	public void navigateTo(int id, TransitionMode transitionMode) {
@@ -351,7 +214,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 	}
 
 	public void navigateTo(String textId) {
-		perfomNavigation(getByTextId(textId));
+		performNavigation(getByTextId(textId));
 	}
 
 	public void navigateTo(String textId, TransitionMode transitionMode) {
@@ -359,10 +222,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		navigateTo(textId);
 	}
 
-	/**
-	 * Switches to the previous container in the list (circular navigation).
-	 */
-	public void switchOnPrevious() {
+	public void navigateToPrevious() {
 		if (transitionManager.isAnimating()) {
 			return;
 		}
@@ -370,10 +230,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		navigateTo(getPreviousContainer());
 	}
 
-	/**
-	 * Switches to the next container in the list (circular navigation).
-	 */
-	public void switchOnNext() {
+	public void navigateToNext() {
 		if (transitionManager.isAnimating()) {
 			return;
 		}
@@ -381,12 +238,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		navigateTo(getNextContainer());
 	}
 
-	/**
-	 * Searches for a container by its numeric ID.
-	 * 
-	 * @param id the numeric ID to search for
-	 * @return the container with the specified ID, or null if not found
-	 */
 	public Container findById(final int id) {
 		for (int i = 0; i < list.size(); i++) {
 			Container c = list.get(i);
@@ -398,13 +249,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return null;
 	}
 
-	/**
-	 * Retrieves a container by its numeric ID.
-	 * 
-	 * @param id the numeric ID of the container to retrieve
-	 * @return the container with the specified ID
-	 * @throws NoSuchElementException if no container with the specified ID is found
-	 */
 	public Container getById(int id) {
 		final Container c = findById(id);
 
@@ -415,13 +259,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return c;
 	}
 
-	/**
-	 * Searches for a container by its text ID.
-	 * 
-	 * @param textId the text ID to search for (cannot be null)
-	 * @return the container with the specified text ID, or null if not found
-	 * @throws NullPointerException if textId is null
-	 */
 	public Container findByTextId(final String textId) {
 		requireNonNull(textId, "textId");
 
@@ -435,15 +272,6 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return null;
 	}
 
-	/**
-	 * Retrieves a container by its text ID.
-	 * 
-	 * @param textId the text ID of the container to retrieve (cannot be null)
-	 * @return the container with the specified text ID
-	 * @throws NullPointerException   if textId is null
-	 * @throws NoSuchElementException if no container with the specified text ID is
-	 *                                found
-	 */
 	public Container getByTextId(String textId) {
 		final Container c = findByTextId(textId);
 
@@ -454,30 +282,14 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return c;
 	}
 
-	/**
-	 * Checks if the ContainerManager has been initialized.
-	 * 
-	 * @return true if initialized, false otherwise
-	 */
 	public static boolean isInitialized() {
 		return initialized;
 	}
 
-	/**
-	 * Checks if manual drawing is allowed.
-	 * 
-	 * @return true if manual drawing is allowed, false otherwise
-	 */
 	public static boolean canDraw() {
 		return canDraw;
 	}
 
-	/**
-	 * Returns the singleton instance of ContainerManager. Creates the instance if
-	 * it doesn't exist.
-	 * 
-	 * @return the singleton ContainerManager instance
-	 */
 	public static ContainerManager getInstance() {
 		if (instance == null) {
 			instance = new ContainerManager();
@@ -553,7 +365,7 @@ public final class ContainerManager extends View implements Scrollable, KeyPress
 		return list.get(getNextContainerIndex());
 	}
 
-	private void perfomNavigation(Container container) {
+	private void performNavigation(Container container) {
 		requireNonNull(container, "container");
 
 		if (list.size() < 2) {

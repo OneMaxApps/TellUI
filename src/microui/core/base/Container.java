@@ -109,25 +109,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	/**
-	 * Handles key press events by propagating them to key-pressable child
-	 * components.
-	 */
-	@Override
-	public void keyPressed() {
-		if (entryList.isEmpty()) {
-			return;
-		}
-
-		for (int i = 0; i < entryList.size(); i++) {
-			ContentView contentView = entryList.get(i).getContentView();
-			if (contentView instanceof KeyPressable pressable) {
-				pressable.keyPressed();
-			}
-		}
-
-	}
-
-	/**
 	 * Handles key press events with KeyEvent details by propagating them to
 	 * key-pressable child components.
 	 * 
