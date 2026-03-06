@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import microui.core.base.Container;
 import microui.core.base.UIHost;
+import microui.core.effect.Transition;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
 import processing.core.PApplet;
@@ -130,14 +131,6 @@ public final class MicroUI {
 		return c;
 	}
 
-	/**
-	 * Creates a new container with the given layout manager and numeric identifier,
-	 * and adds it to the UI system.
-	 *
-	 * @param layoutManager the layout manager for the new container.
-	 * @param id            the numeric identifier for the container.
-	 * @return the newly created container.
-	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		final var c = new Container(layoutManager);
 		c.setId(id);
@@ -145,36 +138,19 @@ public final class MicroUI {
 		return c;
 	}
 	
-	/**
-	 * Removes a container from the UI management system.
-	 *
-	 * @param container the container to remove.
-	 * @return this MicroUI instance for chaining.
-	 */
 	public MicroUI removeContainer(Container container) {
 		uiHost.removeContainer(container);
 		
 		return this;
 	}
 	
-	/**
-	 * Removes a container identified by its string identifier.
-	 *
-	 * @param textId the string identifier of the container to remove.
-	 * @return this MicroUI instance for chaining.
-	 */
+
 	public MicroUI removeContainer(String textId) {
 		uiHost.removeContainer(textId);
 		
 		return this;
 	}
 	
-	/**
-	 * Removes a container identified by its numeric identifier.
-	 *
-	 * @param id the numeric identifier of the container to remove.
-	 * @return this MicroUI instance for chaining.
-	 */
 	public MicroUI removeContainer(int id) {
 		uiHost.removeContainer(id);
 		
@@ -187,7 +163,6 @@ public final class MicroUI {
 		return this;
 	}
 	
-
 	public MicroUI navigateTo(String textId) {
 		uiHost.navigateTo(textId);
 		
@@ -200,9 +175,30 @@ public final class MicroUI {
 		return this;
 	}
 	
-	public MicroUI setTransitionEnabled(boolean enabled) {
-		//containerManager.setTransitionEnabled(enabled);
+	public MicroUI navigateTo(Container container, Transition transition) {
+		uiHost.navigateTo(container,transition);
 		
+		return this;
+	}
+	
+	public MicroUI navigateTo(String textId, Transition transition) {
+		uiHost.navigateTo(textId,transition);
+		
+		return this;
+	}
+	
+	public MicroUI navigateTo(int id, Transition transition) {
+		uiHost.navigateTo(id,transition);
+		
+		return this;
+	}
+	
+	public boolean isTransitionEnabled() {
+		return uiHost.isTransitionEnabled();
+	}
+	
+	public MicroUI setTransitionEnabled(boolean enabled) {
+		uiHost.setTransitionEnabled(enabled);
 		return this;
 	}
 	
@@ -217,17 +213,6 @@ public final class MicroUI {
 		
 		return this;
 	}
-	
-	// == ADVANCED API == //
-	
-	/**
-	 * Returns the container manager instance for advanced container operations.
-	 *
-	 * @return the container manager.
-	 */
-//	public ContainerManager getContainerManager() {
-//		return containerManager;
-//	}
 
 	// == INTERNAL API == //
 	private void setContext(PApplet context) {

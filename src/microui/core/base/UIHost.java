@@ -18,7 +18,6 @@ import microui.layout.LayoutManager;
 import microui.service.TooltipManager;
 import microui.service.ValueOverlayManager;
 import microui.util.Debugger;
-import microui.util.SpatialState;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -85,7 +84,38 @@ public final class UIHost extends View {
 	public void navigateTo(int id) {
 		containerManager.navigateTo(containerManager.get(id));
 	}
+	
+	public void navigateTo(Container container, Transition transition) {
+		containerManager.transitionManager.setTransition(transition);
+		containerManager.navigateTo(container);
+	}
+	
+	public void navigateTo(String textId, Transition transition) {
+		containerManager.transitionManager.setTransition(transition);
+		containerManager.navigateTo(containerManager.get(textId));
+	}
+	
+	public void navigateTo(int id, Transition transition) {
+		containerManager.transitionManager.setTransition(transition);
+		containerManager.navigateTo(containerManager.get(id));
+	}
 
+	public boolean isTransitionEnabled() {
+		return containerManager.transitionManager.isEnabled();
+	}
+	
+	public void setTransitionEnabled(boolean enabled) {
+		containerManager.transitionManager.setEnabled(enabled);
+	}
+	
+	public float getTransitionProgressStep() {
+		return containerManager.transitionManager.getProgressStep();
+	}
+	
+	public void setTransitionProgressStep(float step) {
+		containerManager.transitionManager.setProgressStep(step);
+	}
+	
 	@Override
 	protected void render() {
 		containerManager.draw();
@@ -136,6 +166,7 @@ public final class UIHost extends View {
 					current.draw();
 				}
 			}
+			
 		}
 		
 		public void add(Container container) {
@@ -205,6 +236,10 @@ public final class UIHost extends View {
 		
 		@Override
 		public void keyPressed(KeyEvent keyEvent) {
+			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
+				return;
+			}
+			
 			if (current != null) {
 				current.keyPressed(keyEvent);
 			}
@@ -212,6 +247,10 @@ public final class UIHost extends View {
 		
 		@Override
 		public void mouseWheel(MouseEvent mouseEvent) {
+			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
+				return;
+			}
+			
 			if (current != null) {
 				current.mouseWheel(mouseEvent);
 			}
@@ -247,6 +286,9 @@ public final class UIHost extends View {
 				current = container;
 			}
 			
+			container.setConstrainDimensionsEnabled(true);
+			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
+			
 			list.add(container);
 		}
 		
@@ -271,31 +313,27 @@ public final class UIHost extends View {
 		private final class TransitionManager extends View {
 			private static final int TIMER_START = 0;
 			private static final int TIMER_END = 1;
-			private static final int MIN_SPEED = 0;
-			private static final int MAX_SPEED = 1;
-			private static final float DEFAULT_SPEED = .01f;
-			
+			private static final int MIN_PROGRESS_STEP = 0;
+			private static final int MAX_PROGRESS_STEP = 1;
+			private static final float DEFAULT_PROGRESS_STEP = .02f;
 			
 			private ImageBuffer currentImage, previousImage;
 			private Transition transition;
-			private float timer, speed;
+			private float timer, progressStep;
 			private boolean enabled, activated;
 			
 			public TransitionManager() {
 				setVisible(true);
 				
 				setEnabled(true);
-				setSpeed(DEFAULT_SPEED);
+				setProgressStep(DEFAULT_PROGRESS_STEP);
 				
 				currentImage = new ImageBuffer();
 				previousImage = new ImageBuffer();
 				
 				transition = new Transition();
 				
-				transition.setPreviousStart(new SpatialState(0,0,ctx.width,ctx.height));
-				transition.setPreviousEnd(new SpatialState(-ctx.width,0,ctx.width,ctx.height));
-				transition.setCurrentStart(new SpatialState(ctx.width,0,ctx.width,ctx.height));
-				transition.setCurrentEnd(new SpatialState(0,0,ctx.width,ctx.height));
+				setTransition(Transition.SLIDE_LEFT);
 			}
 			
 			@Override
@@ -305,13 +343,8 @@ public final class UIHost extends View {
 				}
 				
 				if (activated) {
-					if (currentImage.isLoaded() && previousImage.isLoaded()) {
-						currentImage.draw();
-						previousImage.draw();
-					}
-				} else {
-					currentImage.removeTexture();
-					previousImage.removeTexture();
+					currentImage.draw();
+					previousImage.draw();
 				}
 			}
 			
@@ -321,18 +354,26 @@ public final class UIHost extends View {
 				}
 				
 				if (activated) {
+					
 					if (!previousImage.isLoaded()) {
 						previous.draw();
 						previousImage.set(ctx.get(0,0,ctx.width,ctx.height));
 					}
-					
+
 					if (!currentImage.isLoaded()) {
 						current.draw();
-						currentImage.set(ctx.get(0,0,ctx.width,ctx.height));
+						
+						if (previous.isVisible()) {
+							previous.setVisible(false);
+						} else {
+							currentImage.set(ctx.get(0,0,ctx.width,ctx.height));
+							previous.setVisible(true);
+						}
 					}
 					
+					
 					if(timer < TIMER_END) {
-						timer += speed;
+						timer += progressStep;
 					} else {
 						activated = false;
 						timer = TIMER_START;
@@ -354,18 +395,28 @@ public final class UIHost extends View {
 					
 					previousImage.setBounds(px, py, pw, ph);
 				}
-			}
-
-
-			public final float getSpeed() {
-				return speed;
-			}
-
-			public final void setSpeed(float speed) {
-				if (speed < 0 || speed > 1) {
-					throw new IllegalArgumentException("Speed must be between " + MIN_SPEED + " and " + MAX_SPEED);
+				
+				if(!activated) {
+					if (currentImage.isLoaded()) {
+						currentImage.removeTexture();
+					}
+					
+					if (previousImage.isLoaded()) {
+						previousImage.removeTexture();
+					}
 				}
-				this.speed = speed;
+			}
+
+
+			public final float getProgressStep() {
+				return progressStep;
+			}
+
+			public final void setProgressStep(float progressStep) {
+				if (progressStep < MIN_PROGRESS_STEP || progressStep > MAX_PROGRESS_STEP) {
+					throw new IllegalArgumentException("Progress step must be between " + MIN_PROGRESS_STEP + " and " + MAX_PROGRESS_STEP);
+				}
+				this.progressStep = progressStep;
 			}
 
 			public boolean isActivated() {
