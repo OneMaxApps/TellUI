@@ -1066,7 +1066,7 @@ public final class TextField extends Component implements KeyPressable {
 	}
 
 	private boolean mustLostFocus() {
-		return ctx.mousePressed && !isHover() && !isDragging();
+		return ctx.mousePressed && !isHovered() && !isDragging();
 	}
 
 	private void updateScrollMax() {

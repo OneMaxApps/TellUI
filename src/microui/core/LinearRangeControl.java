@@ -45,7 +45,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 */
 	@Override
 	public void mouseWheel(MouseEvent event) {
-		if (isHover()) {
+		if (isHovered()) {
 			getInternalScrolling().init(event);
 			getInternalValue().append(getInternalScrolling().get());
 		}
@@ -55,7 +55,7 @@ public abstract class LinearRangeControl extends RangeControl {
 
 	@Override
 	public boolean isContentPrepared() {
-		if (Environment.isAndroid() && isHover() && !isPressed()) {
+		if (Environment.isAndroid() && isHovered() && !isPressed()) {
 			return false;
 		}
 		
@@ -63,7 +63,7 @@ public abstract class LinearRangeControl extends RangeControl {
 			return false;
 		}
 		
-		return isHover() || getInternalScrolling().isScrolling() || isDragging();
+		return isHovered() || getInternalScrolling().isScrolling() || isDragging();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 *                            to affect value
 	 */
 	public void mouseWheel(MouseEvent event, boolean additionalCondition) {
-		if (isEnter() || additionalCondition) {
+		if (isMouseEnteredEvent() || additionalCondition) {
 			getInternalScrolling().init(event);
 			getInternalValue().append(getInternalScrolling().get());
 		}

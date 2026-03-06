@@ -68,7 +68,7 @@ public final class Hover extends View {
 		
 		ctx.noStroke();
 
-		if (component.isHover() && ((component.isPressed() && onAndroid) || !onAndroid)) {
+		if (component.isHovered() && ((component.isPressed() && onAndroid) || !onAndroid)) {
 			if (timer < timerMax) {
 				timer += speed;
 			}

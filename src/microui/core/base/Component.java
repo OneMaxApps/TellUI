@@ -77,6 +77,7 @@ public abstract class Component extends ContentView {
 		event.listen(); // Detect and process events
 		interactionHandler.listen(); // Handle interaction callbacks
 		tooltip.listen(); // Manage tooltip display
+		
 	}
 
 	/**
@@ -103,117 +104,6 @@ public abstract class Component extends ContentView {
 	// == STATE QUERY METHODS ==
 
 	/**
-	 * Checks if the component is currently being pressed (mouse button down over
-	 * component).
-	 *
-	 * @return true if the component is being pressed, false otherwise
-	 */
-	public boolean isPress() {
-		return event.isPress();
-	}
-
-	/**
-	 * Checks if the component is currently being released (mouse button up after
-	 * press).
-	 *
-	 * @return true if the component is being released, false otherwise
-	 */
-	public boolean isRelease() {
-		return event.isRelease();
-	}
-
-	/**
-	 * Checks if a long press is currently occurring on the component.
-	 *
-	 * @return true if a long press is in progress, false otherwise
-	 */
-	public boolean isLongPress() {
-		return event.isLongPress();
-	}
-
-	/**
-	 * Checks if the mouse has just entered the component's bounds.
-	 *
-	 * @return true if the mouse just entered, false otherwise
-	 */
-	public boolean isEnter() {
-		return event.isEnter();
-	}
-
-	/**
-	 * Checks if the mouse has just left the component's bounds.
-	 *
-	 * @return true if the mouse just left, false otherwise
-	 */
-	public boolean isLeave() {
-		return event.isLeave();
-	}
-
-	/**
-	 * Checks if the mouse has been hovering over the component for an extended
-	 * period.
-	 *
-	 * @return true if long hover is detected, false otherwise
-	 */
-	public boolean isEnterLong() {
-		return event.isEnterLong();
-	}
-
-	/**
-	 * Checks if the mouse has left after a long hover period.
-	 *
-	 * @return true if leaving after long hover, false otherwise
-	 */
-	public boolean isLeaveLong() {
-		return event.isLeaveLong();
-	}
-
-	/**
-	 * Checks if the component has just been clicked (press + release).
-	 *
-	 * @return true if just clicked, false otherwise
-	 */
-	public boolean isClicked() {
-		return event.isClicked();
-	}
-
-	/**
-	 * Checks if the component has just been double-clicked.
-	 *
-	 * @return true if just double-clicked, false otherwise
-	 */
-	public boolean isDoubleClicked() {
-		return event.isDoubleClicked();
-	}
-
-	/**
-	 * Checks if a drag operation has just started on the component.
-	 *
-	 * @return true if drag just started, false otherwise
-	 */
-	public boolean isDragStart() {
-		return event.isDragStart();
-	}
-
-	/**
-	 * Checks if the component is currently being dragged.
-	 *
-	 * @return true if dragging is in progress, false otherwise
-	 */
-	public boolean isDragging() {
-		return event.isDragging();
-	}
-//
-//	/**
-//	 * Checks if a drag operation has just ended on the component.
-//	 *
-//	 * @return true if drag just ended, false otherwise
-//	 */
-//	public boolean isDragEnd() {
-//		return event.isDragEnd();
-//	}
-//
-	/**
 	 * Checks if the component is in a pressed state (mouse down over component).
 	 *
 	 * @return true if component is pressed, false otherwise
@@ -221,25 +111,70 @@ public abstract class Component extends ContentView {
 	public boolean isPressed() {
 		return event.isPressed();
 	}
-//
-//	/**
-//	 * Checks if the component is in a released state (not pressed).
-//	 *
-//	 * @return true if component is released, false otherwise
-//	 */
-//	public boolean isReleased() {
-//		return event.isReleased();
-//	}
-//
+	
 	/**
-	 * Checks if the mouse is currently hovering over the component.
+	 * Checks if the component is in a released state (not pressed).
 	 *
-	 * @return true if mouse is hovering, false otherwise
+	 * @return true if component is released, false otherwise
 	 */
-	public boolean isHover() {
+	public boolean isReleased() {
+		return event.isReleased();
+	}
+	
+	public boolean isHovered() {
 		return event.isHover();
 	}
+	
+	public boolean isDragging() {
+		return event.isDragging();
+	}
+	
+	// == EVENT QUERY METHODS ==
+	
+	public boolean isPressEvent() {
+		return event.isPress();
+	}
 
+	public boolean isReleaseEvent() {
+		return event.isRelease();
+	}
+	
+	public boolean isLongPressedEvent() {
+		return event.isLongPressed();
+	}
+
+	public boolean isMouseEnteredEvent() {
+		return event.isEnter();
+	}
+
+	public boolean isMouseLeftEvent() {
+		return event.isLeave();
+	}
+
+	public boolean isMouseEnteredLongEvent() {
+		return event.isEnterLong();
+	}
+
+	public boolean isMouseLeftLongEvent() {
+		return event.isLeaveLong();
+	}
+
+	public boolean isClickedEvent() {
+		return event.isClicked();
+	}
+
+	public boolean isDoubleClickedEvent() {
+		return event.isDoubleClicked();
+	}
+
+	public boolean isDragStartedEvent() {
+		return event.isDragStarted();
+	}
+
+	public boolean isDragEndedEvent() {
+		return event.isDragEnd();
+	}
+	
 	/**
 	 * Checks if the interaction handler is enabled for this component.
 	 *

@@ -68,7 +68,7 @@ public final class InteractionHandler extends AbstractEventSystem {
 			dispatcher.dispatch(EventType.RELEASED);
 		}
 
-		if (getDetector().isLongPress()) {
+		if (getDetector().isLongPressed()) {
 			dispatcher.dispatch(EventType.LONG_PRESS);
 		}
 
@@ -96,7 +96,7 @@ public final class InteractionHandler extends AbstractEventSystem {
 			dispatcher.dispatch(EventType.DOUBLE_CLICK);
 		}
 
-		if (getDetector().isDragStart()) {
+		if (getDetector().isDragStarted()) {
 			dispatcher.dispatch(EventType.DRAG_START);
 		}
 

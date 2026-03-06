@@ -50,8 +50,8 @@ public final class Event extends AbstractEventSystem {
 	 * 
 	 * @return true if mouse was pressed and held beyond the long-press threshold
 	 */
-	public boolean isLongPress() {
-		return getDetector().isLongPress();
+	public boolean isLongPressed() {
+		return getDetector().isLongPressed();
 	}
 
 	/**
@@ -115,8 +115,8 @@ public final class Event extends AbstractEventSystem {
 	 * 
 	 * @return true if mouse started dragging from this component
 	 */
-	public boolean isDragStart() {
-		return getDetector().isDragStart();
+	public boolean isDragStarted() {
+		return getDetector().isDragStarted();
 	}
 
 	/**

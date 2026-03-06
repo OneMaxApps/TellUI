@@ -591,7 +591,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	private boolean mustLoseFocus() {
-		return !isDragging() && ctx.mousePressed && !isHover();
+		return !isDragging() && ctx.mousePressed && !isHovered();
 	}
 
 	private void backgroundOnDraw() {
@@ -668,7 +668,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 			scrollH.mouseWheel(mouseEvent);
 			scrollV.mouseWheel(mouseEvent);
 
-			if (textArea.isHover() && !scrollH.isHover()) {
+			if (textArea.isHovered() && !scrollH.isHovered()) {
 				textArea.cursorSearch.terminateSoftlySearching();
 
 				final float speed = -mouseEvent.getCount() * textArea.textStyle.getTextSize();

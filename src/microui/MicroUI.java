@@ -155,6 +155,14 @@ public final class MicroUI {
 		return this;
 	}
 	
+	public Container getContainer(String textId) {
+		return uiHost.getContainer(textId);
+	}
+	
+	public Container getContainer(int id) {
+		return uiHost.getContainer(id);
+	}
+	
 	public MicroUI navigateTo(Container container) {
 		uiHost.navigateTo(container);
 		

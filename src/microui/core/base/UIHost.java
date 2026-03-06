@@ -92,6 +92,14 @@ public final class UIHost extends View {
 		containerManager.remove(containerManager.get(id));
 	}
 	
+	public Container getContainer(String textId) {
+		return containerManager.get(textId);
+	}
+	
+	public Container getContainer(int id) {
+		return containerManager.get(id);
+	}
+	
 	public void navigateTo(Container container) {
 		containerManager.navigateTo(container);
 	}

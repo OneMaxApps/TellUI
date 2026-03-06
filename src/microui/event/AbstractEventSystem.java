@@ -207,7 +207,7 @@ public abstract class AbstractEventSystem {
 		 * 
 		 * @return true if long-press detected, false otherwise
 		 */
-		public boolean isLongPress() {
+		public boolean isLongPressed() {
 			return longPressDetector.isDetected();
 		}
 
@@ -270,7 +270,7 @@ public abstract class AbstractEventSystem {
 		 * 
 		 * @return true if drag start detected, false otherwise
 		 */
-		public boolean isDragStart() {
+		public boolean isDragStarted() {
 			return dragStartDetector.isDetected();
 		}
 

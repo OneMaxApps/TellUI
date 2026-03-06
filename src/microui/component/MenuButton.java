@@ -993,7 +993,7 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 	}
 
 	private boolean mustBeClosed() {
-		return ctx.mousePressed && isOpen() && !isHover() && !items.isHoverDeep() && !getRoot().isHover();
+		return ctx.mousePressed && isOpen() && !isHovered() && !items.isHoverDeep() && !getRoot().isHovered();
 	}
 
 	private MenuButton getRoot() {
@@ -1538,7 +1538,7 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
-				if (b.isHover()) {
+				if (b.isHovered()) {
 					return true;
 				}
 			}
@@ -1621,7 +1621,7 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 				return true;
 			}
 
-			if (!menu.isActiveSubMenu() && !active.isHover() && !active.items.isHover()) {
+			if (!menu.isActiveSubMenu() && !active.isHovered() && !active.items.isHover()) {
 				return true;
 			}
 
