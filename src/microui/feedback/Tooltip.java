@@ -1,9 +1,9 @@
 package microui.feedback;
 
 import static java.util.Objects.requireNonNull;
-import static microui.core.base.UIHost.getTooltipManager;
 
 import microui.core.base.Component;
+import microui.core.base.UIHost;
 import microui.core.base.UIHost.TooltipManager;
 import microui.core.base.View;
 
@@ -68,7 +68,7 @@ public final class Tooltip extends View {
 		}
 
 		if (isVisible()) {
-			getTooltipManager().setTooltip(this);
+			UIHost.getInstance().getTooltipManager().setTooltip(this);
 		}
 	}
 

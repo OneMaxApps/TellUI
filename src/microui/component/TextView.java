@@ -16,9 +16,6 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import processing.core.PFont;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
-
 /**
  * A component for displaying text with automatic resizing, alignment, and
  * clipping options. TextView provides flexible text rendering with support for
@@ -49,7 +46,7 @@ public final class TextView extends Component {
 	public TextView(String text, float x, float y, float width, float height) {
 		super(x, y, width, height);
 		setMinSize(10);
-		setMaxSize(100, 40);
+		setConstrainDimensionsEnabled(false);
 
 		setBackgroundColor(Color.TRANSPARENT);
 		setTextColor(textColor = getTheme().getTextViewColor());

@@ -47,11 +47,11 @@ public final class UIHost extends View {
 		setVisible(true);
 		
 		containerManager = new ContainerManager();
-		tooltipManager = TooltipManager.getInstance();
-		valueOverlayManager = ValueOverlayManager.getInstance();
+		tooltipManager = new TooltipManager();
+		valueOverlayManager = new ValueOverlayManager();
 		
 		new Renderer(this);
-	}	
+	}
 
 	public static UIHost getInstance() {
 		if (instance == null) {
@@ -61,13 +61,8 @@ public final class UIHost extends View {
 		return instance;
 	}
 	
-	public static TooltipManager getTooltipManager() {
-		return TooltipManager.getInstance();
-	}
 	
-	public static ValueOverlayManager getOverlayManager() {
-		return ValueOverlayManager.getInstance();
-	}
+	// == CONTAINER MANAGER API == // 
 	
 	public void addContainer(Container container) {
 		containerManager.add(container);
@@ -110,34 +105,45 @@ public final class UIHost extends View {
 	}
 	
 	public void navigateTo(Container container, Transition transition) {
-		containerManager.transitionManager.setTransition(transition);
+		containerManager.setTransition(transition);
 		containerManager.navigateTo(container);
 	}
 	
 	public void navigateTo(String textId, Transition transition) {
-		containerManager.transitionManager.setTransition(transition);
+		containerManager.setTransition(transition);
 		containerManager.navigateTo(containerManager.get(textId));
 	}
 	
 	public void navigateTo(int id, Transition transition) {
-		containerManager.transitionManager.setTransition(transition);
+		containerManager.setTransition(transition);
 		containerManager.navigateTo(containerManager.get(id));
 	}
 
 	public boolean isTransitionEnabled() {
-		return containerManager.transitionManager.isEnabled();
+		return containerManager.isTransitionEnabled();
 	}
 	
 	public void setTransitionEnabled(boolean enabled) {
-		containerManager.transitionManager.setEnabled(enabled);
+		containerManager.setTransitionEnabled(enabled);
 	}
 	
 	public float getTransitionProgressStep() {
-		return containerManager.transitionManager.getProgressStep();
+		return containerManager.getTransitionProgressStep();
 	}
 	
 	public void setTransitionProgressStep(float step) {
-		containerManager.transitionManager.setProgressStep(step);
+		containerManager.setTransitionProgressStep(step);
+	}
+	
+	
+	// == EXTENDED API == //
+	
+	public TooltipManager getTooltipManager() {
+		return tooltipManager;
+	}
+	
+	public ValueOverlayManager getOverlayManager() {
+		return valueOverlayManager;
 	}
 	
 	@Override
@@ -195,17 +201,25 @@ public final class UIHost extends View {
 		}
 		
 		@Override
-		protected void render() {
-			transitionManager.update();
-			
-			if (transitionManager.isActivated()) {
-				transitionManager.draw();
-			} else {
-				if (current != null) {
-					current.draw();
-				}
+		public void keyPressed(KeyEvent keyEvent) {
+			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
+				return;
 			}
 			
+			if (current != null) {
+				current.keyPressed(keyEvent);
+			}
+		}
+		
+		@Override
+		public void mouseWheel(MouseEvent mouseEvent) {
+			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
+				return;
+			}
+			
+			if (current != null) {
+				current.mouseWheel(mouseEvent);
+			}
 		}
 		
 		public void add(Container container) {
@@ -277,28 +291,6 @@ public final class UIHost extends View {
 			transitionManager.activate();
 		}
 		
-		@Override
-		public void keyPressed(KeyEvent keyEvent) {
-			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
-				return;
-			}
-			
-			if (current != null) {
-				current.keyPressed(keyEvent);
-			}
-		}
-		
-		@Override
-		public void mouseWheel(MouseEvent mouseEvent) {
-			if(transitionManager.isEnabled() && transitionManager.isActivated()) {
-				return;
-			}
-			
-			if (current != null) {
-				current.mouseWheel(mouseEvent);
-			}
-		}
-		
 		public void keyEvent(KeyEvent keyEvent) {
 			if (keyEvent.getAction() == KeyEvent.PRESS) {
 
@@ -316,6 +308,43 @@ public final class UIHost extends View {
 			if (mouseEvent.getAction() == MouseEvent.WHEEL) {
 				mouseWheel(mouseEvent);
 			}
+		}
+		
+		
+		// == TRANSITION MANAGER FACADE API == //
+		
+		public void setTransition(Transition transition) {
+			transitionManager.setTransition(transition);
+		}
+		
+		public boolean isTransitionEnabled() {
+			return transitionManager.isEnabled();
+		}
+		
+		public void setTransitionEnabled(boolean enabled) {
+			transitionManager.setEnabled(enabled);
+		}
+		
+		public final float getTransitionProgressStep() {
+			return transitionManager.getProgressStep();
+		}
+
+		public final void setTransitionProgressStep(float progressStep) {
+			transitionManager.setProgressStep(progressStep);
+		}
+
+		@Override
+		protected void render() {
+			transitionManager.update();
+			
+			if (transitionManager.isActivated()) {
+				transitionManager.draw();
+			} else {
+				if (current != null) {
+					current.draw();
+				}
+			}
+			
 		}
 		
 		private void addInternal(Container container) {
@@ -491,19 +520,10 @@ public final class UIHost extends View {
 	}
 	
 	public static final class TooltipManager extends View {
-		private static TooltipManager instance;
 		private Tooltip tooltip;
 		
 		private TooltipManager() {
 			setVisible(true);
-		}
-		
-		public static TooltipManager getInstance() {
-			if (instance == null) {
-				instance = new TooltipManager();
-			}
-			
-			return instance;
 		}
 		
 		public void setTooltip(Tooltip tooltip) {
@@ -517,16 +537,16 @@ public final class UIHost extends View {
 			}
 				
 			if (tooltip != null) {
-				tooltip.getContent().setAbsolutePosition(getCorrectPositionX(), getCorrectPositionY());
+				tooltip.getContent().setAbsolutePosition(getConstrainedX(), getConstrainedY());
 				tooltip.draw();
 			}
 		}
 		
-		private float getCorrectPositionX() {
+		private float getConstrainedX() {
 			return MathUtils.constrain(ctx.mouseX, 0, ctx.width - tooltip.getContent().getAbsoluteWidth());
 		}
 
-		private float getCorrectPositionY() {
+		private float getConstrainedY() {
 			return MathUtils.constrain(ctx.mouseY, 0, ctx.height - tooltip.getContent().getAbsoluteHeight());
 		}
 		
@@ -535,7 +555,6 @@ public final class UIHost extends View {
 	public static final class ValueOverlayManager extends View {
 		private static final int DEFAULT_TEXT_SIZE = 24;
 		private static final int DEFAULT_PADDING_AROUND = 10;
-		private static ValueOverlayManager instance;
 		private final TextView text;
 		private ValuePreviewSource source;
 		private String tmpText;
@@ -548,7 +567,7 @@ public final class UIHost extends View {
 			text = new TextView();
 			
 			
-			prepareTextConfig();
+			initTextStyle();
 			
 		}
 		
@@ -706,19 +725,6 @@ public final class UIHost extends View {
 		public void setSource(ValuePreviewSource source) {
 			this.source = requireNonNull(source,"source");
 		}
-
-		/**
-		 * Returns the singleton instance of ValueOverlayManager.
-		 *
-		 * @return the instance.
-		 */
-		public static ValueOverlayManager getInstance() {
-			if (instance == null) {
-				instance = new ValueOverlayManager();
-			}
-			
-			return instance;
-		}
 		
 		@Override
 		protected void render() {
@@ -763,7 +769,7 @@ public final class UIHost extends View {
 		}
 		
 		private float getTextWidth() {
-			if (isCacheActual()) {
+			if (isCacheValid()) {
 				return cachedTextWidth;
 			}
 			
@@ -772,7 +778,7 @@ public final class UIHost extends View {
 		}
 		
 		private float getTextHeight() {
-			if (isCacheActual()) {
+			if (isCacheValid()) {
 				return cachedTextHeight;
 			}
 			
@@ -800,7 +806,7 @@ public final class UIHost extends View {
 			tmpText = text.getText();
 		}
 		
-		private void prepareTextConfig() {
+		private void initTextStyle() {
 			final BooleanSupplier condition = () -> {
 				return source != null && source.isContentPrepared();
 			};
@@ -820,7 +826,7 @@ public final class UIHost extends View {
 			text.setSpatialAnimator(createDefaultAnimator());
 		}
 		
-		private boolean isCacheActual() {
+		private boolean isCacheValid() {
 			return tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()));
 		}
 	}
