@@ -101,15 +101,6 @@ public class Scroll extends LinearRangeControl {
 	}
 
 	/**
-	 * Checks if the thumb is currently being clicked.
-	 *
-	 * @return true if the thumb is being clicked, false otherwise
-	 */
-	public final boolean isThumbClicked() {
-		return thumb.isClick();
-	}
-
-	/**
 	 * Gets the color of the ripple effects on the thumb.
 	 *
 	 * @return the current thumb ripple color

@@ -252,7 +252,7 @@ public abstract class AbstractEventSystem {
 		 * 
 		 * @return true if click detected, false otherwise
 		 */
-		public boolean isClick() {
+		public boolean isClicked() {
 			return clickDetector.isDetected();
 		}
 
@@ -261,7 +261,7 @@ public abstract class AbstractEventSystem {
 		 * 
 		 * @return true if double-click detected, false otherwise
 		 */
-		public boolean isDoubleClick() {
+		public boolean isDoubleClicked() {
 			return doubleClickDetector.isDetected();
 		}
 

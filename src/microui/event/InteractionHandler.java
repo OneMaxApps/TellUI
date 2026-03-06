@@ -88,11 +88,11 @@ public final class InteractionHandler extends AbstractEventSystem {
 			dispatcher.dispatch(EventType.LEAVE_LONG);
 		}
 
-		if (getDetector().isClick()) {
+		if (getDetector().isClicked()) {
 			dispatcher.dispatch(EventType.CLICK);
 		}
 
-		if (getDetector().isDoubleClick()) {
+		if (getDetector().isDoubleClicked()) {
 			dispatcher.dispatch(EventType.DOUBLE_CLICK);
 		}
 

@@ -18,13 +18,6 @@ import microui.feedback.TooltipContent;
  * management, tooltip support, and visual styling for UI elements.
  * 
  * <p>
- * <strong>Status:</strong> STABLE - Do not modify
- * </p>
- * <p>
- * <strong>Last Reviewed:</strong> 04.12.2025
- * </p>
- * 
- * <p>
  * This class serves as the foundation for all interactive UI elements and
  * should be extended by specific component implementations.
  * </p>
@@ -180,8 +173,8 @@ public abstract class Component extends ContentView {
 	 *
 	 * @return true if just clicked, false otherwise
 	 */
-	public boolean isClick() {
-		return event.isClick();
+	public boolean isClicked() {
+		return event.isClicked();
 	}
 
 	/**
@@ -189,8 +182,8 @@ public abstract class Component extends ContentView {
 	 *
 	 * @return true if just double-clicked, false otherwise
 	 */
-	public boolean isDoubleClick() {
-		return event.isDoubleClick();
+	public boolean isDoubleClicked() {
+		return event.isDoubleClicked();
 	}
 
 	/**
@@ -210,16 +203,16 @@ public abstract class Component extends ContentView {
 	public boolean isDragging() {
 		return event.isDragging();
 	}
-
-	/**
-	 * Checks if a drag operation has just ended on the component.
-	 *
-	 * @return true if drag just ended, false otherwise
-	 */
-	public boolean isDragEnd() {
-		return event.isDragEnd();
-	}
-
+//
+//	/**
+//	 * Checks if a drag operation has just ended on the component.
+//	 *
+//	 * @return true if drag just ended, false otherwise
+//	 */
+//	public boolean isDragEnd() {
+//		return event.isDragEnd();
+//	}
+//
 	/**
 	 * Checks if the component is in a pressed state (mouse down over component).
 	 *
@@ -228,16 +221,16 @@ public abstract class Component extends ContentView {
 	public boolean isPressed() {
 		return event.isPressed();
 	}
-
-	/**
-	 * Checks if the component is in a released state (not pressed).
-	 *
-	 * @return true if component is released, false otherwise
-	 */
-	public boolean isReleased() {
-		return event.isReleased();
-	}
-
+//
+//	/**
+//	 * Checks if the component is in a released state (not pressed).
+//	 *
+//	 * @return true if component is released, false otherwise
+//	 */
+//	public boolean isReleased() {
+//		return event.isReleased();
+//	}
+//
 	/**
 	 * Checks if the mouse is currently hovering over the component.
 	 *

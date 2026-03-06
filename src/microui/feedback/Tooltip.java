@@ -1,10 +1,11 @@
 package microui.feedback;
 
 import static java.util.Objects.requireNonNull;
+import static microui.core.base.UIHost.getTooltipManager;
 
 import microui.core.base.Component;
+import microui.core.base.UIHost.TooltipManager;
 import microui.core.base.View;
-import microui.service.TooltipManager;
 
 /**
  * Tooltip manager that displays contextual information when users hover over
@@ -67,7 +68,7 @@ public final class Tooltip extends View {
 		}
 
 		if (isVisible()) {
-			TooltipManager.setTooltip(this);
+			getTooltipManager().setTooltip(this);
 		}
 	}
 

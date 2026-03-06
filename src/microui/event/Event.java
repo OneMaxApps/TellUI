@@ -97,8 +97,8 @@ public final class Event extends AbstractEventSystem {
 	 * 
 	 * @return true if a complete click action was performed on the component
 	 */
-	public boolean isClick() {
-		return getDetector().isClick();
+	public boolean isClicked() {
+		return getDetector().isClicked();
 	}
 
 	/**
@@ -106,8 +106,8 @@ public final class Event extends AbstractEventSystem {
 	 * 
 	 * @return true if two clicks were detected within the double-click threshold
 	 */
-	public boolean isDoubleClick() {
-		return getDetector().isDoubleClick();
+	public boolean isDoubleClicked() {
+		return getDetector().isDoubleClicked();
 	}
 
 	/**

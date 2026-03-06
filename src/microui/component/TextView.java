@@ -153,11 +153,13 @@ public final class TextView extends Component {
 	/**
 	 * Enables or disables text clipping to bounds.
 	 *
-	 * @param clipModeEnabled true to clip text to component bounds, false to allow
-	 *                        overflow
+	 * @param clipModeEnabled true to clip text to component bounds, false to allow overflow
+	 * @return itself
 	 */
-	public void setClipModeEnabled(boolean clipModeEnabled) {
+	public TextView setClipModeEnabled(boolean clipModeEnabled) {
 		this.clipModeEnabled = clipModeEnabled;
+		
+		return this;
 	}
 
 	/**
