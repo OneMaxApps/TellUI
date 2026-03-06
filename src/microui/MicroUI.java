@@ -30,14 +30,12 @@ public final class MicroUI {
 
 	private static final String VERSION = MAJOR + "." + MINOR + "." + PATCH;
 
-	//private final ContainerManager containerManager;
 	private final UIHost uiHost;
 	
 	
 	private MicroUI(PApplet pApplet) {
 		setContext(pApplet);
 		
-		//containerManager = ContainerManager.getInstance();
 		uiHost = UIHost.getInstance();
 	}
 	

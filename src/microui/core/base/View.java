@@ -2,10 +2,6 @@ package microui.core.base;
 
 import static java.util.Objects.requireNonNull;
 import static microui.MicroUI.getContext;
-import static microui.RendererConfig.getMode;
-import static microui.RendererConfig.Mode.STRICT;
-import static microui.core.base.ContainerManager.canDraw;
-import static microui.core.base.ContainerManager.isInitialized;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,16 +244,6 @@ public abstract class View implements Visible {
 	 *                         ContainerManager's draw cycle
 	 */
 	public void draw() {
-		if (getMode() == STRICT) {
-			if (!isInitialized()) {
-				throw new RenderException("ContainerManager is not initialized");
-			}
-
-			if (!canDraw()) {
-				throw new RenderException("Cannot call draw() outside from ContainerManager");
-			}
-		}
-
 		if (isVisible()) {
 			ctx.pushStyle();
 			render();

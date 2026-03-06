@@ -11,6 +11,7 @@ import microui.MicroUI;
 import microui.core.ImageBuffer;
 import microui.core.effect.Transition;
 import microui.core.exception.DuplicateItemException;
+import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
 import microui.event.PointerManager;
@@ -118,13 +119,22 @@ public final class UIHost extends View {
 	
 	@Override
 	protected void render() {
+		if (!Renderer.isAllowed()) {
+			throw new RenderException("Cannot call draw() of UIHost manually");
+		}
+		
 		containerManager.draw();
 		tooltipManager.draw();
 		valueOverlayManager.draw();
+		
+		if (Debugger.isEnabled() && Debugger.isShowFpsEnabled()) {
+			System.out.println("fps: " + ctx.frameRate);
+		}
 	}
 	
 	public static final class Renderer {
 		private final UIHost uiHost;
+		private static boolean allowed;
 		
 		private Renderer(UIHost uiHost) {
 			this.uiHost = uiHost;
@@ -133,11 +143,17 @@ public final class UIHost extends View {
 		}
 		
 		public void draw() {
+			allowed = true;
 			uiHost.draw();
+			allowed = false;
 			
 			if (!ctx.mousePressed) {
 				PointerManager.release();
 			}
+		}
+		
+		public static boolean isAllowed() {
+			return allowed;
 		}
 		
 	}
@@ -228,6 +244,10 @@ public final class UIHost extends View {
 				throw new NoSuchElementException("Container not found");
 			}
 			
+			if (current == container) {
+				throw new IllegalStateException("Cannot navigate to itself");
+			}
+			
 			previous = current;
 			current = container;
 			
@@ -315,7 +335,7 @@ public final class UIHost extends View {
 			private static final int TIMER_END = 1;
 			private static final int MIN_PROGRESS_STEP = 0;
 			private static final int MAX_PROGRESS_STEP = 1;
-			private static final float DEFAULT_PROGRESS_STEP = .02f;
+			private static final float DEFAULT_PROGRESS_STEP = .1f;
 			
 			private ImageBuffer currentImage, previousImage;
 			private Transition transition;
@@ -350,7 +370,8 @@ public final class UIHost extends View {
 			
 			public void update() {
 				if (!enabled) {
-					return;
+					activated = false;
+					return;					
 				}
 				
 				if (activated) {
