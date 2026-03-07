@@ -3,32 +3,26 @@ package microui.feedback;
 import static java.util.Objects.requireNonNull;
 
 import microui.core.base.Component;
-import microui.core.base.UIHost;
-import microui.core.base.UIHost.TooltipManager;
 import microui.core.base.View;
 
 /**
  * Tooltip manager that displays contextual information when users hover over
  * components. Manages tooltip visibility, content, and lifecycle in
  * coordination with TooltipManager service.
- * <p>
- * The Tooltip class handles the display of tooltip content when users hover
- * over associated components. It automatically shows on enter-long events and
- * hides on leave or press events. Tooltip visibility is managed through the
- * centralized TooltipManager service.
- * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 21.10.2025
- * </p>
  * 
  * @see Component
  * @see TooltipContent
  * @see TooltipManager
  */
 public final class Tooltip extends View {
+	private static final TooltipManager manager; 
 	private TooltipContent content;
 	private boolean mustBeClosed;
 
+	static {
+		manager = TooltipManager.getInstance();
+	}
+	
 	/**
 	 * Constructs a Tooltip associated with the specified component. Sets up event
 	 * listeners to automatically show/hide the tooltip.
@@ -68,7 +62,7 @@ public final class Tooltip extends View {
 		}
 
 		if (isVisible()) {
-			UIHost.getInstance().getTooltipManager().setTooltip(this);
+			manager.setTooltip(this);
 		}
 	}
 
@@ -90,6 +84,11 @@ public final class Tooltip extends View {
 	public void setContent(TooltipContent content) {
 		this.content = requireNonNull(content, "content");
 		content.setTooltip(this);
+	}
+	
+	@Override
+	protected void draw() {
+		super.draw();
 	}
 
 	@Override

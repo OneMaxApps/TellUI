@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import microui.core.base.Component;
-import microui.core.base.UIHost;
 import microui.core.interfaces.Scrollable;
 import microui.core.interfaces.ValuePreviewSource;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
 import microui.event.Listener;
+import microui.feedback.ValueOverlayManager;
 import microui.util.BoundedValue;
 import processing.event.MouseEvent;
 
@@ -309,7 +309,8 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	@Override
 	protected void render() {
 		if (isContentPrepared()) {
-			UIHost.getInstance().getOverlayManager().setSource(this);
+			final var m = ValueOverlayManager.getInstance();
+			m.setSource(this);
 		}
 	}
 	

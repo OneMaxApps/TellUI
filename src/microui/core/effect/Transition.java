@@ -1,6 +1,7 @@
 package microui.core.effect;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import microui.MicroUI;
 import microui.util.SpatialState;
@@ -15,32 +16,37 @@ public final class Transition {
 
 	static {
 		final var c = MicroUI.getContext();
-		final var w = c.width;
-		final var h = c.height;
+		final Supplier<Float> w = () -> (float) c.width;
+		final Supplier<Float> nw = () -> (float) -c.width; // nw == negative width 
+		
+		final Supplier<Float> h = () -> (float) c.height;
+		final Supplier<Float> nh = () -> (float) -c.height; // nh == negative height
+		
+		final Supplier<Float> zero = () -> 0f;
 		
 		SLIDE_LEFT = new Transition();
-		SLIDE_LEFT.setPreviousStart(new SpatialState(0,0,w,h));
-		SLIDE_LEFT.setPreviousEnd(new SpatialState(-w,0,w,h));
-		SLIDE_LEFT.setCurrentStart(new SpatialState(w,0,w,h));
-		SLIDE_LEFT.setCurrentEnd(new SpatialState(0,0,w,h));
+		SLIDE_LEFT.setPreviousStart(new SpatialState(zero,zero,w,h));
+		SLIDE_LEFT.setPreviousEnd(new SpatialState(nw,zero,w,h));
+		SLIDE_LEFT.setCurrentStart(new SpatialState(w,zero,w,h));
+		SLIDE_LEFT.setCurrentEnd(new SpatialState(zero,zero,w,h));
 		
 		SLIDE_RIGHT = new Transition();
-		SLIDE_RIGHT.setPreviousStart(new SpatialState(0,0,w,h));
-		SLIDE_RIGHT.setPreviousEnd(new SpatialState(w,0,w,h));
-		SLIDE_RIGHT.setCurrentStart(new SpatialState(-w,0,w,h));
-		SLIDE_RIGHT.setCurrentEnd(new SpatialState(0,0,w,h));
+		SLIDE_RIGHT.setPreviousStart(new SpatialState(zero,zero,w,h));
+		SLIDE_RIGHT.setPreviousEnd(new SpatialState(w,zero,w,h));
+		SLIDE_RIGHT.setCurrentStart(new SpatialState(nw,zero,w,h));
+		SLIDE_RIGHT.setCurrentEnd(new SpatialState(zero,zero,w,h));
 		
 		SLIDE_UP = new Transition();
-		SLIDE_UP.setPreviousStart(new SpatialState(0,0,w,h));
-		SLIDE_UP.setPreviousEnd(new SpatialState(0,-h,w,h));
-		SLIDE_UP.setCurrentStart(new SpatialState(0,h,w,h));
-		SLIDE_UP.setCurrentEnd(new SpatialState(0,0,w,h));
+		SLIDE_UP.setPreviousStart(new SpatialState(zero,zero,w,h));
+		SLIDE_UP.setPreviousEnd(new SpatialState(zero,nh,w,h));
+		SLIDE_UP.setCurrentStart(new SpatialState(zero,h,w,h));
+		SLIDE_UP.setCurrentEnd(new SpatialState(zero,zero,w,h));
 		
 		SLIDE_DOWN = new Transition();
-		SLIDE_DOWN.setPreviousStart(new SpatialState(0,0,w,h));
-		SLIDE_DOWN.setPreviousEnd(new SpatialState(0,h,w,h));
-		SLIDE_DOWN.setCurrentStart(new SpatialState(0,-h,w,h));
-		SLIDE_DOWN.setCurrentEnd(new SpatialState(0,0,w,h));
+		SLIDE_DOWN.setPreviousStart(new SpatialState(zero,zero,w,h));
+		SLIDE_DOWN.setPreviousEnd(new SpatialState(zero,h,w,h));
+		SLIDE_DOWN.setCurrentStart(new SpatialState(zero,nh,w,h));
+		SLIDE_DOWN.setCurrentEnd(new SpatialState(zero,zero,w,h));
 	}
 	
 	public final SpatialState getCurrentStart() {

@@ -1127,6 +1127,11 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 			iconList = new ArrayList<ImageBuffer>();
 			shadow = new ShadowWrapper(menu);
 		}
+		
+		@Override
+		public void draw() {
+			super.draw();
+		}
 
 		@Override
 		public void mouseWheel(MouseEvent mouseEvent) {

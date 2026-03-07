@@ -29,6 +29,20 @@ public final class SpatialState {
 		this.height = height;
 	}
 	
+	public SpatialState(float x, float y, Supplier<Float> width, Supplier<Float> height) {
+		this(x,y,0,0);
+		supplierWidth = requireNonNull(width,"width");
+		supplierHeight = requireNonNull(height,"height");
+	}
+	
+	public SpatialState(Supplier<Float>  x, Supplier<Float> y, Supplier<Float> width, Supplier<Float> height) {
+		this(0,0,0,0);
+		supplierX = requireNonNull(x,"x");
+		supplierY = requireNonNull(y,"y");
+		supplierWidth = requireNonNull(width,"width");
+		supplierHeight = requireNonNull(height,"height");
+	}
+	
 	/**
 	 * Constructs SpatialState with initialization of bounds from SpatialView object
 	 * 

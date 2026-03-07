@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import microui.core.exception.DuplicateItemException;
-import microui.core.exception.RenderException;
 import microui.core.interfaces.Visible;
 import microui.event.Listener;
 import microui.util.Metrics;
@@ -225,25 +224,7 @@ public abstract class View implements Visible {
 		return !textId.equals(DEFAULT_TEXT_ID);
 	}
 
-	/**
-	 * Renders the element if it is visible. Automatically manages Processing styles
-	 * (push/pop style).
-	 * 
-	 * <p>
-	 * In STRICT render mode, this method validates that drawing is performed within
-	 * the proper context (ContainerManager must be initialized and drawing must
-	 * occur during ContainerManager's draw cycle).
-	 * </p>
-	 * 
-	 * <p>
-	 * Calls the {@link #render() method} only if the element is visible.
-	 * </p>
-	 * 
-	 * @throws RenderException if in STRICT mode and ContainerManager is not
-	 *                         initialized or if drawing occurs outside
-	 *                         ContainerManager's draw cycle
-	 */
-	public void draw() {
+	protected void draw() {
 		if (isVisible()) {
 			ctx.pushStyle();
 			render();

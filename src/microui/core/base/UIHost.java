@@ -1,39 +1,27 @@
 package microui.core.base;
 
-import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.map;
-import static processing.core.PConstants.LEFT;
-import static processing.core.PConstants.TOP;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
 
 import microui.MicroUI;
-import microui.component.TextView;
-import microui.constants.AutoResizeMode;
 import microui.core.ImageBuffer;
-import microui.core.effect.SpatialAnimator;
 import microui.core.effect.Transition;
 import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
-import microui.core.interfaces.ValuePreviewSource;
-import microui.core.style.AbstractColor;
-import microui.core.style.Color;
-import microui.core.style.LerpedColor;
-import microui.core.style.LerpedLoopColor;
+import microui.event.Listener;
 import microui.event.PointerManager;
-import microui.feedback.Tooltip;
+import microui.feedback.TooltipManager;
+import microui.feedback.ValueOverlayManager;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
-import microui.util.Environment;
-import microui.util.MathUtils;
-import microui.util.SpatialState;
-import processing.core.PFont;
+import processing.core.PApplet;
+import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -42,13 +30,18 @@ public final class UIHost extends View {
 	private final ContainerManager containerManager;
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
+	private final SurfaceResizeManager surfaceResizeManager;
 	
 	private UIHost() {
 		setVisible(true);
 		
 		containerManager = new ContainerManager();
-		tooltipManager = new TooltipManager();
-		valueOverlayManager = new ValueOverlayManager();
+		tooltipManager = TooltipManager.getInstance();
+		valueOverlayManager = ValueOverlayManager.getInstance();
+		surfaceResizeManager = new SurfaceResizeManager();
+		surfaceResizeManager.setListener(() -> {
+			containerManager.onResize();
+		});
 		
 		new Renderer(this);
 	}
@@ -144,14 +137,24 @@ public final class UIHost extends View {
 	}
 	
 	
-	// == EXTENDED API == //
+	// == SURFACE API == //
 	
-	public TooltipManager getTooltipManager() {
-		return tooltipManager;
+	public void setIcon(PImage icon) {
+		Objects.requireNonNull(icon,"icon");
+		ctx.getSurface().setIcon(icon);
 	}
 	
-	public ValueOverlayManager getOverlayManager() {
-		return valueOverlayManager;
+	public void setTitle(String title) {
+		Objects.requireNonNull(title,"title");
+		ctx.getSurface().setTitle(title);
+	}
+	
+	public void setLocation(int x, int y) {
+		ctx.getSurface().setLocation(x, y);
+	}
+	
+	public void setResizable(boolean enabled) {
+		ctx.getSurface().setResizable(enabled);
 	}
 	
 	@Override
@@ -160,6 +163,8 @@ public final class UIHost extends View {
 			throw new RenderException("Cannot call draw() of UIHost manually");
 		}
 		
+		surfaceResizeManager.listen();
+		
 		containerManager.draw();
 		tooltipManager.draw();
 		valueOverlayManager.draw();
@@ -167,6 +172,7 @@ public final class UIHost extends View {
 		if (Debugger.isEnabled() && Debugger.isShowFpsEnabled()) {
 			System.out.println("fps: " + ctx.frameRate);
 		}
+		
 	}
 	
 	public static final class Renderer {
@@ -229,13 +235,46 @@ public final class UIHost extends View {
 				current.mouseWheel(mouseEvent);
 			}
 		}
-		
+			
 		public void add(Container container) {
-			addInternal(container);
+			Objects.requireNonNull(container,"container");
+			
+			if (list.contains(container)) {
+				throw new DuplicateItemException("Container already added");
+			}
+			
+			if (current == null) {
+				current = container;
+			}
+			
+			container.setConstrainDimensionsEnabled(true);
+			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
+			
+			list.add(container);
 		}
 		
 		public void remove(Container container) {
-			removeInternal(container);
+			if (transitionManager.isActivated()) {
+				if (current == container || previous == container) {
+					throw new IllegalStateException("Cannot remove container when transition of containers activated");
+				}
+			}
+			
+			Objects.requireNonNull(container,"container");
+			
+			if (!list.contains(container)) {
+				throw new NoSuchElementException("Container not found");
+			}
+			
+			if (current == container) {
+				current = null;
+			}
+			
+			if (previous == container) {
+				previous = null;
+			}
+			
+			list.remove(container);
 		}
 		
 		public Container find(String textId) {
@@ -318,7 +357,6 @@ public final class UIHost extends View {
 			}
 		}
 		
-		
 		// == TRANSITION MANAGER FACADE API == //
 		
 		public void setTransition(Transition transition) {
@@ -333,14 +371,32 @@ public final class UIHost extends View {
 			transitionManager.setEnabled(enabled);
 		}
 		
-		public final float getTransitionProgressStep() {
+		public float getTransitionProgressStep() {
 			return transitionManager.getProgressStep();
 		}
 
-		public final void setTransitionProgressStep(float progressStep) {
+		public void setTransitionProgressStep(float progressStep) {
 			transitionManager.setProgressStep(progressStep);
 		}
 
+		public void onResize() {
+			
+			for (int i = 0; i < list.size(); i++) {
+				final var c = list.get(i);
+				final var minWidth = Math.min(ctx.width,c.getMinWidth());
+				final var maxWidth = Math.max(ctx.width,c.getMaxWidth());
+				final var minHeight = Math.min(ctx.height,c.getMinHeight());
+				final var maxHeight = Math.max(ctx.height,c.getMaxHeight());
+				
+				c.setConstrainDimensionsEnabled(false);
+				c.setSize(ctx.width,ctx.height);
+				
+				c.setMinMaxSize(minWidth,minHeight,maxWidth,maxHeight);
+				
+				c.setConstrainDimensionsEnabled(true);
+			}
+		}
+		
 		@Override
 		protected void render() {
 			transitionManager.update();
@@ -353,41 +409,6 @@ public final class UIHost extends View {
 				}
 			}
 			
-		}
-		
-		private void addInternal(Container container) {
-			Objects.requireNonNull(container,"container");
-			
-			if (list.contains(container)) {
-				throw new DuplicateItemException("Container already added");
-			}
-			
-			if (current == null) {
-				current = container;
-			}
-			
-			container.setConstrainDimensionsEnabled(true);
-			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
-			
-			list.add(container);
-		}
-		
-		private void removeInternal(Container container) {
-			Objects.requireNonNull(container,"container");
-			
-			if (!list.contains(container)) {
-				throw new NoSuchElementException("Container not found");
-			}
-			
-			if (current == container) {
-				current = null;
-			}
-			
-			if (previous == container) {
-				previous = null;
-			}
-			
-			list.remove(container);
 		}
 		
 		private final class TransitionManager extends View {
@@ -427,6 +448,8 @@ public final class UIHost extends View {
 					previousImage.draw();
 				}
 			}
+			
+			
 			
 			public void update() {
 				if (!enabled) {
@@ -526,316 +549,43 @@ public final class UIHost extends View {
 		}
 
 	}
-	
-	public static final class TooltipManager extends View {
-		private Tooltip tooltip;
-		
-		private TooltipManager() {
-			setVisible(true);
-		}
-		
-		public void setTooltip(Tooltip tooltip) {
-			this.tooltip = requireNonNull(tooltip, "tooltip");
-		}
-		
-		@Override
-		protected void render() {
-			if (Environment.isAndroid()) {
-				return;
-			}
-				
-			if (tooltip != null) {
-				tooltip.getContent().setAbsolutePosition(getConstrainedX(), getConstrainedY());
-				tooltip.draw();
-			}
-		}
-		
-		private float getConstrainedX() {
-			return MathUtils.constrain(ctx.mouseX, 0, ctx.width - tooltip.getContent().getAbsoluteWidth());
-		}
 
-		private float getConstrainedY() {
-			return MathUtils.constrain(ctx.mouseY, 0, ctx.height - tooltip.getContent().getAbsoluteHeight());
-		}
+	public static final class SurfaceResizeManager {
+		private PApplet context;
+		private int cachedWidth, cachedHeight;
+		private Listener listener;
 		
-	}
-
-	public static final class ValueOverlayManager extends View {
-		private static final int DEFAULT_TEXT_SIZE = 24;
-		private static final int DEFAULT_PADDING_AROUND = 10;
-		private final TextView text;
-		private ValuePreviewSource source;
-		private String tmpText;
-		private float cachedTextWidth, cachedTextHeight;
-		
-		private ValueOverlayManager() {
-			super();
-			setVisible(true);
+		private SurfaceResizeManager() {
+			context = MicroUI.getContext();
 			
-			text = new TextView();
-			
-			
-			initTextStyle();
-			
+			validateDimensions();
 		}
 		
-		// == TEXT API == //
-
-		/**
-		 * Returns the background color of the value overlay.
-		 *
-		 * @return the background color.
-		 */
-		public AbstractColor getBackgroundColor() {
-			return text.getBackgroundColor();
-		}
-
-		/**
-		 * Sets the background color of the value overlay.
-		 *
-		 * @param backgroundColor the new background color.
-		 * @return this component for chaining.
-		 */
-		public Component setBackgroundColor(AbstractColor backgroundColor) {
-			return text.setBackgroundColor(backgroundColor);
+		public void setListener(Listener listener) {
+			this.listener = Objects.requireNonNull(listener,"listener"); 
 		}
 		
-		/**
-		 * Returns the text color.
-		 *
-		 * @return the text color.
-		 */
-		public AbstractColor getTextColor() {
-			return text.getTextColor();
-		}
-		
-		/**
-		 * Sets the text color.
-		 *
-		 * @param textColor the new text color.
-		 */
-		public void setTextColor(AbstractColor textColor) {
-			text.setTextColor(textColor);
-		}
-
-		/**
-		 * Returns the text size.
-		 *
-		 * @return the text size in pixels.
-		 */
-		public float getTextSize() {
-			return text.getTextSize();
-		}
-
-		/**
-		 * Sets the text size. If the size differs from the current one,
-		 * cached text dimensions are updated.
-		 *
-		 * @param textSize the new text size in pixels.
-		 */
-		public void setTextSize(float textSize) {
-			if (textSize != text.getTextSize()) {
-				text.setTextSize(textSize);
-				updateCachedTextData();
-			}
-		}
-
-		/**
-		 * Returns the font used for text.
-		 *
-		 * @return the current PFont, or null if default.
-		 */
-		public PFont getFont() {
-			return text.getFont();
-		}
-
-		/**
-		 * Sets the font for text. If the font differs from the current one,
-		 * cached text dimensions are updated.
-		 *
-		 * @param font the new PFont.
-		 */
-		public void setFont(PFont font) {
-			if (font != text.getFont()) {
-				text.setFont(font);
-				updateCachedTextData();
+		public void listen() {
+			if (isResized()) {
+				validateDimensions();
 			}
 		}
 		
-		/**
-		 * Returns the current auto-resize mode.
-		 *
-		 * @return the auto-resize mode.
-		 */
-		public AutoResizeMode getAutoResizeMode() {
-			return text.getAutoResizeMode();
+		private boolean isResized() {
+			return cachedWidth != context.width || cachedHeight != context.height;
 		}
 		
-		/**
-		 * Checks whether auto-resize mode is enabled.
-		 *
-		 * @return true if auto-resize is enabled, false otherwise.
-		 */
-		public boolean isAutoResizeModeEnabled() {
-			return text.isAutoResizeModeEnabled();
+		private void validateDimensions() {
+			cachedWidth = context.width;
+			cachedHeight = context.height;
+			
+			notifyListener();
 		}
 		
-		/**
-		 * Enables or disables auto-resize mode. If the state changes,
-		 * cached text dimensions are updated.
-		 *
-		 * @param autoResizeModeEnabled true to enable, false to disable.
-		 */
-		public void setAutoResizeModeEnabled(boolean autoResizeModeEnabled) {
-			if (autoResizeModeEnabled != text.isAutoResizeModeEnabled()) {
-				text.setAutoResizeModeEnabled(autoResizeModeEnabled);
-				updateCachedTextData();
+		private void notifyListener() {
+			if (listener != null) {
+				listener.action();
 			}
-		}
-
-		/**
-		 * Sets the auto-resize mode. If the mode differs from the current one,
-		 * cached text dimensions are updated.
-		 *
-		 * @param autoResizeMode the new auto-resize mode.
-		 */
-		public void setAutoResizeMode(AutoResizeMode autoResizeMode) {
-			if (autoResizeMode != text.getAutoResizeMode()) {
-				text.setAutoResizeMode(autoResizeMode);
-				updateCachedTextData();
-			}
-		}
-		
-		/**
-		 * Sets the spatial animator for the underlying text view.
-		 *
-		 * @param spatialAnimator the animator to use.
-		 */
-		public void setSpatialAnimator(SpatialAnimator spatialAnimator) {
-			text.setSpatialAnimator(spatialAnimator);
-		}
-		
-		/**
-		 * Returns the current value preview source.
-		 *
-		 * @return the source, or null if not set.
-		 */
-		public ValuePreviewSource getSource() {
-			return source;
-		}
-
-		/**
-		 * Sets the value preview source. The source provides the text to display.
-		 *
-		 * @param source the source, cannot be null.
-		 * @throws NullPointerException if source is null.
-		 */
-		public void setSource(ValuePreviewSource source) {
-			this.source = requireNonNull(source,"source");
-		}
-		
-		@Override
-		protected void render() {
-			if (source != null) {
-				if (source.isContentPrepared() && !source.getSource().isBlank()) {
-					text.setText(source.getSource());
-				} else {
-					source = null;
-				}
-			}
-			
-			text.draw();
-		}
-		
-		private SpatialAnimator createDefaultAnimator() {
-			final SpatialState startState = new SpatialState(0,0,0,0);
-			
-			startState.setSupplierX(() -> -text.getAbsoluteWidth());
-			startState.setSupplierY(() -> text.getPaddingTop());
-			startState.setSupplierWidth(() -> text.getWidth());
-			startState.setSupplierHeight(() -> text.getHeight());
-			
-			final SpatialState endState = new SpatialState();
-			
-			endState.setSupplierX(() -> text.getPaddingLeft());
-			endState.setSupplierY(() -> text.getPaddingTop());
-			
-			endState.setSupplierWidth(() -> {
-				text.setWidth(getTextWidth());
-				return text.getWidth();
-			});
-			
-			endState.setSupplierHeight(() -> {
-				text.setHeight(getTextHeight());
-				return text.getHeight();
-			});
-			
-			final var animator = new SpatialAnimator(startState, endState, () -> source != null && source.isContentPrepared());
-			animator.setSpeed(.05f);
-			
-			return animator;
-		}
-		
-		private float getTextWidth() {
-			if (isCacheValid()) {
-				return cachedTextWidth;
-			}
-			
-			updateCachedTextData();
-			return cachedTextWidth;
-		}
-		
-		private float getTextHeight() {
-			if (isCacheValid()) {
-				return cachedTextHeight;
-			}
-			
-			updateCachedTextData();
-			return cachedTextHeight;
-		}
-		
-		private void updateCachedTextData() {
-			ctx.pushStyle();
-			if(getFont() != null) {
-				ctx.textFont(getFont());
-			}
-			ctx.textSize(getTextSize());
-			final String[] lines = text.getText().split("\n");
-			float textWidth = 0;
-			for(String l : lines) {
-				textWidth = Math.max(textWidth, ctx.textWidth(l));
-			}
-			
-			cachedTextHeight = (ctx.textAscent() + ctx.textDescent()) * lines.length;
-			cachedTextWidth = textWidth;
-			
-			ctx.popStyle();
-			
-			tmpText = text.getText();
-		}
-		
-		private void initTextStyle() {
-			final BooleanSupplier condition = () -> {
-				return source != null && source.isContentPrepared();
-			};
-			
-			text.setConstrainDimensionsEnabled(false);
-			text.setId(IGNORE_INTERNAL_COMPONENT_ID);
-			
-			text.setConstrainDimensionsEnabled(false);
-			text.setBackgroundColor(new LerpedColor(Color.TRANSPARENT, new Color(0,128), condition).setSpeed(.1f));
-			text.setTextColor(new LerpedColor(Color.TRANSPARENT, new LerpedLoopColor(Color.WHITE, new Color(255,200)).setSpeed(.1f), condition).setSpeed(.1f));
-			text.setAutoResizeModeEnabled(false);
-			text.setTextSize(DEFAULT_TEXT_SIZE);
-			text.setPadding(DEFAULT_PADDING_AROUND);
-			text.setAlignX(LEFT);
-			text.setAlignY(TOP);
-			text.setClipModeEnabled(false);
-			text.setSpatialAnimator(createDefaultAnimator());
-		}
-		
-		private boolean isCacheValid() {
-			return tmpText == text.getText() || ( tmpText != null && tmpText.equals(text.getText()));
 		}
 	}
 }
