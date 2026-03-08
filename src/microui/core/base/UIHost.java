@@ -39,7 +39,7 @@ public final class UIHost extends View {
 		tooltipManager = TooltipManager.getInstance();
 		valueOverlayManager = ValueOverlayManager.getInstance();
 		surfaceResizeManager = new SurfaceResizeManager();
-		surfaceResizeManager.setListener(() -> {
+		surfaceResizeManager.addListener(() -> {
 			containerManager.onResize();
 		});
 		
@@ -155,6 +155,14 @@ public final class UIHost extends View {
 	
 	public void setResizable(boolean enabled) {
 		ctx.getSurface().setResizable(enabled);
+	}
+	
+	public void addOnSurfaceResizeListener(Listener listener) {
+		surfaceResizeManager.addListener(listener);
+	}
+	
+	public void removeOnSurfaceResizeListener(Listener listener) {
+		surfaceResizeManager.removeListener(listener);
 	}
 	
 	@Override
@@ -551,18 +559,36 @@ public final class UIHost extends View {
 	}
 
 	public static final class SurfaceResizeManager {
-		private PApplet context;
+		private final PApplet context;
+		private final List<Listener> listenerList;
 		private int cachedWidth, cachedHeight;
-		private Listener listener;
+		
 		
 		private SurfaceResizeManager() {
 			context = MicroUI.getContext();
+			listenerList = new ArrayList<Listener>();
 			
 			validateDimensions();
 		}
 		
-		public void setListener(Listener listener) {
-			this.listener = Objects.requireNonNull(listener,"listener"); 
+		public void addListener(Listener listener) {
+			Objects.requireNonNull(listener,"listener");
+			
+			if (listenerList.contains(listener)) {
+				throw new DuplicateItemException("Listener already added");
+			}
+			
+			listenerList.add(listener);
+		}
+		
+		public void removeListener(Listener listener) {
+			Objects.requireNonNull(listener,"listener");
+			
+			if (!listenerList.contains(listener)) {
+				throw new DuplicateItemException("Listener not found");
+			}
+			
+			listenerList.remove(listener);
 		}
 		
 		public void listen() {
@@ -579,12 +605,14 @@ public final class UIHost extends View {
 			cachedWidth = context.width;
 			cachedHeight = context.height;
 			
-			notifyListener();
+			notifyListeners();
 		}
 		
-		private void notifyListener() {
-			if (listener != null) {
-				listener.action();
+		private void notifyListeners() {
+			if (!listenerList.isEmpty()) {
+				for (int i = 0; i < listenerList.size(); i++) {
+					listenerList.get(i).action();
+				}
 			}
 		}
 	}
