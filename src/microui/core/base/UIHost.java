@@ -585,7 +585,7 @@ public final class UIHost extends View {
 			Objects.requireNonNull(listener,"listener");
 			
 			if (!listenerList.contains(listener)) {
-				throw new DuplicateItemException("Listener not found");
+				throw new NoSuchElementException("Listener not found");
 			}
 			
 			listenerList.remove(listener);
