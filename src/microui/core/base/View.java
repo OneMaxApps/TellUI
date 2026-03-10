@@ -5,6 +5,7 @@ import static microui.MicroUI.getContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import microui.core.exception.DuplicateItemException;
 import microui.core.interfaces.Visible;
@@ -91,7 +92,7 @@ public abstract class View implements Visible {
 		requireNonNull(listener,"listener");
 		
 		if (!onChangePriorityListenerList.contains(listener)) {
-			throw new DuplicateItemException("Listener not found");
+			throw new NoSuchElementException("Listener not found");
 		}
 		
 		onChangePriorityListenerList.remove(listener);
