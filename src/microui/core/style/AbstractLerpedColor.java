@@ -2,33 +2,33 @@ package microui.core.style;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.function.Supplier;
+
 import microui.util.MathUtils;
 
-/**
- * An abstract base class for colors that interpolate between two other colors
- * over time. Provides animation control for the interpolation progress and
- * implements color component calculation through linear interpolation.
- * 
- * @see AbstractColor
- */
 public abstract class AbstractLerpedColor extends AbstractColor {
-	private final AbstractColor start;
-	private final AbstractColor end;
+	private final Supplier<AbstractColor> start, end;
 	private final Animator animator;
 
-	/**
-	 * Constructs a new interpolated color with the specified start and end colors.
-	 * The initial animation speed is set to 0.1 (10% progress per update).
-	 * 
-	 * @param start the starting color of the interpolation sequence, cannot be null
-	 * @param end   the ending color of the interpolation sequence, cannot be null
-	 * @throws NullPointerException if either start or end is null
-	 */
+
 	public AbstractLerpedColor(AbstractColor start, AbstractColor end) {
 		super();
+		requireNonNull(start, "start");
+		requireNonNull(end, "end");
+		
+		this.start = () -> start;
+		this.end = () -> end;
 
-		this.start = requireNonNull(start, "start");
-		this.end = requireNonNull(end, "end");
+		animator = new Animator();
+	}
+	
+	public AbstractLerpedColor(Supplier<AbstractColor> start, Supplier<AbstractColor> end) {
+		super();
+		requireNonNull(start, "start");
+		requireNonNull(end, "end");
+		
+		this.start = start;
+		this.end = end;
 
 		animator = new Animator();
 	}
@@ -103,11 +103,11 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	}
 
 	protected final AbstractColor getStart() {
-		return start;
+		return start.get();
 	}
 
 	protected final AbstractColor getEnd() {
-		return end;
+		return end.get();
 	}
 
 	@Override

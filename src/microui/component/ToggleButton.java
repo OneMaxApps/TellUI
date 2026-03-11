@@ -33,7 +33,7 @@ public final class ToggleButton extends AbstractButton {
 		super(x, y, w, h);
 		setMinMaxSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT, DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
 		setActiveStateColor(Color.GREEN);
-		currentStateColor = new  LerpedColor(getBackgroundColor(), getActiveStateColor(), () -> isActive()).setSpeed(.1f);
+		currentStateColor = new  LerpedColor(() -> getBackgroundColor(), () -> getActiveStateColor(), () -> isActive()).setSpeed(.1f);
 		setThumbColor(Color.GRAY_164L);
 		
 		ripples = new Ripples(this);
@@ -43,6 +43,8 @@ public final class ToggleButton extends AbstractButton {
 		onClick(() -> toggle());
 		
 		listenerList = new ArrayList<Listener>();
+		
+		setBackgroundColor(Color.RED);
 	}
 	
 	public ToggleButton() {

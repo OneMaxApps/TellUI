@@ -14,6 +14,7 @@ import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Scrollable;
+import microui.core.interfaces.ValuePreviewSource;
 import microui.event.Listener;
 import microui.event.PointerManager;
 import microui.feedback.TooltipManager;
@@ -31,7 +32,7 @@ public final class UIHost extends View {
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
 	private final SurfaceResizeManager surfaceResizeManager;
-	
+	private final HintTextManager hintTextManager;
 	private UIHost() {
 		setVisible(true);
 		
@@ -42,6 +43,8 @@ public final class UIHost extends View {
 		surfaceResizeManager.addListener(() -> {
 			containerManager.onResize();
 		});
+		
+		hintTextManager = new HintTextManager();
 		
 		new Renderer(this);
 	}
@@ -165,6 +168,18 @@ public final class UIHost extends View {
 		surfaceResizeManager.removeListener(listener);
 	}
 	
+	
+	
+	// == OVERLAY HINT MANAGER API == //
+	
+	public void setHint(String hint, long ms) {
+		hintTextManager.setHint(hint, ms);
+	}
+	
+	public void setHint(String hint) {
+		hintTextManager.setHint(hint, 1000);
+	}
+	
 	@Override
 	protected void render() {
 		if (!Renderer.isAllowed()) {
@@ -172,6 +187,7 @@ public final class UIHost extends View {
 		}
 		
 		surfaceResizeManager.listen();
+		hintTextManager.listen();
 		
 		containerManager.draw();
 		tooltipManager.draw();
@@ -182,7 +198,7 @@ public final class UIHost extends View {
 		}
 		
 	}
-	
+
 	public static final class Renderer {
 		private final UIHost uiHost;
 		private static boolean allowed;
@@ -558,7 +574,7 @@ public final class UIHost extends View {
 
 	}
 
-	public static final class SurfaceResizeManager {
+	private static final class SurfaceResizeManager {
 		private final PApplet context;
 		private final List<Listener> listenerList;
 		private int cachedWidth, cachedHeight;
@@ -614,6 +630,65 @@ public final class UIHost extends View {
 					listenerList.get(i).action();
 				}
 			}
+		}
+	}
+
+	private final static class HintTextManager implements ValuePreviewSource {
+		private static final int DEFAULT_MS = 0;
+		private String hint;
+		private long ms;
+		private long lastUpdateTime;
+		
+		public HintTextManager() {
+			validateLastUpdateTime();
+		}
+		
+		@Override
+		public String getSource() {
+			return hint;
+		}
+
+		@Override
+		public boolean isContentPrepared() {
+			return ms > DEFAULT_MS && hint != null;
+		}
+		
+		public void listen() {
+			if (isContentPrepared()) {
+				final long delta = System.currentTimeMillis() - lastUpdateTime;
+				if (delta > 0) {
+					lastUpdateTime = System.currentTimeMillis();
+					ms -= delta;
+				}
+				
+				ValueOverlayManager.getInstance().setSource(this);
+			}
+		}
+		
+		public void setHint(String hint, long ms) {
+			setHint(hint);
+			setMs(ms);
+			validateLastUpdateTime();
+		}
+
+		private void setHint(String hint) {
+			this.hint = Objects.requireNonNull(hint, "hint");
+		}
+
+		private void setMs(long ms) {
+			if (this.ms > DEFAULT_MS) {
+				return;
+			}
+			
+			if (ms <= DEFAULT_MS) {
+				throw new IllegalArgumentException("Milliseconds should be greater than " + DEFAULT_MS);
+			}
+			
+			this.ms = ms;
+		}
+		
+		private void validateLastUpdateTime() {
+			lastUpdateTime = System.currentTimeMillis();
 		}
 	}
 }

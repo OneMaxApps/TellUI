@@ -50,7 +50,25 @@ public final class LerpedColor extends AbstractLerpedColor {
 	 */
 	public LerpedColor(AbstractColor start, AbstractColor end, Supplier<Float> progressSupplier) {
 		super(start, end);
-
+		
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
+		
+		this.progressSupplier = requireNonNull(progressSupplier, "progressSupplier");
+	}
+	
+	public LerpedColor(Supplier<AbstractColor> start, Supplier<AbstractColor> end, BooleanSupplier condition) {
+		super(start, end);
+		
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
+		
+		this.condition = requireNonNull(condition, "condition");
+	}
+	
+	public LerpedColor(Supplier<AbstractColor> start, Supplier<AbstractColor> end, Supplier<Float> progressSupplier) {
+		super(start, end);
+		
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
+		
 		this.progressSupplier = requireNonNull(progressSupplier, "progressSupplier");
 	}
 

@@ -1,5 +1,7 @@
 package microui.core.style;
 
+import java.util.function.Supplier;
+
 /**
  * A continuously looping interpolated color that automatically cycles between
  * start and end colors.
@@ -32,6 +34,12 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	 * @param end   the ending color of the loop sequence, cannot be null
 	 */
 	public LerpedLoopColor(AbstractColor start, AbstractColor end) {
+		super(start, end);
+		setLoopEnabled(true);
+		getAnimator().setSpeed(.01f);
+	}
+	
+	public LerpedLoopColor(Supplier<AbstractColor> start, Supplier<AbstractColor> end) {
 		super(start, end);
 		setLoopEnabled(true);
 		getAnimator().setSpeed(.01f);
