@@ -1,6 +1,6 @@
 package microui.core.base;
 
-import static processing.core.PApplet.map;
+import static microui.util.MathUtils.convert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,8 @@ public final class UIHost extends View {
 	private final TooltipManager tooltipManager;
 	private final ValueOverlayManager valueOverlayManager;
 	private final SurfaceResizeManager surfaceResizeManager;
-	private final HintTextManager hintTextManager;
+	private final ToastManager toastManager;
+	
 	private UIHost() {
 		setVisible(true);
 		
@@ -44,9 +45,9 @@ public final class UIHost extends View {
 			containerManager.onResize();
 		});
 		
-		hintTextManager = new HintTextManager();
+		toastManager = new ToastManager();
 		
-		new Renderer(this);
+		new HostBridge(this);
 	}
 
 	public static UIHost getInstance() {
@@ -172,17 +173,17 @@ public final class UIHost extends View {
 	
 	// == OVERLAY HINT MANAGER API == //
 	
-	public void setHint(String hint, long ms) {
-		hintTextManager.setHint(hint, ms);
+	public void setToast(String text, long ms) {
+		toastManager.setToast(text, ms);
 	}
 	
-	public void setHint(String hint) {
-		hintTextManager.setHint(hint, 1000);
+	public void setToast(String text) {
+		toastManager.setToast(text, 1000);
 	}
 	
 	@Override
 	protected void render() {
-		if (!Renderer.isAllowed()) {
+		if (!HostBridge.isAllowed()) {
 			throw new RenderException("Cannot call draw() of UIHost manually");
 		}
 		
@@ -191,7 +192,7 @@ public final class UIHost extends View {
 		containerManager.draw();
 		tooltipManager.draw();
 		
-		hintTextManager.listen();
+		toastManager.listen();
 		valueOverlayManager.draw();
 		
 		if (Debugger.isEnabled() && Debugger.isShowFpsEnabled()) {
@@ -199,15 +200,25 @@ public final class UIHost extends View {
 		}
 		
 	}
+	
+	private void keyEvent(KeyEvent keyEvent) {
+		containerManager.keyEvent(keyEvent);
+	}
+	
+	private void mouseEvent(MouseEvent mouseEvent) {
+		containerManager.mouseEvent(mouseEvent);
+	}
 
-	public static final class Renderer {
+	public static final class HostBridge {
 		private final UIHost uiHost;
 		private static boolean allowed;
 		
-		private Renderer(UIHost uiHost) {
+		private HostBridge(UIHost uiHost) {
 			this.uiHost = uiHost;
 			
-			MicroUI.getContext().registerMethod("draw", this);
+			ctx.registerMethod("draw", this);
+			ctx.registerMethod("keyEvent", this);
+			ctx.registerMethod("mouseEvent", this);
 		}
 		
 		public void draw() {
@@ -218,6 +229,14 @@ public final class UIHost extends View {
 			if (!ctx.mousePressed) {
 				PointerManager.release();
 			}
+		}
+		
+		public void keyEvent(KeyEvent keyEvent) {
+			uiHost.keyEvent(keyEvent);
+		}
+		
+		public void mouseEvent(MouseEvent mouseEvent) {
+			uiHost.mouseEvent(mouseEvent);
 		}
 		
 		public static boolean isAllowed() {
@@ -235,8 +254,6 @@ public final class UIHost extends View {
 			setVisible(true);
 			list = new ArrayList<Container>();
 			transitionManager = new TransitionManager();
-			ctx.registerMethod("keyEvent", this);
-			ctx.registerMethod("mouseEvent", this);
 		}
 		
 		@Override
@@ -569,7 +586,7 @@ public final class UIHost extends View {
 			}
 		
 			private float lerpFromTime(float start, float end) {
-				return map(timer,TIMER_START, TIMER_END, start, end);
+				return convert(timer,TIMER_START, TIMER_END, start, end);
 			}
 		}
 
@@ -634,24 +651,24 @@ public final class UIHost extends View {
 		}
 	}
 
-	private final static class HintTextManager implements ValuePreviewSource {
+	private final static class ToastManager implements ValuePreviewSource {
 		private static final int DEFAULT_MS = 0;
-		private String hint;
+		private String text;
 		private long ms;
 		private long lastUpdateTime;
 		
-		public HintTextManager() {
+		public ToastManager() {
 			validateLastUpdateTime();
 		}
 		
 		@Override
 		public String getSource() {
-			return hint;
+			return text;
 		}
 
 		@Override
 		public boolean isContentPrepared() {
-			return ms > DEFAULT_MS && hint != null;
+			return ms > DEFAULT_MS && text != null;
 		}
 		
 		public void listen() {
@@ -668,17 +685,19 @@ public final class UIHost extends View {
 			}
 		}
 		
-		public void setHint(String hint, long ms) {
-			setHint(hint);
+		public void setToast(String text, long ms) {
+			setToast(text);
 			setMs(ms);
 			validateLastUpdateTime();
 		}
 
-		private void setHint(String hint) {
-			Objects.requireNonNull(hint, "hint");
-			if (hint.isBlank()) {
-				throw new IllegalArgumentException("Hint cannot be blank");
+		private void setToast(String text) {
+			Objects.requireNonNull(text, "text");
+			if (text.isBlank()) {
+				throw new IllegalArgumentException("Text cannot be blank");
 			}
+			
+			this.text = text;
 		}
 
 		private void setMs(long ms) {

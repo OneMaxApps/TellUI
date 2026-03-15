@@ -5,9 +5,11 @@ import static java.util.Objects.requireNonNull;
 import microui.core.base.Container;
 import microui.core.base.UIHost;
 import microui.core.effect.Transition;
+import microui.event.Listener;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
 import processing.core.PApplet;
+import processing.core.PImage;
 
 /**
  * Core initialization and metadata class for the MicroUI library.
@@ -208,6 +210,46 @@ public final class MicroUI {
 		return this;
 	}
 	
+	public MicroUI setSurfaceIcon(PImage icon) {
+		uiHost.setIcon(icon);
+		return this;
+	}
+
+	public MicroUI setSurfaceTitle(String title) {
+		uiHost.setTitle(title);
+		return this;
+	}
+
+	public MicroUI setSurfaceLocation(int x, int y) {
+		uiHost.setLocation(x, y);
+		return this;
+	}
+
+	public MicroUI setSurfaceResizable(boolean enabled) {
+		uiHost.setResizable(enabled);
+		return this;
+	}
+
+	public MicroUI addOnSurfaceResizeListener(Listener listener) {
+		uiHost.addOnSurfaceResizeListener(listener);
+		return this;
+	}
+
+	public MicroUI removeOnSurfaceResizeListener(Listener listener) {
+		uiHost.removeOnSurfaceResizeListener(listener);
+		return this;
+	}
+	
+	public MicroUI setToast(String text, long ms) {
+		uiHost.setToast(text, ms);
+		return this;
+	}
+
+	public MicroUI setToast(String text) {
+		uiHost.setToast(text);
+		return this;
+	}
+
 	/**
 	 * Enables or disables debug mode for the UI system.
 	 *
