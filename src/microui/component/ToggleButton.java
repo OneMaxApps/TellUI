@@ -44,7 +44,6 @@ public final class ToggleButton extends AbstractButton {
 		
 		listenerList = new ArrayList<Listener>();
 		
-		setBackgroundColor(Color.RED);
 	}
 	
 	public ToggleButton() {

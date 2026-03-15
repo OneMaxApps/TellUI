@@ -187,10 +187,11 @@ public final class UIHost extends View {
 		}
 		
 		surfaceResizeManager.listen();
-		hintTextManager.listen();
 		
 		containerManager.draw();
 		tooltipManager.draw();
+		
+		hintTextManager.listen();
 		valueOverlayManager.draw();
 		
 		if (Debugger.isEnabled() && Debugger.isShowFpsEnabled()) {
@@ -655,9 +656,11 @@ public final class UIHost extends View {
 		
 		public void listen() {
 			if (isContentPrepared()) {
-				final long delta = System.currentTimeMillis() - lastUpdateTime;
+				final long currentMs = System.currentTimeMillis();
+				final long delta =  currentMs - lastUpdateTime;
+				
 				if (delta > 0) {
-					lastUpdateTime = System.currentTimeMillis();
+					lastUpdateTime = currentMs;
 					ms -= delta;
 				}
 				
@@ -672,14 +675,13 @@ public final class UIHost extends View {
 		}
 
 		private void setHint(String hint) {
-			this.hint = Objects.requireNonNull(hint, "hint");
+			Objects.requireNonNull(hint, "hint");
+			if (hint.isBlank()) {
+				throw new IllegalArgumentException("Hint cannot be blank");
+			}
 		}
 
 		private void setMs(long ms) {
-			if (this.ms > DEFAULT_MS) {
-				return;
-			}
-			
 			if (ms <= DEFAULT_MS) {
 				throw new IllegalArgumentException("Milliseconds should be greater than " + DEFAULT_MS);
 			}

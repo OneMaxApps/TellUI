@@ -47,7 +47,7 @@ public class FullSingleLineTextController {
 	public FullSingleLineTextController(final String text) {
 		undoRedoManager = new UndoRedoManager(this);
 		setInputFilter((c) -> "!@#$%^&()_-+=|\\/[]{}<>,. ~\'\";:?*".indexOf(c) >= 0 || Character.isLetterOrDigit(c));
-		sb = new StringBuilder(getFilteredString(requireNonNull(text, "text"))); // FIXME its not validated
+		sb = new StringBuilder(getFilteredString(requireNonNull(text, "text")));
 		updateCachedStrings();
 
 		validationEnabled = true;
