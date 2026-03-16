@@ -436,13 +436,13 @@ public final class UIHost extends View {
 		}
 		
 		private void removeInternal(Container container) {
+			Objects.requireNonNull(container,"container");
+
 			if (transitionManager.isActivated()) {
 				if (current == container || previous == container) {
 					throw new IllegalStateException("Cannot remove container when transition of containers activated");
 				}
 			}
-			
-			Objects.requireNonNull(container,"container");
 			
 			if (!list.contains(container)) {
 				throw new NoSuchElementException("Container not found");
@@ -523,7 +523,7 @@ public final class UIHost extends View {
 		private final class TransitionManager extends View {
 			private static final int TIMER_START = 0;
 			private static final int TIMER_END = 1;
-			private static final int MIN_PROGRESS_STEP = 0;
+			private static final float MIN_PROGRESS_STEP = .00000001f;
 			private static final int MAX_PROGRESS_STEP = 1;
 			private static final float DEFAULT_PROGRESS_STEP = .1f;
 			
