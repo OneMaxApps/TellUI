@@ -66,15 +66,15 @@ public final class UIHost extends View {
 	}
 	
 	public void addContainer(LayoutManager layoutManager) {
-		containerManager.add(new Container(layoutManager));
+		containerManager.add(layoutManager);
 	}
 	
 	public void addContainer(LayoutManager layoutManager, String textId) {
-		containerManager.add((Container) new Container(layoutManager).setTextId(textId));
+		containerManager.add(layoutManager, textId);
 	}
 	
 	public void addContainer(LayoutManager layoutManager, int id) {
-		containerManager.add((Container) new Container(layoutManager).setId(id));
+		containerManager.add(layoutManager, id);
 	}
 
 	public void removeContainer(Container container) {
@@ -82,11 +82,11 @@ public final class UIHost extends View {
 	}
 	
 	public void removeContainer(String textId) {
-		containerManager.remove(containerManager.get(textId));
+		containerManager.remove(textId);
 	}
 	
 	public void removeContainer(int id) {
-		containerManager.remove(containerManager.get(id));
+		containerManager.remove(id);
 	}
 	
 	public Container getContainer(String textId) {
@@ -102,26 +102,23 @@ public final class UIHost extends View {
 	}
 	
 	public void navigateTo(String textId) {
-		containerManager.navigateTo(containerManager.get(textId));
+		containerManager.navigateTo(textId);
 	}
 	
 	public void navigateTo(int id) {
-		containerManager.navigateTo(containerManager.get(id));
+		containerManager.navigateTo(id);
 	}
 	
 	public void navigateTo(Container container, Transition transition) {
-		containerManager.setTransition(transition);
-		containerManager.navigateTo(container);
+		containerManager.navigateTo(container, transition);
 	}
 	
 	public void navigateTo(String textId, Transition transition) {
-		containerManager.setTransition(transition);
-		containerManager.navigateTo(containerManager.get(textId));
+		containerManager.navigateTo(textId, transition);
 	}
 	
 	public void navigateTo(int id, Transition transition) {
-		containerManager.setTransition(transition);
-		containerManager.navigateTo(containerManager.get(id));
+		containerManager.navigateTo(id, transition);
 	}
 
 	public boolean isTransitionEnabled() {
@@ -279,105 +276,74 @@ public final class UIHost extends View {
 		}
 			
 		public void add(Container container) {
-			Objects.requireNonNull(container,"container");
-			
-			if (list.contains(container)) {
-				throw new DuplicateItemException("Container already added");
-			}
-			
-			if (current == null) {
-				current = container;
-			}
-			
-			container.setConstrainDimensionsEnabled(true);
-			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
-			
-			list.add(container);
+			addInternal(container);
+		}
+		
+		public void add(LayoutManager layoutManager) {
+			addInternal(new Container(layoutManager));
+		}
+		
+		public void add(LayoutManager layoutManager, String textId) {
+			addInternal((Container) new Container(layoutManager).setTextId(textId));
+		}
+		
+		public void add(LayoutManager layoutManager, int id) {
+			addInternal((Container) new Container(layoutManager).setId(id));
 		}
 		
 		public void remove(Container container) {
-			if (transitionManager.isActivated()) {
-				if (current == container || previous == container) {
-					throw new IllegalStateException("Cannot remove container when transition of containers activated");
-				}
-			}
-			
-			Objects.requireNonNull(container,"container");
-			
-			if (!list.contains(container)) {
-				throw new NoSuchElementException("Container not found");
-			}
-			
-			if (current == container) {
-				current = null;
-			}
-			
-			if (previous == container) {
-				previous = null;
-			}
-			
-			list.remove(container);
+			removeInternal(container);
+		}
+		
+		public void remove(String textId) {
+			removeInternal(getInternal(textId));
+		}
+		
+		public void remove(int id) {
+			removeInternal(getInternal(id));
 		}
 		
 		public Container find(String textId) {
-			Objects.requireNonNull(textId,"textId");
-			
-			for(int i = 0; i < list.size(); i++) {
-				final var c = list.get(i);
-				if(c.getTextId().equals(textId)) {
-					return c;
-				}
-			}
-			
-			return null;
+			return findInternal(textId);
 		}
 		
 		public Container find(int id) {
-			for(int i = 0; i < list.size(); i++) {
-				final var c = list.get(i);
-				if(c.getId() == id) {
-					return c;
-				}
-			}
-			
-			return null;
+			return findInternal(id);
 		}
 		
 		public Container get(String textId) {
-			final var c = find(textId);
-			
-			if(c == null) {
-				throw new NoSuchElementException("Container with text id: " + textId +" not found");
-			}
-			
-			return c;
+			return getInternal(textId);
 		}
 		
 		public Container get(int id) {
-			final var c = find(id);
-			
-			if(c == null) {
-				throw new NoSuchElementException("Container with id: " + id +" not found");
-			}
-			
-			return c;
+			return getInternal(id);
 		}
 		
 		public void navigateTo(Container container) {
-			Objects.requireNonNull(container,"container");
-			
-			if (!list.contains(container)) {
-				throw new NoSuchElementException("Container not found");
-			}
-			
-			if (current == container) {
-				throw new IllegalStateException("Cannot navigate to itself");
-			}
-			
-			previous = current;
-			current = container;
-			
-			transitionManager.activate();
+			navigateToInternal(container);
+		}
+		
+		public void navigateTo(String textId) {
+			navigateToInternal(getInternal(textId));
+		}
+		
+		public void navigateTo(int id) {
+			navigateToInternal(getInternal(id));
+		}
+		
+		public void navigateTo(Container container, Transition transition) {
+			setTransition(transition);
+			navigateToInternal(container);
+		}
+		
+		public void navigateTo(String textId, Transition transition) {
+			setTransition(transition);
+			navigateToInternal(getInternal(textId));
+		}
+		
+		public void navigateTo(int id, Transition transition) {
+			setTransition(transition);
+			navigateToInternal(getInternal(id));
 		}
 		
 		public void keyEvent(KeyEvent keyEvent) {
@@ -422,7 +388,6 @@ public final class UIHost extends View {
 		}
 
 		public void onResize() {
-			
 			for (int i = 0; i < list.size(); i++) {
 				final var c = list.get(i);
 				final var minWidth = Math.min(ctx.width,c.getMinWidth());
@@ -451,6 +416,108 @@ public final class UIHost extends View {
 				}
 			}
 			
+		}
+		
+		private void addInternal(Container container) {
+			Objects.requireNonNull(container,"container");
+			
+			if (list.contains(container)) {
+				throw new DuplicateItemException("Container already added");
+			}
+			
+			if (current == null) {
+				current = container;
+			}
+			
+			container.setConstrainDimensionsEnabled(true);
+			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
+			
+			list.add(container);		
+		}
+		
+		private void removeInternal(Container container) {
+			if (transitionManager.isActivated()) {
+				if (current == container || previous == container) {
+					throw new IllegalStateException("Cannot remove container when transition of containers activated");
+				}
+			}
+			
+			Objects.requireNonNull(container,"container");
+			
+			if (!list.contains(container)) {
+				throw new NoSuchElementException("Container not found");
+			}
+			
+			if (current == container) {
+				current = null;
+			}
+			
+			if (previous == container) {
+				previous = null;
+			}
+			
+			list.remove(container);
+		}
+		
+		private Container findInternal(String textId) {
+			Objects.requireNonNull(textId,"textId");
+			
+			for(int i = 0; i < list.size(); i++) {
+				final var c = list.get(i);
+				if(c.getTextId().equals(textId)) {
+					return c;
+				}
+			}
+			
+			return null;
+		}
+		
+		private Container findInternal(int id) {
+			for(int i = 0; i < list.size(); i++) {
+				final var c = list.get(i);
+				if(c.getId() == id) {
+					return c;
+				}
+			}
+			
+			return null;
+		}
+		
+		private Container getInternal(String textId) {
+			final var c = findInternal(textId);
+			
+			if(c == null) {
+				throw new NoSuchElementException("Container with text id: " + textId +" not found");
+			}
+			
+			return c;
+		}
+		
+		private Container getInternal(int id) {
+			final var c = find(id);
+			
+			if(c == null) {
+				throw new NoSuchElementException("Container with id: " + id +" not found");
+			}
+			
+			return c;
+		}
+		
+		private void navigateToInternal(Container container) {
+			Objects.requireNonNull(container,"container");
+			
+			if (!list.contains(container)) {
+				throw new NoSuchElementException("Container not found");
+			}
+			
+			if (current == container) {
+				throw new IllegalStateException("Cannot navigate to itself");
+			}
+			
+			previous = current;
+			current = container;
+			
+			transitionManager.activate();
 		}
 		
 		private final class TransitionManager extends View {
@@ -490,9 +557,7 @@ public final class UIHost extends View {
 					previousImage.draw();
 				}
 			}
-			
-			
-			
+
 			public void update() {
 				if (!enabled) {
 					activated = false;

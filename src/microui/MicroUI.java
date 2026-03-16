@@ -92,69 +92,33 @@ public final class MicroUI {
 	
 	// == PUBLIC FACADE API == //
 	
-	/**
-	 * Adds a container to the UI management system.
-	 *
-	 * @param container the container to add.
-	 * @return the added container for chaining.
-	 */
-	public Container addContainer(Container container) {
+	public void addContainer(Container container) {
 		uiHost.addContainer(container);
-		
-		return container;
 	}
 	
-	/**
-	 * Creates a new container with the given layout manager and adds it to the UI system.
-	 *
-	 * @param layoutManager the layout manager for the new container.
-	 * @return the newly created container.
-	 */
-	public Container addContainer(LayoutManager layoutManager) {
-		final var c = new Container(layoutManager);
-		uiHost.addContainer(c);
-		return c;
+	public void addContainer(LayoutManager layoutManager) {
+		uiHost.addContainer(layoutManager);
 	}
 	
-	/**
-	 * Creates a new container with the given layout manager and string identifier,
-	 * and adds it to the UI system.
-	 *
-	 * @param layoutManager the layout manager for the new container.
-	 * @param textId        the string identifier for the container.
-	 * @return the newly created container.
-	 */
-	public Container addContainer(LayoutManager layoutManager, String textId) {
-		final var c = new Container(layoutManager);
-		c.setTextId(textId);
-		uiHost.addContainer(c);
-		return c;
+	public void addContainer(LayoutManager layoutManager, String textId) {
+		uiHost.addContainer(layoutManager, textId);
 	}
 
-	public Container addContainer(LayoutManager layoutManager, int id) {
-		final var c = new Container(layoutManager);
-		c.setId(id);
-		uiHost.addContainer(c);
-		return c;
+	public void addContainer(LayoutManager layoutManager, int id) {
+		uiHost.addContainer(layoutManager, id);
 	}
 	
-	public MicroUI removeContainer(Container container) {
+	public void removeContainer(Container container) {
 		uiHost.removeContainer(container);
-		
-		return this;
 	}
 	
 
-	public MicroUI removeContainer(String textId) {
+	public void removeContainer(String textId) {
 		uiHost.removeContainer(textId);
-		
-		return this;
 	}
 	
-	public MicroUI removeContainer(int id) {
+	public void removeContainer(int id) {
 		uiHost.removeContainer(id);
-		
-		return this;
 	}
 	
 	public Container getContainer(String textId) {
