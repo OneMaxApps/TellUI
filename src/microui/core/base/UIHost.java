@@ -1,6 +1,10 @@
 package microui.core.base;
 
 import static microui.util.MathUtils.convert;
+import static processing.core.PConstants.DOWN;
+import static processing.core.PConstants.LEFT;
+import static processing.core.PConstants.RIGHT;
+import static processing.core.PConstants.UP;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,11 +117,23 @@ public final class UIHost extends View {
 		containerManager.navigateTo(container, transition);
 	}
 	
+	public void navigateTo(Container container, int transition) {
+		containerManager.navigateTo(container, transition);
+	}
+	
 	public void navigateTo(String textId, Transition transition) {
 		containerManager.navigateTo(textId, transition);
 	}
 	
+	public void navigateTo(String textId, int transition) {
+		containerManager.navigateTo(textId, transition);
+	}
+	
 	public void navigateTo(int id, Transition transition) {
+		containerManager.navigateTo(id, transition);
+	}
+	
+	public void navigateTo(int id, int transition) {
 		containerManager.navigateTo(id, transition);
 	}
 
@@ -336,12 +352,27 @@ public final class UIHost extends View {
 			navigateToInternal(container);
 		}
 		
+		public void navigateTo(Container container, int transition) {
+			setTransition(transition);
+			navigateToInternal(container);
+		}
+		
 		public void navigateTo(String textId, Transition transition) {
 			setTransition(transition);
 			navigateToInternal(getInternal(textId));
 		}
 		
+		public void navigateTo(String textId, int transition) {
+			setTransition(transition);
+			navigateToInternal(getInternal(textId));
+		}
+		
 		public void navigateTo(int id, Transition transition) {
+			setTransition(transition);
+			navigateToInternal(getInternal(id));
+		}
+		
+		public void navigateTo(int id, int transition) {
 			setTransition(transition);
 			navigateToInternal(getInternal(id));
 		}
@@ -368,6 +399,10 @@ public final class UIHost extends View {
 		// == TRANSITION MANAGER FACADE API == //
 		
 		public void setTransition(Transition transition) {
+			transitionManager.setTransition(transition);
+		}
+		
+		public void setTransition(int transition) {
 			transitionManager.setTransition(transition);
 		}
 		
@@ -642,6 +677,26 @@ public final class UIHost extends View {
 			
 			public void setTransition(Transition transition) {
 				this.transition = Objects.requireNonNull(transition,"transition");
+			}
+			
+			public void setTransition(int transition) {
+				switch (transition) {
+					case LEFT :
+						this.transition = Transition.SLIDE_LEFT;
+						break;
+						
+					case RIGHT :
+						this.transition = Transition.SLIDE_RIGHT;
+						break;
+						
+					case UP :
+						this.transition = Transition.SLIDE_UP;
+						break;
+						
+					case DOWN :
+						this.transition = Transition.SLIDE_DOWN;
+						break;
+				}
 			}
 
 			public final boolean isEnabled() {

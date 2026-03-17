@@ -149,13 +149,31 @@ public final class MicroUI {
 		return this;
 	}
 	
+	public MicroUI navigateTo(Container container, int transition) {
+		uiHost.navigateTo(container,transition);
+		
+		return this;
+	}
+	
 	public MicroUI navigateTo(String textId, Transition transition) {
 		uiHost.navigateTo(textId,transition);
 		
 		return this;
 	}
 	
+	public MicroUI navigateTo(String textId, int transition) {
+		uiHost.navigateTo(textId,transition);
+		
+		return this;
+	}
+	
 	public MicroUI navigateTo(int id, Transition transition) {
+		uiHost.navigateTo(id,transition);
+		
+		return this;
+	}
+	
+	public MicroUI navigateTo(int id, int transition) {
 		uiHost.navigateTo(id,transition);
 		
 		return this;

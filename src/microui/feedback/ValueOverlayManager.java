@@ -289,6 +289,7 @@ public final class ValueOverlayManager extends View {
 			return source != null && source.isContentPrepared();
 		};
 		
+		text.setBounds(0, 0, 0, 0);
 		text.setConstrainDimensionsEnabled(false);
 		text.setId(IGNORE_INTERNAL_COMPONENT_ID);
 		
