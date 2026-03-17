@@ -71,54 +71,50 @@ public final class MicroUI {
 		return ctx;
 	}
 	
-	/**
-	 * Initializes the MicroUI library with the given Processing sketch context.
-	 * <p>
-	 * This method must be called once before using any MicroUI functionality.
-	 * Subsequent calls return the existing instance.
-	 * </p>
-	 *
-	 * @param pApplet the Processing sketch context, cannot be null.
-	 * @return the singleton MicroUI instance.
-	 * @throws NullPointerException if pApplet is null.
-	 */
 	public static MicroUI init(PApplet pApplet) {
-		if (instance == null) {
-			instance = new MicroUI(pApplet);
+		if (instance != null) {
+			throw new IllegalStateException("MicroUI already initialized");
 		}
+		
+		instance = new MicroUI(pApplet);
 		
 		return instance;
 	}
 	
 	// == PUBLIC FACADE API == //
 	
-	public void addContainer(Container container) {
-		uiHost.addContainer(container);
+	public Container addContainer(Container container) {
+		return uiHost.addContainer(container);
 	}
 	
-	public void addContainer(LayoutManager layoutManager) {
-		uiHost.addContainer(layoutManager);
+	public Container addContainer(LayoutManager layoutManager) {
+		return uiHost.addContainer(layoutManager);
 	}
 	
-	public void addContainer(LayoutManager layoutManager, String textId) {
-		uiHost.addContainer(layoutManager, textId);
+	public Container addContainer(LayoutManager layoutManager, String textId) {
+		return uiHost.addContainer(layoutManager, textId);
 	}
 
-	public void addContainer(LayoutManager layoutManager, int id) {
-		uiHost.addContainer(layoutManager, id);
+	public Container addContainer(LayoutManager layoutManager, int id) {
+		return uiHost.addContainer(layoutManager, id);
 	}
 	
-	public void removeContainer(Container container) {
+	public MicroUI removeContainer(Container container) {
 		uiHost.removeContainer(container);
+		
+		return this;
 	}
 	
-
-	public void removeContainer(String textId) {
+	public MicroUI removeContainer(String textId) {
 		uiHost.removeContainer(textId);
+		
+		return this;
 	}
 	
-	public void removeContainer(int id) {
+	public MicroUI removeContainer(int id) {
 		uiHost.removeContainer(id);
+		
+		return this;
 	}
 	
 	public Container getContainer(String textId) {

@@ -61,22 +61,22 @@ public final class UIHost extends View {
 	
 	// == CONTAINER MANAGER API == // 
 	
-	public void addContainer(Container container) {
-		containerManager.add(container);
+	public Container addContainer(Container container) {
+		return containerManager.add(container);
 	}
 	
-	public void addContainer(LayoutManager layoutManager) {
-		containerManager.add(layoutManager);
+	public Container addContainer(LayoutManager layoutManager) {
+		return containerManager.add(layoutManager);
 	}
 	
-	public void addContainer(LayoutManager layoutManager, String textId) {
-		containerManager.add(layoutManager, textId);
+	public Container addContainer(LayoutManager layoutManager, String textId) {
+		return containerManager.add(layoutManager, textId);
 	}
 	
-	public void addContainer(LayoutManager layoutManager, int id) {
-		containerManager.add(layoutManager, id);
+	public Container addContainer(LayoutManager layoutManager, int id) {
+		return containerManager.add(layoutManager, id);
 	}
-
+	
 	public void removeContainer(Container container) {
 		containerManager.remove(container);
 	}
@@ -275,20 +275,20 @@ public final class UIHost extends View {
 			}
 		}
 			
-		public void add(Container container) {
-			addInternal(container);
+		public Container add(Container container) {
+			return addInternal(container);
 		}
 		
-		public void add(LayoutManager layoutManager) {
-			addInternal(new Container(layoutManager));
+		public Container add(LayoutManager layoutManager) {
+			return addInternal(new Container(layoutManager));
 		}
 		
-		public void add(LayoutManager layoutManager, String textId) {
-			addInternal((Container) new Container(layoutManager).setTextId(textId));
+		public Container add(LayoutManager layoutManager, String textId) {
+			return addInternal((Container) new Container(layoutManager).setTextId(textId));
 		}
 		
-		public void add(LayoutManager layoutManager, int id) {
-			addInternal((Container) new Container(layoutManager).setId(id));
+		public Container add(LayoutManager layoutManager, int id) {
+			return addInternal((Container) new Container(layoutManager).setId(id));
 		}
 		
 		public void remove(Container container) {
@@ -418,7 +418,7 @@ public final class UIHost extends View {
 			
 		}
 		
-		private void addInternal(Container container) {
+		private Container addInternal(Container container) {
 			Objects.requireNonNull(container,"container");
 			
 			if (list.contains(container)) {
@@ -432,7 +432,9 @@ public final class UIHost extends View {
 			container.setConstrainDimensionsEnabled(true);
 			container.setMinMaxSize(ctx.width,ctx.height,ctx.width,ctx.height);
 			
-			list.add(container);		
+			list.add(container);
+			
+			return container;
 		}
 		
 		private void removeInternal(Container container) {
