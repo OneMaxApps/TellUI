@@ -11,20 +11,9 @@ import microui.util.Debugger;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-/**
- * Core initialization and metadata class for the MicroUI library.
- * <p>
- * This singleton-style class provides the foundational setup for MicroUI
- * components by establishing a connection to the Processing sketch context.
- * <b>Must be initialized</b> before using any MicroUI functionality.
- * </p>
- * 
- * @see #setContext(PApplet)
- * @see #getContext()
- */
 public final class MicroUI {
 	private static MicroUI instance;
-	private static PApplet ctx;
+	private static PApplet context;
 
 	private static final int MAJOR = 1;
 	private static final int MINOR = 0;
@@ -36,39 +25,23 @@ public final class MicroUI {
 	
 	
 	private MicroUI(PApplet pApplet) {
-		setContext(pApplet);
-		
+		requireNonNull(pApplet, "pApplet");
+		context = pApplet;
 		uiHost = UIHost.getInstance();
 	}
 	
-	/**
-	 * Returns the current version of the MicroUI library.
-	 * 
-	 * @return the version string in format "MAJOR.MINOR.PATCH"
-	 */
-	public static String getVersion() {
-		return VERSION;
-	}
 	
-	/**
-	 * Returns the Processing sketch context for MicroUI.
-	 * <p>
-	 * This method provides access to the initialized PApplet instance, which is
-	 * required by MicroUI components for rendering and Processing API access.
-	 * </p>
-	 * 
-	 * @return the initialized PApplet instance
-	 * @throws IllegalStateException if {@link #setContext(PApplet)} has not been
-	 *                               called
-	 * 
-	 * @see #setContext(PApplet)
-	 */
+	// == PUBLIC API == //
 	public static PApplet getContext() {
-		if (ctx == null) {
+		if (context == null) {
 			throw new IllegalStateException("Context (PApplet) for MicroUI is not initialized");
 		}
 
-		return ctx;
+		return context;
+	}
+
+	public static String getVersion() {
+		return VERSION;
 	}
 	
 	public static MicroUI init(PApplet pApplet) {
@@ -80,9 +53,25 @@ public final class MicroUI {
 		
 		return instance;
 	}
+
+	public MicroUI setToast(String text, long ms) {
+		uiHost.setToast(text, ms);
+		return this;
+	}
+
+	public MicroUI setToast(String text) {
+		uiHost.setToast(text);
+		return this;
+	}
+
+	public MicroUI setDebugEnabled(boolean enabled) {
+		Debugger.setEnabled(enabled);
+		
+		return this;
+	}
 	
-	// == PUBLIC FACADE API == //
 	
+	// == CONTAINER MANAGER API == //
 	public Container addContainer(Container container) {
 		return uiHost.addContainer(container);
 	}
@@ -123,6 +112,14 @@ public final class MicroUI {
 	
 	public Container getContainer(int id) {
 		return uiHost.getContainer(id);
+	}
+	
+	public Container findContainer(String textId) {
+		return uiHost.findContainer(textId);
+	}
+	
+	public Container findContainer(int id) {
+		return uiHost.findContainer(id);
 	}
 	
 	public MicroUI navigateTo(Container container) {
@@ -188,6 +185,9 @@ public final class MicroUI {
 		return this;
 	}
 	
+	
+	// == SURFACE API == //
+	
 	public MicroUI setSurfaceIcon(PImage icon) {
 		uiHost.setIcon(icon);
 		return this;
@@ -216,36 +216,5 @@ public final class MicroUI {
 	public MicroUI removeOnSurfaceResizeListener(Listener listener) {
 		uiHost.removeOnSurfaceResizeListener(listener);
 		return this;
-	}
-	
-	public MicroUI setToast(String text, long ms) {
-		uiHost.setToast(text, ms);
-		return this;
-	}
-
-	public MicroUI setToast(String text) {
-		uiHost.setToast(text);
-		return this;
-	}
-
-	/**
-	 * Enables or disables debug mode for the UI system.
-	 *
-	 * @param enabled true to enable debug output, false to disable.
-	 * @return this MicroUI instance for chaining.
-	 */
-	public MicroUI setDebugEnabled(boolean enabled) {
-		Debugger.setEnabled(enabled);
-		
-		return this;
-	}
-
-	// == INTERNAL API == //
-	private void setContext(PApplet context) {
-		requireNonNull(context, "context");
-
-		if (MicroUI.ctx == null) {
-			MicroUI.ctx = context;
-		}
 	}
 }

@@ -101,6 +101,14 @@ public final class UIHost extends View {
 		return containerManager.get(id);
 	}
 	
+	public Container findContainer(String textId) {
+		return containerManager.find(textId);
+	}
+	
+	public Container findContainer(int id) {
+		return containerManager.find(id);
+	}
+	
 	public void navigateTo(Container container) {
 		containerManager.navigateTo(container);
 	}
@@ -696,6 +704,8 @@ public final class UIHost extends View {
 					case DOWN :
 						this.transition = Transition.SLIDE_DOWN;
 						break;
+					default:
+						throw new IllegalArgumentException("Constant must be only LEFT, RIGHT, UP or DOWN");
 				}
 			}
 
