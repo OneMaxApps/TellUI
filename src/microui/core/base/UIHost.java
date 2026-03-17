@@ -539,7 +539,7 @@ public final class UIHost extends View {
 		}
 		
 		private Container getInternal(int id) {
-			final var c = find(id);
+			final var c = findInternal(id);
 			
 			if(c == null) {
 				throw new NoSuchElementException("Container with id: " + id +" not found");
