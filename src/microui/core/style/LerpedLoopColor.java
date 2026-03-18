@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * @see AbstractLerpedColor
  */
 public class LerpedLoopColor extends AbstractLerpedColor {
-
+	private static final float DEFAULT_SPEED_OF_PROGRESS = .01f;
 	private boolean loopEnabled;
 
 	/**
@@ -36,13 +36,23 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	public LerpedLoopColor(AbstractColor start, AbstractColor end) {
 		super(start, end);
 		setLoopEnabled(true);
-		getAnimator().setSpeed(.01f);
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
 	}
 	
+	/**
+	 * Constructs a new looping interpolated color with the specified start and end
+	 * color suppliers. Loop mode is enabled by default with an animation speed of 0.01.
+	 * The suppliers are called each time the color is evaluated, allowing the
+	 * start/end colors to change dynamically over time.
+	 * 
+	 * @param start supplier for the starting color of the loop sequence, cannot be null
+	 * @param end   supplier for the ending color of the loop sequence, cannot be null
+	 * @throws NullPointerException if either supplier is null
+	 */
 	public LerpedLoopColor(Supplier<AbstractColor> start, Supplier<AbstractColor> end) {
 		super(start, end);
 		setLoopEnabled(true);
-		getAnimator().setSpeed(.01f);
+		getAnimator().setSpeed(DEFAULT_SPEED_OF_PROGRESS);
 	}
 
 	/**

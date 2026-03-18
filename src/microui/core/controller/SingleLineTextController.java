@@ -29,10 +29,11 @@ public final class SingleLineTextController {
 	private InputFilter inputFilter;
 	
 	/**
-	 * Constructs a SingleLineTextController with initial text.
-	 * 
-	 * @param text the initial text content (cannot be null)
-	 * @throws NullPointerException if text is null
+	 * Constructs a new text controller with the specified initial text and input filter.
+	 *
+	 * @param text        the initial text content (must not be {@code null})
+	 * @param inputFilter the filter that defines allowed characters (must not be {@code null})
+	 * @throws NullPointerException if either argument is {@code null}
 	 */
 	public SingleLineTextController(final String text, InputFilter inputFilter) {
 		setInputFilter(inputFilter);
@@ -42,16 +43,30 @@ public final class SingleLineTextController {
 	}
 
 	/**
-	 * Constructs a SingleLineTextController with empty initial text.
+	 * Constructs a new text controller with an empty initial text and the specified input filter.
+	 *
+	 * @param inputFilter the filter that defines allowed characters (must not be {@code null})
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
 	 */
 	public SingleLineTextController(InputFilter inputFilter) {
 		this("",inputFilter);
 	}
 
+	/**
+	 * Returns the current input filter used for character validation.
+	 *
+	 * @return the input filter (never {@code null})
+	 */
 	public InputFilter getInputFilter() {
 		return inputFilter;
 	}
 
+	/**
+	 * Sets the input filter used for character validation.
+	 *
+	 * @param inputFilter the new input filter (must not be {@code null})
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
+	 */
 	public void setInputFilter(InputFilter inputFilter) {
 		this.inputFilter = requireNonNull(inputFilter,"inputFilter");
 	}
@@ -234,8 +249,7 @@ public final class SingleLineTextController {
 	}
 
 	/**
-	 * Validates if a character is allowed based on standard validation rules. Valid
-	 * characters include letters, digits, and standard special characters.
+	 * Validates if a character is allowed based on the current input filter.
 	 * 
 	 * @param ch the character to validate
 	 * @return true if the character is valid, false otherwise

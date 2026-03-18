@@ -135,10 +135,22 @@ public final class TextField extends Component implements KeyPressable {
 		prepareBoundsInCenter();
 	}
 	
+	/**
+	 * Returns the current input filter used for character validation.
+	 *
+	 * @return the input filter (never {@code null})
+	 */
 	public InputFilter getInputFilter() {
 		return text.controller.getInputFilter();
 	}
 
+	/**
+	 * Sets the input filter used for character validation.
+	 *
+	 * @param inputFilter the new input filter (must not be {@code null})
+	 * @return this TextField instance for method chaining
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
+	 */
 	public TextField setInputFilter(InputFilter inputFilter) {
 		text.controller.setInputFilter(inputFilter);
 		
@@ -251,10 +263,22 @@ public final class TextField extends Component implements KeyPressable {
 		return this;
 	}
 
+	/**
+	 * Returns the current filter mode used for character validation.
+	 *
+	 * @return the filter mode (never {@code null})
+	 */
 	public FilterMode getFilterMode() {
 		return text.getFilterMode();
 	}
 
+	/**
+	 * Sets the filter mode for character validation.
+	 *
+	 * @param validationMode the new filter mode (must not be {@code null})
+	 * @return this TextField instance for method chaining
+	 * @throws NullPointerException if {@code validationMode} is {@code null}
+	 */
 	public TextField setFilterModeMode(FilterMode validationMode) {
 		text.setFilterMode(validationMode);
 		return this;

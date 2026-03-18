@@ -12,5 +12,4 @@ microui.core.style.theme
 microui.event
 microui.feedback
 microui.layout
-microui.service
 microui.util

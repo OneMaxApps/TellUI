@@ -30,6 +30,10 @@ import processing.core.PImage;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
+/**
+ * Manages the core UI lifecycle, including overlay information, container manager,
+ * toast system, transition system, and surface control.
+ */
 public final class UIHost extends View {
 	private static UIHost instance;
 	private final ContainerManager containerManager;
@@ -54,6 +58,11 @@ public final class UIHost extends View {
 		new HostBridge(this);
 	}
 
+	/**
+	 * Returns the singleton instance of UIHost.
+	 * 
+	 * @return the instance of UIHost
+	 */
 	public static UIHost getInstance() {
 		if (instance == null) {
 			instance = new UIHost();
@@ -65,98 +74,282 @@ public final class UIHost extends View {
 	
 	// == CONTAINER MANAGER API == // 
 	
+	/**
+	 * Adds a container to the container manager.
+	 *
+	 * @param container the container to add (must not be {@code null})
+	 * @return the added container
+	 * @throws NullPointerException   if {@code container} is {@code null}
+	 * @throws DuplicateItemException if the container has already been added
+	 */
 	public Container addContainer(Container container) {
 		return containerManager.add(container);
 	}
 	
+	/**
+	 * Creates and adds a new container with the specified layout manager.
+	 *
+	 * @param layoutManager the layout manager for the new container (must not be {@code null})
+	 * @return the newly created container
+	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 */
 	public Container addContainer(LayoutManager layoutManager) {
 		return containerManager.add(layoutManager);
 	}
 	
+	/**
+	 * Creates and adds a new container with the specified layout manager and text identifier.
+	 *
+	 * @param layoutManager the layout manager for the new container (must not be {@code null})
+	 * @param textId        the text identifier for the container
+	 * @return the newly created container with the given {@code textId}
+	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 */
 	public Container addContainer(LayoutManager layoutManager, String textId) {
 		return containerManager.add(layoutManager, textId);
 	}
 	
+	/**
+	 * Creates and adds a new container with the specified layout manager and numeric identifier.
+	 *
+	 * @param layoutManager the layout manager for the new container (must not be {@code null})
+	 * @param id            the numeric identifier for the container
+	 * @return the newly created container with the given {@code id}
+	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		return containerManager.add(layoutManager, id);
 	}
 	
+	/**
+	 * Removes the specified container from the container manager.
+	 *
+	 * @param container the container to remove (must not be {@code null})
+	 * @throws NullPointerException   if {@code container} is {@code null}
+	 * @throws NoSuchElementException if the container is not found
+	 * @throws IllegalStateException  if the container is currently involved in a transition
+	 */
 	public void removeContainer(Container container) {
 		containerManager.remove(container);
 	}
 	
+	/**
+	 * Removes the container with the specified text identifier.
+	 *
+	 * @param textId the text identifier of the container to remove (must not be {@code null})
+	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws NoSuchElementException if no container with the given {@code textId} exists
+	 * @throws IllegalStateException  if the container is currently involved in a transition
+	 */
 	public void removeContainer(String textId) {
 		containerManager.remove(textId);
 	}
 	
+	/**
+	 * Removes the container with the specified numeric identifier.
+	 *
+	 * @param id the numeric identifier of the container to remove
+	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 * @throws IllegalStateException  if the container is currently involved in a transition
+	 */
 	public void removeContainer(int id) {
 		containerManager.remove(id);
 	}
 	
+	/**
+	 * Retrieves the container with the specified text identifier.
+	 *
+	 * @param textId the text identifier of the container (must not be {@code null})
+	 * @return the container with the given {@code textId}
+	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws NoSuchElementException if no container with the given {@code textId} exists
+	 */
 	public Container getContainer(String textId) {
 		return containerManager.get(textId);
 	}
 	
+	/**
+	 * Retrieves the container with the specified numeric identifier.
+	 *
+	 * @param id the numeric identifier of the container
+	 * @return the container with the given {@code id}
+	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 */
 	public Container getContainer(int id) {
 		return containerManager.get(id);
 	}
 	
+	/**
+	 * Finds a container by its text identifier. Returns {@code null} if not found.
+	 *
+	 * @param textId the text identifier of the container (may be {@code null})
+	 * @return the container with the given {@code textId}, or {@code null} if none found
+	 */
 	public Container findContainer(String textId) {
 		return containerManager.find(textId);
 	}
 	
+	/**
+	 * Finds a container by its numeric identifier. Returns {@code null} if not found.
+	 *
+	 * @param id the numeric identifier of the container
+	 * @return the container with the given {@code id}, or {@code null} if none found
+	 */
 	public Container findContainer(int id) {
 		return containerManager.find(id);
 	}
 	
+	/**
+	 * Navigates to the specified container with the default transition.
+	 *
+	 * @param container the target container (must not be {@code null})
+	 * @throws NullPointerException   if {@code container} is {@code null}
+	 * @throws NoSuchElementException if the container is not registered
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(Container container) {
 		containerManager.navigateTo(container);
 	}
 	
+	/**
+	 * Navigates to the container with the specified text identifier using the default transition.
+	 *
+	 * @param textId the text identifier of the target container (must not be {@code null})
+	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws NoSuchElementException if no container with the given {@code textId} exists
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(String textId) {
 		containerManager.navigateTo(textId);
 	}
 	
+	/**
+	 * Navigates to the container with the specified numeric identifier using the default transition.
+	 *
+	 * @param id the numeric identifier of the target container
+	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(int id) {
 		containerManager.navigateTo(id);
 	}
 	
+	/**
+	 * Navigates to the specified container using the given transition.
+	 *
+	 * @param container  the target container (must not be {@code null})
+	 * @param transition the transition effect to use (must not be {@code null})
+	 * @throws NullPointerException   if {@code container} or {@code transition} is {@code null}
+	 * @throws NoSuchElementException if the container is not registered
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(Container container, Transition transition) {
 		containerManager.navigateTo(container, transition);
 	}
 	
+	/**
+	 * Navigates to the specified container using a predefined transition identified by a constant.
+	 * The constant must be one of {@code LEFT}, {@code RIGHT}, {@code UP}, or {@code DOWN}
+	 * from {@link processing.core.PConstants}.
+	 *
+	 * @param container  the target container (must not be {@code null})
+	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
+	 * @throws NullPointerException     if {@code container} is {@code null}
+	 * @throws IllegalArgumentException if the transition constant is invalid
+	 * @throws NoSuchElementException   if the container is not registered
+	 * @throws IllegalStateException    if trying to navigate to the currently active container
+	 */
 	public void navigateTo(Container container, int transition) {
 		containerManager.navigateTo(container, transition);
 	}
 	
+	/**
+	 * Navigates to the container with the specified text identifier using the given transition.
+	 *
+	 * @param textId     the text identifier of the target container (must not be {@code null})
+	 * @param transition the transition effect to use (must not be {@code null})
+	 * @throws NullPointerException   if {@code textId} or {@code transition} is {@code null}
+	 * @throws NoSuchElementException if no container with the given {@code textId} exists
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(String textId, Transition transition) {
 		containerManager.navigateTo(textId, transition);
 	}
 	
+	/**
+	 * Navigates to the container with the specified text identifier using a predefined transition constant.
+	 *
+	 * @param textId     the text identifier of the target container (must not be {@code null})
+	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
+	 * @throws NullPointerException     if {@code textId} is {@code null}
+	 * @throws IllegalArgumentException if the transition constant is invalid
+	 * @throws NoSuchElementException   if no container with the given {@code textId} exists
+	 * @throws IllegalStateException    if trying to navigate to the currently active container
+	 */
 	public void navigateTo(String textId, int transition) {
 		containerManager.navigateTo(textId, transition);
 	}
 	
+	/**
+	 * Navigates to the container with the specified numeric identifier using the given transition.
+	 *
+	 * @param id         the numeric identifier of the target container
+	 * @param transition the transition effect to use (must not be {@code null})
+	 * @throws NullPointerException   if {@code transition} is {@code null}
+	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 */
 	public void navigateTo(int id, Transition transition) {
 		containerManager.navigateTo(id, transition);
 	}
 	
+	/**
+	 * Navigates to the container with the specified numeric identifier using a predefined transition constant.
+	 *
+	 * @param id         the numeric identifier of the target container
+	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
+	 * @throws IllegalArgumentException if the transition constant is invalid
+	 * @throws NoSuchElementException   if no container with the given {@code id} exists
+	 * @throws IllegalStateException    if trying to navigate to the currently active container
+	 */
 	public void navigateTo(int id, int transition) {
 		containerManager.navigateTo(id, transition);
 	}
 
+	/**
+	 * Returns whether transitions are enabled globally.
+	 *
+	 * @return {@code true} if transitions are enabled, {@code false} otherwise
+	 */
 	public boolean isTransitionEnabled() {
 		return containerManager.isTransitionEnabled();
 	}
 	
+	/**
+	 * Enables or disables transitions globally.
+	 *
+	 * @param enabled {@code true} to enable transitions, {@code false} to disable
+	 */
 	public void setTransitionEnabled(boolean enabled) {
 		containerManager.setTransitionEnabled(enabled);
 	}
 	
+	/**
+	 * Returns the current progress step used for transition animations.
+	 *
+	 * @return the progress step value (between 0 and 1)
+	 */
 	public float getTransitionProgressStep() {
 		return containerManager.getTransitionProgressStep();
 	}
 	
+	/**
+	 * Sets the progress step for transition animations.
+	 * The step determines how fast the transition progresses.
+	 *
+	 * @param step the progress step (must be between {@code MIN_PROGRESS_STEP} and {@code MAX_PROGRESS_STEP})
+	 * @throws IllegalArgumentException if {@code step} is out of bounds
+	 */
 	public void setTransitionProgressStep(float step) {
 		containerManager.setTransitionProgressStep(step);
 	}
@@ -164,28 +357,65 @@ public final class UIHost extends View {
 	
 	// == SURFACE API == //
 	
+	/**
+	 * Sets the icon for the application surface (window).
+	 *
+	 * @param icon the icon image (must not be {@code null})
+	 * @throws NullPointerException if {@code icon} is {@code null}
+	 */
 	public void setIcon(PImage icon) {
 		Objects.requireNonNull(icon,"icon");
 		ctx.getSurface().setIcon(icon);
 	}
 	
+	/**
+	 * Sets the title of the application surface (window).
+	 *
+	 * @param title the window title (must not be {@code null})
+	 * @throws NullPointerException if {@code title} is {@code null}
+	 */
 	public void setTitle(String title) {
 		Objects.requireNonNull(title,"title");
 		ctx.getSurface().setTitle(title);
 	}
 	
+	/**
+	 * Sets the location of the application surface on the screen.
+	 *
+	 * @param x the x-coordinate
+	 * @param y the y-coordinate
+	 */
 	public void setLocation(int x, int y) {
 		ctx.getSurface().setLocation(x, y);
 	}
 	
+	/**
+	 * Sets whether the application surface is resizable by the user.
+	 *
+	 * @param enabled {@code true} to allow resizing, {@code false} to disallow
+	 */
 	public void setResizable(boolean enabled) {
 		ctx.getSurface().setResizable(enabled);
 	}
 	
+	/**
+	 * Adds a listener to be notified when the surface is resized.
+	 *
+	 * @param listener the listener to add (must not be {@code null})
+	 * @throws NullPointerException   if {@code listener} is {@code null}
+	 * @throws DuplicateItemException if the listener has already been added
+	 */
 	public void addOnSurfaceResizeListener(Listener listener) {
 		surfaceResizeManager.addListener(listener);
 	}
 	
+	/**
+	 * Removes a previously added surface resize listener.
+	 *
+	 * @param listener the listener to remove (must not be {@code null})
+	 * @throws NullPointerException   if {@code listener} is {@code null}
+	 * @throws NoSuchElementException if the listener is not found
+	 */
 	public void removeOnSurfaceResizeListener(Listener listener) {
 		surfaceResizeManager.removeListener(listener);
 	}
@@ -194,10 +424,25 @@ public final class UIHost extends View {
 	
 	// == OVERLAY HINT MANAGER API == //
 	
+	/**
+	 * Shows a toast message for the specified duration.
+	 *
+	 * @param text the toast message (must not be {@code null} or blank)
+	 * @param ms   the duration in milliseconds (must be positive)
+	 * @throws NullPointerException     if {@code text} is {@code null}
+	 * @throws IllegalArgumentException if {@code text} is blank or {@code ms} is not positive
+	 */
 	public void setToast(String text, long ms) {
 		toastManager.setToast(text, ms);
 	}
 	
+	/**
+	 * Shows a toast message for the default duration (1000 ms).
+	 *
+	 * @param text the toast message (must not be {@code null} or blank)
+	 * @throws NullPointerException     if {@code text} is {@code null}
+	 * @throws IllegalArgumentException if {@code text} is blank
+	 */
 	public void setToast(String text) {
 		toastManager.setToast(text, 1000);
 	}
@@ -230,6 +475,9 @@ public final class UIHost extends View {
 		containerManager.mouseEvent(mouseEvent);
 	}
 
+	/**
+	 * Handles bridging with Processing
+	 */
 	public static final class HostBridge {
 		private final UIHost uiHost;
 		private static boolean allowed;
@@ -242,6 +490,10 @@ public final class UIHost extends View {
 			ctx.registerMethod("mouseEvent", this);
 		}
 		
+		/**
+		 * Called by Processing's draw loop. Do not call manually.
+		 * This method triggers the UI rendering and manages internal state.
+		 */
 		public void draw() {
 			allowed = true;
 			uiHost.draw();
@@ -252,21 +504,37 @@ public final class UIHost extends View {
 			}
 		}
 		
+		/**
+		 * Called by Processing on key events. Dispatches the event to the container manager.
+		 *
+		 * @param keyEvent the Processing key event
+		 */
 		public void keyEvent(KeyEvent keyEvent) {
 			uiHost.keyEvent(keyEvent);
 		}
 		
+		/**
+		 * Called by Processing on mouse events. Dispatches the event to the container manager.
+		 *
+		 * @param mouseEvent the Processing mouse event
+		 */
 		public void mouseEvent(MouseEvent mouseEvent) {
 			uiHost.mouseEvent(mouseEvent);
 		}
 		
+		/**
+		 * Checks whether it is allowed to call {@code draw()} on UIHost directly.
+		 * Used internally to prevent manual rendering.
+		 *
+		 * @return {@code true} if {@code draw()} is being called from the host bridge, {@code false} otherwise
+		 */
 		public static boolean isAllowed() {
 			return allowed;
 		}
 		
 	}
 	
-	public static final class ContainerManager extends View implements Scrollable, KeyPressable {
+	private static final class ContainerManager extends View implements Scrollable, KeyPressable {
 		private final List<Container> list;
 		private final TransitionManager transitionManager;
 		private Container current, previous;

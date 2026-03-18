@@ -121,56 +121,121 @@ public abstract class Component extends ContentView {
 		return event.isReleased();
 	}
 	
+	/**
+	 * Checks if the mouse is currently hovering over the component.
+	 *
+	 * @return true if hovered, false otherwise
+	 */
 	public boolean isHovered() {
 		return event.isHover();
 	}
 	
+	/**
+	 * Checks if the component is currently being dragged.
+	 *
+	 * @return true if dragging, false otherwise
+	 */
 	public boolean isDragging() {
 		return event.isDragging();
 	}
 	
 	// == EVENT QUERY METHODS ==
 	
+	/**
+	 * Returns whether a press event occurred in the current frame.
+	 *
+	 * @return true if a press event occurred, false otherwise
+	 */
 	public boolean isPressEvent() {
 		return event.isPress();
 	}
 
+	/**
+	 * Returns whether a release event occurred in the current frame.
+	 *
+	 * @return true if a release event occurred, false otherwise
+	 */
 	public boolean isReleaseEvent() {
 		return event.isRelease();
 	}
 	
+	/**
+	 * Returns whether a long press event occurred in the current frame.
+	 *
+	 * @return true if a long press event occurred, false otherwise
+	 */
 	public boolean isLongPressedEvent() {
 		return event.isLongPressed();
 	}
 
+	/**
+	 * Returns whether a mouse enter event occurred in the current frame.
+	 *
+	 * @return true if a mouse enter event occurred, false otherwise
+	 */
 	public boolean isMouseEnteredEvent() {
 		return event.isEnter();
 	}
 
+	/**
+	 * Returns whether a mouse leave event occurred in the current frame.
+	 *
+	 * @return true if a mouse leave event occurred, false otherwise
+	 */
 	public boolean isMouseLeftEvent() {
 		return event.isLeave();
 	}
 
+	/**
+	 * Returns whether a long mouse enter event occurred in the current frame.
+	 *
+	 * @return true if a long mouse enter event occurred, false otherwise
+	 */
 	public boolean isMouseEnteredLongEvent() {
 		return event.isEnterLong();
 	}
 
+	/**
+	 * Returns whether a long mouse leave event occurred in the current frame.
+	 *
+	 * @return true if a long mouse leave event occurred, false otherwise
+	 */
 	public boolean isMouseLeftLongEvent() {
 		return event.isLeaveLong();
 	}
 
+	/**
+	 * Returns whether a click event occurred in the current frame.
+	 *
+	 * @return true if a click event occurred, false otherwise
+	 */
 	public boolean isClickedEvent() {
 		return event.isClicked();
 	}
 
+	/**
+	 * Returns whether a double‑click event occurred in the current frame.
+	 *
+	 * @return true if a double‑click event occurred, false otherwise
+	 */
 	public boolean isDoubleClickedEvent() {
 		return event.isDoubleClicked();
 	}
 
+	/**
+	 * Returns whether a drag start event occurred in the current frame.
+	 *
+	 * @return true if a drag start event occurred, false otherwise
+	 */
 	public boolean isDragStartedEvent() {
 		return event.isDragStarted();
 	}
 
+	/**
+	 * Returns whether a drag end event occurred in the current frame.
+	 *
+	 * @return true if a drag end event occurred, false otherwise
+	 */
 	public boolean isDragEndedEvent() {
 		return event.isDragEnd();
 	}

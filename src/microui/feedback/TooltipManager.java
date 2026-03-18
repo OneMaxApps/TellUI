@@ -6,6 +6,12 @@ import microui.core.base.View;
 import microui.util.Environment;
 import microui.util.MathUtils;
 
+/**
+ * Manages the display of tooltips. This is a singleton class responsible for
+ * rendering a tooltip near the mouse cursor. On Android, tooltips are disabled.
+ *
+ * @see Tooltip
+ */
 public final class TooltipManager extends View {
 	private static TooltipManager instance;
 	private Tooltip tooltip;
@@ -14,6 +20,11 @@ public final class TooltipManager extends View {
 		setVisible(true);
 	}
 	
+	/**
+	 * Returns the singleton instance of the tooltip manager.
+	 *
+	 * @return the unique {@code TooltipManager} instance
+	 */
 	public static TooltipManager getInstance() {
 		if (instance == null) {
 			instance = new TooltipManager();

@@ -36,10 +36,21 @@ public final class TextEditorModel {
 
 	// == TEXT CONTROL ==
 
+	/**
+	 * Returns the current input filter used for character validation.
+	 *
+	 * @return the input filter (never {@code null})
+	 */
 	public InputFilter getInputFilter() {
 		return controller.getInputFilter();
 	}
 
+	/**
+	 * Sets the input filter used for character validation.
+	 *
+	 * @param inputFilter the new input filter (must not be {@code null})
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
+	 */
 	public void setInputFilter(InputFilter inputFilter) {
 		controller.setInputFilter(inputFilter);
 	}
@@ -205,10 +216,10 @@ public final class TextEditorModel {
 	// == CURSOR CONTROL ==
 
 	/**
-	 * Moves the cursor in the specified direction by the specified number of steps.
+	 * Moves the cursor in the specified direction by the given number of steps.
 	 *
-	 * @param direction the direction to move (LEFT, UP, RIGHT, DOWN)
-	 * @param repeat    the number of steps to move
+	 * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
+	 * @param repeat    the number of steps to move (must be ≥ 0)
 	 */
 	public void moveCursorTo(Direction direction, int repeat) {
 		cursor.moveTo(direction, repeat);
@@ -217,7 +228,7 @@ public final class TextEditorModel {
 	/**
 	 * Moves the cursor one step in the specified direction.
 	 *
-	 * @param direction the direction to move (LEFT, UP, RIGHT, DOWN)
+	 * @param direction the direction to move (LEFT, RIGHT, UP, DOWN)
 	 */
 	public void moveCursorTo(Direction direction) {
 		cursor.moveTo(direction);
@@ -225,9 +236,10 @@ public final class TextEditorModel {
 
 	/**
 	 * Moves the cursor to the specified row and column.
+	 * The values are automatically constrained to valid ranges.
 	 *
-	 * @param row    the target row (0-based)
-	 * @param column the target column (0-based)
+	 * @param row    the target row (0‑based)
+	 * @param column the target column (0‑based)
 	 */
 	public void moveCursorTo(int row, int column) {
 		cursor.moveTo(row, column);

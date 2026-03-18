@@ -17,6 +17,12 @@ import microui.core.style.LerpedColor;
 import microui.event.Listener;
 import microui.util.SpatialState;
 
+/**
+ * A toggle button component that can be switched between two states (active/inactive).
+ * The button visually indicates its state through a sliding thumb and a background color
+ * that changes based on the active state. Supports ripple effects, hover effects,
+ * and state change listeners.
+ */
 public final class ToggleButton extends AbstractButton {
 	private static final int DEFAULT_MIN_WIDTH = 20;
 	private static final int DEFAULT_MIN_HEIGHT = 10;
@@ -29,6 +35,14 @@ public final class ToggleButton extends AbstractButton {
 	private AbstractColor currentStateColor, activeStateColor, thumbColor;
 	private boolean active;
 	
+	/**
+	 * Constructs a toggle button with the specified position and size.
+	 *
+	 * @param x the x-coordinate of the button's top-left corner
+	 * @param y the y-coordinate of the button's top-left corner
+	 * @param w the width of the button
+	 * @param h the height of the button
+	 */
 	public ToggleButton(float x, float y, float w, float h) {
 		super(x, y, w, h);
 		setMinMaxSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT, DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
@@ -46,11 +60,21 @@ public final class ToggleButton extends AbstractButton {
 		
 	}
 	
+	/**
+	 * Constructs a toggle button with default size and positions it at the center of the sketch.
+	 */
 	public ToggleButton() {
 		this(0,0,0,0);
 		initPositionInCenter();
 	}
 
+	/**
+	 * Adds a listener to be notified when the active state of the button changes.
+	 *
+	 * @param listener the listener to add (must not be {@code null})
+	 * @throws NullPointerException if {@code listener} is {@code null}
+	 * @throws DuplicateItemException if the listener has already been added
+	 */
 	public void addOnStateChangedListener(Listener listener) {
 		Objects.requireNonNull(listener, "listener");
 		
@@ -61,6 +85,13 @@ public final class ToggleButton extends AbstractButton {
 		listenerList.add(listener);
 	}
 	
+	/**
+	 * Removes a previously added state change listener.
+	 *
+	 * @param listener the listener to remove (must not be {@code null})
+	 * @throws NullPointerException if {@code listener} is {@code null}
+	 * @throws NoSuchElementException if the listener is not found
+	 */
 	public void removeOnStateChangedListener(Listener listener) {
 		Objects.requireNonNull(listener, "listener");
 		
@@ -71,26 +102,59 @@ public final class ToggleButton extends AbstractButton {
 		listenerList.remove(listener);
 	}
 	
+	/**
+	 * Returns the current color of the sliding thumb.
+	 *
+	 * @return the thumb color (never {@code null})
+	 */
 	public AbstractColor getThumbColor() {
 		return thumbColor;
 	}
 
+	/**
+	 * Sets the color of the sliding thumb.
+	 *
+	 * @param thumbColor the new thumb color (must not be {@code null})
+	 * @throws NullPointerException if {@code thumbColor} is {@code null}
+	 */
 	public void setThumbColor(AbstractColor thumbColor) {
 		this.thumbColor = Objects.requireNonNull(thumbColor, "thumbColor");
 	}
 
+	/**
+	 * Returns the color used for the background when the button is in the active state.
+	 *
+	 * @return the active state color (never {@code null})
+	 */
 	public AbstractColor getActiveStateColor() {
 		return activeStateColor;
 	}
 
+	/**
+	 * Sets the color used for the background when the button becomes active.
+	 *
+	 * @param activeStateColor the new active state color (must not be {@code null})
+	 * @throws NullPointerException if {@code activeStateColor} is {@code null}
+	 */
 	public void setActiveStateColor(AbstractColor activeStateColor) {
 		this.activeStateColor = Objects.requireNonNull(activeStateColor, "activeStateColor");
 	}
 
+	/**
+	 * Checks whether the button is currently in the active state.
+	 *
+	 * @return {@code true} if active, {@code false} otherwise
+	 */
 	public boolean isActive() {
 		return active;
 	}
 
+	/**
+	 * Sets the active state of the button. If the new state differs from the current one,
+	 * all registered state change listeners are notified.
+	 *
+	 * @param active {@code true} to set active, {@code false} to set inactive
+	 */
 	public void setActive(boolean active) {
 		if (this.active == active) {
 			return;
@@ -101,6 +165,9 @@ public final class ToggleButton extends AbstractButton {
 		notifyListenersOnActiveStateChange();
 	}
 	
+	/**
+	 * Toggles the active state of the button. Equivalent to {@code setActive(!isActive())}.
+	 */
 	public void toggle() {
 		setActive(!isActive());
 	}

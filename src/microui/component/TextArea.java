@@ -166,10 +166,22 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 		this(0, 0, 1, 1);
 	}
 	
+	/**
+	 * Returns the current input filter used to validate characters.
+	 *
+	 * @return the input filter (never {@code null})
+	 */
 	public InputFilter getInputFilter() {
 		return textEditorModel.getInputFilter();
 	}
 
+	/**
+	 * Sets the input filter used to validate characters entered into the text area.
+	 *
+	 * @param inputFilter the new input filter (must not be {@code null})
+	 * @return this {@code TextArea} instance for chaining
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
+	 */
 	public TextArea setInputFilter(InputFilter inputFilter) {
 		textEditorModel.setInputFilter(inputFilter);
 		

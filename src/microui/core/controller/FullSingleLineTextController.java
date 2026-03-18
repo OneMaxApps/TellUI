@@ -64,10 +64,21 @@ public class FullSingleLineTextController {
 		this("");
 	}
 
+	/**
+	 * Returns the current input filter used for character validation.
+	 *
+	 * @return the input filter (never {@code null})
+	 */
 	public InputFilter getInputFilter() {
 		return inputFilter;
 	}
 
+	/**
+	 * Sets the input filter used for character validation.
+	 *
+	 * @param inputFilter the new input filter (must not be {@code null})
+	 * @throws NullPointerException if {@code inputFilter} is {@code null}
+	 */
 	public void setInputFilter(InputFilter inputFilter) {
 		this.inputFilter = requireNonNull(inputFilter,"inputFilter");
 	}
@@ -174,10 +185,21 @@ public class FullSingleLineTextController {
 		updateCachedStrings();
 	}
 
+	/**
+	 * Returns the current filter mode used for character validation.
+	 *
+	 * @return the filter mode (never {@code null})
+	 */
 	public final FilterMode getFilterMode() {
 		return filterMode;
 	}
 
+	/**
+	 * Sets the filter mode for character validation.
+	 *
+	 * @param filterMode the new filter mode (must not be {@code null})
+	 * @throws NullPointerException if {@code filterMode} is {@code null}
+	 */
 	public final void setFilterMode(FilterMode filterMode) {
 		if (this.filterMode == filterMode) {
 			return;

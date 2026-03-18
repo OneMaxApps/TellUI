@@ -19,6 +19,19 @@ import microui.core.style.LerpedLoopColor;
 import microui.util.SpatialState;
 import processing.core.PFont;
 
+/**
+ * Manages the display of a value overlay – a transient text preview
+ * (e.g., for volume, brightness, etc.) that appears when a value changes.
+ * The overlay is implemented as a {@link TextView} with animated appearance
+ * and disappearance. It uses a {@link ValuePreviewSource} to obtain the text
+ * to display and automatically hides when the source is no longer prepared.
+ * <p>
+ * This class is a singleton; use {@link #getInstance()} to obtain the instance.
+ * </p>
+ *
+ * @see ValuePreviewSource
+ * @see TextView
+ */
 public final class ValueOverlayManager extends View {
 	private static ValueOverlayManager instance;
 	private static final int DEFAULT_TEXT_SIZE = 24;
@@ -43,6 +56,11 @@ public final class ValueOverlayManager extends View {
 	
 	// == TEXT API == //
 
+	/**
+	 * Returns the singleton instance of the value overlay manager.
+	 *
+	 * @return the unique {@code ValueOverlayManager} instance
+	 */
 	public static final ValueOverlayManager getInstance() {
 		if (instance == null) {
 			instance = new ValueOverlayManager();
