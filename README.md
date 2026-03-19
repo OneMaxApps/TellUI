@@ -15,7 +15,7 @@ The library provides four built-in layout systems that allow flexible placement 
 3. RowLayout;
 4. ColumnLayout;
 
-### III. Control Components (9 Elements)
+### III. Control Components (10 Elements)
 
 MicroUI includes ten main components, each with specific capabilities:
 
@@ -28,6 +28,8 @@ MicroUI includes ten main components, each with specific capabilities:
 7. **Scroll** (`Scrollbar`): Also a linear range control (`LinearRangeControl`). Includes a movable thumb, which is implemented as a separate `Button` component and is used to navigate through the content.
 8. **Knob** (`Rotary`): A range control (`RangeControl`) that changes its value when rotated with the mouse. It uses an arc to visualize the current value.
  9. **MenuButton** (`Menu Button`): Extends the functionality of a standard button by allowing it to display a drop-down list of other buttons or nested submenus (`subMenu`). The component implements the `Scrollable` interface, allowing scrolling of menu items if there are many.
+ 10. **ToggleButton** ('ToggleButton'): Inherits AbstractButton and provides standard button
+ 11. functionality with toggle behavior.
 
 ### IV. Initialization Example
 
