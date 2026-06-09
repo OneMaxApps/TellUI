@@ -12,11 +12,8 @@ import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
-
 /**
- * Component CheckBox.
+ * Represents a clickable CheckBox component which extends by AbstractButton.
  */
 public final class CheckBox extends AbstractButton {
 	private float cachedCenterX, cachedCenterY, cachedSize;
@@ -82,6 +79,8 @@ public final class CheckBox extends AbstractButton {
 
 	/**
 	 * @param markColor current color of mark
+	 * 
+	 * @throws NullPointerException if markColor is {@code null}
 	 */
 	public void setMarkColor(AbstractColor markColor) {
 		this.markColor = Objects.requireNonNull(markColor,"markColor");

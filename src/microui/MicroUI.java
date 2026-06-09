@@ -235,7 +235,7 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container getContainer(int id) {
 		return uiHost.getContainer(id);
@@ -258,7 +258,7 @@ public final class MicroUI {
 	 *
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}, or {@code null} if none found
-	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container findContainer(int id) {
 		return uiHost.findContainer(id);
@@ -302,7 +302,7 @@ public final class MicroUI {
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
 	 * @throws IllegalStateException  if trying to navigate to the currently active container
-	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public MicroUI navigateTo(int id) {
 		uiHost.navigateTo(id);

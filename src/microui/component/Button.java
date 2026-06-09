@@ -11,9 +11,6 @@ import microui.core.style.AbstractColor;
 import processing.core.PFont;
 import processing.core.PImage;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
-
 /**
  * Represents a clickable button component with text and/or image content. The
  * Button class extends AbstractButton to provide interactive button
@@ -26,6 +23,7 @@ import processing.core.PImage;
  * @see ImageBuffer
  */
 public class Button extends AbstractButton {
+	private static final String DEFAULT_TITLE = "BUTTON";
 	private final Ripples ripples;
 	private final Hover hover;
 	private final TextView textView;
@@ -41,6 +39,7 @@ public class Button extends AbstractButton {
 	 * @param y    the y-coordinate of the button's top-left corner
 	 * @param w    the width of the button
 	 * @param h    the height of the button
+	 * @throws NullPointerException if text is {@code null}
 	 */
 	public Button(String text, float x, float y, float w, float h) {
 		super(x, y, w, h);
@@ -82,6 +81,7 @@ public class Button extends AbstractButton {
 	 * Constructs a Button with specified text, centered on the screen.
 	 *
 	 * @param text the text to display on the button
+	 * @throws NullPointerException if text is {@code null}
 	 */
 	public Button(String text) {
 		this(text, 0, 0, 0, 0);
@@ -94,7 +94,7 @@ public class Button extends AbstractButton {
 	 * This is a convenience constructor for quick button creation.
 	 */
 	public Button() {
-		this("BUTTON");
+		this(DEFAULT_TITLE);
 	}
 	
 	/**
@@ -110,9 +110,9 @@ public class Button extends AbstractButton {
 	 * Sets the color of the ripple effects.
 	 *
 	 * @param color the color to use for ripple effects
-	 * @return this AbstractButton instance for method chaining
+	 * @return this Button instance for method chaining
 	 */
-	public final AbstractButton setRipplesColor(AbstractColor color) {
+	public final Button setRipplesColor(AbstractColor color) {
 		ripples.setColor(color);
 		return this;
 	}
@@ -130,9 +130,9 @@ public class Button extends AbstractButton {
 	 * Enables or disables ripple effects.
 	 *
 	 * @param enabled true to enable ripple effects, false to disable
-	 * @return this AbstractButton instance for method chaining
+	 * @return this Button instance for method chaining
 	 */
-	public final AbstractButton setRipplesEnabled(boolean enabled) {
+	public final Button setRipplesEnabled(boolean enabled) {
 		ripples.setEnabled(enabled);
 		return this;
 	}
@@ -150,9 +150,9 @@ public class Button extends AbstractButton {
 	 * Enables or disables hover effects.
 	 *
 	 * @param enabled true to enable hover effects, false to disable
-	 * @return this AbstractButton instance for method chaining
+	 * @return this Button instance for method chaining
 	 */
-	public final AbstractButton setHoverEnabled(boolean enabled) {
+	public final Button setHoverEnabled(boolean enabled) {
 		hover.setEnabled(enabled);
 		return this;
 	}
@@ -170,9 +170,9 @@ public class Button extends AbstractButton {
 	 * Sets the color of the hover effect.
 	 *
 	 * @param color the color to use for hover effects
-	 * @return this AbstractButton instance for method chaining
+	 * @return this Button instance for method chaining
 	 */
-	public AbstractButton setHoverColor(AbstractColor color) {
+	public Button setHoverColor(AbstractColor color) {
 		hover.setColor(color);
 		return this;
 	}
@@ -191,6 +191,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param speed the animation speed (must be greater than 0)
 	 * @return this AbstractButton instance for method chaining
+	 * @throws IllegalArgumentException if speed <= 0
 	 */
 	public final AbstractButton setHoverSpeed(float speed) {
 		hover.setSpeed(speed);
@@ -213,6 +214,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param text the text to display
 	 * @return this Button instance for method chaining
+	 * @throws NullPointerException if text is null
 	 */
 	public final Button setText(String text) {
 		this.textView.setText(text);
@@ -233,6 +235,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param font the font to use for text rendering
 	 * @return this Button instance for method chaining
+	 * @throws IllegalArgumentException if font is null
 	 */
 	public final Button setFont(PFont font) {
 		textView.setFont(font);
@@ -253,6 +256,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param color the color to use for text rendering
 	 * @return this Button instance for method chaining
+	 * @throws NullPointerException if color is null
 	 */
 	public final Button setTextColor(AbstractColor color) {
 		textView.setTextColor(color);
@@ -294,6 +298,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param image the image to display on the button
 	 * @return this Button instance for method chaining
+	 * @throws NullPointerException if image is null
 	 */
 	public final Button setImage(PImage image) {
 		this.image.set(image);
@@ -314,6 +319,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param color the tint color to apply to the image
 	 * @return this Button instance for method chaining
+	 * @throws NullPointerException if color is null
 	 */
 	public final Button setImageColor(AbstractColor color) {
 		image.setColor(color);
@@ -326,6 +332,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param alignX the horizontal alignment (LEFT, CENTER, RIGHT)
 	 * @return this Button instance for method chaining
+	 * @throws IllegalArgumentException if alignX is not LEFT, CENTER, or RIGHT
 	 */
 	public final Button setTextAlignX(int alignX) {
 		textView.setAlignX(alignX);
@@ -338,6 +345,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param alignY the vertical alignment (TOP, CENTER, BOTTOM)
 	 * @return this Button instance for method chaining
+	 * @throws IllegalArgumentException if alignY is not TOP, CENTER, or BOTTOM
 	 */
 	public final Button setTextAlignY(int alignY) {
 		textView.setAlignY(alignY);
