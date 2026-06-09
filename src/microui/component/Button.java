@@ -190,10 +190,10 @@ public class Button extends AbstractButton {
 	 * Sets the animation speed of the hover effect.
 	 *
 	 * @param speed the animation speed (must be greater than 0)
-	 * @return this AbstractButton instance for method chaining
+	 * @return this Button instance for method chaining
 	 * @throws IllegalArgumentException if speed <= 0
 	 */
-	public final AbstractButton setHoverSpeed(float speed) {
+	public final Button setHoverSpeed(float speed) {
 		hover.setSpeed(speed);
 		return this;
 	}
@@ -235,7 +235,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @param font the font to use for text rendering
 	 * @return this Button instance for method chaining
-	 * @throws IllegalArgumentException if font is null
+	 * @throws NullPointerException if font is {@code null}
 	 */
 	public final Button setFont(PFont font) {
 		textView.setFont(font);

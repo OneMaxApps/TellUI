@@ -13,7 +13,7 @@ import microui.core.style.LerpedLoopColor;
 import microui.event.Listener;
 
 /**
- * Represents a clickable CheckBox component which extends by AbstractButton.
+ * Represents a clickable CheckBox component which extends AbstractButton.
  */
 public final class CheckBox extends AbstractButton {
 	private float cachedCenterX, cachedCenterY, cachedSize;
@@ -23,7 +23,7 @@ public final class CheckBox extends AbstractButton {
 	private Style style; 
 	
 	/**
-	 * Constructs for CheckBox bounds
+	 * Constructs a CheckBox with specified bounds
 	 * @param x current position X
 	 * @param y current position Y
 	 * @param w current width
@@ -48,7 +48,7 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * Constructs default CheckBox bounds in to center of screen
+	 * Constructs a CheckBox with default size, centered on the screen.
 	 */
 	public CheckBox() {
 		this(0,0,0,0);
@@ -57,14 +57,16 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * @return style of mark 
-	 */
+	 * @return the current visual style of the check mark (MARK, DOT, RECT)
+	 */	
 	public Style getStyle() {
 		return style;
 	}
 
 	/**
-	 * @param style current style for mark
+	 * @param style the new style to set (must not be null)
+	 * 
+	 * @throws NullPointerException if style is {@code null}
 	 */
 	public void setStyle(Style style) {
 		this.style = Objects.requireNonNull(style,"style");
@@ -87,9 +89,11 @@ public final class CheckBox extends AbstractButton {
 	}
 
 	/**
-	 * Provides setting for listeners
-	 * Listeners calling when state of CheckBox changing
+	 * Adds a listener that is called whenever the checked
+	 * state changes (via setChecked or toggle).
 	 * @param listener current listener of change state of CheckBox
+	 * @throws NullPointerException if listener is {@code null}
+	 * @throws IllegalArgumentException if listener already added
 	 */
 	public void addOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
@@ -102,8 +106,11 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * Provides removing listeners
+	 * Removes a previously added checked-state listener.
+	 * 
 	 * @param listener current listener of change state of CheckBox
+	 * @throws NullPointerException if listener is {@code null}
+	 * @throws IllegalArgumentException if listener not found
 	 */
 	public void removeOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
@@ -116,13 +123,15 @@ public final class CheckBox extends AbstractButton {
 	}
 
 	/**
-	 * @return true if checked, false if isn't
+	 * @return true if checked, false otherwise
 	 */
 	public boolean isChecked() {
 		return checked;
 	}
 
 	/**
+	 * Sets the checked state.
+	 * 
 	 * @param checked state of checked
 	 */
 	public void setChecked(boolean checked) {
@@ -136,7 +145,7 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * change state of checked
+	 * Toggles the checked state (switches it to the opposite value).
 	 */
 	public void toggle() {
 		checked = !checked;
