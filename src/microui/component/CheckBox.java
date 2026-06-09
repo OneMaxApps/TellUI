@@ -4,9 +4,11 @@ import static processing.core.PConstants.PROJECT;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import microui.core.AbstractButton;
+import microui.core.exception.DuplicateItemException;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
@@ -93,13 +95,13 @@ public final class CheckBox extends AbstractButton {
 	 * state changes (via setChecked or toggle).
 	 * @param listener current listener of change state of CheckBox
 	 * @throws NullPointerException if listener is {@code null}
-	 * @throws IllegalArgumentException if listener already added
+	 * @throws DuplicateItemException if listener already added
 	 */
 	public void addOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
 		
 		if (onCheckedListenerList.contains(listener)) {
-			throw new IllegalArgumentException("Listener already added");
+			throw new DuplicateItemException("Listener already added");
 		}
 		
 		onCheckedListenerList.add(listener);
@@ -110,13 +112,13 @@ public final class CheckBox extends AbstractButton {
 	 * 
 	 * @param listener current listener of change state of CheckBox
 	 * @throws NullPointerException if listener is {@code null}
-	 * @throws IllegalArgumentException if listener not found
+	 * @throws NoSuchElementException if listener not found
 	 */
 	public void removeOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
 		
 		if (!onCheckedListenerList.contains(listener)) {
-			throw new IllegalArgumentException("Listener not found");
+			throw new NoSuchElementException("Listener not found");
 		}
 		
 		onCheckedListenerList.remove(listener);

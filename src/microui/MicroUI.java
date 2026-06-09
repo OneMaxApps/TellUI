@@ -2,12 +2,9 @@ package microui;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.NoSuchElementException;
-
 import microui.core.base.Container;
 import microui.core.base.UIHost;
 import microui.core.effect.Transition;
-import microui.core.exception.DuplicateItemException;
 import microui.event.Listener;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
@@ -96,8 +93,6 @@ public final class MicroUI {
 	 * @param text the toast message (must not be {@code null} or blank)
 	 * @param ms   the duration in milliseconds (must be positive)
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException     if {@code text} is {@code null}
-	 * @throws IllegalArgumentException if {@code text} is blank or {@code ms} is not positive
 	 */
 	public MicroUI setToast(String text, long ms) {
 		uiHost.setToast(text, ms);
@@ -109,8 +104,6 @@ public final class MicroUI {
 	 *
 	 * @param text the toast message (must not be {@code null} or blank)
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException     if {@code text} is {@code null}
-	 * @throws IllegalArgumentException if {@code text} is blank
 	 */
 	public MicroUI setToast(String text) {
 		uiHost.setToast(text);
@@ -137,8 +130,6 @@ public final class MicroUI {
 	 *
 	 * @param container the container to add (must not be {@code null})
 	 * @return the added container
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws DuplicateItemException if the container has already been added
 	 */
 	public Container addContainer(Container container) {
 		return uiHost.addContainer(container);
@@ -149,7 +140,6 @@ public final class MicroUI {
 	 *
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @return the newly created container
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
 	 */
 	public Container addContainer(LayoutManager layoutManager) {
 		return uiHost.addContainer(layoutManager);
@@ -161,7 +151,6 @@ public final class MicroUI {
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @param textId        the text identifier for the container
 	 * @return the newly created container with the given {@code textId}
-	 * @throws NullPointerException if {@code layoutManager} or {@code textId} is {@code null}
 	 */
 	public Container addContainer(LayoutManager layoutManager, String textId) {
 		return uiHost.addContainer(layoutManager, textId);
@@ -173,8 +162,6 @@ public final class MicroUI {
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @param id            the numeric identifier for the container
 	 * @return the newly created container with the given {@code id}
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		return uiHost.addContainer(layoutManager, id);
@@ -184,9 +171,6 @@ public final class MicroUI {
 	 * Removes the specified container from the UI system.
 	 *
 	 * @param container the container to remove (must not be {@code null})
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws NoSuchElementException if the container is not found
-	 * @throws IllegalStateException  if the container is currently involved in a transition
 	 */
 	public void removeContainer(Container container) {
 		uiHost.removeContainer(container);
@@ -196,9 +180,6 @@ public final class MicroUI {
 	 * Removes the container with the specified text identifier.
 	 *
 	 * @param textId the text identifier of the container to remove (must not be {@code null})
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if the container is currently involved in a transition
 	 */
 	public void removeContainer(String textId) {
 		uiHost.removeContainer(textId);
@@ -208,9 +189,6 @@ public final class MicroUI {
 	 * Removes the container with the specified numeric identifier.
 	 *
 	 * @param id the numeric identifier of the container to remove
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if the container is currently involved in a transition
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public void removeContainer(int id) {
 		uiHost.removeContainer(id);
@@ -221,9 +199,6 @@ public final class MicroUI {
 	 *
 	 * @param textId the text identifier of the container (must not be {@code null} or blank)
 	 * @return the container with the given {@code textId}
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws IllegalArgumentException if textId is blank
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
 	 */
 	public Container getContainer(String textId) {
 		return uiHost.getContainer(textId);
@@ -234,8 +209,6 @@ public final class MicroUI {
 	 *
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container getContainer(int id) {
 		return uiHost.getContainer(id);
@@ -246,8 +219,6 @@ public final class MicroUI {
 	 *
 	 * @param textId the text identifier of the container
 	 * @return the container with the given {@code textId}, or {@code null} if none found
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public Container findContainer(String textId) {
 		return uiHost.findContainer(textId);
@@ -258,7 +229,6 @@ public final class MicroUI {
 	 *
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}, or {@code null} if none found
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container findContainer(int id) {
 		return uiHost.findContainer(id);
@@ -269,9 +239,6 @@ public final class MicroUI {
 	 *
 	 * @param container the target container (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws NoSuchElementException if the container is not registered
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(Container container) {
 		uiHost.navigateTo(container);
@@ -284,10 +251,6 @@ public final class MicroUI {
 	 *
 	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws IllegalArgumentException if {@code textId} is blank
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(String textId) {
 		uiHost.navigateTo(textId);
@@ -300,9 +263,6 @@ public final class MicroUI {
 	 *
 	 * @param id the numeric identifier of the target container
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public MicroUI navigateTo(int id) {
 		uiHost.navigateTo(id);
@@ -316,9 +276,6 @@ public final class MicroUI {
 	 * @param container  the target container (must not be {@code null})
 	 * @param transition the transition effect to use (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code container} or {@code transition} is {@code null}
-	 * @throws NoSuchElementException if the container is not registered
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(Container container, Transition transition) {
 		uiHost.navigateTo(container,transition);
@@ -334,10 +291,6 @@ public final class MicroUI {
 	 * @param container  the target container (must not be {@code null})
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException     if {@code container} is {@code null}
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if the container is not registered
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(Container container, int transition) {
 		uiHost.navigateTo(container,transition);
@@ -351,9 +304,6 @@ public final class MicroUI {
 	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition effect to use (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code textId} or {@code transition} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(String textId, Transition transition) {
 		uiHost.navigateTo(textId,transition);
@@ -367,10 +317,6 @@ public final class MicroUI {
 	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException     if {@code textId} is {@code null}
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if no container with the given {@code textId} exists
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(String textId, int transition) {
 		uiHost.navigateTo(textId,transition);
@@ -384,9 +330,6 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the target container
 	 * @param transition the transition effect to use (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code transition} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(int id, Transition transition) {
 		uiHost.navigateTo(id,transition);
@@ -400,9 +343,6 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the target container
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
 	 * @return this MicroUI instance (for chaining)
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if no container with the given {@code id} exists
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public MicroUI navigateTo(int id, int transition) {
 		uiHost.navigateTo(id,transition);
@@ -438,7 +378,6 @@ public final class MicroUI {
 	 *
 	 * @param icon the icon image (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException if {@code icon} is {@code null}
 	 */
 	public MicroUI setSurfaceIcon(PImage icon) {
 		uiHost.setIcon(icon);
@@ -450,7 +389,6 @@ public final class MicroUI {
 	 *
 	 * @param title the window title (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException if {@code title} is {@code null}
 	 */
 	public MicroUI setSurfaceTitle(String title) {
 		uiHost.setTitle(title);
@@ -485,8 +423,6 @@ public final class MicroUI {
 	 *
 	 * @param listener the listener to add (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code listener} is {@code null}
-	 * @throws DuplicateItemException if the listener has already been added
 	 */
 	public MicroUI addOnSurfaceResizeListener(Listener listener) {
 		uiHost.addOnSurfaceResizeListener(listener);
@@ -498,8 +434,6 @@ public final class MicroUI {
 	 *
 	 * @param listener the listener to remove (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
-	 * @throws NullPointerException   if {@code listener} is {@code null}
-	 * @throws NoSuchElementException if the listener is not found
 	 */
 	public MicroUI removeOnSurfaceResizeListener(Listener listener) {
 		uiHost.removeOnSurfaceResizeListener(listener);

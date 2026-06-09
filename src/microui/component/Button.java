@@ -39,7 +39,6 @@ public class Button extends AbstractButton {
 	 * @param y    the y-coordinate of the button's top-left corner
 	 * @param w    the width of the button
 	 * @param h    the height of the button
-	 * @throws NullPointerException if text is {@code null}
 	 */
 	public Button(String text, float x, float y, float w, float h) {
 		super(x, y, w, h);
@@ -81,7 +80,6 @@ public class Button extends AbstractButton {
 	 * Constructs a Button with specified text, centered on the screen.
 	 *
 	 * @param text the text to display on the button
-	 * @throws NullPointerException if text is {@code null}
 	 */
 	public Button(String text) {
 		this(text, 0, 0, 0, 0);
@@ -191,7 +189,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param speed the animation speed (must be greater than 0)
 	 * @return this Button instance for method chaining
-	 * @throws IllegalArgumentException if speed <= 0
 	 */
 	public final Button setHoverSpeed(float speed) {
 		hover.setSpeed(speed);
@@ -214,10 +211,9 @@ public class Button extends AbstractButton {
 	 *
 	 * @param text the text to display
 	 * @return this Button instance for method chaining
-	 * @throws NullPointerException if text is null
 	 */
 	public final Button setText(String text) {
-		this.textView.setText(text);
+		textView.setText(text);
 		return this;
 	}
 
@@ -235,7 +231,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param font the font to use for text rendering
 	 * @return this Button instance for method chaining
-	 * @throws NullPointerException if font is {@code null}
 	 */
 	public final Button setFont(PFont font) {
 		textView.setFont(font);
@@ -256,7 +251,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param color the color to use for text rendering
 	 * @return this Button instance for method chaining
-	 * @throws NullPointerException if color is null
 	 */
 	public final Button setTextColor(AbstractColor color) {
 		textView.setTextColor(color);
@@ -298,7 +292,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param image the image to display on the button
 	 * @return this Button instance for method chaining
-	 * @throws NullPointerException if image is null
 	 */
 	public final Button setImage(PImage image) {
 		this.image.set(image);
@@ -319,7 +312,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param color the tint color to apply to the image
 	 * @return this Button instance for method chaining
-	 * @throws NullPointerException if color is null
 	 */
 	public final Button setImageColor(AbstractColor color) {
 		image.setColor(color);
@@ -332,7 +324,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param alignX the horizontal alignment (LEFT, CENTER, RIGHT)
 	 * @return this Button instance for method chaining
-	 * @throws IllegalArgumentException if alignX is not LEFT, CENTER, or RIGHT
 	 */
 	public final Button setTextAlignX(int alignX) {
 		textView.setAlignX(alignX);
@@ -345,7 +336,6 @@ public class Button extends AbstractButton {
 	 *
 	 * @param alignY the vertical alignment (TOP, CENTER, BOTTOM)
 	 * @return this Button instance for method chaining
-	 * @throws IllegalArgumentException if alignY is not TOP, CENTER, or BOTTOM
 	 */
 	public final Button setTextAlignY(int alignY) {
 		textView.setAlignY(alignY);
