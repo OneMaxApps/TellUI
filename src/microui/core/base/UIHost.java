@@ -116,6 +116,7 @@ public final class UIHost extends View {
 	 * @param id            the numeric identifier for the container
 	 * @return the newly created container with the given {@code id}
 	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		return containerManager.add(layoutManager, id);
@@ -151,6 +152,7 @@ public final class UIHost extends View {
 	 * @param id the numeric identifier of the container to remove
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
 	 * @throws IllegalStateException  if the container is currently involved in a transition
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public void removeContainer(int id) {
 		containerManager.remove(id);
@@ -159,10 +161,11 @@ public final class UIHost extends View {
 	/**
 	 * Retrieves the container with the specified text identifier.
 	 *
-	 * @param textId the text identifier of the container (must not be {@code null})
+	 * @param textId the text identifier of the container (must not be {@code null} or blank)
 	 * @return the container with the given {@code textId}
 	 * @throws NullPointerException   if {@code textId} is {@code null}
 	 * @throws NoSuchElementException if no container with the given {@code textId} exists
+	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public Container getContainer(String textId) {
 		return containerManager.get(textId);
@@ -174,6 +177,7 @@ public final class UIHost extends View {
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
 	 */
 	public Container getContainer(int id) {
 		return containerManager.get(id);
@@ -775,6 +779,10 @@ public final class UIHost extends View {
 		private Container findInternal(String textId) {
 			Objects.requireNonNull(textId,"textId");
 			
+			if (textId.isBlank()) {
+				throw new IllegalArgumentException("TextId cannot be blank");
+			}
+			
 			for(int i = 0; i < list.size(); i++) {
 				final var c = list.get(i);
 				if(c.getTextId().equals(textId)) {
@@ -786,6 +794,10 @@ public final class UIHost extends View {
 		}
 		
 		private Container findInternal(int id) {
+			if (id <= View.MIN_ID) {
+				throw new IllegalArgumentException("Id cannot be equal or lower than MIN_ID (0)");
+			}
+			
 			for(int i = 0; i < list.size(); i++) {
 				final var c = list.get(i);
 				if(c.getId() == id) {

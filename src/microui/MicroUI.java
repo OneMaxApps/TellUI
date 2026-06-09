@@ -17,8 +17,8 @@ import processing.core.PImage;
 /**
  * Core facade for the MicroUI library.
  * <p>
- * This class provides a simplified API for initialising and controlling the UI system.
- * It follows the singleton pattern and must be initialised via {@link #init(PApplet)}
+ * This class provides a simplified API for initializing and controlling the UI system.
+ * It follows the singleton pattern and must be initialized via {@link #init(PApplet)}
  * before any other methods are called.
  * </p>
  */
@@ -48,7 +48,7 @@ public final class MicroUI {
 	 * Returns the Processing sketch context used by MicroUI.
 	 *
 	 * @return the PApplet instance
-	 * @throws IllegalStateException if MicroUI has not been initialised
+	 * @throws IllegalStateException if MicroUI has not been initialized
 	 *                               (i.e. {@link #init(PApplet)} was not called)
 	 */
 	public static PApplet getContext() {
@@ -69,7 +69,7 @@ public final class MicroUI {
 	}
 	
 	/**
-	 * Initialises the MicroUI library with the given Processing sketch context.
+	 * Initializes the MicroUI library with the given Processing sketch context.
 	 * <p>
 	 * This method must be called exactly once before using any other functionality.
 	 * Subsequent calls will throw an exception.
@@ -78,7 +78,7 @@ public final class MicroUI {
 	 * @param pApplet the Processing sketch (must not be {@code null})
 	 * @return the singleton MicroUI instance
 	 * @throws NullPointerException     if {@code pApplet} is {@code null}
-	 * @throws IllegalStateException    if MicroUI has already been initialised
+	 * @throws IllegalStateException    if MicroUI has already been initialized
 	 */
 	public static MicroUI init(PApplet pApplet) {
 		if (instance != null) {
@@ -161,7 +161,7 @@ public final class MicroUI {
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @param textId        the text identifier for the container
 	 * @return the newly created container with the given {@code textId}
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 * @throws NullPointerException if {@code layoutManager} or {@code textId} is {@code null}
 	 */
 	public Container addContainer(LayoutManager layoutManager, String textId) {
 		return uiHost.addContainer(layoutManager, textId);
@@ -174,6 +174,7 @@ public final class MicroUI {
 	 * @param id            the numeric identifier for the container
 	 * @return the newly created container with the given {@code id}
 	 * @throws NullPointerException if {@code layoutManager} is {@code null}
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		return uiHost.addContainer(layoutManager, id);
@@ -209,6 +210,7 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the container to remove
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
 	 * @throws IllegalStateException  if the container is currently involved in a transition
+	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public void removeContainer(int id) {
 		uiHost.removeContainer(id);
@@ -217,9 +219,10 @@ public final class MicroUI {
 	/**
 	 * Retrieves the container with the specified text identifier.
 	 *
-	 * @param textId the text identifier of the container (must not be {@code null})
+	 * @param textId the text identifier of the container (must not be {@code null} or blank)
 	 * @return the container with the given {@code textId}
 	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws IllegalArgumentException if textId is blank
 	 * @throws NoSuchElementException if no container with the given {@code textId} exists
 	 */
 	public Container getContainer(String textId) {
@@ -232,6 +235,7 @@ public final class MicroUI {
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
+	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
 	 */
 	public Container getContainer(int id) {
 		return uiHost.getContainer(id);
@@ -240,8 +244,10 @@ public final class MicroUI {
 	/**
 	 * Finds a container by its text identifier. Returns {@code null} if not found.
 	 *
-	 * @param textId the text identifier of the container (may be {@code null})
+	 * @param textId the text identifier of the container
 	 * @return the container with the given {@code textId}, or {@code null} if none found
+	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public Container findContainer(String textId) {
 		return uiHost.findContainer(textId);
@@ -252,6 +258,7 @@ public final class MicroUI {
 	 *
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}, or {@code null} if none found
+	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
 	 */
 	public Container findContainer(int id) {
 		return uiHost.findContainer(id);
@@ -278,6 +285,7 @@ public final class MicroUI {
 	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NullPointerException   if {@code textId} is {@code null}
+	 * @throws IllegalArgumentException if {@code textId} is blank
 	 * @throws NoSuchElementException if no container with the given {@code textId} exists
 	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
@@ -294,6 +302,7 @@ public final class MicroUI {
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NoSuchElementException if no container with the given {@code id} exists
 	 * @throws IllegalStateException  if trying to navigate to the currently active container
+	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
 	 */
 	public MicroUI navigateTo(int id) {
 		uiHost.navigateTo(id);
@@ -339,7 +348,7 @@ public final class MicroUI {
 	/**
 	 * Navigates to the container with the specified text identifier using the given transition.
 	 *
-	 * @param textId     the text identifier of the target container (must not be {@code null})
+	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition effect to use (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NullPointerException   if {@code textId} or {@code transition} is {@code null}
@@ -355,7 +364,7 @@ public final class MicroUI {
 	/**
 	 * Navigates to the container with the specified text identifier using a predefined transition constant.
 	 *
-	 * @param textId     the text identifier of the target container (must not be {@code null})
+	 * @param textId the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NullPointerException     if {@code textId} is {@code null}
@@ -372,7 +381,7 @@ public final class MicroUI {
 	/**
 	 * Navigates to the container with the specified numeric identifier using the given transition.
 	 *
-	 * @param id         the numeric identifier of the target container
+	 * @param id the numeric identifier of the target container
 	 * @param transition the transition effect to use (must not be {@code null})
 	 * @return this MicroUI instance (for chaining)
 	 * @throws NullPointerException   if {@code transition} is {@code null}
@@ -388,7 +397,7 @@ public final class MicroUI {
 	/**
 	 * Navigates to the container with the specified numeric identifier using a predefined transition constant.
 	 *
-	 * @param id         the numeric identifier of the target container
+	 * @param id the numeric identifier of the target container
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
 	 * @return this MicroUI instance (for chaining)
 	 * @throws IllegalArgumentException if the transition constant is invalid
