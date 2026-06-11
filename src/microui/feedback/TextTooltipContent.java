@@ -38,7 +38,6 @@ public final class TextTooltipContent extends TooltipContent {
 	 * default styling from the current theme.
 	 * 
 	 * @param text the text to display in the tooltip (cannot be null)
-	 * @throws NullPointerException if text is null
 	 */
 	public TextTooltipContent(String text) {
 		super();
@@ -65,8 +64,8 @@ public final class TextTooltipContent extends TooltipContent {
 	/**
 	 * Sets the text size.
 	 * 
-	 * @param textSize the text size in points (must be ≥ MIN_TEXT_SIZE)
-	 * @throws IllegalArgumentException if textSize is less than MIN_TEXT_SIZE
+	 * @param textSize the text size in points (must be ≥ MIN_TEXT_SIZE {@value #MIN_TEXT_SIZE})
+	 * @throws IllegalArgumentException if textSize is less than MIN_TEXT_SIZE {@value #MIN_TEXT_SIZE}
 	 */
 	public void setTextSize(int textSize) {
 		if (textSize < MIN_TEXT_SIZE) {

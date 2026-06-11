@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import microui.core.base.Container;
 import microui.core.base.UIHost;
 import microui.core.effect.Transition;
-import microui.event.Listener;
+import microui.core.interfaces.Listener;
 import microui.layout.LayoutManager;
 import microui.util.Debugger;
 import processing.core.PApplet;

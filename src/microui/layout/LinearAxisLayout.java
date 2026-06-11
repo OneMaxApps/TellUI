@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 import microui.core.base.ContentView;
 
 /**
@@ -112,13 +113,13 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	 * Validates that the provided layout parameters are of the correct type.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if the parameters are not an instance of
+	 * @throws ClassCastException if the parameters are not an instance of
 	 *                                  LinearAxisLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof LinearAxisLayoutParams)) {
-			throw new IllegalArgumentException("using not correct layout params for LinearAxisLayoutParams");
+			throw new ClassCastException("using not correct layout params for LinearAxisLayoutParams");
 		}
 	}
 
@@ -138,7 +139,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	 * If the mode changes, triggers a recalculation of the layout.
 	 * </p>
 	 * 
-	 * @param isVerticalMode true for vertical layout, false for horizontal layout
+	 * @param verticalMode true for vertical layout, false for horizontal layout
 	 */
 	protected void setVerticalMode(boolean verticalMode) {
 		if (this.verticalMode == verticalMode) {
@@ -154,7 +155,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	 * Checks if the total weight of all entries exceeds the available space.
 	 * 
 	 * <p>
-	 * Compares the sum of all component weights against TOTAL_WEIGHT (1.0) with a
+	 * Compares the sum of all component weights against TOTAL_WEIGHT ({@value #TOTAL_WEIGHT}) with a
 	 * small epsilon for floating-point comparison.
 	 * </p>
 	 * 

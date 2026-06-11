@@ -272,8 +272,8 @@ public abstract class AbstractShadow extends View {
 	 * Validates that a weight value is within allowed bounds.
 	 * 
 	 * @param weight the weight value to validate
-	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT or greater
-	 *                                  than MAX_WEIGHT
+	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
+	 *                                  than MAX_WEIGHT ({@value #MAX_WEIGHT})
 	 */
 	protected void checkWeight(int weight) {
 		if (weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
@@ -285,10 +285,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets the left shadow weight.
 	 * 
-	 * @param weightLeft the left weight to set (must be between MIN_WEIGHT and
-	 *                   MAX_WEIGHT)
+	 * @param weightLeft the left weight to set (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and
+	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if weightLeft is out of bounds
 	 */
 	protected AbstractShadow setWeightLeft(int weightLeft) {
 		checkWeight(weightLeft);
@@ -300,10 +299,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets the top shadow weight.
 	 * 
-	 * @param weightTop the top weight to set (must be between MIN_WEIGHT and
-	 *                  MAX_WEIGHT)
+	 * @param weightTop the top weight to set (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and
+	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if weightTop is out of bounds
 	 */
 	protected AbstractShadow setWeightTop(int weightTop) {
 		checkWeight(weightTop);
@@ -314,10 +312,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets the right shadow weight.
 	 * 
-	 * @param weightRight the right weight to set (must be between MIN_WEIGHT and
-	 *                    MAX_WEIGHT)
+	 * @param weightRight the right weight to set (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and
+	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if weightRight is out of bounds
 	 */
 	protected AbstractShadow setWeightRight(int weightRight) {
 		checkWeight(weightRight);
@@ -328,10 +325,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets the bottom shadow weight.
 	 * 
-	 * @param weightBottom the bottom weight to set (must be between MIN_WEIGHT and
-	 *                     MAX_WEIGHT)
+	 * @param weightBottom the bottom weight to set (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and
+	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if weightBottom is out of bounds
 	 */
 	protected AbstractShadow setWeightBottom(int weightBottom) {
 		checkWeight(weightBottom);
@@ -352,10 +348,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets uniform shadow weight for all sides.
 	 * 
-	 * @param weight the weight value for all sides (must be between MIN_WEIGHT and
-	 *               MAX_WEIGHT)
+	 * @param weight the weight value for all sides (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and
+	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if weight is out of bounds
 	 */
 	protected AbstractShadow setWeight(int weight) {
 		checkWeight(weight);
@@ -366,12 +361,9 @@ public abstract class AbstractShadow extends View {
 	/**
 	 * Sets shadow weight for horizontal and vertical sides separately.
 	 * 
-	 * @param weightHorizontal the weight for left and right sides (must be between
-	 *                         MIN_WEIGHT and MAX_WEIGHT)
-	 * @param weightVertical   the weight for top and bottom sides (must be between
-	 *                         MIN_WEIGHT and MAX_WEIGHT)
+	 * @param weightHorizontal the weight for left and right sides (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and MAX_WEIGHT ({@value #MAX_WEIGHT}))
+	 * @param weightVertical   the weight for top and bottom sides (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
 	protected AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
 		checkWeight(weightHorizontal);
@@ -384,11 +376,12 @@ public abstract class AbstractShadow extends View {
 
 	/**
 	 * Sets individual shadow weights for each side.
+	 * (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * 
-	 * @param left   the left weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param top    the top weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param right  the right weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param bottom the bottom weight (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param left   the left weight
+	 * @param top    the top weight
+	 * @param right  the right weight
+	 * @param bottom the bottom weight
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */

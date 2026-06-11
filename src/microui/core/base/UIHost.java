@@ -17,9 +17,9 @@ import microui.core.effect.Transition;
 import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
 import microui.core.interfaces.KeyPressable;
+import microui.core.interfaces.Listener;
 import microui.core.interfaces.Scrollable;
 import microui.core.interfaces.ValuePreviewSource;
-import microui.event.Listener;
 import microui.event.PointerManager;
 import microui.feedback.TooltipManager;
 import microui.feedback.ValueOverlayManager;
@@ -79,8 +79,6 @@ public final class UIHost extends View {
 	 *
 	 * @param container the container to add (must not be {@code null})
 	 * @return the added container
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws DuplicateItemException if the container has already been added
 	 */
 	public Container addContainer(Container container) {
 		return containerManager.add(container);
@@ -91,7 +89,6 @@ public final class UIHost extends View {
 	 *
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @return the newly created container
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
 	 */
 	public Container addContainer(LayoutManager layoutManager) {
 		return containerManager.add(layoutManager);
@@ -103,7 +100,6 @@ public final class UIHost extends View {
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @param textId        the text identifier for the container
 	 * @return the newly created container with the given {@code textId}
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
 	 */
 	public Container addContainer(LayoutManager layoutManager, String textId) {
 		return containerManager.add(layoutManager, textId);
@@ -115,8 +111,6 @@ public final class UIHost extends View {
 	 * @param layoutManager the layout manager for the new container (must not be {@code null})
 	 * @param id            the numeric identifier for the container
 	 * @return the newly created container with the given {@code id}
-	 * @throws NullPointerException if {@code layoutManager} is {@code null}
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public Container addContainer(LayoutManager layoutManager, int id) {
 		return containerManager.add(layoutManager, id);
@@ -126,9 +120,6 @@ public final class UIHost extends View {
 	 * Removes the specified container from the container manager.
 	 *
 	 * @param container the container to remove (must not be {@code null})
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws NoSuchElementException if the container is not found
-	 * @throws IllegalStateException  if the container is currently involved in a transition
 	 */
 	public void removeContainer(Container container) {
 		containerManager.remove(container);
@@ -138,9 +129,6 @@ public final class UIHost extends View {
 	 * Removes the container with the specified text identifier.
 	 *
 	 * @param textId the text identifier of the container to remove (must not be {@code null})
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if the container is currently involved in a transition
 	 */
 	public void removeContainer(String textId) {
 		containerManager.remove(textId);
@@ -150,9 +138,6 @@ public final class UIHost extends View {
 	 * Removes the container with the specified numeric identifier.
 	 *
 	 * @param id the numeric identifier of the container to remove
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if the container is currently involved in a transition
-	 * @throws IllegalArgumentException if the id is less than 0
 	 */
 	public void removeContainer(int id) {
 		containerManager.remove(id);
@@ -163,9 +148,6 @@ public final class UIHost extends View {
 	 *
 	 * @param textId the text identifier of the container (must not be {@code null} or blank)
 	 * @return the container with the given {@code textId}
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalArgumentException if textId is blank
 	 */
 	public Container getContainer(String textId) {
 		return containerManager.get(textId);
@@ -176,8 +158,6 @@ public final class UIHost extends View {
 	 *
 	 * @param id the numeric identifier of the container
 	 * @return the container with the given {@code id}
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalArgumentException if id is lower or equal to MIN_ID (0)
 	 */
 	public Container getContainer(int id) {
 		return containerManager.get(id);
@@ -207,9 +187,6 @@ public final class UIHost extends View {
 	 * Navigates to the specified container with the default transition.
 	 *
 	 * @param container the target container (must not be {@code null})
-	 * @throws NullPointerException   if {@code container} is {@code null}
-	 * @throws NoSuchElementException if the container is not registered
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(Container container) {
 		containerManager.navigateTo(container);
@@ -219,9 +196,6 @@ public final class UIHost extends View {
 	 * Navigates to the container with the specified text identifier using the default transition.
 	 *
 	 * @param textId the text identifier of the target container (must not be {@code null})
-	 * @throws NullPointerException   if {@code textId} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(String textId) {
 		containerManager.navigateTo(textId);
@@ -231,8 +205,6 @@ public final class UIHost extends View {
 	 * Navigates to the container with the specified numeric identifier using the default transition.
 	 *
 	 * @param id the numeric identifier of the target container
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(int id) {
 		containerManager.navigateTo(id);
@@ -243,9 +215,6 @@ public final class UIHost extends View {
 	 *
 	 * @param container  the target container (must not be {@code null})
 	 * @param transition the transition effect to use (must not be {@code null})
-	 * @throws NullPointerException   if {@code container} or {@code transition} is {@code null}
-	 * @throws NoSuchElementException if the container is not registered
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(Container container, Transition transition) {
 		containerManager.navigateTo(container, transition);
@@ -258,10 +227,6 @@ public final class UIHost extends View {
 	 *
 	 * @param container  the target container (must not be {@code null})
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
-	 * @throws NullPointerException     if {@code container} is {@code null}
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if the container is not registered
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public void navigateTo(Container container, int transition) {
 		containerManager.navigateTo(container, transition);
@@ -272,9 +237,6 @@ public final class UIHost extends View {
 	 *
 	 * @param textId     the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition effect to use (must not be {@code null})
-	 * @throws NullPointerException   if {@code textId} or {@code transition} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code textId} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(String textId, Transition transition) {
 		containerManager.navigateTo(textId, transition);
@@ -285,10 +247,6 @@ public final class UIHost extends View {
 	 *
 	 * @param textId     the text identifier of the target container (must not be {@code null})
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
-	 * @throws NullPointerException     if {@code textId} is {@code null}
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if no container with the given {@code textId} exists
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public void navigateTo(String textId, int transition) {
 		containerManager.navigateTo(textId, transition);
@@ -299,9 +257,6 @@ public final class UIHost extends View {
 	 *
 	 * @param id         the numeric identifier of the target container
 	 * @param transition the transition effect to use (must not be {@code null})
-	 * @throws NullPointerException   if {@code transition} is {@code null}
-	 * @throws NoSuchElementException if no container with the given {@code id} exists
-	 * @throws IllegalStateException  if trying to navigate to the currently active container
 	 */
 	public void navigateTo(int id, Transition transition) {
 		containerManager.navigateTo(id, transition);
@@ -312,9 +267,6 @@ public final class UIHost extends View {
 	 *
 	 * @param id         the numeric identifier of the target container
 	 * @param transition the transition constant (LEFT, RIGHT, UP, DOWN)
-	 * @throws IllegalArgumentException if the transition constant is invalid
-	 * @throws NoSuchElementException   if no container with the given {@code id} exists
-	 * @throws IllegalStateException    if trying to navigate to the currently active container
 	 */
 	public void navigateTo(int id, int transition) {
 		containerManager.navigateTo(id, transition);
@@ -352,7 +304,6 @@ public final class UIHost extends View {
 	 * The step determines how fast the transition progresses.
 	 *
 	 * @param step the progress step (must be between {@code MIN_PROGRESS_STEP} and {@code MAX_PROGRESS_STEP})
-	 * @throws IllegalArgumentException if {@code step} is out of bounds
 	 */
 	public void setTransitionProgressStep(float step) {
 		containerManager.setTransitionProgressStep(step);
@@ -406,8 +357,6 @@ public final class UIHost extends View {
 	 * Adds a listener to be notified when the surface is resized.
 	 *
 	 * @param listener the listener to add (must not be {@code null})
-	 * @throws NullPointerException   if {@code listener} is {@code null}
-	 * @throws DuplicateItemException if the listener has already been added
 	 */
 	public void addOnSurfaceResizeListener(Listener listener) {
 		surfaceResizeManager.addListener(listener);
@@ -417,8 +366,6 @@ public final class UIHost extends View {
 	 * Removes a previously added surface resize listener.
 	 *
 	 * @param listener the listener to remove (must not be {@code null})
-	 * @throws NullPointerException   if {@code listener} is {@code null}
-	 * @throws NoSuchElementException if the listener is not found
 	 */
 	public void removeOnSurfaceResizeListener(Listener listener) {
 		surfaceResizeManager.removeListener(listener);
@@ -432,9 +379,7 @@ public final class UIHost extends View {
 	 * Shows a toast message for the specified duration.
 	 *
 	 * @param text the toast message (must not be {@code null} or blank)
-	 * @param ms   the duration in milliseconds (must be positive)
-	 * @throws NullPointerException     if {@code text} is {@code null}
-	 * @throws IllegalArgumentException if {@code text} is blank or {@code ms} is not positive
+	 * @param ms the duration in milliseconds (must be positive)
 	 */
 	public void setToast(String text, long ms) {
 		toastManager.setToast(text, ms);
@@ -444,8 +389,6 @@ public final class UIHost extends View {
 	 * Shows a toast message for the default duration (1000 ms).
 	 *
 	 * @param text the toast message (must not be {@code null} or blank)
-	 * @throws NullPointerException     if {@code text} is {@code null}
-	 * @throws IllegalArgumentException if {@code text} is blank
 	 */
 	public void setToast(String text) {
 		toastManager.setToast(text, 1000);

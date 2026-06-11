@@ -1,4 +1,4 @@
-package microui.layout;
+package microui.core.interfaces;
 
 /**
  * Marker interface for layout parameters.

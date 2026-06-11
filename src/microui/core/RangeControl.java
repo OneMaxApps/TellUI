@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import microui.core.base.Component;
+import microui.core.interfaces.Listener;
 import microui.core.interfaces.Scrollable;
 import microui.core.interfaces.ValuePreviewSource;
 import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
-import microui.event.Listener;
 import microui.feedback.ValueOverlayManager;
 import microui.util.BoundedValue;
 import processing.event.MouseEvent;
@@ -25,6 +25,9 @@ import processing.event.MouseEvent;
  * @see BoundedValue
  */
 public abstract class RangeControl extends Component implements Scrollable, ValuePreviewSource {
+	private final static int DEFAULT_MIN_VALUE = 0;
+	private final static int DEFAULT_MAX_VALUE = 100;
+	private final static int DEFAULT_VALUE = 0;
 	private final BoundedValue value;
 	private final Scrolling scrolling;
 	private final Stroke stroke;
@@ -34,7 +37,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	
 	/**
 	 * Constructs a RangeControl with specified position and dimensions. Initializes
-	 * with default value range (0-100) at 0, and creates scrolling and stroke
+	 * with default value range ({@value #DEFAULT_MIN_VALUE} - {@value #DEFAULT_MAX_VALUE}) at 0, and creates scrolling and stroke
 	 * objects.
 	 *
 	 * @param x      the x-coordinate of the control's top-left corner
@@ -49,7 +52,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 		onStartChangeValueListenerList = new ArrayList<Listener>();
 		onEndChangeValueListenerList = new ArrayList<Listener>();
 		
-		value = new BoundedValue(0, 100, 0);
+		value = new BoundedValue(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE, DEFAULT_VALUE);
 		scrolling = new Scrolling(this);
 		stroke = new Stroke();
 	}
@@ -58,8 +61,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Adds a listener that will be called when value change starts (e.g., when user begins dragging).
 	 *
 	 * @param listener the listener to add, cannot be null and must not already be added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener is already present.
 	 */
 	public void addOnStartChangeValueListener(Listener listener) {
 		addListenerSafe(onStartChangeValueListenerList, listener);
@@ -69,8 +70,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Adds a listener that will be called whenever the value changes.
 	 *
 	 * @param listener the listener to add, cannot be null and must not already be added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener is already present.
 	 */
 	public void addOnChangeValueListener(Listener listener) {
 		addListenerSafe(onChangeValueListenerList, listener);
@@ -80,8 +79,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Adds a listener that will be called when value change ends (e.g., when user releases drag).
 	 *
 	 * @param listener the listener to add, cannot be null and must not already be added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener is already present.
 	 */
 	public void addOnEndChangeValueListener(Listener listener) {
 		addListenerSafe(onEndChangeValueListenerList, listener);
@@ -91,8 +88,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Removes a previously added start-change listener.
 	 *
 	 * @param listener the listener to remove, cannot be null and must have been added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener was not found.
 	 */
 	public void removeOnStartChangeValueListener(Listener listener) {
 		removeListenerSafe(onStartChangeValueListenerList, listener);
@@ -102,8 +97,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Removes a previously added change listener.
 	 *
 	 * @param listener the listener to remove, cannot be null and must have been added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener was not found.
 	 */
 	public void removeOnChangeValueListener(Listener listener) {
 		removeListenerSafe(onChangeValueListenerList, listener);
@@ -113,8 +106,6 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	 * Removes a previously added end-change listener.
 	 *
 	 * @param listener the listener to remove, cannot be null and must have been added.
-	 * @throws NullPointerException if listener is null.
-	 * @throws IllegalArgumentException if listener was not found.
 	 */
 	public void removeOnEndChangeValueListener(Listener listener) {
 		removeListenerSafe(onEndChangeValueListenerList, listener);
@@ -135,8 +126,7 @@ public abstract class RangeControl extends Component implements Scrollable, Valu
 	public Supplier<String> getSupplierOverlayText() {
 		return supplierOverlayText;
 	}
-
-
+	
 	/**
 	 * Sets a supplier for custom overlay text. If set, this text will be displayed
 	 * instead of the raw numeric value.

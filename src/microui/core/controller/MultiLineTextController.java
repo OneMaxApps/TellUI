@@ -10,7 +10,7 @@ import java.util.Deque;
 import java.util.List;
 
 import microui.core.interfaces.InputFilter;
-import microui.event.Listener;
+import microui.core.interfaces.Listener;
 
 /**
  * Controller for managing multi-line text with line-based operations and
@@ -42,7 +42,7 @@ public final class MultiLineTextController {
 	}
 
 	/**
-	 * Constructs a new multi‑line text controller with one empty line.
+	 * Constructs a new multi-line text controller with one empty line.
 	 * The default input filter allows letters, digits, and common punctuation.
 	 */
 	public MultiLineTextController() {
@@ -137,7 +137,6 @@ public final class MultiLineTextController {
 	 * Adds a new line with the specified text at the end.
 	 * 
 	 * @param text the text for the new line (must not be {@code null})
-	 * @throws NullPointerException if text is null
 	 */
 	public void addLine(String text) {
 		addLineSilently(text);
@@ -147,9 +146,8 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a new line with the specified text at the given index.
 	 * 
-	 * @param index the position to insert the new line (0‑based, will be constrained to a valid range)
+	 * @param index the position to insert the new line
 	 * @param text  the text for the new line (must not be {@code null})
-	 * @throws NullPointerException if text is null
 	 */
 	public void insertLine(int index, String text) {
 		index = (int) constrain(index, 0, getLinesCount());
@@ -164,7 +162,7 @@ public final class MultiLineTextController {
 	 * Removes a line at the specified index. If only one line remains, clears its
 	 * content instead of removing.
 	 * 
-	 * @param index the index of the line to remove (0‑based, will be constrained to a valid range)
+	 * @param index the index of the line to remove
 	 */
 	public void removeLine(int index) {
 		if (getLinesCount() == MIN_LINES_COUNT) {
@@ -179,9 +177,9 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a character at a specific position in a line.
 	 * 
-	 * @param row    the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @param column the character position within the line (will be constrained to a valid range)
-	 * @param ch     the character to insert
+	 * @param ch the character to insert
 	 */
 	public void insertCharForLine(int row, int column, char ch) {
 		list.get(getClampedIndex(row)).insert(column, ch);
@@ -190,9 +188,9 @@ public final class MultiLineTextController {
 	/**
 	 * Inserts a string at a specific position in a line.
 	 * 
-	 * @param row    the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @param column the character position within the line (will be constrained to a valid range)
-	 * @param str    the string to insert (filtered according to the input filter)
+	 * @param str the string to insert (filtered according to the input filter)
 	 */
 	public void insertStringForLine(int row, int column, String str) {
 		list.get(getClampedIndex(row)).insert(column, str);
@@ -201,7 +199,7 @@ public final class MultiLineTextController {
 	/**
 	 * Removes a character at a specific position in a line.
 	 * 
-	 * @param row    the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @param column the character position within the line (will be constrained to a valid range)
 	 */
 	public void removeCharForLine(int row, int column) {
@@ -211,9 +209,9 @@ public final class MultiLineTextController {
 	/**
 	 * Removes a substring from a line.
 	 * 
-	 * @param row         the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @param columnStart the starting position (inclusive, will be constrained)
-	 * @param columnEnd   the ending position (exclusive, will be constrained)
+	 * @param columnEnd the ending position (exclusive, will be constrained)
 	 */
 	public void removeStringForLine(int row, int columnStart, int columnEnd) {
 		list.get(getClampedIndex(row)).remove(columnStart, columnEnd);
@@ -223,7 +221,7 @@ public final class MultiLineTextController {
 	 * Splits a line at the specified column position. Text from the column position
 	 * to the end of the line becomes a new line below.
 	 * 
-	 * @param row    the line index to split (0‑based, will be constrained to a valid range)
+	 * @param row the line index to split
 	 * @param column the column position to split at (will be constrained to the line length)
 	 */
 	public void splitLine(int row, int column) {
@@ -239,7 +237,7 @@ public final class MultiLineTextController {
 	/**
 	 * Merges a line with the line below it.
 	 * 
-	 * @param row the line index to merge with the next line (0‑based, will be constrained to a valid range)
+	 * @param row the line index to merge with the next line
 	 */
 	public void mergeLines(int row) {
 		row = getClampedIndex(row);
@@ -255,7 +253,7 @@ public final class MultiLineTextController {
 	/**
 	 * Returns the text controller for a specific line.
 	 * 
-	 * @param row the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @return the {@link SingleLineTextController} for the specified line
 	 */
 	public SingleLineTextController getLine(int row) {
@@ -336,7 +334,7 @@ public final class MultiLineTextController {
 	/**
 	 * Returns the text content of a specific line.
 	 * 
-	 * @param row the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @return the text content of the specified line
 	 */
 	public String getLineText(int row) {
@@ -347,7 +345,7 @@ public final class MultiLineTextController {
 	/**
 	 * Returns the length (character count) of a specific line.
 	 * 
-	 * @param row the line index (0‑based, will be constrained to a valid range)
+	 * @param row the line index
 	 * @return the number of characters in the specified line
 	 */
 	public int getLineLength(int row) {

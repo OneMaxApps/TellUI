@@ -11,14 +11,7 @@ import java.util.Map;
  * <p>
  * Provides a simple way to monitor and count instances of different object
  * types in the application. Useful for debugging memory usage and object
- * lifecycle.
- * </p>
- * 
- * <p>
- * Status: STABLE - Do not modify
- * </p>
- * <p>
- * Last Reviewed: 26.09.2025
+ * life-cycle.
  * </p>
  */
 public final class Metrics {
@@ -65,7 +58,7 @@ public final class Metrics {
 		if (metrics.isEmpty()) {
 			return;
 		}
-
+		
 		System.out.println("\n////////////////////");
 
 		System.out.println("Total created objects : " + totalCreatedObjects);

@@ -8,9 +8,6 @@ import microui.core.style.AbstractColor;
 import microui.core.style.Stroke;
 import microui.util.MathUtils;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
-
 /**
  * A slider component for selecting values within a linear range. The Slider
  * extends LinearRangeControl to provide a draggable interface with a visual
@@ -22,6 +19,9 @@ import microui.util.MathUtils;
  * </p>
  */
 public class Slider extends LinearRangeControl {
+	private static final float DEFAULT_MIN_VALUE = 0;
+	private static final float DEFAULT_MAX_VALUE = 100;
+	private static final float DEFAULT_VALUE = 0;
 	private final Rect progress;
 
 	/**
@@ -37,7 +37,7 @@ public class Slider extends LinearRangeControl {
 		super(x, y, w, h);
 		progress = new Rect(x, y, w, h);
 
-		setValue(0, 100, 0);
+		setValue(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE, DEFAULT_VALUE);
 
 		onDragging(() -> {
 			recalculateProgressBounds();

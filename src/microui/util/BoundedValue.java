@@ -3,7 +3,7 @@ package microui.util;
 import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
-import microui.event.Listener;
+import microui.core.interfaces.Listener;
 
 /**
  * Represents a numeric value bounded between minimum and maximum limits.
@@ -12,13 +12,6 @@ import microui.event.Listener;
  * This class provides a way to store and manipulate values that must stay
  * within a defined range. It includes change listeners and ensures values
  * remain within bounds through automatic constraint.
- * </p>
- * 
- * <p>
- * Status: STABLE - Do not modify
- * </p>
- * <p>
- * Last reviewed: 03.11.2025
  * </p>
  */
 public final class BoundedValue {
@@ -177,8 +170,6 @@ public final class BoundedValue {
 	 * @param max   the new maximum value
 	 * @param value the new value
 	 * @return this BoundedValue for method chaining
-	 * 
-	 * @throws IllegalArgumentException if min is greater than max
 	 */
 	public BoundedValue set(float min, float max, float value) {
 		setMin(min);
@@ -195,8 +186,6 @@ public final class BoundedValue {
 	 * @param min the new minimum value
 	 * @param max the new maximum value
 	 * @return this BoundedValue for method chaining
-	 * 
-	 * @throws IllegalArgumentException if min is greater than max
 	 */
 	public BoundedValue setMinMax(float min, float max) {
 		setMin(min);

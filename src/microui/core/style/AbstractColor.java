@@ -16,9 +16,6 @@ import processing.core.PGraphics;
  * the main Processing context and PGraphics objects. It also integrates with
  * the Metrics system for resource tracking.
  * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 27.10.2025
- * </p>
  * 
  * @see Color
  * @see Metrics
@@ -125,28 +122,28 @@ public abstract class AbstractColor {
 	/**
 	 * Returns the red component of this color.
 	 * 
-	 * @return the red component value (0-255)
+	 * @return the red component value ({@value #MIN_VALUE} - {@value #MAX_VALUE})
 	 */
 	public abstract int getRed();
 
 	/**
 	 * Returns the green component of this color.
 	 * 
-	 * @return the green component value (0-255)
+	 * @return the green component value ({@value #MIN_VALUE} - {@value #MAX_VALUE})
 	 */
 	public abstract int getGreen();
 
 	/**
 	 * Returns the blue component of this color.
 	 * 
-	 * @return the blue component value (0-255)
+	 * @return the blue component value ({@value #MIN_VALUE} - {@value #MAX_VALUE})
 	 */
 	public abstract int getBlue();
 
 	/**
 	 * Returns the alpha (transparency) component of this color.
 	 * 
-	 * @return the alpha component value (0-255, where 0 is fully transparent)
+	 * @return the alpha component value ({@value #MIN_VALUE} - {@value #MAX_VALUE}, where {@value #MIN_VALUE} is fully transparent)
 	 */
 	public abstract int getAlpha();
 

@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 import microui.core.base.ContentView;
 
 /**

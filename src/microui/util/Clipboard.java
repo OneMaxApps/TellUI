@@ -109,7 +109,7 @@ public final class Clipboard {
 	 * instead of the operating system's clipboard.
 	 * </p>
 	 */
-	public static final void usingLocalBuffer() {
+	public static final void useLocalBuffer() {
 		usingLocalBuffer = true;
 	}
 
@@ -121,7 +121,7 @@ public final class Clipboard {
 	 * clipboard.
 	 * </p>
 	 */
-	public static final void usingSystemBuffer() {
+	public static final void useSystemBuffer() {
 		usingLocalBuffer = false;
 	}
 
@@ -131,7 +131,7 @@ public final class Clipboard {
 	 * @return "Local Buffer" if using local buffer, "OS Buffer" if using system
 	 *         clipboard
 	 */
-	public static final String usingTypeOfBuffer() {
+	public static final String getTypeOfBuffer() {
 		return usingLocalBuffer ? "Local Buffer" : "OS Buffer";
 	}
 

@@ -9,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import microui.core.interfaces.InputFilter;
-import microui.event.Listener;
+import microui.core.interfaces.Listener;
 import microui.util.Debugger;
 
 /**
@@ -245,8 +245,8 @@ public class FullSingleLineTextController {
 	/**
 	 * Sets the maximum allowed characters when constraints are enabled.
 	 * 
-	 * @param maxChars the maximum character limit (must be ≥ MIN_CONSTRAIN_VALUE)
-	 * @throws IllegalArgumentException if maxChars is less than MIN_CONSTRAIN_VALUE
+	 * @param maxChars the maximum character limit (must be ≥ MIN_CONSTRAIN_VALUE {@value #MIN_CONSTRAIN_VALUE})
+	 * @throws IllegalArgumentException if maxChars is less than MIN_CONSTRAIN_VALUE {@value #MIN_CONSTRAIN_VALUE}
 	 */
 	public final void setMaxChars(int maxChars) {
 		if (maxChars < MIN_CONSTRAIN_VALUE) {
@@ -285,7 +285,6 @@ public class FullSingleLineTextController {
 	 * Returns the text content parsed as an integer.
 	 * 
 	 * @return the text content as an integer
-	 * @throws NumberFormatException if the text cannot be parsed as an integer
 	 */
 	public final int getDigitsStrict() {
 		return Integer.parseInt(cachedText);
@@ -362,7 +361,7 @@ public class FullSingleLineTextController {
 
 	/**
 	 * Clears all text content. If the internal buffer capacity exceeds
-	 * MAX_CAPACITY_FOR_CLEAR, trims the buffer.
+	 * MAX_CAPACITY_FOR_CLEAR ({@value #MAX_CAPACITY_FOR_CLEAR}), trims the buffer.
 	 */
 	public final void clear() {
 		if (isEmpty()) {

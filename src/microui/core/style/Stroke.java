@@ -57,7 +57,7 @@ public final class Stroke {
 	}
 
 	/**
-	 * Constructs a Stroke with default theme color and weight.
+	 * Constructs a Stroke with default theme color and weight ({@value #DEFAULT_STROKE_WEIGHT}).
 	 */
 	public Stroke() {
 		this(DEFAULT_STROKE_WEIGHT);
@@ -116,7 +116,7 @@ public final class Stroke {
 	 * @param stroke the Stroke object to copy from (cannot be null)
 	 * @throws NullPointerException if stroke is null
 	 */
-	public void set(Stroke stroke) {
+	public void copyFrom(Stroke stroke) {
 		requireNonNull(stroke, "stroke");
 
 		color = stroke.getColor();

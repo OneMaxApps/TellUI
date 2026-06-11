@@ -136,7 +136,7 @@ public final class SpatialAnimator {
 	}
 
 	/**
-	 * Checks if the SpatialAnimator has reached either endpoint.
+	 * Checks if the SpatialAnimator has reached either end-point.
 	 * 
 	 * @return true if current time equals either START or END, false otherwise
 	 */

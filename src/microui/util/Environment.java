@@ -6,11 +6,11 @@ import java.util.Objects;
  *  Environment class provides information about system
  */
 public final class Environment {
-	private static boolean isAndroid;
+	private static boolean android;
 	private static Mode forcedMode;
 	
 	static {
-		isAndroid = System.getProperty("java.vendor").contains("Android") || System.getProperty("os.name").contains("Android");
+		android = System.getProperty("java.vendor").contains("Android") || System.getProperty("os.name").contains("Android");
 	}
 	
 	private Environment() {
@@ -23,7 +23,7 @@ public final class Environment {
 	 * @return true if environment is Android, false if isn't
 	 */
 	public static boolean isAndroid() {
-		return forcedMode == null ? isAndroid : forcedMode == Mode.ANDROID;
+		return forcedMode == null ? android : forcedMode == Mode.ANDROID;
 	}
 	
 	/**
@@ -32,13 +32,15 @@ public final class Environment {
 	 * @return true if environment is Desktop, false if isn't
 	 */
 	public static boolean isDesktop() {
-		return forcedMode == null ? !isAndroid : forcedMode == Mode.DESKTOP;
+		return forcedMode == null ? !android : forcedMode == Mode.DESKTOP;
 	}
 	
 	/**
 	 * Provides handle initialization for mode of environment.
 	 * Can only be called once
 	 * @param forcedMode the current mode for environment
+	 * @throws NullPointerException if forcedMode == null
+	 * @throws IllegalStateException if Environment.forcedMode != null
 	 */
 	public static void setForcedMode(Mode forcedMode) {
 		if (Environment.forcedMode != null) {

@@ -1,10 +1,10 @@
 package microui.util;
 
 /**
- * Timer utility for tracking progress between two endpoints over time.
+ * Timer utility for tracking progress between two end-points over time.
  * 
  * <p>
- * Manages a timer value that progresses between START (0) and END (1) at a
+ * Manages a timer value that progresses between START ({@value #START}) and END ({@value #END}) at a
  * configurable speed. Can increment or decrement the timer value and provides
  * methods to check completion status.
  * </p>
@@ -83,7 +83,7 @@ public final class Timer {
 	 */
 	public void setSpeed(float speed) {
 		if (speed < 0 || speed > 1) {
-			throw new IllegalArgumentException("speed for Timer must be between 0 and 1");
+			throw new IllegalArgumentException("Speed for Timer must be between 0 and 1");
 		}
 		this.speed = speed;
 	}
@@ -109,7 +109,7 @@ public final class Timer {
 	}
 
 	/**
-	 * Checks if the timer has reached either endpoint.
+	 * Checks if the timer has reached either end-point.
 	 * 
 	 * @return true if current time equals either START or END, false otherwise
 	 */

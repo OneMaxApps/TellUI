@@ -10,7 +10,7 @@ import microui.core.style.LerpedLoopColor;
  * backgrounds and soft color transitions.
  * <p>
  * This theme features animated lerp backgrounds, translucent elements, and
- * soft color palettes to create a "glass" or "frosted glass" visual effect. It
+ * soft color palettes to create a "glass" visual effect. It
  * includes looping animations for dynamic visual interest.
  * </p>
  * 

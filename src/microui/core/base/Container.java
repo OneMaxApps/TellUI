@@ -10,11 +10,11 @@ import java.util.NoSuchElementException;
 
 import microui.core.ImageBuffer;
 import microui.core.interfaces.KeyPressable;
+import microui.core.interfaces.LayoutParams;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.layout.LayoutManager;
-import microui.layout.LayoutParams;
 import microui.util.Debugger;
 import processing.core.PImage;
 import processing.event.KeyEvent;
@@ -26,15 +26,11 @@ import processing.event.MouseEvent;
  * system (LayoutManager), event handling, and rendering priority management.
  * <p>
  * The container supports two operation modes: {@link Mode#RESPECT_CONSTRAINTS}
- * (respect constraints) and {@link Mode#IGNORE_CONSTRAINTS} (ignore
- * constraints). Default mode is {@code RESPECT_CONSTRAINTS}.
+ * and {@link Mode#IGNORE_CONSTRAINTS}. Default mode is {@code RESPECT_CONSTRAINTS}.
  * </p>
  * <p>
  * Implements {@link KeyPressable} and {@link Scrollable} interfaces to
  * propagate keyboard and scroll events to child components.
- * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 08.11.2025
  * </p>
  * 
  * @see ContentView
@@ -186,7 +182,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param textId the text identifier of the ContentView (cannot be null)
 	 * @return the ContentView with the specified text ID
-	 * @throws NullPointerException   if textId is null
 	 * @throws NoSuchElementException if no ContentView with the specified text ID
 	 *                                is found
 	 */
@@ -206,9 +201,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * @param layoutParams the layout parameters for the component (cannot be null)
 	 * @param id           the numeric identifier for the component
 	 * @return this container for method chaining
-	 * @throws NullPointerException     if contentView or layoutParams is null
-	 * @throws IllegalArgumentException if contentView is already added or is the
-	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams, int id) {
 		addInternal(contentView, layoutParams);
@@ -224,10 +216,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * @param layoutParams the layout parameters for the component (cannot be null)
 	 * @param textId       the text identifier for the component (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException     if contentView, layoutParams, or textId is
-	 *                                  null
-	 * @throws IllegalArgumentException if contentView is already added or is the
-	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams, String textId) {
 		addInternal(contentView, layoutParams);
@@ -241,9 +229,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * @param contentView  the component to add (cannot be null)
 	 * @param layoutParams the layout parameters for the component (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException     if contentView or layoutParams is null
-	 * @throws IllegalArgumentException if contentView is already added or is the
-	 *                                  container itself
 	 */
 	public Container add(ContentView contentView, LayoutParams layoutParams) {
 		addInternal(contentView, layoutParams);
@@ -255,8 +240,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param contentView the component to remove (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException   if contentView is null
-	 * @throws NoSuchElementException if the component is not found in the container
 	 */
 	public Container remove(ContentView contentView) {
 		removeInternal(contentView);
@@ -268,7 +251,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param id the numeric identifier of the component to remove
 	 * @return this container for method chaining
-	 * @throws NoSuchElementException if no component with the specified ID is found
 	 */
 	public Container removeById(int id) {
 		removeInternal(getById(id));
@@ -281,9 +263,6 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	 * 
 	 * @param textId the text identifier of the component to remove (cannot be null)
 	 * @return this container for method chaining
-	 * @throws NullPointerException   if textId is null
-	 * @throws NoSuchElementException if no component with the specified text ID is
-	 *                                found
 	 */
 	public Container removeByTextId(String textId) {
 		removeInternal(getByTextId(textId));

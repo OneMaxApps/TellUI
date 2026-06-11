@@ -160,7 +160,7 @@ public final class TextView extends Component {
 	}
 
 	/**
-	 * Gets the manual text size (used when auto-resize is disabled).
+	 * Gets the current text size.
 	 *
 	 * @return the current manual text size in pixels
 	 */

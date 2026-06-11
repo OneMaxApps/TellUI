@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 
 /**
  * Linear layout manager that arranges components in a single row or column.
@@ -82,13 +83,13 @@ public class LinearLayout extends LinearAxisLayout {
 	 * Validates that the provided layout parameters are of the correct type.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if the parameters are not an instance of
+	 * @throws ClassCastException if the parameters are not an instance of
 	 *                                  LinearLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof LinearLayoutParams)) {
-			throw new IllegalArgumentException("using not correct layout params for LinearLayoutParams");
+			throw new ClassCastException("Using not correct layout params for LinearLayoutParams");
 		}
 	}
 }

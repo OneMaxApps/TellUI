@@ -11,10 +11,10 @@ import microui.core.effect.Hover;
 import microui.core.effect.Ripples;
 import microui.core.effect.SpatialAnimator;
 import microui.core.exception.DuplicateItemException;
+import microui.core.interfaces.Listener;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
-import microui.event.Listener;
 import microui.util.SpatialState;
 
 /**
@@ -61,7 +61,7 @@ public final class ToggleButton extends AbstractButton {
 	}
 	
 	/**
-	 * Constructs a toggle button with default size and positions it at the center of the sketch.
+	 * Constructs a toggle button with default size and positions it at the center of the screen.
 	 */
 	public ToggleButton() {
 		this(0,0,0,0);

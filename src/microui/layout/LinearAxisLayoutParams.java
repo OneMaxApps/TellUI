@@ -1,5 +1,7 @@
 package microui.layout;
 
+import microui.core.interfaces.LayoutParams;
+
 /**
  * Abstract base class for layout parameters used in linear axis layouts.
  * 

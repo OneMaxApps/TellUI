@@ -38,19 +38,16 @@ import microui.core.TextEditorModel.Direction;
 import microui.core.base.Component;
 import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
+import microui.core.interfaces.Listener;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
-import microui.event.Listener;
 import microui.util.Clipboard;
 import microui.util.MathUtils;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
-
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
 
 /**
  * A multi-line text editing component with support for selection, scrolling,
@@ -180,7 +177,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 *
 	 * @param inputFilter the new input filter (must not be {@code null})
 	 * @return this {@code TextArea} instance for chaining
-	 * @throws NullPointerException if {@code inputFilter} is {@code null}
 	 */
 	public TextArea setInputFilter(InputFilter inputFilter) {
 		textEditorModel.setInputFilter(inputFilter);
@@ -189,9 +185,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	/**
-	 * Sets the color of the scrollbar thumbs.
+	 * Sets the color of the scroll-bar thumbs.
 	 *
-	 * @param color the color for the scrollbar thumbs
+	 * @param color the color for the scroll-bar thumbs
 	 */
 	public void setScrollsThumbColor(AbstractColor color) {
 		scrollManager.scrollH.setThumbColor(color);
@@ -199,9 +195,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	/**
-	 * Sets the background color of the scrollbars.
+	 * Sets the background color of the scroll-bars.
 	 *
-	 * @param color the background color for the scrollbars
+	 * @param color the background color for the scroll-bars
 	 */
 	public void setScrollsBackgroundColor(AbstractColor color) {
 		scrollManager.scrollH.setBackgroundColor(color);
@@ -209,9 +205,9 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	}
 
 	/**
-	 * Sets the stroke color of the scrollbar thumbs.
+	 * Sets the stroke color of the scroll-bar thumbs.
 	 *
-	 * @param color the stroke color for the scrollbar thumbs
+	 * @param color the stroke color for the scroll-bar thumbs
 	 */
 	public void setScrollsThumbStrokeColor(AbstractColor color) {
 		scrollManager.scrollH.setThumbStrokeColor(color);
@@ -252,7 +248,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * 8 inclusive.
 	 *
 	 * @param tabSize the tab size to set
-	 * @throws IllegalArgumentException if tabSize is not between 1 and 8
 	 */
 	public void setTabSize(int tabSize) {
 		tabConfig.setTabSize(tabSize);
@@ -272,7 +267,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * Minimum speed is 1.
 	 *
 	 * @param draggingSpeed the dragging speed to set
-	 * @throws IllegalArgumentException if draggingSpeed is less than 1
 	 */
 	public void setHandleDraggingSpeed(float draggingSpeed) {
 		handleDraggingConfig.setDraggingSpeed(draggingSpeed);
@@ -373,7 +367,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * Sets the font for text rendering.
 	 *
 	 * @param font the font to use for text
-	 * @throws NullPointerException if font is null
 	 */
 	public void setFont(PFont font) {
 		textStyle.setFont(font);
@@ -392,7 +385,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * Sets the text size in pixels. Minimum size is 4 pixels.
 	 *
 	 * @param textSize the text size to set
-	 * @throws IllegalArgumentException if textSize is less than 4
 	 */
 	public void setTextSize(int textSize) {
 		textStyle.setTextSize(textSize);
@@ -438,7 +430,6 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 	 * Sets the cursor stroke weight (thickness). Minimum weight is 1 pixel.
 	 *
 	 * @param weight the cursor weight to set
-	 * @throws IllegalArgumentException if weight is less than 1
 	 */
 	public void setCursorWeight(float weight) {
 		cursorRenderer.setWeight(weight);
@@ -464,7 +455,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 	/**
 	 * Handles mouse wheel scrolling. Scrolls the text area vertically when hovered,
-	 * or scrolls scrollbars when they are hovered.
+	 * or scrolls scroll-bars when they are hovered.
 	 *
 	 * @param mouseEvent the mouse wheel event
 	 */

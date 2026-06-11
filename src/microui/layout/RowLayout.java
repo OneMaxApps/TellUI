@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 
 /**
  * Row layout manager that arranges components horizontally.
@@ -56,13 +57,13 @@ public final class RowLayout extends LinearAxisLayout {
 	 * Validates that the provided layout parameters are of the correct type.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if the parameters are not an instance of
+	 * @throws ClassCastException if the parameters are not an instance of
 	 *                                  RowLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof RowLayoutParams)) {
-			throw new IllegalArgumentException("Using not correct layout params for RowLayout");
+			throw new ClassCastException("Using not correct layout params for RowLayout");
 		}
 	}
 }

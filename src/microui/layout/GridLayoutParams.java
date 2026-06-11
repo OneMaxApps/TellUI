@@ -1,5 +1,7 @@
 package microui.layout;
 
+import microui.core.interfaces.LayoutParams;
+
 /**
  * Layout parameters for positioning components within a GridLayout. Defines
  * grid coordinates, spanning, and alignment for components in a grid-based

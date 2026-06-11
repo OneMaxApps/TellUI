@@ -160,7 +160,7 @@ public class Button extends AbstractButton {
 	 *
 	 * @return the current hover effect color
 	 */
-	public AbstractColor getHoverColor() {
+	public final AbstractColor getHoverColor() {
 		return hover.getColor();
 	}
 
@@ -170,7 +170,7 @@ public class Button extends AbstractButton {
 	 * @param color the color to use for hover effects
 	 * @return this Button instance for method chaining
 	 */
-	public Button setHoverColor(AbstractColor color) {
+	public final Button setHoverColor(AbstractColor color) {
 		hover.setColor(color);
 		return this;
 	}

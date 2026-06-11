@@ -127,7 +127,6 @@ public abstract class AbstractEventSystem {
 	 * Sets the threshold for double-click detection.
 	 * 
 	 * @param threshold the threshold in milliseconds (must be ≥ 0)
-	 * @throws IllegalArgumentException if threshold is less than 0
 	 */
 	public final void setDoubleClickThreshold(long threshold) {
 		detector.doubleClickDetector.setThreshold(threshold);

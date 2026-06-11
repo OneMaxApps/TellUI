@@ -126,7 +126,7 @@ public final class Hover extends View {
 	 * Sets the animation speed for the hover effect.
 	 * 
 	 * @param speed the animation speed (must be greater than 0)
-	 * @throws IllegalArgumentException if speed <= 0
+	 * @throws IllegalArgumentException if speed lower or equal to 0
 	 */
 	public void setSpeed(float speed) {
 		if (speed <= 0) {

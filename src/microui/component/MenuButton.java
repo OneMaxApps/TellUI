@@ -17,6 +17,7 @@ import microui.core.effect.AbstractShadow;
 import microui.core.effect.ReactiveShadow;
 import microui.core.effect.SpatialAnimator;
 import microui.core.exception.DuplicateItemException;
+import microui.core.interfaces.Listener;
 import microui.core.interfaces.ModalParent;
 import microui.core.interfaces.Scrollable;
 import microui.core.style.AbstractColor;
@@ -24,16 +25,12 @@ import microui.core.style.Color;
 import microui.core.style.LerpedColor;
 import microui.core.style.LerpedLoopColor;
 import microui.core.style.Stroke;
-import microui.event.Listener;
 import microui.event.PointerManager;
 import microui.util.Debugger;
 import microui.util.SpatialState;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.event.MouseEvent;
-
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
 
 /**
  * A hierarchical menu button component that can contain both plain items and
@@ -51,6 +48,7 @@ import processing.event.MouseEvent;
  * @see Scrollable
  */
 public final class MenuButton extends Button implements Scrollable, ModalParent {
+	private static final String DEFAULT_TITLE = "Menu Button";
 	private static final int DEFAULT_MAX_WIDTH = 100;
 	private static final int DEFAULT_MAX_HEIGHT = 24;
 	private static final int DEFAULT_ITEM_WIDTH = 200;
@@ -103,11 +101,11 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 	}
 
 	/**
-	 * Constructs a default MenuButton with the text "Menu Button". The menu is
+	 * Constructs a default MenuButton with the text "{@value #DEFAULT_TITLE}". The menu is
 	 * centered on the screen.
 	 */
 	public MenuButton() {
-		this("Menu Button");
+		this(DEFAULT_TITLE);
 	}
 
 	/**

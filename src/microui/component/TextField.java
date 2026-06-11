@@ -28,20 +28,17 @@ import microui.core.controller.FullSingleLineTextController;
 import microui.core.controller.FullSingleLineTextController.FilterMode;
 import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
+import microui.core.interfaces.Listener;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
 import microui.core.style.LerpedLoopColor;
-import microui.event.Listener;
 import microui.util.BoundedValue;
 import microui.util.Clipboard;
 import microui.util.Metrics;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
-
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
 
 /**
  * A single-line text input field with support for text editing, selection,
@@ -149,7 +146,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param inputFilter the new input filter (must not be {@code null})
 	 * @return this TextField instance for method chaining
-	 * @throws NullPointerException if {@code inputFilter} is {@code null}
 	 */
 	public TextField setInputFilter(InputFilter inputFilter) {
 		text.controller.setInputFilter(inputFilter);
@@ -277,7 +273,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param validationMode the new filter mode (must not be {@code null})
 	 * @return this TextField instance for method chaining
-	 * @throws NullPointerException if {@code validationMode} is {@code null}
 	 */
 	public TextField setFilterModeMode(FilterMode validationMode) {
 		text.setFilterMode(validationMode);
@@ -368,7 +363,7 @@ public final class TextField extends Component implements KeyPressable {
 	/**
 	 * Gets the number of digits when in digit-only validation mode.
 	 *
-	 * @return the number of digits, or -1 if not in digit mode
+	 * @return the number of digits
 	 */
 	public int getDigitsStrict() {
 		return text.getDigitsStrict();
@@ -458,7 +453,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param size the text size to set
 	 * @return this TextField instance for method chaining
-	 * @throws IllegalArgumentException if size is less than 1
 	 */
 	public TextField setTextSize(float size) {
 		text.setTextSize(size);
@@ -479,7 +473,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param weight the cursor weight to set
 	 * @return this TextField instance for method chaining
-	 * @throws IllegalArgumentException if weight is outside 1-10 range
 	 */
 	public TextField setCursorWeight(float weight) {
 		cursor.setWeight(weight);
@@ -500,7 +493,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param rate the blink rate to set
 	 * @return this TextField instance for method chaining
-	 * @throws IllegalArgumentException if rate is outside 1-30 range
 	 */
 	public TextField setCursorBlinkRate(float rate) {
 		cursor.setBlinkRate(rate);
@@ -521,7 +513,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param font the font to use for text
 	 * @return this TextField instance for method chaining
-	 * @throws NullPointerException if font is null
 	 */
 	public TextField setFont(PFont font) {
 		text.setFont(font);
@@ -542,7 +533,6 @@ public final class TextField extends Component implements KeyPressable {
 	 *
 	 * @param hint the hint text to display
 	 * @return this TextField instance for method chaining
-	 * @throws NullPointerException if hint is null
 	 */
 	public TextField setHint(String hint) {
 		text.setHint(hint);

@@ -10,10 +10,10 @@ import java.util.function.Supplier;
  * This class extends {@link AbstractLerpedColor} with built-in looping
  * behavior. When loop mode is enabled, the color automatically interpolates
  * back and forth between the start and end colors, creating a continuous
- * pulsing or breathing effect.
+ * breathing effect.
  * 
  * <p>
- * The default animation speed is set to 0.01 (1% progress per update), which
+ * The default animation speed is set to {@value #DEFAULT_SPEED_OF_PROGRESS}, which
  * creates a smooth, gradual transition suitable for visual effects.
  * 
  * <p>
@@ -28,7 +28,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 
 	/**
 	 * Constructs a new looping interpolated color with the specified start and end
-	 * colors. Loop mode is enabled by default with an animation speed of 0.01.
+	 * colors. Loop mode is enabled by default with an animation speed of {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * 
 	 * @param start the starting color of the loop sequence, cannot be null
 	 * @param end   the ending color of the loop sequence, cannot be null
@@ -41,7 +41,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	
 	/**
 	 * Constructs a new looping interpolated color with the specified start and end
-	 * color suppliers. Loop mode is enabled by default with an animation speed of 0.01.
+	 * color suppliers. Loop mode is enabled by default with an animation speed of {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * The suppliers are called each time the color is evaluated, allowing the
 	 * start/end colors to change dynamically over time.
 	 * 
@@ -67,7 +67,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 
 	/**
 	 * Enables or disables loop mode. When enabled, the animation automatically
-	 * reverses direction when reaching either endpoint, creating a continuous
+	 * reverses direction when reaching either end-point, creating a continuous
 	 * back-and-forth transition. When disabled, the animation stops at the current
 	 * progress until loop mode is re-enabled.
 	 * 
@@ -88,6 +88,7 @@ public class LerpedLoopColor extends AbstractLerpedColor {
 	 * <p>
 	 * This method should be called periodically (e.g., each frame) to maintain the
 	 * animation when loop mode is active.
+	 * </p>
 	 */
 	@Override
 	protected void preApply() {

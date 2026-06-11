@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import microui.core.exception.DuplicateItemException;
+import microui.core.interfaces.Listener;
 import microui.core.interfaces.Visible;
-import microui.event.Listener;
 import microui.util.Metrics;
 import processing.core.PApplet;
 
@@ -23,10 +23,6 @@ import processing.core.PApplet;
  * Subclasses must implement the {@link #render()} method to define their
  * specific drawing logic. This class implements the {@link Visible} interface
  * and provides built-in support for metrics collection.
- * </p>
- * 
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
  * </p>
  * 
  * @see Visible
@@ -72,6 +68,8 @@ public abstract class View implements Visible {
 	 * Setter for a new listener for priority.
 	 *  
 	 * @param listener a new listener for priority (cannot be {@code null}).
+	 * @throws NullPointerException if listener is null
+	 * @throws DuplicateItemException if listener already added
 	 */
 	public final void addOnChangePriorityListener(Listener listener) {
 		requireNonNull(listener,"listener");
@@ -87,6 +85,8 @@ public abstract class View implements Visible {
 	 * Remover for priority listeners.
 	 * 
 	 * @param listener a listener for remove (cannot be {@code null}).
+	 * @throws NullPointerException if listener is null
+	 * @throws NoSuchElementException if listener not added
 	 */
 	public final void removeOnChangePriorityListener(Listener listener) {
 		requireNonNull(listener,"listener");
@@ -122,7 +122,7 @@ public abstract class View implements Visible {
 	 * Returns the priority of rendering the element. Elements with a higher
 	 * priority are drawn on top of others.
 	 *
-	 * @return current rendering priority (≥ 0)
+	 * @return current rendering priority (≥ {@value #MIN_PRIORITY})
 	 */
 	public final int getPriority() {
 		return priority;
@@ -131,9 +131,9 @@ public abstract class View implements Visible {
 	/**
 	 * Sets the priority of rendering the element.
 	 *
-	 * @param priority new rendering priority (must be ≥ 0)
+	 * @param priority new rendering priority (must be ≥ {@value #MIN_PRIORITY})
 	 * @return this View for method chaining
-	 * @throws IllegalArgumentException if priority is less than 0
+	 * @throws IllegalArgumentException if priority is less than {@value #MIN_PRIORITY}
 	 */
 	public final View setPriority(int priority) {
 		if (this.priority == priority) {
@@ -154,7 +154,7 @@ public abstract class View implements Visible {
 	/**
 	 * Returns the numeric identifier of the element.
 	 *
-	 * @return numeric element Id (≥ 0)
+	 * @return numeric element Id (≥ {@value #MIN_ID})
 	 */
 	public final int getId() {
 		return id;
@@ -163,10 +163,10 @@ public abstract class View implements Visible {
 	/**
 	 * Sets the numeric identifier of the element.
 	 *
-	 * @param id new identifier (must be between MIN_ID (0) and MAX_ID
+	 * @param id new identifier (must be between MIN_ID ({@value #MIN_PRIORITY}) and MAX_ID
 	 *           (Integer.MAX_VALUE))
 	 * @return this View for method chaining
-	 * @throws IllegalArgumentException if the identifier is less than 0
+	 * @throws IllegalArgumentException if the identifier is less than {@value #MIN_PRIORITY}
 	 */
 	public final View setId(int id) {
 		if (id < MIN_ID) {
@@ -189,8 +189,7 @@ public abstract class View implements Visible {
 	/**
 	 * Sets text identifier for this View object.
 	 * 
-	 * @param textId new text identifier for this View object (cannot be null and
-	 *               (or) empty)
+	 * @param textId new text identifier for this View object (cannot be null or empty)
 	 * @return this View for method chaining
 	 * @throws NullPointerException     if textId is null
 	 * @throws IllegalArgumentException if textId is blank
@@ -210,7 +209,7 @@ public abstract class View implements Visible {
 	/**
 	 * Checks if this View has a non-default numeric identifier.
 	 * 
-	 * @return true if id is not equal to DEFAULT_ID (0), false otherwise
+	 * @return true if id is not equal to DEFAULT_ID ({@value #DEFAULT_ID}), false otherwise
 	 */
 	public final boolean hasId() {
 		return id != DEFAULT_ID;
@@ -219,7 +218,7 @@ public abstract class View implements Visible {
 	/**
 	 * Checks if this View has a non-default text identifier.
 	 * 
-	 * @return true if text id is not equal to DEFAULT_TEXT_ID (""), false otherwise
+	 * @return true if text id is not equal to DEFAULT_TEXT_ID ({@value #DEFAULT_TEXT_ID}), false otherwise
 	 */
 	public final boolean hasTextId() {
 		return !textId.equals(DEFAULT_TEXT_ID);

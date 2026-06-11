@@ -112,7 +112,6 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 	 * 
 	 * @param speed the new animation speed, must be between 0.0 and 1.0
 	 * @return this instance for method chaining
-	 * @throws IllegalArgumentException if speed is outside the range [0.0, 1.0]
 	 */
 	public final AbstractLerpedColor setSpeed(float speed) {
 		getAnimator().setSpeed(speed);
@@ -245,7 +244,7 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		}
 
 		/**
-		 * Returns whether the animation loops (ping‑pong) between start and end.
+		 * Returns whether the animation loops (ping-pong) between start and end.
 		 *
 		 * @return {@code true} if looping is enabled, {@code false} otherwise
 		 */

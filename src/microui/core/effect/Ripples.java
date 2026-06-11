@@ -22,9 +22,6 @@ import processing.core.PGraphics;
  * graphics buffer management and animation timing. The effect is triggered by
  * clicks on the associated component.
  * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 16.09.2025
- * </p>
  * 
  * @see Component
  * @see View
@@ -90,7 +87,6 @@ public final class Ripples extends View {
 	 * Sets the ripple color.
 	 * 
 	 * @param color the color to use for ripples (cannot be null)
-	 * @throws NullPointerException if color is null
 	 */
 	public void setColor(AbstractColor color) {
 		animation.setColor(color);

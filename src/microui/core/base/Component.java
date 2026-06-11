@@ -3,11 +3,11 @@ package microui.core.base;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
+import microui.core.interfaces.Listener;
 import microui.core.style.AbstractColor;
 import microui.event.Event;
 import microui.event.EventType;
 import microui.event.InteractionHandler;
-import microui.event.Listener;
 import microui.feedback.TextTooltipContent;
 import microui.feedback.Tooltip;
 import microui.feedback.TooltipContent;
@@ -72,11 +72,11 @@ public abstract class Component extends ContentView {
 			return;
 		}
 
-		super.draw(); // Render the component's visual representation
+		super.draw();
 
-		event.listen(); // Detect and process events
-		interactionHandler.listen(); // Handle interaction callbacks
-		tooltip.listen(); // Manage tooltip display
+		event.listen();
+		interactionHandler.listen();
+		tooltip.listen();
 		
 	}
 
@@ -214,9 +214,9 @@ public abstract class Component extends ContentView {
 	}
 
 	/**
-	 * Returns whether a double‑click event occurred in the current frame.
+	 * Returns whether a double-click event occurred in the current frame.
 	 *
-	 * @return true if a double‑click event occurred, false otherwise
+	 * @return true if a double-click event occurred, false otherwise
 	 */
 	public boolean isDoubleClickedEvent() {
 		return event.isDoubleClicked();
@@ -319,7 +319,7 @@ public abstract class Component extends ContentView {
 	}
 
 	/**
-	 * Registers a listener for long press events (extended mouse button hold).
+	 * Registers a listener for long press events (mouse button hold).
 	 *
 	 * @param listener the listener to call on long press
 	 * @return this Component instance for method chaining

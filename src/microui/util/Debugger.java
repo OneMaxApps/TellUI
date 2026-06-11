@@ -13,7 +13,7 @@ import processing.core.PApplet;
  * 
  * <p>
  * Provides centralized control over debug mode with options for
- * enabling/disabling, hotkey switching, and storing additional debug
+ * enabling/disabling, hot-key switching, and storing additional debug
  * information.
  * </p>
  */
@@ -218,23 +218,23 @@ public final class Debugger {
 	}
 
 	/**
-	 * Checks if hotkey switching of debug mode is enabled.
+	 * Checks if hot-key switching of debug mode is enabled.
 	 * 
-	 * @return true if hotkey switching is enabled, false otherwise
+	 * @return true if hot-key switching is enabled, false otherwise
 	 */
 	public static boolean isHotKeyEnabled() {
 		return hotKeyEnabled;
 	}
 
 	/**
-	 * Enables or disables hotkey switching of debug mode.
+	 * Enables or disables hot-key switching of debug mode.
 	 * 
 	 * <p>
-	 * When enabled, allows debug mode to be toggled via a hotkey (ALT).
+	 * When enabled, allows debug mode to be toggled via a hot-key (ALT).
 	 * When disabled, debug mode can only be changed programmatically.
 	 * </p>
 	 * 
-	 * @param hotKeyEnabled true to enable hotkey switching, false to
+	 * @param hotKeyEnabled true to enable hot-key switching, false to
 	 *                              disable
 	 */
 	public static void setHotKeyEnabled(boolean hotKeyEnabled) {
@@ -259,25 +259,10 @@ public final class Debugger {
 	 * TextConfig a class for settings for text drawing
 	 */
 	public static final class TextConfig {
-		/**
-		 * Color for text
-		 */
-		public static AbstractColor color;
-		
-		/**
-		 * Position x for text
-		 */
-		public static int x;
-		
-		/**
-		 * Position y for text
-		 */
-		public static int y;
-		
-		/**
-		 * Size for text
-		 */
-		public static int size;
+		private static AbstractColor color;
+		private static int x;
+		private static int y;
+		private static int size;
 		
 		static {
 			color = Color.WHITE;
@@ -346,9 +331,12 @@ public final class Debugger {
 		}
 		
 		/**
-		 * setter for text size
-		 * text size must be greater than 2
+		 * Setter for text size.
+		 * 
+		 * (text size must be greater than 1)
+		 * 
 		 * @param size for text size
+		 * @throws IllegalArgumentException if size lower or equal to 1
 		 */
 		public static void setSize(int size) {
 			if (size <= 1) {

@@ -8,28 +8,32 @@ import microui.core.LinearRangeControl;
 import microui.core.style.AbstractColor;
 import microui.util.MathUtils;
 
-//Status: STABLE - Do not modify
-//Last Reviewed: 01.03.2026
-
 /**
- * A scrollbar component with a draggable thumb for selecting values within a
+ * A scroll-bar component with a draggable thumb for selecting values within a
  * range. The Scroll extends LinearRangeControl to provide linear scrolling
  * functionality with both horizontal and vertical orientations.
  */
 public class Scroll extends LinearRangeControl {
+	private static final float DEFAULT_MIN_VALUE = 0;
+	private static final float DEFAULT_MAX_VALUE = 100;
+	private static final float DEFAULT_VALUE = 50;
+	private static final float DEFAULT_THUMB_SIZE_RATIO = .1f;
+	private static final float MIN_THUMB_SIZE_RATIO = 0;
+	private static final float MAX_THUMB_SIZE_RATIO = 1;
+	
 	private final Button thumb;
 	private float distToThumb, thumbSizeRatio;
 	private boolean needRecalculateDistToThumb, pressedInsideThumb;
 
 	/**
-	 * Constructs a Scroll with specified position and dimensions. The scrollbar is
+	 * Constructs a Scroll with specified position and dimensions. The scroll-bar is
 	 * initialized with a thumb button, default styling, and a thumb size ratio of
-	 * 0.1 (10% of the track).
+	 * {@value #DEFAULT_THUMB_SIZE_RATIO} (10% of the track).
 	 *
 	 * @param x the x-coordinate of the scrollbar's top-left corner
 	 * @param y the y-coordinate of the scrollbar's top-left corner
-	 * @param w the width of the scrollbar
-	 * @param h the height of the scrollbar
+	 * @param w the width of the scroll-bar
+	 * @param h the height of the scroll-bar
 	 */
 	public Scroll(float x, float y, float w, float h) {
 		super(x, y, w, h);
@@ -73,16 +77,16 @@ public class Scroll extends LinearRangeControl {
 		onDragEnd(() -> needRecalculateDistToThumb = true);
 		needRecalculateDistToThumb = true;
 
-		setThumbSizeRatio(.1f);
+		setThumbSizeRatio(DEFAULT_THUMB_SIZE_RATIO);
 
 		updateThumbTransforms();
-		setValue(0, 100, 50);
+		setValue(DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE, DEFAULT_VALUE);
 		
 	}
 
 	/**
 	 * Constructs a Scroll with default maximum size, centered on the screen. This
-	 * is a convenience constructor for creating a centered scrollbar.
+	 * is a convenience constructor for creating a centered scroll-bar.
 	 */
 	public Scroll() {
 		this(0, 0, 0, 0);
@@ -91,8 +95,8 @@ public class Scroll extends LinearRangeControl {
 	}
 
 	/**
-	 * Swaps the orientation of the scrollbar (horizontal to vertical or vice
-	 * versa). Updates the thumb position and dimensions accordingly.
+	 * Swaps the orientation of the scroll-bar.
+	 * Updates the thumb position and dimensions accordingly.
 	 */
 	@Override
 	public void swapOrientation() {
@@ -130,10 +134,10 @@ public class Scroll extends LinearRangeControl {
 	/**
 	 * Enables or disables ripple effects on the thumb.
 	 *
-	 * @param isEnabled true to enable ripple effects, false to disable
+	 * @param enabled true to enable ripple effects, false to disable
 	 */
-	public final void setThumbRipplesEnabled(boolean isEnabled) {
-		thumb.setRipplesEnabled(isEnabled);
+	public final void setThumbRipplesEnabled(boolean enabled) {
+		thumb.setRipplesEnabled(enabled);
 	}
 
 	/**
@@ -148,10 +152,10 @@ public class Scroll extends LinearRangeControl {
 	/**
 	 * Enables or disables hover effects on the thumb.
 	 *
-	 * @param isEnabled true to enable hover effects, false to disable
+	 * @param enabled true to enable hover effects, false to disable
 	 */
-	public final void setThumbHoverEnabled(boolean isEnabled) {
-		thumb.setHoverEnabled(isEnabled);
+	public final void setThumbHoverEnabled(boolean enabled) {
+		thumb.setHoverEnabled(enabled);
 	}
 
 	/**
@@ -218,7 +222,7 @@ public class Scroll extends LinearRangeControl {
 	}
 
 	/**
-	 * Sets the stroke color (border color) of the thumb.
+	 * Sets the stroke color of the thumb.
 	 *
 	 * @param color the color for the thumb border
 	 */
@@ -246,8 +250,8 @@ public class Scroll extends LinearRangeControl {
 
 	/**
 	 * Gets the calculated size of the thumb based on the thumbSizeRatio and
-	 * orientation. For horizontal scrollbars, returns width × thumbSizeRatio. For
-	 * vertical scrollbars, returns height × thumbSizeRatio.
+	 * orientation. For horizontal scroll-bars, returns width × thumbSizeRatio. For
+	 * vertical scroll-bars, returns height × thumbSizeRatio.
 	 *
 	 * @return the calculated thumb size in pixels
 	 */
@@ -257,15 +261,15 @@ public class Scroll extends LinearRangeControl {
 
 	/**
 	 * Sets the ratio that determines the thumb size relative to the track. The
-	 * thumbSizeRatio must be between 0 and 1 inclusive.
+	 * thumbSizeRatio must be between {@value #MIN_THUMB_SIZE_RATIO} and {@value #MAX_THUMB_SIZE_RATIO} inclusive.
 	 *
-	 * @param thumbSizeRatio the ratio of thumb size to track size (0 to 1)
-	 * @throws IllegalStateException if thumbSizeRatio is less than 0 or greater
-	 *                               than 1
+	 * @param thumbSizeRatio the ratio of thumb size to track size ({@value #MIN_THUMB_SIZE_RATIO} to {@value #MAX_THUMB_SIZE_RATIO})
+	 * @throws IllegalStateException if thumbSizeRatio is less than {@value #MIN_THUMB_SIZE_RATIO} or greater
+	 *                               than {@value #MAX_THUMB_SIZE_RATIO}
 	 */
 	public final void setThumbSizeRatio(float thumbSizeRatio) {
-		if (thumbSizeRatio < 0 || thumbSizeRatio > 1) {
-			throw new IllegalStateException("thumb ratio in scroll cannot be lower than zero or be greater than 1");
+		if (thumbSizeRatio < MIN_THUMB_SIZE_RATIO || thumbSizeRatio > MAX_THUMB_SIZE_RATIO) {
+			throw new IllegalStateException("thumb ratio in scroll cannot be lower than " + MIN_THUMB_SIZE_RATIO + " or be greater than " + MAX_THUMB_SIZE_RATIO);
 		}
 		this.thumbSizeRatio = thumbSizeRatio;
 	}

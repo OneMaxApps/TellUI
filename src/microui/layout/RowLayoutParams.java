@@ -20,8 +20,6 @@ public final class RowLayoutParams extends LinearAxisLayoutParams {
 	 * 
 	 * @param weight the weight of the component (0.0 to 1.0)
 	 * @param alignY vertical alignment (-1 for top, 0 for center, 1 for bottom)
-	 * 
-	 * @throws IllegalArgumentException if any parameter is outside its valid range
 	 */
 	public RowLayoutParams(float weight, int alignY) {
 		super(weight, 0, alignY);
@@ -37,9 +35,6 @@ public final class RowLayoutParams extends LinearAxisLayoutParams {
 	 * </p>
 	 * 
 	 * @param weight the weight of the component (0.0 to 1.0)
-	 * 
-	 * @throws IllegalArgumentException if weight is outside the valid range (0.0 to
-	 *                                  1.0)
 	 */
 	public RowLayoutParams(float weight) {
 		this(weight, 0);
@@ -53,7 +48,7 @@ public final class RowLayoutParams extends LinearAxisLayoutParams {
 	 * changed.
 	 * </p>
 	 * 
-	 * @return the vertical alignment value (-1 for top, 0 for center, 1 for bottom)
+	 * @return the vertical alignment value
 	 */
 	@Override
 	public int getAlignY() {

@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 
 /**
  * Layout manager that arranges child components in a vertical column. Extends

@@ -7,7 +7,7 @@ import processing.event.MouseEvent;
 
 /**
  * Abstract base class for linear range control components (sliders,
- * scrollbars). Provides common functionality for components that allow
+ * scroll-bars). Provides common functionality for components that allow
  * selecting a value along a linear axis, with support for orientation, mouse
  * wheel scrolling, and value change events.
  * 
@@ -15,6 +15,10 @@ import processing.event.MouseEvent;
  * @see Orientation
  */
 public abstract class LinearRangeControl extends RangeControl {
+	private final static int DEFAULT_MIN_WIDTH = 10;
+	private final static int DEFAULT_MIN_HEIGHT = 20;
+	private final static int DEFAULT_MAX_WIDTH = 200;
+	private final static int DEFAULT_MAX_HEIGHT = 20;
 	private Orientation orientation;
 
 	/**
@@ -28,7 +32,7 @@ public abstract class LinearRangeControl extends RangeControl {
 	 */
 	public LinearRangeControl(float x, float y, float width, float height) {
 		super(x, y, width, height);
-		setMinMaxSize(10, 20, 200, 20);
+		setMinMaxSize(DEFAULT_MIN_WIDTH, DEFAULT_MIN_HEIGHT, DEFAULT_MAX_WIDTH, DEFAULT_MAX_HEIGHT);
 
 		getInternalValue().setOnChangeValueListener(() -> requestUpdate());
 

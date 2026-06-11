@@ -68,9 +68,8 @@ public class PlainShadow extends AbstractShadow {
 	 * return value.
 	 * 
 	 * @param weightLeft the left weight to set (must be between MIN_WEIGHT and
-	 *                   MAX_WEIGHT)
+	 *                   MAX_WEIGHT
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if weightLeft is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeightLeft(int weightLeft) {
@@ -84,7 +83,6 @@ public class PlainShadow extends AbstractShadow {
 	 * @param weightTop the top weight to set (must be between MIN_WEIGHT and
 	 *                  MAX_WEIGHT)
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if weightTop is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeightTop(int weightTop) {
@@ -98,7 +96,6 @@ public class PlainShadow extends AbstractShadow {
 	 * @param weightRight the right weight to set (must be between MIN_WEIGHT and
 	 *                    MAX_WEIGHT)
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if weightRight is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeightRight(int weightRight) {
@@ -112,7 +109,6 @@ public class PlainShadow extends AbstractShadow {
 	 * @param weightBottom the bottom weight to set (must be between MIN_WEIGHT and
 	 *                     MAX_WEIGHT)
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if weightBottom is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeightBottom(int weightBottom) {
@@ -126,7 +122,6 @@ public class PlainShadow extends AbstractShadow {
 	 * @param weight the weight value for all sides (must be between MIN_WEIGHT and
 	 *               MAX_WEIGHT)
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if weight is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeight(int weight) {
@@ -142,7 +137,6 @@ public class PlainShadow extends AbstractShadow {
 	 * @param weightVertical   the weight for top and bottom sides (must be between
 	 *                         MIN_WEIGHT and MAX_WEIGHT)
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
@@ -152,13 +146,13 @@ public class PlainShadow extends AbstractShadow {
 	/**
 	 * Sets individual shadow weights for each side. Overrides parent method to
 	 * provide type-correct return value.
+	 * (must be between MIN_WEIGHT and MAX_WEIGHT)
 	 * 
-	 * @param left   the left weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param top    the top weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param right  the right weight (must be between MIN_WEIGHT and MAX_WEIGHT)
-	 * @param bottom the bottom weight (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * @param left   the left weight
+	 * @param top    the top weight
+	 * @param right  the right weight
+	 * @param bottom the bottom weight
 	 * @return this PlainShadow for method chaining
-	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
 	@Override
 	public AbstractShadow setWeight(int left, int top, int right, int bottom) {

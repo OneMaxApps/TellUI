@@ -29,7 +29,7 @@ public class ThemeBlack extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getBackgroundColor() {
-		return new Color(32);
+		return Color.GRAY_32L;
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class ThemeBlack extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getButtonTextColor() {
-		return new Color(164);
+		return Color.GRAY_164L;
 	}
 
 	/**

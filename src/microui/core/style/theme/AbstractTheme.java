@@ -24,7 +24,7 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getBackgroundColor();
 
 	/**
-	 * Returns the color for non-editable text elements (labels, headers, etc.).
+	 * Returns the color for non-editable text elements.
 	 * 
 	 * @return the text view color
 	 */
@@ -38,7 +38,7 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getButtonTextColor();
 
 	/**
-	 * Returns the color for strokes/borders around UI elements.
+	 * Returns the color for strokes around UI elements.
 	 * 
 	 * @return the stroke color
 	 */
@@ -67,7 +67,7 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getPrimaryColor();
 
 	/**
-	 * Returns the color for editable text (text fields, text areas, etc.).
+	 * Returns the color for editable text.
 	 * 
 	 * @return the editable text color
 	 */
@@ -81,7 +81,7 @@ public abstract class AbstractTheme {
 	public abstract AbstractColor getSelectColor();
 
 	/**
-	 * Returns the color for text cursor/caret in editable text fields.
+	 * Returns the color for text cursor in editable text fields.
 	 * 
 	 * @return the cursor color
 	 */

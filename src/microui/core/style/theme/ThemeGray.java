@@ -45,7 +45,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getButtonTextColor() {
-		return new Color(32);
+		return Color.GRAY_32L;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getStrokeColor() {
-		return new Color(128);
+		return Color.GRAY_128L;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getPrimaryColor() {
-		return new Color(64);
+		return Color.GRAY_64L;
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getEditableTextColor() {
-		return new Color(0);
+		return Color.BLACK;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getCursorColor() {
-		return new Color(0);
+		return Color.BLACK;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getEditableBackgroundColor() {
-		return new Color(232);
+		return Color.GRAY_232L;
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipBackgroundColor() {
-		return new Color(200);
+		return Color.GRAY_200L;
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class ThemeGray extends AbstractTheme {
 	 */
 	@Override
 	public AbstractColor getTooltipTextColor() {
-		return new Color(32);
+		return Color.GRAY_32L;
 	}
 
 	/**

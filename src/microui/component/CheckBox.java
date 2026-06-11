@@ -9,13 +9,20 @@ import java.util.Objects;
 
 import microui.core.AbstractButton;
 import microui.core.exception.DuplicateItemException;
+import microui.core.interfaces.Listener;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedLoopColor;
-import microui.event.Listener;
 
 /**
- * Represents a clickable CheckBox component which extends AbstractButton.
+ * A clickable CheckBox component that can be toggled between checked and unchecked states.
+ * <p>
+ * Supports multiple visual styles for the check mark (MARK, DOT, RECT) and notifies
+ * registered listeners whenever the state changes (via {@link #setChecked(boolean)}
+ * or {@link #toggle()}).
+ * </p>
+ *
+ * @see AbstractButton
  */
 public final class CheckBox extends AbstractButton {
 	private float cachedCenterX, cachedCenterY, cachedSize;
@@ -25,11 +32,12 @@ public final class CheckBox extends AbstractButton {
 	private Style style; 
 	
 	/**
-	 * Constructs a CheckBox with specified bounds
-	 * @param x current position X
-	 * @param y current position Y
-	 * @param w current width
-	 * @param h current height
+	 * Constructs a CheckBox with the specified bounds.
+	 *
+	 * @param x the x-coordinate of the CheckBox
+	 * @param y the y-coordinate of the CheckBox
+	 * @param w the width of the CheckBox
+	 * @param h the height of the CheckBox
 	 */
 	public CheckBox(float x, float y, float w, float h) {
 		super(x, y, w, h);
@@ -59,43 +67,50 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * @return the current visual style of the check mark (MARK, DOT, RECT)
-	 */	
+	 * Returns the current visual style of the check mark.
+	 *
+	 * @return the current style (MARK, DOT, or RECT)
+	 */
 	public Style getStyle() {
 		return style;
 	}
 
 	/**
-	 * @param style the new style to set (must not be null)
-	 * 
-	 * @throws NullPointerException if style is {@code null}
+	 * Sets the visual style of the check mark.
+	 *
+	 * @param style the new style (must not be null)
+	 * @throws NullPointerException if {@code style} is null
 	 */
 	public void setStyle(Style style) {
 		this.style = Objects.requireNonNull(style,"style");
 	}
 
 	/**
-	 * @return color of mark
+	 * Returns the color used for the check mark.
+	 *
+	 * @return the mark color
 	 */
 	public AbstractColor getMarkColor() {
 		return markColor;
 	}
 
 	/**
-	 * @param markColor current color of mark
-	 * 
-	 * @throws NullPointerException if markColor is {@code null}
+	 * Sets the color of the check mark.
+	 *
+	 * @param markColor the new mark color (must not be null)
+	 * @throws NullPointerException if {@code markColor} is null
 	 */
 	public void setMarkColor(AbstractColor markColor) {
 		this.markColor = Objects.requireNonNull(markColor,"markColor");
 	}
 
 	/**
-	 * Adds a listener that is called whenever the checked
-	 * state changes (via setChecked or toggle).
-	 * @param listener current listener of change state of CheckBox
-	 * @throws NullPointerException if listener is {@code null}
-	 * @throws DuplicateItemException if listener already added
+	 * Adds a listener that is called whenever the checked state changes
+	 * (via {@link #setChecked(boolean)} or {@link #toggle()}).
+	 *
+	 * @param listener the listener to add
+	 * @throws NullPointerException   if {@code listener} is null
+	 * @throws DuplicateItemException if the listener has already been added
 	 */
 	public void addOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
@@ -109,10 +124,10 @@ public final class CheckBox extends AbstractButton {
 	
 	/**
 	 * Removes a previously added checked-state listener.
-	 * 
-	 * @param listener current listener of change state of CheckBox
-	 * @throws NullPointerException if listener is {@code null}
-	 * @throws NoSuchElementException if listener not found
+	 *
+	 * @param listener the listener to remove
+	 * @throws NullPointerException   if {@code listener} is null
+	 * @throws NoSuchElementException if the listener was not found
 	 */
 	public void removeOnCheckedListener(Listener listener) {
 		Objects.requireNonNull(listener,"listener");
@@ -125,16 +140,18 @@ public final class CheckBox extends AbstractButton {
 	}
 
 	/**
-	 * @return true if checked, false otherwise
+	 * Returns the current checked state.
+	 *
+	 * @return {@code true} if checked, {@code false} otherwise
 	 */
 	public boolean isChecked() {
 		return checked;
 	}
 
 	/**
-	 * Sets the checked state.
-	 * 
-	 * @param checked state of checked
+	 * Sets the checked state. No event is fired if the new state equals the current one.
+	 *
+	 * @param checked the new checked state
 	 */
 	public void setChecked(boolean checked) {
 		if (this.checked == checked) {
@@ -249,21 +266,21 @@ public final class CheckBox extends AbstractButton {
 	}
 	
 	/**
-	 * Provides styles for mark
+	 * Defines the visual styles available for the check mark.
 	 */
 	public static enum Style {
 		/**
-		 * Default form of mark style
+		 * The default check mark (two crossing lines).
 		 */
 		MARK,
 		
 		/**
-		 * Dot form of mark style
+		 * A filled dot.
 		 */
 		DOT,
 		
 		/**
-		 * Rectangle form of mark style
+		 * A filled rectangle.
 		 */
 		RECT;
 	}

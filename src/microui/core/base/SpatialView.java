@@ -22,9 +22,6 @@ import microui.util.Debugger;
  * animation through SpatialAnimator - Update hooks with configurable timing
  * modes
  * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
- * </p>
  * 
  * @see View
  * @see SpatialAnimator
@@ -69,7 +66,7 @@ public abstract class SpatialView extends View {
 	}
 
 	/**
-	 * Constructs a SpatialView at origin (0,0) with default minimum size.
+	 * Constructs a SpatialView at origin (0,0) with default minimum size {@value #DEFAULT_MIN_SIZE}.
 	 */
 	public SpatialView() {
 		this(0, 0, DEFAULT_MIN_SIZE, DEFAULT_MIN_SIZE);
@@ -601,8 +598,6 @@ public abstract class SpatialView extends View {
 	 * Sets the x-coordinate from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy x-coordinate from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setXFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -614,8 +609,6 @@ public abstract class SpatialView extends View {
 	 * Sets the y-coordinate from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy y-coordinate from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setYFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -627,8 +620,6 @@ public abstract class SpatialView extends View {
 	 * Sets the height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy height from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -640,8 +631,6 @@ public abstract class SpatialView extends View {
 	 * Sets the width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy width from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -653,8 +642,6 @@ public abstract class SpatialView extends View {
 	 * Sets the position from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy position from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setPositionFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -666,8 +653,6 @@ public abstract class SpatialView extends View {
 	 * Sets the size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy size from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -679,8 +664,6 @@ public abstract class SpatialView extends View {
 	 * Sets all bounds from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy bounds from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setBoundsFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -692,8 +675,6 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum width from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -705,8 +686,6 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum height from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -718,8 +697,6 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum width from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum width from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxWidthFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -731,8 +708,6 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum height from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum height from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxHeightFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -744,8 +719,6 @@ public abstract class SpatialView extends View {
 	 * Sets the maximum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy maximum size from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMaxSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -758,8 +731,6 @@ public abstract class SpatialView extends View {
 	 * Sets the minimum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy minimum size from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -772,8 +743,6 @@ public abstract class SpatialView extends View {
 	 * Sets both minimum and maximum size from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy size constraints from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setMinMaxSizeFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -787,8 +756,6 @@ public abstract class SpatialView extends View {
 	 * constraints and bounds.
 	 * 
 	 * @param other the SpatialView to copy configuration from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setSpatialConfigFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -801,8 +768,6 @@ public abstract class SpatialView extends View {
 	 * Copies constraint configuration from another SpatialView.
 	 * 
 	 * @param other the SpatialView to copy constraints from (cannot be null)
-	 * @throws NullPointerException     if other is null
-	 * @throws IllegalArgumentException if other is this view
 	 */
 	public final void setConstrainConfigFrom(SpatialView other) {
 		checkSpatialViewObject(other);
@@ -900,10 +865,8 @@ public abstract class SpatialView extends View {
 
 		float correctValue = currentValue;
 
-		final float constrainedValue = constrain(newValue, min, max);
-
 		if (constrainDimensionsEnabled) {
-			correctValue = constrainedValue;
+			correctValue = constrain(newValue, min, max);
 		} else {
 			if (negativeDimensionsEnabled) {
 				correctValue = newValue;
@@ -960,7 +923,7 @@ public abstract class SpatialView extends View {
 		 * 
 		 * @param ms the time interval in milliseconds
 		 */
-		HooksUpdateMode(int ms) {
+		private HooksUpdateMode(int ms) {
 			this.ms = ms;
 		}
 

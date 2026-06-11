@@ -7,6 +7,7 @@ import java.util.List;
 import microui.MicroUI;
 import microui.core.base.Container;
 import microui.core.base.Container.Entry;
+import microui.core.interfaces.LayoutParams;
 import processing.core.PApplet;
 
 /**
@@ -39,8 +40,8 @@ public abstract class LayoutManager {
 	 * Draws debug information for the layout.
 	 * 
 	 * <p>
-	 * This method can be overridden by subclasses to visualize layout calculations,
-	 * boundaries, or other debug information during development.
+	 * This method can be overridden by subclasses to visualize layout calculations or
+	 * boundaries.
 	 * </p>
 	 */
 	public abstract void debugOnDraw();
@@ -113,7 +114,6 @@ public abstract class LayoutManager {
 	 * </p>
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if the parameters are invalid
 	 */
 	protected abstract void checkCorrectParams(LayoutParams layoutParams);
 }

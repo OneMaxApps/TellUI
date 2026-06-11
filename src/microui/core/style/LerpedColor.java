@@ -23,7 +23,7 @@ public final class LerpedColor extends AbstractLerpedColor {
 	/**
 	 * Constructs a new LerpedColor with specified start and end colors, and a
 	 * condition that controls animation direction. The animation speed is set to
-	 * 0.025 (2.5% progress per update).
+	 * {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * 
 	 * @param start     the starting color of the interpolation, cannot be null
 	 * @param end       the ending color of the interpolation, cannot be null
@@ -44,7 +44,7 @@ public final class LerpedColor extends AbstractLerpedColor {
 	 * Constructs a new LerpedColor with specified start and end colors, and a
 	 * supplier that provides the animation progress directly. The supplied progress
 	 * must be a value between 0.0 and 1.0, where 0.0 represents the start color
-	 * and 1.0 represents the end color. The animation speed is set to 0.025.
+	 * and 1.0 represents the end color. The animation speed is set to {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * 
 	 * @param start            the starting color of the interpolation, cannot be null
 	 * @param end              the ending color of the interpolation, cannot be null
@@ -64,7 +64,7 @@ public final class LerpedColor extends AbstractLerpedColor {
 	 * Constructs a new LerpedColor with supplier-based start and end colors, and a
 	 * condition that controls animation direction. The start and end colors are
 	 * obtained from suppliers each time the color is evaluated, allowing dynamic
-	 * color changes. The animation speed is set to 0.025.
+	 * color changes. The animation speed is set to {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * 
 	 * @param start     supplier for the starting color, cannot be null
 	 * @param end       supplier for the ending color, cannot be null
@@ -86,7 +86,7 @@ public final class LerpedColor extends AbstractLerpedColor {
 	 * supplier that provides the animation progress directly. The start and end
 	 * colors are obtained from suppliers each time the color is evaluated.
 	 * The supplied progress must be a value between 0.0 and 1.0.
-	 * The animation speed is set to 0.025.
+	 * The animation speed is set to {@value #DEFAULT_SPEED_OF_PROGRESS}.
 	 * 
 	 * @param start            supplier for the starting color, cannot be null
 	 * @param end              supplier for the ending color, cannot be null

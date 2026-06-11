@@ -1,4 +1,6 @@
-package microui.event;
+package microui.core.interfaces;
+
+import microui.event.InteractionHandler;
 
 /**
  * Functional interface for event listeners.

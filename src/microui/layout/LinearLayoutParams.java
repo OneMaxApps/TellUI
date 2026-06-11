@@ -17,7 +17,6 @@ public class LinearLayoutParams extends LinearAxisLayoutParams {
 	 * @param alignX horizontal alignment (-1 for left, 0 for center, 1 for right)
 	 * @param alignY vertical alignment (-1 for top, 0 for center, 1 for bottom)
 	 * 
-	 * @throws IllegalArgumentException if any parameter is outside its valid range
 	 */
 	public LinearLayoutParams(float weight, int alignX, int alignY) {
 		super(weight, alignX, alignY);
@@ -34,7 +33,6 @@ public class LinearLayoutParams extends LinearAxisLayoutParams {
 	 * @param align  alignment value used for both axes (-1 for left/top, 0 for
 	 *               center, 1 for right/bottom)
 	 * 
-	 * @throws IllegalArgumentException if any parameter is outside its valid range
 	 */
 	public LinearLayoutParams(float weight, int align) {
 		this(weight, align, align);

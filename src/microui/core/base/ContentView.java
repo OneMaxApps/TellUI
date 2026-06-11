@@ -14,9 +14,6 @@ import microui.util.Debugger;
  * features. It manages internal padding (space inside the component) and
  * external margin (space outside the component), and supports shadow effects.
  * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 29.10.2025
- * </p>
  * 
  * @see SpatialView
  * @see AbstractShadow

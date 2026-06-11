@@ -6,7 +6,7 @@ import static java.util.Objects.requireNonNull;
 import static microui.util.MathUtils.constrain;
 
 import microui.core.interfaces.InputFilter;
-import microui.event.Listener;
+import microui.core.interfaces.Listener;
 
 /**
  * Controller for managing single-line text input with validation and event
@@ -31,7 +31,7 @@ public final class SingleLineTextController {
 	/**
 	 * Constructs a new text controller with the specified initial text and input filter.
 	 *
-	 * @param text        the initial text content (must not be {@code null})
+	 * @param text the initial text content (must not be {@code null})
 	 * @param inputFilter the filter that defines allowed characters (must not be {@code null})
 	 * @throws NullPointerException if either argument is {@code null}
 	 */
@@ -81,7 +81,7 @@ public final class SingleLineTextController {
 	public void setOnAfterCharInsertListener(Listener onAfterCharInsertListener) {
 		this.onAfterCharInsertListener = requireNonNull(onAfterCharInsertListener, "onAfterCharInsertListener");
 	}
-
+	
 	/**
 	 * Sets the listener for after-string-insert events.
 	 * 
@@ -163,7 +163,7 @@ public final class SingleLineTextController {
 
 	/**
 	 * Clears all text content. If the internal buffer capacity exceeds
-	 * MAX_CAPACITY_FOR_CLEAR, trims the buffer.
+	 * MAX_CAPACITY_FOR_CLEAR ({@value #MAX_CAPACITY_FOR_CLEAR}), trims the buffer.
 	 */
 	public void clear() {
 		if (isEmpty()) {

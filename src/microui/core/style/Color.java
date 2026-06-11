@@ -12,9 +12,6 @@ import static microui.util.MathUtils.constrain;
  * values are constrained to the valid range (0-255) and the class includes
  * convenient factory methods and predefined color constants.
  * </p>
- * <p>
- * Status: STABLE - Do not modify Last Reviewed: 11.10.2025
- * </p>
  * 
  * @see AbstractColor
  */
@@ -62,9 +59,9 @@ public class Color extends AbstractColor {
 	/**
 	 * Constructs a Color with specified RGBA components.
 	 * 
-	 * @param red   the red component (0-255, will be constrained)
+	 * @param red the red component (0-255, will be constrained)
 	 * @param green the green component (0-255, will be constrained)
-	 * @param blue  the blue component (0-255, will be constrained)
+	 * @param blue the blue component (0-255, will be constrained)
 	 * @param alpha the alpha component (0-255, will be constrained)
 	 */
 	public Color(float red, float green, float blue, float alpha) {
@@ -77,9 +74,9 @@ public class Color extends AbstractColor {
 	/**
 	 * Constructs a Color with specified RGB components and full opacity.
 	 * 
-	 * @param red   the red component (0-255, will be constrained)
+	 * @param red the red component (0-255, will be constrained)
 	 * @param green the green component (0-255, will be constrained)
-	 * @param blue  the blue component (0-255, will be constrained)
+	 * @param blue the blue component (0-255, will be constrained)
 	 */
 	public Color(float red, float green, float blue) {
 		this(red, green, blue, MAX_VALUE);
