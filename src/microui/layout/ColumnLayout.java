@@ -47,13 +47,13 @@ public final class ColumnLayout extends LinearAxisLayout {
 	 * ColumnLayout.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if layoutParams is not an instance of
+	 * @throws ClassCastException if layoutParams is not an instance of
 	 *                                  ColumnLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof ColumnLayoutParams)) {
-			throw new IllegalArgumentException("Using not correct layout params for ColumnLayout");
+			throw new ClassCastException("Incorrect layout params: expected ColumnLayoutParams but got " + layoutParams.getClass().getSimpleName());
 		}
 	}
 

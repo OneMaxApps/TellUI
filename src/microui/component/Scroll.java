@@ -269,7 +269,7 @@ public class Scroll extends LinearRangeControl {
 	 */
 	public final void setThumbSizeRatio(float thumbSizeRatio) {
 		if (thumbSizeRatio < MIN_THUMB_SIZE_RATIO || thumbSizeRatio > MAX_THUMB_SIZE_RATIO) {
-			throw new IllegalStateException("thumb ratio in scroll cannot be lower than " + MIN_THUMB_SIZE_RATIO + " or be greater than " + MAX_THUMB_SIZE_RATIO);
+			throw new IllegalStateException("Thumb ratio in scroll cannot be lower than " + MIN_THUMB_SIZE_RATIO + " or be greater than " + MAX_THUMB_SIZE_RATIO);
 		}
 		this.thumbSizeRatio = thumbSizeRatio;
 	}

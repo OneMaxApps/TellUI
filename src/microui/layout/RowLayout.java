@@ -63,7 +63,7 @@ public final class RowLayout extends LinearAxisLayout {
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof RowLayoutParams)) {
-			throw new ClassCastException("Using not correct layout params for RowLayout");
+			throw new ClassCastException("Incorrect layout params: expected RowLayoutParams but got " + layoutParams.getClass().getSimpleName());
 		}
 	}
 }

@@ -181,7 +181,7 @@ public final class InteractionHandler extends AbstractEventSystem {
 			requireNonNull(listener, "listener");
 
 			if (listeners.get(eventType) == null || !listeners.get(eventType).contains(listener)) {
-				throw new IllegalStateException("listener is not found");
+				throw new IllegalStateException("Listener is not found");
 			}
 
 			listeners.get(eventType).remove(listener);

@@ -6,9 +6,9 @@ import microui.core.base.ContentView;
 import processing.core.PApplet;
 
 /**
- * A simple shadow effect that creates a solid outline around a
- * ContentView. Extends AbstractShadow to provide a basic shadow implementation
- * with optional alpha fade-out.
+ * A simple shadow effect that creates a solid outline around a ContentView.
+ * Extends AbstractShadow to provide a basic shadow implementation with optional
+ * alpha fade-out.
  * <p>
  * The PlainShadow can render either a solid outline or a gradient fade-out
  * effect based on the weight values set for each side. When alpha fade-out is
@@ -145,8 +145,8 @@ public class PlainShadow extends AbstractShadow {
 
 	/**
 	 * Sets individual shadow weights for each side. Overrides parent method to
-	 * provide type-correct return value.
-	 * (must be between MIN_WEIGHT and MAX_WEIGHT)
+	 * provide type-correct return value. (must be between MIN_WEIGHT and
+	 * MAX_WEIGHT)
 	 * 
 	 * @param left   the left weight
 	 * @param top    the top weight
@@ -167,64 +167,52 @@ public class PlainShadow extends AbstractShadow {
 	protected void render() {
 		getColor().apply();
 
-		switch(getFormMode()) {
-			case ELLIPSE:
-				ellipseModeOnRender();
-				break;
-				
-			case RECTANGLE: 
-				rectangleModeOnRender();
-				break;	
+		shapeOnRender(getFormMode());
+	}
+
+	private void shapeOnRender(FormMode mode) {
+		final float x = getTargetX();
+		final float y = getTargetY();
+		float x1 = 0;
+		float y1 = 0;
+
+		switch (mode) {
+		case RECTANGLE:
+			x1 = getTargetX() + getTargetWidth();
+			y1 = getTargetY() + getTargetHeight();
+			break;
+
+		case ELLIPSE:
+			x1 = getTargetWidth();
+			y1 = getTargetHeight();
+			break;
 		}
 
-	}
-	
-	private void rectangleModeOnRender() {
-		float x = getTargetX();
-		float y = getTargetY();
-		float x1 = getTargetX() + getTargetWidth();
-		float y1 = getTargetY() + getTargetHeight();
-
-		ctx.rectMode(PApplet.CORNERS);
+		final int r = getColor().getRed();
+		final int g = getColor().getGreen();
+		final int b = getColor().getBlue();
 
 		for (int i = 0; i < MAX_WEIGHT; i++) {
-			ctx.stroke(getColor().getRed(),
-					   getColor().getGreen(),
-					   getColor().getBlue(),
-					   isAlphaFadeOutEnabled() ? convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0) : getColor().getAlpha());
-			
-			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
-			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
-			final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
-			final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
+		final float a = isAlphaFadeOutEnabled() ? convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0) : getColor().getAlpha();
+		
+		ctx.noFill();
+		ctx.stroke(r, g, b, a);
 
+		final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
+		final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
+		final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
+		final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
+
+		switch (mode) {
+		case RECTANGLE:
+			ctx.rectMode(PApplet.CORNERS);
 			ctx.rect(newX, newY, newX1, newY1);
+			break;
+
+		case ELLIPSE:
+			ctx.ellipse(newX, newY, newX1, newY1);
+			break;
 		}
 	}
-	
-	private void ellipseModeOnRender() {
-		float x = getTargetX();
-		float y = getTargetY();
-		float x1 = getTargetX() + getTargetWidth();
-		float y1 = getTargetY() + getTargetHeight();
-		
-		final float w = getTargetWidth();
-		final float h = getTargetHeight();
-		
-		ctx.ellipseMode(PApplet.CORNERS);
-		
-		for (int i = 0; i < MAX_WEIGHT; i++) {
-			ctx.stroke(getColor().getRed(),
-					   getColor().getGreen(),
-					   getColor().getBlue(),
-					   isAlphaFadeOutEnabled() ? convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0) : getColor().getAlpha());
-			
-			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
-			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
-			final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
-			final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
-			
-			ctx.ellipse(newX - w/2, newY - h/2, newX1 - w/2, newY1 - h/2);
-		}
 	}
 }

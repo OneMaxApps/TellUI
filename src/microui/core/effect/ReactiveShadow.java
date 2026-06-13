@@ -85,7 +85,7 @@ public class ReactiveShadow extends AbstractShadow {
 	public final void setFalloffRadius(int falloffRadius) {
 		if (falloffRadius < MIN_FALLOFF_RADIUS || falloffRadius > MAX_FALLOFF_RADIUS) {
 			throw new IllegalArgumentException(
-					"falloffRadius must be between " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
+					"FalloffRadius must be between " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
 		}
 
 		this.falloffRadius = falloffRadius;

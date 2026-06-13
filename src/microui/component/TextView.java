@@ -109,7 +109,7 @@ public final class TextView extends Component {
 	 */
 	public void setAlignX(int alignX) {
 		if (alignX != LEFT && alignX != CENTER && alignX != RIGHT) {
-			throw new IllegalArgumentException("alignX for text must be only LEFT, CENTER or RIGHT");
+			throw new IllegalArgumentException("AlignX for text must be only LEFT, CENTER or RIGHT");
 		}
 		this.alignX = alignX;
 	}
@@ -131,7 +131,7 @@ public final class TextView extends Component {
 	 */
 	public void setAlignY(int alignY) {
 		if (alignY != TOP && alignY != CENTER && alignY != BOTTOM) {
-			throw new IllegalArgumentException("alignY for text must be only TOP, CENTER or BOTTOM");
+			throw new IllegalArgumentException("AlignY for text must be only TOP, CENTER or BOTTOM");
 		}
 
 		this.alignY = alignY;
@@ -180,7 +180,7 @@ public final class TextView extends Component {
 	 */
 	public void setTextSize(float textSize) {
 		if (textSize <= 0) {
-			throw new IllegalArgumentException("text size cannot be equal to zero and lower");
+			throw new IllegalArgumentException("Text size cannot be equal to zero and lower");
 		}
 		this.textSize = textSize;
 	}

@@ -96,7 +96,7 @@ public final class Stroke {
 	 */
 	public void setWeight(float weight) {
 		if (weight <= 0) {
-			throw new IllegalArgumentException("stroke weight cannot be lower than 1");
+			throw new IllegalArgumentException("Stroke weight cannot be lower than 1");
 		}
 		this.weight = weight;
 	}

@@ -159,20 +159,20 @@ public final class GridLayout extends LayoutManager {
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof GridLayoutParams)) {
-			throw new IllegalArgumentException("using not correct layout params for GridLayout");
+			throw new ClassCastException("Incorrect layout params: expected GridLayoutParams but got " + layoutParams.getClass().getSimpleName());
 		}
 	}
 
 	private void setColumns(int columns) {
 		if (columns < 1) {
-			throw new IllegalArgumentException("columns in grid layout cannot be less than 1");
+			throw new IllegalArgumentException("Columns in grid layout cannot be less than 1");
 		}
 		this.columns = columns;
 	}
 
 	private void setRows(int rows) {
 		if (rows < 1) {
-			throw new IllegalArgumentException("rows in grid layout cannot be less than 1");
+			throw new IllegalArgumentException("Rows in grid layout cannot be less than 1");
 		}
 		this.rows = rows;
 	}
@@ -180,7 +180,7 @@ public final class GridLayout extends LayoutManager {
 	private void checkOutOfGrid(GridLayoutParams params) {
 		if (params.getColumn() + (params.getColumnSpan() - 1) >= getColumns()
 				|| (params.getRow() + params.getRowSpan() - 1) >= getRows()) {
-			throw new IndexOutOfBoundsException("contentView is out of grid layout");
+			throw new IndexOutOfBoundsException("ContentView is out of grid layout");
 		}
 	}
 
@@ -200,9 +200,9 @@ public final class GridLayout extends LayoutManager {
 						oprs = paramsOther.getRowSpan();
 
 				if (params != paramsOther) {
-					// Check for overlap in grid coordinates
+					// Checking for overlap in grid coordinates
 					if (pc > opc - pcs && pc < opc + opcs && pr > opr - prs && pr < opr + oprs) {
-						throw new IllegalArgumentException("several contentViews cannot be in one cell of grid");
+						throw new IllegalArgumentException("Several contentViews cannot be in one cell of grid");
 					}
 				}
 

@@ -433,7 +433,7 @@ public abstract class AbstractEventSystem {
 
 			public void setLongPressThreshold(long longPressThreshold) {
 				if (longPressThreshold < 0) {
-					throw new IllegalArgumentException("long press threshold cannot be less than 0");
+					throw new IllegalArgumentException("Long press threshold cannot be less than 0");
 				}
 
 				this.longPressThreshold = longPressThreshold;
@@ -534,7 +534,7 @@ public abstract class AbstractEventSystem {
 
 			public void setEnterLongThreshold(long enterLongThreshold) {
 				if (enterLongThreshold < 0) {
-					throw new IllegalArgumentException("enter long threshold cannot be less than 0");
+					throw new IllegalArgumentException("Enter long threshold cannot be less than 0");
 				}
 				this.enterLongThreshold = enterLongThreshold;
 			}
@@ -577,7 +577,7 @@ public abstract class AbstractEventSystem {
 
 			public void setLeaveLongThreshold(long leaveLongThreshold) {
 				if (leaveLongThreshold < 0) {
-					throw new IllegalArgumentException("leave long threshold cannot be less than 0");
+					throw new IllegalArgumentException("Leave long threshold cannot be less than 0");
 				}
 
 				this.leaveLongThreshold = leaveLongThreshold;
@@ -651,7 +651,7 @@ public abstract class AbstractEventSystem {
 
 			public void setThreshold(long threshold) {
 				if (threshold < 0) {
-					throw new IllegalArgumentException("double click threshold cannot be less than 0");
+					throw new IllegalArgumentException("Double click threshold cannot be less than 0");
 				}
 				this.threshold = threshold;
 			}

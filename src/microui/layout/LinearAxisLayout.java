@@ -119,7 +119,7 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof LinearAxisLayoutParams)) {
-			throw new ClassCastException("using not correct layout params for LinearAxisLayoutParams");
+			throw new ClassCastException("Incorrect layout params: expected LinearAxisLayoutParams but got " + layoutParams.getClass().getSimpleName());
 		}
 	}
 

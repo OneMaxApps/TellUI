@@ -33,27 +33,27 @@ public abstract class LinearAxisLayoutParams implements LayoutParams {
 		super();
 
 		if (weight < 0) {
-			throw new IllegalArgumentException("weight cannot be lower than zero");
+			throw new IllegalArgumentException("Weight cannot be lower than zero");
 		}
 
 		if (weight > 1) {
-			throw new IllegalArgumentException("weight cannot be greater than 1");
+			throw new IllegalArgumentException("Weight cannot be greater than 1");
 		}
 
 		if (alignX < -1) {
-			throw new IllegalArgumentException("alignX cannot be lower than -1");
+			throw new IllegalArgumentException("AlignX cannot be lower than -1");
 		}
 
 		if (alignX > 1) {
-			throw new IllegalArgumentException("alignX cannot be greater than 1");
+			throw new IllegalArgumentException("AlignX cannot be greater than 1");
 		}
 
 		if (alignY < -1) {
-			throw new IllegalArgumentException("alignY cannot be lower than -1");
+			throw new IllegalArgumentException("AlignY cannot be lower than -1");
 		}
 
 		if (alignY > 1) {
-			throw new IllegalArgumentException("alignY cannot be greater than 1");
+			throw new IllegalArgumentException("AlignY cannot be greater than 1");
 		}
 
 		this.weight = weight;
