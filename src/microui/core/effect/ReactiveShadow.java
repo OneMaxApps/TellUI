@@ -24,11 +24,15 @@ import processing.core.PApplet;
  * @see ContentView
  */
 public class ReactiveShadow extends AbstractShadow {
-	private static final int DEFAULT_FALLOFF_RADIUS = 10;
-	private static final int MIN_FALLOFF_RADIUS = 1;
-	private static final int MAX_FALLOFF_RADIUS = 100;
+	/** Default value for fall-off radius */
+	public static final int DEFAULT_FALLOFF_RADIUS = 10;
+	/** Min value for fall-off radius */
+	public static final int MIN_FALLOFF_RADIUS = 1;
+	/** Max value for fall-off radius */
+	public static final int MAX_FALLOFF_RADIUS = 100;
+
 	private int falloffRadius;
-	
+
 	/**
 	 * Constructs a ReactiveShadow with default properties. Initializes with all
 	 * weights cleared and a semi-transparent black color.
@@ -58,11 +62,10 @@ public class ReactiveShadow extends AbstractShadow {
 	public void requestUpdateWeights() {
 		updateWeights();
 	}
-	
-	
+
 	/**
-	 * Getter for falloffRadius value.
-	 * (default value is {@value #DEFAULT_FALLOFF_RADIUS})
+	 * Getter for falloffRadius value. (default value is
+	 * {@value #DEFAULT_FALLOFF_RADIUS})
 	 * 
 	 * @return falloffRadius
 	 */
@@ -71,17 +74,20 @@ public class ReactiveShadow extends AbstractShadow {
 	}
 
 	/**
-	 * Setter for falloffRadius.
-	 * (Must be between {@value #MIN_FALLOFF_RADIUS} and {@value #MAX_FALLOFF_RADIUS})
+	 * Setter for falloffRadius. (Must be between {@value #MIN_FALLOFF_RADIUS} and
+	 * {@value #MAX_FALLOFF_RADIUS})
 	 * 
 	 * @param falloffRadius radius for fall-off effect
-	 * @throws IllegalArgumentException if falloffRadius not between {@value #MIN_FALLOFF_RADIUS} and {@value #MAX_FALLOFF_RADIUS}
+	 * @throws IllegalArgumentException if falloffRadius not between
+	 *                                  {@value #MIN_FALLOFF_RADIUS} and
+	 *                                  {@value #MAX_FALLOFF_RADIUS}
 	 */
 	public final void setFalloffRadius(int falloffRadius) {
 		if (falloffRadius < MIN_FALLOFF_RADIUS || falloffRadius > MAX_FALLOFF_RADIUS) {
-			throw new IllegalArgumentException("falloffRadius must be betwen " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
+			throw new IllegalArgumentException(
+					"falloffRadius must be between " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
 		}
-		
+
 		this.falloffRadius = falloffRadius;
 	}
 
@@ -98,67 +104,43 @@ public class ReactiveShadow extends AbstractShadow {
 
 		ctx.noFill();
 
-		switch(getFormMode()) {
-		case ELLIPSE:
-			ellipseModeOnRender();
+		shapeOnRender(getFormMode());
+
+	}
+
+	private void shapeOnRender(FormMode mode) {
+		final float x = getTargetX();
+		final float y = getTargetY();
+		float x1 = 0;
+		float y1 = 0;
+
+		switch (mode) {
+		case RECTANGLE:
+			x1 = getTargetX() + getTargetWidth();
+			y1 = getTargetY() + getTargetHeight();
 			break;
-			
-		case RECTANGLE: 
-			rectangleModeOnRender();
-			break;	
+
+		case ELLIPSE:
+			x1 = getTargetWidth();
+			y1 = getTargetHeight();
+			break;
 		}
-
-	}
-	
-	private void ellipseModeOnRender() {
-		final float x = getTargetX();
-		final float y = getTargetY();
-		final float w = getTargetWidth();
-		final float h = getTargetHeight();
-		
-		final float tw = getTarget().getPadWidth();
-		final float th = getTarget().getPadHeight();
-		
-		final int mx = ctx.mouseX;
-		final int my = ctx.mouseY;
-
-		for (int i = 0; i < MAX_WEIGHT; i++) {
-			final int r = getColor().getRed();
-			final int g = getColor().getGreen();
-			final int b = getColor().getBlue();
-			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / getFalloffRadius(), 0, getColor().getAlpha()), 0);
-			
-			ctx.stroke(r, g, b, a);
-			
-			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
-			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
-			final float newX1 = w + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
-			final float newY1 = h + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
-
-			ctx.ellipse(newX, newY, newX1, newY1);
-		}
-	}
-
-	private void rectangleModeOnRender() {
-		final float x = getTargetX();
-		final float y = getTargetY();
-		final float x1 = getTargetX() + getTargetWidth();
-		final float y1 = getTargetY() + getTargetHeight();
 
 		final float tw = getTarget().getPadWidth();
 		final float th = getTarget().getPadHeight();
-		
+
 		final int mx = ctx.mouseX;
 		final int my = ctx.mouseY;
 
-		ctx.rectMode(PApplet.CORNERS);
+		final int r = getColor().getRed();
+		final int g = getColor().getGreen();
+		final int b = getColor().getBlue();
 
 		for (int i = 0; i < MAX_WEIGHT; i++) {
-			final int r = getColor().getRed();
-			final int g = getColor().getGreen();
-			final int b = getColor().getBlue();
-			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / getFalloffRadius(), 0, getColor().getAlpha()), 0);
-			
+			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha()
+					- constrain(dist(mx, my, x + tw / 2, y + th / 2) / getFalloffRadius(), 0, getColor().getAlpha()),
+					0);
+
 			ctx.stroke(r, g, b, a);
 
 			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
@@ -166,7 +148,16 @@ public class ReactiveShadow extends AbstractShadow {
 			final float newX1 = x1 + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
 			final float newY1 = y1 + convert(i, 0, MAX_WEIGHT, 0, getWeightBottom());
 
-			ctx.rect(newX, newY, newX1, newY1);
+			switch (mode) {
+			case RECTANGLE:
+				ctx.rectMode(PApplet.CORNERS);
+				ctx.rect(newX, newY, newX1, newY1);
+				break;
+
+			case ELLIPSE:
+				ctx.ellipse(newX, newY, newX1, newY1);
+				break;
+			}
 		}
 	}
 
@@ -175,18 +166,19 @@ public class ReactiveShadow extends AbstractShadow {
 		final float ty = getTarget().getPadY();
 		final float tw = getTarget().getPadWidth();
 		final float th = getTarget().getPadHeight();
-		
+
 		final int mx = ctx.mouseX;
 		final int my = ctx.mouseY;
-		
+
 		setWeightLeft(constrain(convert(mx, tx, tx + tw, MIN_WEIGHT, MAX_WEIGHT), MIN_WEIGHT, MAX_WEIGHT));
 		setWeightTop(constrain(convert(my, ty, ty + th, MIN_WEIGHT, MAX_WEIGHT), MIN_WEIGHT, MAX_WEIGHT));
 		setWeightRight(constrain(convert(mx, tx + tw, tx, MIN_WEIGHT, MAX_WEIGHT), MIN_WEIGHT, MAX_WEIGHT));
 		setWeightBottom(constrain(convert(my, ty + th, ty, MIN_WEIGHT, MAX_WEIGHT), MIN_WEIGHT, MAX_WEIGHT));
-		
+
 	}
 
 	private boolean isMouseMoving() {
 		return ctx.mouseX != ctx.pmouseX || ctx.mouseY != ctx.pmouseY;
 	}
+
 }
