@@ -24,7 +24,11 @@ import processing.core.PApplet;
  * @see ContentView
  */
 public class ReactiveShadow extends AbstractShadow {
-
+	private static final int DEFAULT_FALLOFF_RADIUS = 10;
+	private static final int MIN_FALLOFF_RADIUS = 1;
+	private static final int MAX_FALLOFF_RADIUS = 100;
+	private int falloffRadius;
+	
 	/**
 	 * Constructs a ReactiveShadow with default properties. Initializes with all
 	 * weights cleared and a semi-transparent black color.
@@ -33,6 +37,7 @@ public class ReactiveShadow extends AbstractShadow {
 		super();
 		clearAllWeight();
 		setColor(new Color(0, 32));
+		setFalloffRadius(DEFAULT_FALLOFF_RADIUS);
 	}
 
 	/**
@@ -52,6 +57,32 @@ public class ReactiveShadow extends AbstractShadow {
 	 */
 	public void requestUpdateWeights() {
 		updateWeights();
+	}
+	
+	
+	/**
+	 * Getter for falloffRadius value.
+	 * (default value is {@value #DEFAULT_FALLOFF_RADIUS})
+	 * 
+	 * @return falloffRadius
+	 */
+	public final int getFalloffRadius() {
+		return falloffRadius;
+	}
+
+	/**
+	 * Setter for falloffRadius.
+	 * (Must be between {@value #MIN_FALLOFF_RADIUS} and {@value #MAX_FALLOFF_RADIUS})
+	 * 
+	 * @param falloffRadius radius for fall-off effect
+	 * @throws IllegalArgumentException if falloffRadius not between {@value #MIN_FALLOFF_RADIUS} and {@value #MAX_FALLOFF_RADIUS}
+	 */
+	public final void setFalloffRadius(int falloffRadius) {
+		if (falloffRadius < MIN_FALLOFF_RADIUS || falloffRadius > MAX_FALLOFF_RADIUS) {
+			throw new IllegalArgumentException("falloffRadius must be betwen " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
+		}
+		
+		this.falloffRadius = falloffRadius;
 	}
 
 	/**
@@ -95,7 +126,7 @@ public class ReactiveShadow extends AbstractShadow {
 			final int r = getColor().getRed();
 			final int g = getColor().getGreen();
 			final int b = getColor().getBlue();
-			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / 10, 0, getColor().getAlpha()), 0);
+			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / getFalloffRadius(), 0, getColor().getAlpha()), 0);
 			
 			ctx.stroke(r, g, b, a);
 			
@@ -126,7 +157,7 @@ public class ReactiveShadow extends AbstractShadow {
 			final int r = getColor().getRed();
 			final int g = getColor().getGreen();
 			final int b = getColor().getBlue();
-			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / 10, 0, getColor().getAlpha()), 0);
+			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / getFalloffRadius(), 0, getColor().getAlpha()), 0);
 			
 			ctx.stroke(r, g, b, a);
 

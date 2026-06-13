@@ -3,6 +3,7 @@ package microui.core.base;
 import static java.util.Objects.requireNonNull;
 import static microui.core.style.theme.ThemeManager.getTheme;
 
+import microui.core.effect.ReactiveShadow;
 import microui.core.interfaces.Listener;
 import microui.core.style.AbstractColor;
 import microui.event.Event;
@@ -51,6 +52,7 @@ public abstract class Component extends ContentView {
 		interactionHandler = new InteractionHandler(this);
 		tooltip = new Tooltip(this);
 		
+		setShadow(new ReactiveShadow());
 	}
 
 	/**
