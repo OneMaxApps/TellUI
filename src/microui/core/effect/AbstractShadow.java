@@ -42,7 +42,7 @@ public abstract class AbstractShadow extends View {
 
 	private FormMode formMode;
 	
-	private int weightLeft, weightTop, weightRight, weightBottom;
+	private float weightLeft, weightTop, weightRight, weightBottom;
 	
 	/**
 	 * Constructs an AbstractShadow with default properties. Default shadow has
@@ -135,7 +135,7 @@ public abstract class AbstractShadow extends View {
 	 * 
 	 * @return the left shadow weight
 	 */
-	public int getWeightLeft() {
+	public float getWeightLeft() {
 		return weightLeft;
 	}
 
@@ -144,7 +144,7 @@ public abstract class AbstractShadow extends View {
 	 * 
 	 * @return the top shadow weight
 	 */
-	public int getWeightTop() {
+	public float getWeightTop() {
 		return weightTop;
 	}
 
@@ -153,7 +153,7 @@ public abstract class AbstractShadow extends View {
 	 * 
 	 * @return the right shadow weight
 	 */
-	public int getWeightRight() {
+	public float getWeightRight() {
 		return weightRight;
 	}
 
@@ -162,7 +162,7 @@ public abstract class AbstractShadow extends View {
 	 * 
 	 * @return the bottom shadow weight
 	 */
-	public int getWeightBottom() {
+	public float getWeightBottom() {
 		return weightBottom;
 	}
 
@@ -275,7 +275,7 @@ public abstract class AbstractShadow extends View {
 	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
 	 *                                  than MAX_WEIGHT ({@value #MAX_WEIGHT})
 	 */
-	protected void checkWeight(int weight) {
+	protected void checkWeight(float weight) {
 		if (weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
 			throw new IllegalArgumentException(
 					"Weight for Shadow must be between: " + MIN_WEIGHT + " and " + MAX_WEIGHT);
@@ -289,7 +289,7 @@ public abstract class AbstractShadow extends View {
 	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeightLeft(int weightLeft) {
+	protected AbstractShadow setWeightLeft(float weightLeft) {
 		checkWeight(weightLeft);
 		this.weightLeft = weightLeft;
 
@@ -303,9 +303,10 @@ public abstract class AbstractShadow extends View {
 	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeightTop(int weightTop) {
+	protected AbstractShadow setWeightTop(float weightTop) {
 		checkWeight(weightTop);
 		this.weightTop = weightTop;
+		
 		return this;
 	}
 
@@ -316,9 +317,10 @@ public abstract class AbstractShadow extends View {
 	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeightRight(int weightRight) {
+	protected AbstractShadow setWeightRight(float weightRight) {
 		checkWeight(weightRight);
 		this.weightRight = weightRight;
+		
 		return this;
 	}
 
@@ -329,9 +331,10 @@ public abstract class AbstractShadow extends View {
 	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeightBottom(int weightBottom) {
+	protected AbstractShadow setWeightBottom(float weightBottom) {
 		checkWeight(weightBottom);
 		this.weightBottom = weightBottom;
+		
 		return this;
 	}
 
@@ -352,7 +355,7 @@ public abstract class AbstractShadow extends View {
 	 *                   MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeight(int weight) {
+	protected AbstractShadow setWeight(float weight) {
 		checkWeight(weight);
 		weightLeft = weightTop = weightRight = weightBottom = weight;
 		return this;
@@ -365,7 +368,7 @@ public abstract class AbstractShadow extends View {
 	 * @param weightVertical   the weight for top and bottom sides (must be between MIN_WEIGHT ({@value #MIN_WEIGHT}) and MAX_WEIGHT ({@value #MAX_WEIGHT}))
 	 * @return this AbstractShadow for method chaining
 	 */
-	protected AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
+	protected AbstractShadow setWeight(float weightHorizontal, float weightVertical) {
 		checkWeight(weightHorizontal);
 		checkWeight(weightVertical);
 
@@ -385,7 +388,7 @@ public abstract class AbstractShadow extends View {
 	 * @return this AbstractShadow for method chaining
 	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
-	protected AbstractShadow setWeight(int left, int top, int right, int bottom) {
+	protected AbstractShadow setWeight(float left, float top, float right, float bottom) {
 		checkWeight(left);
 		checkWeight(top);
 		checkWeight(right);

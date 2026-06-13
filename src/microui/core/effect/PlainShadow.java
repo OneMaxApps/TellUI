@@ -72,7 +72,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeightLeft(int weightLeft) {
+	public AbstractShadow setWeightLeft(float weightLeft) {
 		return super.setWeightLeft(weightLeft);
 	}
 
@@ -85,7 +85,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeightTop(int weightTop) {
+	public AbstractShadow setWeightTop(float weightTop) {
 		return super.setWeightTop(weightTop);
 	}
 
@@ -98,7 +98,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeightRight(int weightRight) {
+	public AbstractShadow setWeightRight(float weightRight) {
 		return super.setWeightRight(weightRight);
 	}
 
@@ -111,7 +111,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeightBottom(int weightBottom) {
+	public AbstractShadow setWeightBottom(float weightBottom) {
 		return super.setWeightBottom(weightBottom);
 	}
 
@@ -124,7 +124,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeight(int weight) {
+	public AbstractShadow setWeight(float weight) {
 		return super.setWeight(weight);
 	}
 
@@ -139,7 +139,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeight(int weightHorizontal, int weightVertical) {
+	public AbstractShadow setWeight(float weightHorizontal, float weightVertical) {
 		return super.setWeight(weightHorizontal, weightVertical);
 	}
 
@@ -155,7 +155,7 @@ public class PlainShadow extends AbstractShadow {
 	 * @return this PlainShadow for method chaining
 	 */
 	@Override
-	public AbstractShadow setWeight(int left, int top, int right, int bottom) {
+	public AbstractShadow setWeight(float left, float top, float right, float bottom) {
 		return super.setWeight(left, top, right, bottom);
 	}
 
