@@ -84,11 +84,21 @@ public class ReactiveShadow extends AbstractShadow {
 		final float y = getTargetY();
 		final float w = getTargetWidth();
 		final float h = getTargetHeight();
+		
+		final float tw = getTarget().getPadWidth();
+		final float th = getTarget().getPadHeight();
+		
+		final int mx = ctx.mouseX;
+		final int my = ctx.mouseY;
 
 		for (int i = 0; i < MAX_WEIGHT; i++) {
-			ctx.stroke(getColor().getRed(), getColor().getGreen(), getColor().getBlue(),
-					convert(i, 0, MAX_WEIGHT, getColor().getAlpha(), 0));
-
+			final int r = getColor().getRed();
+			final int g = getColor().getGreen();
+			final int b = getColor().getBlue();
+			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / 10, 0, getColor().getAlpha()), 0);
+			
+			ctx.stroke(r, g, b, a);
+			
 			final float newX = x - convert(i, 0, MAX_WEIGHT, 0, getWeightLeft());
 			final float newY = y - convert(i, 0, MAX_WEIGHT, 0, getWeightTop());
 			final float newX1 = w + convert(i, 0, MAX_WEIGHT, 0, getWeightRight());
@@ -116,7 +126,7 @@ public class ReactiveShadow extends AbstractShadow {
 			final int r = getColor().getRed();
 			final int g = getColor().getGreen();
 			final int b = getColor().getBlue();
-			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2), 0, getColor().getAlpha() / 2), 0);
+			final int a = (int) convert(i, 0, MAX_WEIGHT, getColor().getAlpha() - constrain(dist(mx, my, x + tw / 2, y + th / 2) / 10, 0, getColor().getAlpha()), 0);
 			
 			ctx.stroke(r, g, b, a);
 
