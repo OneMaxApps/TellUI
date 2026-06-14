@@ -1,5 +1,6 @@
 package microui.layout;
 
+import microui.core.exception.LayoutException;
 import microui.core.interfaces.LayoutParams;
 
 /**
@@ -34,30 +35,30 @@ public final class GridLayoutParams implements LayoutParams {
 	public GridLayoutParams(int column, int row, int columnSpan, int rowSpan, int alignX, int alignY) {
 		super();
 		if (column < 0) {
-			throw new IllegalArgumentException("Grid layout param: \"column\" cannot be less than zero");
+			throw new LayoutException("Grid layout param: \"column\" cannot be less than zero");
 		}
 		if (row < 0) {
-			throw new IllegalArgumentException("Grid layout param: \"row\" cannot be less than zero");
+			throw new LayoutException("Grid layout param: \"row\" cannot be less than zero");
 		}
 		if (columnSpan < 1) {
-			throw new IllegalArgumentException("Grid layout param: \"columnSpan\" cannot be less than 1");
+			throw new LayoutException("Grid layout param: \"columnSpan\" cannot be less than 1");
 		}
 		if (rowSpan < 1) {
-			throw new IllegalArgumentException("Grid layout param: \"rowSpan\" cannot be less than 1");
+			throw new LayoutException("Grid layout param: \"rowSpan\" cannot be less than 1");
 		}
 
 		if (alignX < -1) {
-			throw new IllegalArgumentException("Grid layout param: \"alignX\" cannot be less than -1");
+			throw new LayoutException("Grid layout param: \"alignX\" cannot be less than -1");
 		}
 		if (alignX > 1) {
-			throw new IllegalArgumentException("Grid layout param: \"alignX\" cannot be greater than 1");
+			throw new LayoutException("Grid layout param: \"alignX\" cannot be greater than 1");
 		}
 
 		if (alignY < -1) {
-			throw new IllegalArgumentException("Grid layout param: \"alignY\" cannot be less than -1");
+			throw new LayoutException("Grid layout param: \"alignY\" cannot be less than -1");
 		}
 		if (alignY > 1) {
-			throw new IllegalArgumentException("Grid layout param: \"alignY\" cannot be greater than 1");
+			throw new LayoutException("Grid layout param: \"alignY\" cannot be greater than 1");
 		}
 
 		this.column = column;

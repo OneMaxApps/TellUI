@@ -1,6 +1,8 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.exception.IllegalLayoutParamsException;
+import microui.core.exception.LayoutException;
 import microui.core.interfaces.LayoutParams;
 
 /**
@@ -37,7 +39,7 @@ public final class RowLayout extends LinearAxisLayout {
 	public void onAdd(Entry contentViewEntry) {
 		super.onAdd(contentViewEntry);
 		if (isOutOfSpace()) {
-			throw new IllegalStateException("Weight limit out of bounds in RowLayout");
+			throw new LayoutException("Weight limit out of bounds in RowLayout");
 		}
 	}
 
@@ -57,13 +59,13 @@ public final class RowLayout extends LinearAxisLayout {
 	 * Validates that the provided layout parameters are of the correct type.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws ClassCastException if the parameters are not an instance of
+	 * @throws IllegalLayoutParamsException if the parameters are not an instance of
 	 *                                  RowLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof RowLayoutParams)) {
-			throw new ClassCastException("Incorrect layout params: expected RowLayoutParams but got " + layoutParams.getClass().getSimpleName());
+			throw new IllegalLayoutParamsException(RowLayoutParams.class, layoutParams);
 		}
 	}
 }

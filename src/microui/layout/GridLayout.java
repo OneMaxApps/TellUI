@@ -1,8 +1,10 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
-import microui.core.interfaces.LayoutParams;
 import microui.core.base.ContentView;
+import microui.core.exception.IllegalLayoutParamsException;
+import microui.core.exception.LayoutException;
+import microui.core.interfaces.LayoutParams;
 
 /**
  * Layout manager that arranges child components in a grid with specified
@@ -153,26 +155,26 @@ public final class GridLayout extends LayoutManager {
 	 * GridLayout.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws IllegalArgumentException if layoutParams is not an instance of
+	 * @throws IllegalLayoutParamsException if layoutParams is not an instance of
 	 *                                  GridLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof GridLayoutParams)) {
-			throw new ClassCastException("Incorrect layout params: expected GridLayoutParams but got " + layoutParams.getClass().getSimpleName());
+			throw new IllegalLayoutParamsException(GridLayoutParams.class, layoutParams);
 		}
 	}
 
 	private void setColumns(int columns) {
 		if (columns < 1) {
-			throw new IllegalArgumentException("Columns in grid layout cannot be less than 1");
+			throw new LayoutException("Columns in grid layout cannot be less than 1");
 		}
 		this.columns = columns;
 	}
 
 	private void setRows(int rows) {
 		if (rows < 1) {
-			throw new IllegalArgumentException("Rows in grid layout cannot be less than 1");
+			throw new LayoutException("Rows in grid layout cannot be less than 1");
 		}
 		this.rows = rows;
 	}
@@ -180,7 +182,7 @@ public final class GridLayout extends LayoutManager {
 	private void checkOutOfGrid(GridLayoutParams params) {
 		if (params.getColumn() + (params.getColumnSpan() - 1) >= getColumns()
 				|| (params.getRow() + params.getRowSpan() - 1) >= getRows()) {
-			throw new IndexOutOfBoundsException("ContentView is out of grid layout");
+			throw new LayoutException("ContentView is out of grid layout");
 		}
 	}
 
@@ -202,7 +204,7 @@ public final class GridLayout extends LayoutManager {
 				if (params != paramsOther) {
 					// Checking for overlap in grid coordinates
 					if (pc > opc - pcs && pc < opc + opcs && pr > opr - prs && pr < opr + oprs) {
-						throw new IllegalArgumentException("Several contentViews cannot be in one cell of grid");
+						throw new LayoutException("Several contentViews cannot be in one cell of grid");
 					}
 				}
 

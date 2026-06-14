@@ -1,6 +1,7 @@
 package microui.layout;
 
 import microui.core.base.Container.Entry;
+import microui.core.exception.IllegalLayoutParamsException;
 import microui.core.interfaces.LayoutParams;
 import microui.core.base.ContentView;
 
@@ -95,8 +96,8 @@ public abstract class LinearAxisLayout extends LayoutManager {
 		ctx.fill(200, 0, 0, 32);
 
 		getEntryList().forEach(entry -> {
-			ContentView contentView = entry.getContentView();
-			LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.getLayoutParams();
+			final ContentView contentView = entry.getContentView();
+			final LinearAxisLayoutParams params = (LinearAxisLayoutParams) entry.getLayoutParams();
 			if (verticalMode) {
 				ctx.rect(getContainer().getX(), contentView.getAbsoluteY(), getContainer().getWidth(),
 						getContainer().getHeight() * params.getWeight());
@@ -113,13 +114,13 @@ public abstract class LinearAxisLayout extends LayoutManager {
 	 * Validates that the provided layout parameters are of the correct type.
 	 * 
 	 * @param layoutParams the layout parameters to validate
-	 * @throws ClassCastException if the parameters are not an instance of
+	 * @throws IllegalLayoutParamsException if the parameters are not an instance of
 	 *                                  LinearAxisLayoutParams
 	 */
 	@Override
 	protected void checkCorrectParams(LayoutParams layoutParams) {
 		if (!(layoutParams instanceof LinearAxisLayoutParams)) {
-			throw new ClassCastException("Incorrect layout params: expected LinearAxisLayoutParams but got " + layoutParams.getClass().getSimpleName());
+			throw new IllegalLayoutParamsException(LinearAxisLayoutParams.class, layoutParams);
 		}
 	}
 
