@@ -26,6 +26,7 @@ import java.util.HashMap;
 import microui.core.base.Component;
 import microui.core.controller.FullSingleLineTextController;
 import microui.core.controller.FullSingleLineTextController.FilterMode;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Listener;
@@ -1392,12 +1393,8 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void setWeight(float weight) {
-			if (weight < MIN_CURSOR_WEIGHT) {
-				throw new IllegalArgumentException("Weight of cursor cannot be less than " + MIN_CURSOR_WEIGHT);
-			}
-
-			if (weight > MAX_CURSOR_WEIGHT) {
-				throw new IllegalArgumentException("Weight of cursor cannot be greater than " + MAX_CURSOR_WEIGHT);
+			if (weight < MIN_CURSOR_WEIGHT || weight > MAX_CURSOR_WEIGHT) {
+				throw new ValueOutOfRangeException("weight", weight, MIN_CURSOR_WEIGHT, MAX_CURSOR_WEIGHT);
 			}
 
 			this.weight = weight;
@@ -1461,9 +1458,9 @@ public final class TextField extends Component implements KeyPressable {
 
 			public void setRate(final float rate) {
 				if (rate < MIN_BLINK_RATE || rate > MAX_BLINK_RATE) {
-					throw new IllegalArgumentException(
-							"Rate for blink must be between " + MIN_BLINK_RATE + " and " + MAX_BLINK_RATE);
+					throw new ValueOutOfRangeException("rate", rate, MIN_BLINK_RATE, MAX_BLINK_RATE);
 				}
+				
 				this.rate = (byte) rate;
 			}
 

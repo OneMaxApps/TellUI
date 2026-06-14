@@ -36,6 +36,7 @@ import microui.core.GraphicsBuffer;
 import microui.core.TextEditorModel;
 import microui.core.TextEditorModel.Direction;
 import microui.core.base.Component;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.interfaces.InputFilter;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Listener;
@@ -2033,7 +2034,7 @@ public final class TextArea extends Component implements KeyPressable, Scrollabl
 
 		public void setTabSize(int tabSize) {
 			if (tabSize < MIN_TAB_SIZE || tabSize > MAX_TAB_SIZE) {
-				throw new IllegalArgumentException("Tab size must be between " + MIN_TAB_SIZE + " and " + MAX_TAB_SIZE);
+				throw new ValueOutOfRangeException("tabSize", tabSize, MIN_TAB_SIZE, MAX_TAB_SIZE);
 			}
 
 			this.tabSize = tabSize;

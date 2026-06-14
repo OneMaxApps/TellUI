@@ -1,5 +1,7 @@
 package microui.util;
 
+import microui.core.exception.ValueOutOfRangeException;
+
 /**
  * Timer utility for tracking progress between two end-points over time.
  * 
@@ -79,11 +81,11 @@ public final class Timer {
 	 * </p>
 	 * 
 	 * @param speed the new speed value, must be between 0 and 1
-	 * @throws IllegalArgumentException if speed is outside the range [0, 1]
+	 * @throws ValueOutOfRangeException if speed is outside the range [0, 1]
 	 */
 	public void setSpeed(float speed) {
 		if (speed < 0 || speed > 1) {
-			throw new IllegalArgumentException("Speed for Timer must be between 0 and 1");
+			throw new ValueOutOfRangeException("speed", speed, 0, 1);
 		}
 		this.speed = speed;
 	}

@@ -9,6 +9,7 @@ import static processing.core.PConstants.HALF_PI;
 import static processing.core.PConstants.TWO_PI;
 
 import microui.core.RangeControl;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 import microui.core.style.LerpedColor;
@@ -163,11 +164,12 @@ public final class Knob extends RangeControl {
 	 * knob's center.
 	 *
 	 * @param handleOffsetRatio the new ratio (must be between {@value #MIN_HANDLE_OFFSET_RATIO} and {@value #MAX_HANDLE_OFFSET_RATIO})
-	 * @throws IllegalArgumentException if the value is out of allowed bounds
+	 * @throws ValueOutOfRangeException if the value is out of allowed bounds
 	 */
 	public void setHandleOffsetRatio(float handleOffsetRatio) {
 		if (handleOffsetRatio < MIN_HANDLE_OFFSET_RATIO || handleOffsetRatio > MAX_HANDLE_OFFSET_RATIO) {
-			throw new IllegalArgumentException(String.format("Handle offset ratio must be between min(%f) and max(%f) value",MIN_HANDLE_OFFSET_RATIO,MAX_HANDLE_OFFSET_RATIO));
+			throw new ValueOutOfRangeException("handleOffsetRatio", handleOffsetRatio, MIN_HANDLE_OFFSET_RATIO, MAX_HANDLE_OFFSET_RATIO);
+			
 		}
 		
 		this.handleOffsetRatio = handleOffsetRatio;
@@ -187,11 +189,11 @@ public final class Knob extends RangeControl {
 	 * compared to the overall knob size.
 	 *
 	 * @param handleSizeRatio the new ratio (must be between {@value #MIN_HANDLE_SIZE_RATIO} and {@value #MAX_HANDLE_SIZE_RATIO})
-	 * @throws IllegalArgumentException if the value is out of allowed bounds
+	 * @throws ValueOutOfRangeException if the value is out of allowed bounds
 	 */
 	public void setHandleSizeRatio(float handleSizeRatio) {
 		if (handleSizeRatio < MIN_HANDLE_SIZE_RATIO || handleSizeRatio > MAX_HANDLE_SIZE_RATIO) {
-			throw new IllegalArgumentException(String.format("Handle size ratio must be between min(%f) and max(%f) value",MIN_HANDLE_SIZE_RATIO,MAX_HANDLE_SIZE_RATIO));
+			throw new ValueOutOfRangeException("handleSizeRatio", handleSizeRatio, MIN_HANDLE_SIZE_RATIO, MAX_HANDLE_SIZE_RATIO);
 		}
 		
 		this.handleSizeRatio = handleSizeRatio;
@@ -211,11 +213,11 @@ public final class Knob extends RangeControl {
 	 * the current value is reset to this default.
 	 *
 	 * @param defaultValue the default value (must be within the current min/max range)
-	 * @throws IllegalArgumentException if {@code defaultValue} is outside the valid range
+	 * @throws ValueOutOfRangeException if {@code defaultValue} is outside the valid range
 	 */
 	public void setDefaultValue(float defaultValue) {
 		if (defaultValue < getMinValue() || defaultValue > getMaxValue()) {
-			throw new IllegalArgumentException(String.format("Default value must be between min(%f) and max(%f) value",getMinValue(),getMaxValue()));
+			throw new ValueOutOfRangeException("defaultValue", defaultValue, getMinValue(), getMaxValue());
 		}
 
 		this.defaultValue = Float.valueOf(defaultValue);
@@ -234,11 +236,11 @@ public final class Knob extends RangeControl {
 	 * Sets the scale weight ratio. Higher values produce a thicker scale arc.
 	 *
 	 * @param scaleWeightRatio the new ratio (must be between {@value #MIN_SCALE_WEIGHT_RATIO} and {@value #MAX_SCALE_WEIGHT_RATIO})
-	 * @throws IllegalArgumentException if the ratio is out of bounds
+	 * @throws ValueOutOfRangeException if the ratio is out of bounds
 	 */
 	public void setScaleWeightRatio(float scaleWeightRatio) {
 		if (scaleWeightRatio < MIN_SCALE_WEIGHT_RATIO || scaleWeightRatio > MAX_SCALE_WEIGHT_RATIO) {
-			throw new IllegalArgumentException("Scale weight ratio must be between " + MIN_SCALE_WEIGHT_RATIO + " and " + MAX_SCALE_WEIGHT_RATIO);
+			throw new ValueOutOfRangeException("scaleWeightRatio", scaleWeightRatio, MIN_SCALE_WEIGHT_RATIO, MAX_SCALE_WEIGHT_RATIO);
 		}
 		this.scaleWeightRatio = scaleWeightRatio;
 	}
@@ -493,7 +495,7 @@ public final class Knob extends RangeControl {
 	
 	private void validateAngle(final float angle) {
 		if (angle < 0 || angle > TWO_PI) {
-			throw new IllegalArgumentException("Angle must be between 0 and " + TWO_PI);
+			throw new ValueOutOfRangeException("angle", angle, 0, TWO_PI);
 		}
 	}
 	

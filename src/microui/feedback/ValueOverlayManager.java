@@ -52,8 +52,6 @@ public final class ValueOverlayManager extends View {
 		
 	}
 	
-	
-	
 	// == TEXT API == //
 
 	/**

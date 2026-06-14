@@ -1312,11 +1312,11 @@ public final class MenuButton extends Button implements Scrollable, ModalParent 
 
 			for (int i = 0; i < list.size(); i++) {
 				final Button b = list.get(i);
-				Button finded = null;
+				Button found = null;
 				if (b instanceof MenuButton m) {
-					finded = m.find(title);
-					if (finded != null) {
-						return finded;
+					found = m.find(title);
+					if (found != null) {
+						return found;
 					}
 				}
 			}

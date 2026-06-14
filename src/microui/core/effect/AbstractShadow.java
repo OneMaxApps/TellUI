@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import microui.component.Knob;
 import microui.core.base.ContentView;
 import microui.core.base.View;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.style.AbstractColor;
 import microui.core.style.Color;
 
@@ -272,13 +273,12 @@ public abstract class AbstractShadow extends View {
 	 * Validates that a weight value is within allowed bounds.
 	 * 
 	 * @param weight the weight value to validate
-	 * @throws IllegalArgumentException if weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
+	 * @throws ValueOutOfRangeException if weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
 	 *                                  than MAX_WEIGHT ({@value #MAX_WEIGHT})
 	 */
 	protected void checkWeight(float weight) {
 		if (weight < MIN_WEIGHT || weight > MAX_WEIGHT) {
-			throw new IllegalArgumentException(
-					"Weight for Shadow must be between: " + MIN_WEIGHT + " and " + MAX_WEIGHT);
+			throw new ValueOutOfRangeException("weight", weight, MIN_WEIGHT, MAX_WEIGHT);
 		}
 	}
 

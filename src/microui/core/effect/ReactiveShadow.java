@@ -5,6 +5,7 @@ import static microui.util.MathUtils.convert;
 import static microui.util.MathUtils.dist;
 
 import microui.core.base.ContentView;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.style.Color;
 import processing.core.PApplet;
 
@@ -78,14 +79,13 @@ public class ReactiveShadow extends AbstractShadow {
 	 * {@value #MAX_FALLOFF_RADIUS})
 	 * 
 	 * @param falloffRadius radius for fall-off effect
-	 * @throws IllegalArgumentException if falloffRadius not between
+	 * @throws ValueOutOfRangeException if falloffRadius is not between
 	 *                                  {@value #MIN_FALLOFF_RADIUS} and
 	 *                                  {@value #MAX_FALLOFF_RADIUS}
 	 */
 	public final void setFalloffRadius(int falloffRadius) {
 		if (falloffRadius < MIN_FALLOFF_RADIUS || falloffRadius > MAX_FALLOFF_RADIUS) {
-			throw new IllegalArgumentException(
-					"FalloffRadius must be between " + MIN_FALLOFF_RADIUS + " and " + MAX_FALLOFF_RADIUS);
+			throw new ValueOutOfRangeException("falloffRadius", falloffRadius, MIN_FALLOFF_RADIUS, MAX_FALLOFF_RADIUS);
 		}
 
 		this.falloffRadius = falloffRadius;

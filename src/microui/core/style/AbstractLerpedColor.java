@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Supplier;
 
+import microui.core.exception.ValueOutOfRangeException;
 import microui.util.MathUtils;
 
 /**
@@ -234,11 +235,11 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		 * Sets the animation progress directly.
 		 *
 		 * @param progress the new progress value (must be between 0 and 1)
-		 * @throws IllegalArgumentException if progress is outside [0,1]
+		 * @throws ValueOutOfRangeException if progress is outside [0,1]
 		 */
 		public final void setProgress(float progress) {
 			if (progress < START_PROGRESS || progress > END_PROGRESS) {
-				throw new IllegalArgumentException("Progress for lerp must be between 0 and 1");
+				throw new ValueOutOfRangeException("progress", progress, START_PROGRESS, END_PROGRESS);
 			}
 			this.progress = progress;
 		}
@@ -276,11 +277,11 @@ public abstract class AbstractLerpedColor extends AbstractColor {
 		 * per update.
 		 *
 		 * @param speed the new speed (must be between 0.0 and 1.0)
-		 * @throws IllegalArgumentException if speed is outside [0,1]
+		 * @throws ValueOutOfRangeException if speed is outside [0,1]
 		 */
 		public final void setSpeed(float speed) {
 			if (speed < 0 || speed > 1) {
-				throw new IllegalArgumentException("Speed must be between 0 and 1");
+				throw new ValueOutOfRangeException("speed", speed, 0, 1);
 			}
 			this.speed = speed;
 		}

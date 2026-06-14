@@ -16,6 +16,7 @@ import microui.core.ImageBuffer;
 import microui.core.effect.Transition;
 import microui.core.exception.DuplicateItemException;
 import microui.core.exception.RenderException;
+import microui.core.exception.ValueOutOfRangeException;
 import microui.core.interfaces.KeyPressable;
 import microui.core.interfaces.Listener;
 import microui.core.interfaces.Scrollable;
@@ -893,7 +894,7 @@ public final class UIHost extends View {
 
 			public final void setProgressStep(float progressStep) {
 				if (progressStep < MIN_PROGRESS_STEP || progressStep > MAX_PROGRESS_STEP) {
-					throw new IllegalArgumentException("Progress step must be between " + MIN_PROGRESS_STEP + " and " + MAX_PROGRESS_STEP);
+					throw new ValueOutOfRangeException("progressStep", progressStep, MIN_PROGRESS_STEP, MAX_PROGRESS_STEP);
 				}
 				this.progressStep = progressStep;
 			}
