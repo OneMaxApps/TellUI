@@ -151,7 +151,7 @@ public final class TextView extends Component {
 	 * Enables or disables text clipping to bounds.
 	 *
 	 * @param clipModeEnabled true to clip text to component bounds, false to allow overflow
-	 * @return itself
+	 * @return this TextView instance for method chaining
 	 */
 	public TextView setClipModeEnabled(boolean clipModeEnabled) {
 		this.clipModeEnabled = clipModeEnabled;
@@ -180,7 +180,7 @@ public final class TextView extends Component {
 	 */
 	public void setTextSize(float textSize) {
 		if (textSize <= 0) {
-			throw new IllegalArgumentException("Text size cannot be equal to zero and lower");
+			throw new IllegalArgumentException("Text size cannot be zero or lower");
 		}
 		this.textSize = textSize;
 	}

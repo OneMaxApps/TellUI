@@ -5,6 +5,7 @@ import static microui.core.style.theme.ThemeManager.getTheme;
 import microui.core.LinearRangeControl;
 import microui.core.base.SpatialView;
 import microui.core.style.AbstractColor;
+import microui.core.style.Color;
 import microui.core.style.Stroke;
 import microui.util.MathUtils;
 
@@ -161,6 +162,7 @@ public class Slider extends LinearRangeControl {
 
 			stroke = new Stroke();
 			stroke.setWeight(1);
+			stroke.setColor(Color.TRANSPARENT);
 			color = getTheme().getPrimaryColor();
 		}
 

@@ -813,6 +813,8 @@ public final class UIHost extends View {
 				transition = new Transition();
 				
 				setTransition(Transition.SLIDE_LEFT);
+				
+				timer = TIMER_START;
 			}
 			
 			@Override
@@ -834,10 +836,9 @@ public final class UIHost extends View {
 				}
 				
 				if (activated) {
-					
 					if (!previousImage.isLoaded()) {
 						previous.draw();
-						previousImage.set(ctx.get(0,0,ctx.width,ctx.height));
+						previousImage.set(getScreenshot());
 					}
 
 					if (!currentImage.isLoaded()) {
@@ -846,17 +847,19 @@ public final class UIHost extends View {
 						if (previous.isVisible()) {
 							previous.setVisible(false);
 						} else {
-							currentImage.set(ctx.get(0,0,ctx.width,ctx.height));
+							currentImage.set(getScreenshot());
 							previous.setVisible(true);
 						}
 					}
 					
-					
-					if(timer < TIMER_END) {
+					if(timer < TIMER_END && previousImage.isLoaded() && currentImage.isLoaded()) {
 						timer += progressStep;
+						
 					} else {
-						activated = false;
-						timer = TIMER_START;
+						if (timer >= TIMER_END) {
+							activated = false;
+							timer = TIMER_START;
+						}
 					}
 					
 					final var t = transition;
@@ -884,6 +887,7 @@ public final class UIHost extends View {
 					if (previousImage.isLoaded()) {
 						previousImage.removeTexture();
 					}
+					
 				}
 			}
 
@@ -943,6 +947,10 @@ public final class UIHost extends View {
 		
 			private float lerpFromTime(float start, float end) {
 				return convert(timer,TIMER_START, TIMER_END, start, end);
+			}
+			
+			private PImage getScreenshot() {
+				return ctx.get(0, 0, ctx.width, ctx.height);
 			}
 		}
 

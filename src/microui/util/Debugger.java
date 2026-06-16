@@ -168,7 +168,7 @@ public final class Debugger {
 	}
 
 	/**
-	 * Drawing text about frame rate and additional information if that typed
+	 * Draws text displaying the frame rate and any additional typed information.
 	 */
 	public static void draw() {
 		if (!enabled) {
@@ -256,7 +256,7 @@ public final class Debugger {
 	}
 	
 	/**
-	 * TextConfig a class for settings for text drawing
+	 * TextConfig is a class containing settings for text drawing.
 	 */
 	public static final class TextConfig {
 		private static AbstractColor color;
@@ -276,7 +276,8 @@ public final class Debugger {
 		}
 		
 		/**
-		 * return the color of text
+		 * Returns the text color.
+		 * 
 		 * @return current color of text
 		 */
 		public static AbstractColor getColor() {
@@ -284,7 +285,8 @@ public final class Debugger {
 		}
 		
 		/**
-		 * setter for color of text
+		 * Sets the text color.
+		 * 
 		 * @param color for text
 		 */
 		public static void setColor(AbstractColor color) {
@@ -333,14 +335,14 @@ public final class Debugger {
 		/**
 		 * Setter for text size.
 		 * 
-		 * (text size must be greater than 1)
+		 * (Text size must be greater than 1)
 		 * 
 		 * @param size for text size
-		 * @throws IllegalArgumentException if size lower or equal to 1
+		 * @throws IllegalArgumentException if size is lower or equal to 1
 		 */
 		public static void setSize(int size) {
 			if (size <= 1) {
-				throw new IllegalArgumentException("Text size must be greater that 1");
+				throw new IllegalArgumentException("Text size must be greater than 1");
 			}
 			TextConfig.size = size;
 		}

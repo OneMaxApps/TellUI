@@ -328,7 +328,7 @@ public final class Knob extends RangeControl {
 		validateAngle(endAngle);
 		
 		if (startAngle == endAngle) {
-			throw new IllegalArgumentException("Start and end angle cannot be equals");
+			throw new IllegalArgumentException("Start and end angles cannot be equal");
 		}
 		
 		if (startAngle > endAngle) {

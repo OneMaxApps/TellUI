@@ -13,7 +13,7 @@ public interface ValuePreviewSource {
 	
 	/**
 	 * Checks if the content is ready for display. 
-	 * @return true if ready and false if not
+	 * @return true if the content is ready, false otherwise
 	 */
 	boolean isContentPrepared();
 	
