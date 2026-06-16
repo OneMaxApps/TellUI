@@ -8,7 +8,7 @@ import microui.core.exception.ValueOutOfRangeException;
 import microui.util.MathUtils;
 
 /**
- * Abstract class for all classes witch releases interpolation of colors
+ * Abstract class for all classes which releases interpolation of colors
  */
 public abstract class AbstractLerpedColor extends AbstractColor {
 	private final Supplier<AbstractColor> start, end;

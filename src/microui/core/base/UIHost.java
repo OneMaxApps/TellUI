@@ -424,7 +424,7 @@ public final class UIHost extends View {
 	}
 
 	/**
-	 * Handles bridging with Processing
+	 * Provides the bridge between Processing and MicroUI.
 	 */
 	public static final class HostBridge {
 		private final UIHost uiHost;
@@ -701,7 +701,7 @@ public final class UIHost extends View {
 
 			if (transitionManager.isActivated()) {
 				if (current == container || previous == container) {
-					throw new IllegalStateException("Cannot remove container when transition of containers activated");
+					throw new IllegalStateException("Cannot remove container while a transition is active");
 				}
 			}
 			
@@ -933,7 +933,7 @@ public final class UIHost extends View {
 						this.transition = Transition.SLIDE_DOWN;
 						break;
 					default:
-						throw new IllegalArgumentException("Constant must be only LEFT, RIGHT, UP or DOWN");
+						throw new IllegalArgumentException("Transition constant must be only LEFT, RIGHT, UP or DOWN");
 				}
 			}
 
@@ -1066,7 +1066,7 @@ public final class UIHost extends View {
 
 		private void setMs(long ms) {
 			if (ms <= DEFAULT_MS) {
-				throw new IllegalArgumentException("Milliseconds should be greater than " + DEFAULT_MS);
+				throw new IllegalArgumentException("Milliseconds must be greater than " + DEFAULT_MS);
 			}
 			
 			this.ms = ms;

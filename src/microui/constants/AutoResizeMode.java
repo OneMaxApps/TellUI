@@ -55,7 +55,7 @@ public enum AutoResizeMode {
 
 	/**
 	 * Gets the scaling factor divisor for this resize mode. The divisor is used to
-	 * calculate automatic text size:
+	 * calculate automatic text size.
 	 *
 	 * @return the scaling factor divisor
 	 */

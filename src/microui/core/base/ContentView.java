@@ -570,9 +570,8 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	/**
-	 * Resize using margin. this method can change real width and height but it's
-	 * don't ignore constrain system. Also this method can't modify margin
-	 * parameters
+	 * Resizes the component using absolute dimensions, taking margin into account.
+	 * This method adjust the real width and height but does not bypass the constrain system and does not modify margin parameters.
 	 * 
 	 * @param width  change real width with using margin
 	 * @param height change real height with using margin
@@ -584,9 +583,8 @@ public abstract class ContentView extends SpatialView {
 	}
 
 	/**
-	 * Change bounds using margin. this method can change real bounds, but it's
-	 * don't ignore constrain system. Also this method can't modify margin
-	 * parameters
+	 * Changes the bounds using absolute values, taking margin into account.
+	 * This method adjust the real bounds but does not bypass the constrain system and does not modify margin parameters. 
 	 * 
 	 * @param x      change position with margin left
 	 * @param y      change position with margin top

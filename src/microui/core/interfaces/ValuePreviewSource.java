@@ -1,7 +1,7 @@
 package microui.core.interfaces;
 
 /**
- * An interface for components that have data to display on top of everything on the screen
+ * An interface for components that have data to display on top of everything on the screen.
  */
 public interface ValuePreviewSource {
 	

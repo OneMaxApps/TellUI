@@ -22,18 +22,18 @@ public final class PointerManager {
 	}
 	
 	/**
-	 * Checks is modal component is open.
+	 * Checks whether a modal component is open.
 	 * 
-	 * @return true if modal view component is open, false if not.
+	 * @return true if modal view component is open, false otherwise
 	 */
 	public static boolean isModalViewOpen() {
 		return modalViewOpen;
 	}
 
 	/**
-	 * Setter for components which implements ModalParent interface.
+	 * Setter for components which implement ModalParent interface.
 	 * 
-	 * @param modalViewOpen true if open, false if not.
+	 * @param modalViewOpen true if open, false otherwise
 	 */
 	public static void setModalViewOpen(boolean modalViewOpen) {
 		PointerManager.modalViewOpen = modalViewOpen;

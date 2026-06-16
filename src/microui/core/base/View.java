@@ -65,7 +65,7 @@ public abstract class View implements Visible {
 	}
 	
 	/**
-	 * Setter for a new listener for priority.
+	 * Add a listener that is called when the rendering priority of this view changes.
 	 *  
 	 * @param listener a new listener for priority (cannot be {@code null}).
 	 * @throws NullPointerException if listener is null
@@ -82,11 +82,11 @@ public abstract class View implements Visible {
 	}
 	
 	/**
-	 * Remover for priority listeners.
+	 * Removes a previously added priority change listener.
 	 * 
 	 * @param listener a listener for remove (cannot be {@code null}).
 	 * @throws NullPointerException if listener is null
-	 * @throws NoSuchElementException if listener not added
+	 * @throws NoSuchElementException if listener has not been added
 	 */
 	public final void removeOnChangePriorityListener(Listener listener) {
 		requireNonNull(listener,"listener");
@@ -163,10 +163,9 @@ public abstract class View implements Visible {
 	/**
 	 * Sets the numeric identifier of the element.
 	 *
-	 * @param id new identifier (must be between MIN_ID ({@value #MIN_PRIORITY}) and MAX_ID
-	 *           (Integer.MAX_VALUE))
+	 * @param id new identifier (must be greater than MIN_ID ({@value #MIN_ID})
 	 * @return this View for method chaining
-	 * @throws IllegalArgumentException if the identifier is less than {@value #MIN_PRIORITY}
+	 * @throws IllegalArgumentException if the identifier is less than {@value #MIN_ID}
 	 */
 	public final View setId(int id) {
 		if (id < MIN_ID) {

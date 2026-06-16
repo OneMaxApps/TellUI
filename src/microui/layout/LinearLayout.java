@@ -32,7 +32,7 @@ public class LinearLayout extends LinearAxisLayout {
 	 * 
 	 * @param contentViewEntry the entry being added to the container
 	 * 
-	 * @throws IllegalStateException if adding the entry would exceed the weight
+	 * @throws LayoutException if adding the entry would exceed the weight
 	 *                               limit
 	 */
 	@Override

@@ -12,11 +12,11 @@ import microui.core.exception.ValueOutOfRangeException;
  * </p>
  */
 public final class Timer {
-	/** Default speed for timer */
+	/** Default speed for timer. */
 	public static final float DEFAULT_SPEED = .05f;
-	/** constant for setting in start */
+	/** Constant for setting in start. */
 	public static final int START = 0;
-	/** constant for setting in end */
+	/** Constant representing the end point of the timer. */
 	public static final int END = 1;
 	private float currentTime;
 	private float speed;

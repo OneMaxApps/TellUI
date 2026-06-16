@@ -59,7 +59,9 @@ public abstract class AbstractShadow extends View {
 	}
 
 	/**
-	 * Setter for custom spatial
+	 * Sets custom bounds for this shadow, overriding the target's bounds.
+	 * The shadow will use the specified position and size instead of the target's.
+	 * 
 	 * @param x position X of shadow
 	 * @param y position Y of shadow
 	 * @param width current width of shadow
@@ -273,7 +275,7 @@ public abstract class AbstractShadow extends View {
 	 * Validates that a weight value is within allowed bounds.
 	 * 
 	 * @param weight the weight value to validate
-	 * @throws ValueOutOfRangeException if weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
+	 * @throws ValueOutOfRangeException if the weight is less than MIN_WEIGHT ({@value #MIN_WEIGHT}) or greater
 	 *                                  than MAX_WEIGHT ({@value #MAX_WEIGHT})
 	 */
 	protected void checkWeight(float weight) {
@@ -386,7 +388,6 @@ public abstract class AbstractShadow extends View {
 	 * @param right  the right weight
 	 * @param bottom the bottom weight
 	 * @return this AbstractShadow for method chaining
-	 * @throws IllegalArgumentException if any weight is out of bounds
 	 */
 	protected AbstractShadow setWeight(float left, float top, float right, float bottom) {
 		checkWeight(left);

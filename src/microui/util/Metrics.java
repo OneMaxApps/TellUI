@@ -38,7 +38,7 @@ public final class Metrics {
 		String name = object.getClass().getSimpleName();
 
 		if (name.isEmpty()) {
-			name = "Anonim class : " + object.getClass().getName();
+			name = "Anonymous class : " + object.getClass().getName();
 		}
 
 		metrics.put(name, metrics.getOrDefault(name, 0) + 1);

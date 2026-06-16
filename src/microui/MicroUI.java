@@ -59,7 +59,7 @@ public final class MicroUI {
 	/**
 	 * Returns the version of the MicroUI library.
 	 *
-	 * @return the version string in format "MAJOR.MINOR.PATCH"
+	 * @return the version string in the format "MAJOR.MINOR.PATCH"
 	 */
 	public static String getVersion() {
 		return VERSION;

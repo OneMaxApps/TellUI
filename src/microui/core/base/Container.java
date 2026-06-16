@@ -355,8 +355,9 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 
 	/**
-	 * Change mode of container
-	 * @return himself
+	 * Sets the container to respect constraints mode.
+	 * 
+	 * @return this container for method chaining
 	 */
 	public Container respectConstraints() {
 		setMode(Mode.RESPECT_CONSTRAINTS);
@@ -364,8 +365,8 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 	
 	/**
-	 * Changing mode of constraints
-	 * @return himself
+	 * Sets the container to ignore constraints mode.
+	 * @return this container for method chaining
 	 */
 	public Container ignoreConstraints() {
 		setMode(Mode.IGNORE_CONSTRAINTS);
@@ -373,23 +374,25 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 	
 	/**
-	 * Checking mode of constraints
-	 * @return true if respect constraints, false if isn't
+	 * Checks whether the container respects constraints.
+	 * 
+	 * @return true if the container respects constraints, false otherwise
 	 */
 	public boolean isRespectConstraints() {
 		return getMode() == Mode.RESPECT_CONSTRAINTS;
 	}
 	
 	/**
-	 * Checking mode of constraints
-	 * @return true if ignore constraints, false if isn't
+	 * Checks whether the container ignores constraints.
+	 * 
+	 * @return true if the container ignores constraints, false otherwise
 	 */
 	public boolean isIgnoreConstraints() {
 		return getMode() == Mode.IGNORE_CONSTRAINTS;
 	}
 	
 	/**
-	 * Changing mode of constraints on other
+	 * Toggles the constraint mode between ignore and respect.
 	 */
 	public void toggleConstraintsMode() {
 		setMode(isRespectConstraints() ?  Mode.IGNORE_CONSTRAINTS : Mode.RESPECT_CONSTRAINTS);
@@ -426,7 +429,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 
 		if (contentView == this) {
-			throw new IllegalArgumentException("Cannot add in container itself");
+			throw new IllegalArgumentException("Cannot add a container to itself");
 		}
 		
 		contentView.addOnChangePriorityListener(() -> priorityManager.recalculateMax());
@@ -549,16 +552,18 @@ public final class Container extends Component implements KeyPressable, Scrollab
 	}
 	
 	/**
-	 * Entry the class for storing the data of content and layout parameters
+	 * Represents an entry containing a content view and its layout parameters.
 	 */
 	public static final class Entry {
 		private final ContentView contentView;
 		private final LayoutParams layoutParams;
 		
 		/**
-		 * Constructs of Entry
-		 * @param contentView is content for view
-		 * @param layoutParams is parameters for layout
+		 * Constructs an Entry.
+		 * 
+		 * @param contentView the content view
+		 * @param layoutParams the layout parameters
+		 * @throws NullPointerException if contentView or layoutParams is null
 		 */
 		public Entry(ContentView contentView, LayoutParams layoutParams) {
 			this.contentView = requireNonNull(contentView, "contentView");
@@ -566,7 +571,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 		
 		/**
-		 * Returns the contentView object
+		 * Returns the ContentView instance.
 		 * 
 		 * @return the current contentView object
 		 */
@@ -575,7 +580,7 @@ public final class Container extends Component implements KeyPressable, Scrollab
 		}
 		
 		/**
-		 * Returns the LayoutParams object
+		 * Returns the LayoutParams instance.
 		 * 
 		 * @return the current LayoutParams object
 		 */

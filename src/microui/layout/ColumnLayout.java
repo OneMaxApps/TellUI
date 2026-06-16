@@ -26,7 +26,7 @@ public final class ColumnLayout extends LinearAxisLayout {
 	 * sufficient space for the new component.
 	 * 
 	 * @param contentViewEntry the entry being added
-	 * @throws IllegalStateException if weight limit is exceeded (out of bounds)
+	 * @throws LayoutException if weight limit is exceeded (out of bounds)
 	 */
 	@Override
 	public void onAdd(Entry contentViewEntry) {

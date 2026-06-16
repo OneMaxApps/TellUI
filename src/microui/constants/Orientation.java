@@ -1,8 +1,8 @@
 package microui.constants;
 
 /**
- * Enumeration representing the two primary layout orientations for sliders and
- * scrolls components.
+ * Enumeration representing the two primary layout orientations for slider and
+ * scroll components.
  */
 public enum Orientation {
 	/**

@@ -480,6 +480,6 @@ public abstract class Component extends ContentView {
 			return content.getText();
 		}
 
-		throw new ClassCastException("Tooltip not instance of TextTooltipContent");
+		throw new ClassCastException("Tooltip is not an instance of TextTooltipContent");
 	}
 }

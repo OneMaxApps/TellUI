@@ -1,7 +1,7 @@
 package microui.core.interfaces;
 
 /**
- * Marker interface for modal components
+ * Marker interface for modal components.
  */
 public interface ModalParent {
 
