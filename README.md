@@ -35,7 +35,7 @@ MicroUI includes ten main components, each with specific capabilities:
 
 8. **Knob** - A rotary range control (`RangeControl`) that changes its value when rotated with the mouse. An arc visualizes the current value.
 
-9. **MenuButton** - Extends a standard button by displaying a drop?down list of other buttons or nested sub?menus. Implements `Scrollable`, allowing scrolling of menu items when many are present.
+9. **MenuButton** - Extends a standard button by displaying a drop-down list of other buttons or nested sub-menus. Implements `Scrollable`, allowing scrolling of menu items when many are present.
 
 10. **ToggleButton** - A toggle switch that inherits `AbstractButton`. It provides a sliding thumb with active/inactive states and supports ripple and hover effects.
 
