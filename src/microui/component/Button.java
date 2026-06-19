@@ -95,6 +95,8 @@ public class Button extends AbstractButton {
 		this(DEFAULT_TITLE);
 	}
 	
+	
+	
 	/**
 	 * Gets the color of the ripple effects.
 	 *

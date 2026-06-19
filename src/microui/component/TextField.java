@@ -66,7 +66,7 @@ public final class TextField extends Component implements KeyPressable {
 	private PGraphics pg;
 	private Listener onTextChangedListener, onEnterPressedListener, onFocusChangedListener;
 
-	private boolean focused, componentSizeChanged;
+	private boolean focused, alwaysFocused, componentSizeChanged;
 
 	/**
 	 * Constructs a TextField with specified position and dimensions. The text field
@@ -99,7 +99,7 @@ public final class TextField extends Component implements KeyPressable {
 
 		createPGraphics();
 
-		setTextSize(getMaxHeight());
+		setAutoResizeTextEnabled(true);
 
 		onDoubleClick(() -> {
 			selection.selectWord();
@@ -576,6 +576,10 @@ public final class TextField extends Component implements KeyPressable {
 	 * @return this TextField instance for method chaining
 	 */
 	public TextField setFocused(boolean focused) {
+		if (isAlwaysFocused()) {
+			return this;
+		}
+		
 		if (this.focused == focused) {
 			return this;
 		}
@@ -583,6 +587,52 @@ public final class TextField extends Component implements KeyPressable {
 		this.focused = focused;
 		notifyFocusChanged();
 		return this;
+	}
+	
+	/**
+	 * Returns true if always focused mode is turned on, false otherwise.
+	 * 
+	 * @return true if always focused mode is turned on, false otherwise
+	 */
+	public boolean isAlwaysFocused() {
+		return alwaysFocused;
+	}
+
+	/**
+	 * Sets always focused mode state.
+	 * 
+	 * @param alwaysFocused true for always focused state, false otherwise
+	 * 
+	 * @return this TextField instance for method chaining
+	 */
+	public TextField setAlwaysFocused(boolean alwaysFocused) {
+		if (this.alwaysFocused == alwaysFocused) {
+			return this;
+		}
+		
+		focused = this.alwaysFocused = alwaysFocused;
+
+		notifyFocusChanged();
+		
+		return this;
+	}
+
+	/**
+	 * Returns true if auto resize of text is enabled, false otherwise.
+	 * 
+	 * @return true if auto resize of text is enabled, false otherwise
+	 */
+	public boolean isAutoResizeTextEnabled() {
+		return text.isAutoResizeEnabled();
+	}
+
+	/**
+	 * Sets state for auto resizing of text.
+	 * 
+	 * @param autoResizeEnabled true if auto resize of text is enabled, false otherwise
+	 */
+	public void setAutoResizeTextEnabled(boolean autoResizeEnabled) {
+		text.setAutoResizeEnabled(autoResizeEnabled);
 	}
 
 	/**
@@ -618,6 +668,9 @@ public final class TextField extends Component implements KeyPressable {
 
 		if (text != null) {
 			text.recalculateY();
+			if (text.isAutoResizeEnabled()) {
+				text.setTextSize(Math.max(1, getHeight()));
+			}
 		}
 
 		if (scroll != null) {
@@ -1102,6 +1155,7 @@ public final class TextField extends Component implements KeyPressable {
 		private PFont font;
 		private String hint;
 		private float x, y, textWidth, textSize;
+		private boolean autoResizeEnabled;
 
 		private Text(TextField textField) {
 			super();
@@ -1156,6 +1210,14 @@ public final class TextField extends Component implements KeyPressable {
 			pg.text(mustShowHint() ? hint : controller.getAsString(), getX(), y);
 
 			pg.popStyle();
+		}
+		
+		public boolean isAutoResizeEnabled() {
+			return autoResizeEnabled;
+		}
+		
+		public void setAutoResizeEnabled(boolean autoResizeEnabled) {
+			this.autoResizeEnabled = autoResizeEnabled;
 		}
 
 		public AbstractColor getHintColor() {
