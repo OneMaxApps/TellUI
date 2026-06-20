@@ -66,7 +66,7 @@ public final class TextField extends Component implements KeyPressable {
 	private PGraphics pg;
 	private Listener onTextChangedListener, onEnterPressedListener, onFocusChangedListener;
 
-	private boolean focused, alwaysFocused, componentSizeChanged;
+	private boolean focused, alwaysFocused, componentSizeChanged, pendingCursorToEnd;
 
 	/**
 	 * Constructs a TextField with specified position and dimensions. The text field
@@ -307,6 +307,7 @@ public final class TextField extends Component implements KeyPressable {
 	 */
 	public TextField setText(String text) {
 		this.text.set(text);
+
 		return this;
 	}
 
@@ -691,6 +692,7 @@ public final class TextField extends Component implements KeyPressable {
 	@Override
 	protected void render() {
 		checkDimensions();
+		applyPendingCursor();
 
 		ctx.pushStyle();
 		getBackgroundColor().apply();
@@ -701,9 +703,25 @@ public final class TextField extends Component implements KeyPressable {
 		ctx.popStyle();
 
 		mouseEventsUpdateState();
+		
 	}
 
 	// == PRIVATE KEYBOARD CONTROL API ==
+	
+	private void applyPendingCursor() {
+		if (pendingCursorToEnd) {
+			
+			final var c = cursor.column;
+
+			c.set(text.length());
+
+			updateScrollMax();
+			scroll.append(getTextWidth(text.getAsString()));
+			cursor.blink.reset();
+			
+			pendingCursorToEnd = false;
+		}
+	}
 
 	private void onRegularKeyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -1347,13 +1365,13 @@ public final class TextField extends Component implements KeyPressable {
 		}
 
 		public void set(String text) {
-			controller.set(text);
+			setInternal(text);
 		}
 
 		public void set(StringBuilder text) {
-			controller.set(text);
+			setInternal(text.toString());
 		}
-
+		
 		public void removeCharAt(int pos) {
 			controller.removeCharAt(pos);
 		}
@@ -1400,6 +1418,12 @@ public final class TextField extends Component implements KeyPressable {
 
 		private float getWidth() {
 			return textWidth;
+		}
+		
+		private void setInternal(String text) {
+			controller.set(text);
+			
+			tf.pendingCursorToEnd = true;
 		}
 	}
 

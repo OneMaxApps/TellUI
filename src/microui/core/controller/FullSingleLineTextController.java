@@ -351,15 +351,6 @@ public class FullSingleLineTextController {
 	}
 
 	/**
-	 * Sets the text content from a StringBuilder, replacing any existing text.
-	 * 
-	 * @param text the StringBuilder containing new text content
-	 */
-	public final void set(StringBuilder text) {
-		setInternal(text.toString());
-	}
-
-	/**
 	 * Clears all text content. If the internal buffer capacity exceeds
 	 * MAX_CAPACITY_FOR_CLEAR ({@value #MAX_CAPACITY_FOR_CLEAR}), trims the buffer.
 	 */
