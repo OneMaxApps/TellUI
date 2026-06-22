@@ -25,9 +25,9 @@ TellUI includes ten main components, each with specific capabilities:
 
 3. **TextView** - A component for displaying text. It supports various `AutoResizeMode` modes, including `FULL`, `BIG`, `MIDDLE`, `SMALL`, and `TINY`.
 
-4. **TextField** - A single?line text input that implements `KeyPressable`. It manages cursor position, selection, horizontal scrolling, and standard keyboard shortcuts (`CTRL+C`, `CTRL+V`, `CTRL+X`, `CTRL+A`).
+4. **TextField** - A single-line text input that implements `KeyPressable`. It manages cursor position, selection, horizontal scrolling, and standard keyboard shortcuts (`CTRL+C`, `CTRL+V`, `CTRL+X`, `CTRL+A`).
 
-5. **TextArea** - A multi?line text editor that implements both `Scrollable` and `KeyPressable`. It includes built?in vertical and horizontal scrollbars, undo/redo support, and complex internal classes for text, cursor, and selection.
+5. **TextArea** - A multi-line text editor that implements both `Scrollable` and `KeyPressable`. It includes built-in vertical and horizontal scrollbars, undo/redo support, and complex internal classes for text, cursor, and selection.
 
 6. **Slider** - A linear range control (`LinearRangeControl`) that changes its value when the user clicks or drags anywhere on the track.
 
@@ -48,7 +48,7 @@ void setup() {
   fullScreen();
   TellUI ui = TellUI.init(this);
 
-  // Adding a new container with the ID "main" using GridLayout
+  // Adding a new container with the text ID "main" using GridLayout
   ui.addContainer(new GridLayout(3, 3), "main");
 
   // Getting the container by ID and adding a Button component to it
