@@ -11,7 +11,7 @@ import tellui.TellUI;
 class SpatialViewTest {
 
 	@BeforeAll
-	static void initMicroUI() {
+	static void initTellUI() {
 		TellUI.init(new PApplet());
 	}
 

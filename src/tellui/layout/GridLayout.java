@@ -1,7 +1,7 @@
 package tellui.layout;
 
-import tellui.core.base.ContentView;
 import tellui.core.base.Container.Entry;
+import tellui.core.base.ContentView;
 import tellui.core.exception.IllegalLayoutParamsException;
 import tellui.core.exception.LayoutException;
 import tellui.core.interfaces.LayoutParams;

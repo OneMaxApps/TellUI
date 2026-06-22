@@ -12,7 +12,7 @@ package tellui.core.exception;
 public class TellUIException extends RuntimeException {
 
 	/**
-	 * Constructs a MicroUIException with the specified detail message.
+	 * Constructs a TellUIException with the specified detail message.
 	 * 
 	 * @param message the detail message explaining the exception
 	 */
