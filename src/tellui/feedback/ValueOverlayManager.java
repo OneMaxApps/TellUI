@@ -17,7 +17,7 @@ import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.core.style.LerpedColor;
 import tellui.core.style.LerpedLoopColor;
-import telluii.util.SpatialState;
+import tellui.util.SpatialState;
 
 /**
  * Manages the display of a value overlay – a transient text preview

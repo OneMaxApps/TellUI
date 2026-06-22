@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import processing.core.PApplet;
-import telluii.util.MathUtils;
 
 public class ConvertTest {
 

@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static tellui.TellUI.getContext;
 
 import processing.core.PGraphics;
-import telluii.util.Metrics;
+import tellui.util.Metrics;
 
 /**
  * Abstract base class for color representations in the TellUI framework.

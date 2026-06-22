@@ -14,7 +14,7 @@ import tellui.core.interfaces.ValuePreviewSource;
 import tellui.core.style.AbstractColor;
 import tellui.core.style.Stroke;
 import tellui.feedback.ValueOverlayManager;
-import telluii.util.BoundedValue;
+import tellui.util.BoundedValue;
 
 /**
  * Abstract base class for range control components that allow selecting a

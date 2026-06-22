@@ -8,9 +8,9 @@ import processing.core.PGraphics;
 import tellui.core.base.Component;
 import tellui.core.base.View;
 import tellui.core.style.AbstractColor;
-import telluii.util.Environment;
-import telluii.util.MathUtils;
-import telluii.util.Metrics;
+import tellui.util.Environment;
+import tellui.util.MathUtils;
+import tellui.util.Metrics;
 
 /**
  * Ripple effect animation that creates expanding circular waves from

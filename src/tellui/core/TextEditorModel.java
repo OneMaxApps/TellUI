@@ -3,7 +3,7 @@ package tellui.core;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import tellui.core.controller.MultiLineTextController;
 import tellui.core.interfaces.InputFilter;

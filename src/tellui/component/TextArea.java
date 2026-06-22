@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.TOP;
 import static tellui.core.style.theme.ThemeManager.getTheme;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,8 +47,8 @@ import tellui.core.interfaces.Listener;
 import tellui.core.interfaces.Scrollable;
 import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
-import telluii.util.Clipboard;
-import telluii.util.MathUtils;
+import tellui.util.Clipboard;
+import tellui.util.MathUtils;
 
 /**
  * A multi-line text editing component with support for selection, scrolling,

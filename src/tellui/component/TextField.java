@@ -18,8 +18,8 @@ import static processing.core.PConstants.ENTER;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static tellui.core.style.theme.ThemeManager.getTheme;
-import static telluii.util.MathUtils.constrain;
-import static telluii.util.MathUtils.convert;
+import static tellui.util.MathUtils.constrain;
+import static tellui.util.MathUtils.convert;
 
 import java.util.HashMap;
 
@@ -37,9 +37,9 @@ import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.core.style.LerpedColor;
 import tellui.core.style.LerpedLoopColor;
-import telluii.util.BoundedValue;
-import telluii.util.Clipboard;
-import telluii.util.Metrics;
+import tellui.util.BoundedValue;
+import tellui.util.Clipboard;
+import tellui.util.Metrics;
 
 /**
  * A single-line text input field with support for text editing, selection,

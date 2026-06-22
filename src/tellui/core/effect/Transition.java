@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import tellui.TellUI;
-import telluii.util.SpatialState;
+import tellui.util.SpatialState;
 
 /**
  * Represents a transition animation between two UI containers.

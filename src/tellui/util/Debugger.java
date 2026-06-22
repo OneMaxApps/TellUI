@@ -1,4 +1,4 @@
-package telluii.util;
+package tellui.util;
 
 import static java.util.Objects.requireNonNull;
 import static tellui.TellUI.getContext;

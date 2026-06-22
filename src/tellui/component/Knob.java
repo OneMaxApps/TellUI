@@ -6,7 +6,7 @@ import static java.util.Objects.requireNonNull;
 import static processing.core.PApplet.dist;
 import static processing.core.PConstants.HALF_PI;
 import static processing.core.PConstants.TWO_PI;
-import static telluii.util.MathUtils.convert;
+import static tellui.util.MathUtils.convert;
 
 import processing.event.MouseEvent;
 import tellui.core.RangeControl;
@@ -15,7 +15,7 @@ import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.core.style.LerpedColor;
 import tellui.event.PointerManager;
-import telluii.util.Environment;
+import tellui.util.Environment;
 
 /**
  * A graphical knob component that allows users to select a value from a range

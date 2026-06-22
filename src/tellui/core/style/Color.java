@@ -1,7 +1,7 @@
 package tellui.core.style;
 
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 /**
  * Concrete implementation of AbstractColor representing a solid RGBA color.

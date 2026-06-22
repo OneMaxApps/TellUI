@@ -1,4 +1,4 @@
-package telluii.util;
+package tellui.util;
 
 import java.util.Objects;
 

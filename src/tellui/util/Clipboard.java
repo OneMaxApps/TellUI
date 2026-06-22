@@ -1,4 +1,4 @@
-package telluii.util;
+package tellui.util;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;

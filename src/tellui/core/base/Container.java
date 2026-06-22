@@ -18,7 +18,7 @@ import tellui.core.interfaces.Scrollable;
 import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.layout.LayoutManager;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Container component for organizing and managing GUI components. Provides

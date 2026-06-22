@@ -15,7 +15,7 @@ import tellui.core.interfaces.Listener;
 import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.core.style.LerpedColor;
-import telluii.util.SpatialState;
+import tellui.util.SpatialState;
 
 /**
  * A toggle button component that can be switched between two states (active/inactive).

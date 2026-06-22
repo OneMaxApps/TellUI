@@ -29,8 +29,8 @@ import tellui.core.style.LerpedColor;
 import tellui.core.style.LerpedLoopColor;
 import tellui.core.style.Stroke;
 import tellui.event.PointerManager;
-import telluii.util.Debugger;
-import telluii.util.SpatialState;
+import tellui.util.Debugger;
+import tellui.util.SpatialState;
 
 /**
  * A hierarchical menu button component that can contain both plain items and

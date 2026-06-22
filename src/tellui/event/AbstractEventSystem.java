@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import tellui.TellUI;
 import tellui.core.base.ContentView;
 import tellui.core.base.SpatialView;
-import telluii.util.Metrics;
+import tellui.util.Metrics;
 
 /**
  * Abstract base class for event detection systems in TellUI. Provides

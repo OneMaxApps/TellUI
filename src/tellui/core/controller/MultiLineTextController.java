@@ -2,7 +2,7 @@ package tellui.core.controller;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

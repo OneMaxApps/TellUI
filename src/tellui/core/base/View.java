@@ -11,7 +11,7 @@ import processing.core.PApplet;
 import tellui.core.exception.DuplicateItemException;
 import tellui.core.interfaces.Listener;
 import tellui.core.interfaces.Visible;
-import telluii.util.Metrics;
+import tellui.util.Metrics;
 
 /**
  * Abstract base class for all visual elements in TellUI. Provides fundamental

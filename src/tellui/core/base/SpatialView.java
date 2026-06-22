@@ -6,10 +6,10 @@ import static java.lang.Math.min;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
 import static tellui.core.base.SpatialView.HooksUpdateMode.REACTIVE;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import tellui.core.effect.SpatialAnimator;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Abstract base class for GUI components that have spatial properties (position

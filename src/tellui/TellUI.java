@@ -9,7 +9,7 @@ import tellui.core.base.UIHost;
 import tellui.core.effect.Transition;
 import tellui.core.interfaces.Listener;
 import tellui.layout.LayoutManager;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Core facade for the TellUI library.

@@ -5,7 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.function.Supplier;
 
 import tellui.core.exception.ValueOutOfRangeException;
-import telluii.util.MathUtils;
+import tellui.util.MathUtils;
 
 /**
  * Abstract class for all classes which releases interpolation of colors

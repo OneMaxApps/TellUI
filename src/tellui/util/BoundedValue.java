@@ -1,7 +1,7 @@
-package telluii.util;
+package tellui.util;
 
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import tellui.core.interfaces.Listener;
 

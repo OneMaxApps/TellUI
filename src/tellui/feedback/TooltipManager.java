@@ -3,8 +3,8 @@ package tellui.feedback;
 import static java.util.Objects.requireNonNull;
 
 import tellui.core.base.View;
-import telluii.util.Environment;
-import telluii.util.MathUtils;
+import tellui.util.Environment;
+import tellui.util.MathUtils;
 
 /**
  * Manages the display of tooltips. This is a singleton class responsible for

@@ -6,7 +6,7 @@ import static tellui.TellUI.getContext;
 import static tellui.core.style.theme.ThemeManager.getTheme;
 
 import processing.core.PGraphics;
-import telluii.util.Metrics;
+import tellui.util.Metrics;
 
 /**
  * Represents a stroke style with color and weight properties for drawing

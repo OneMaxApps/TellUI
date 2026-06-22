@@ -3,7 +3,7 @@ package tellui.core;
 import processing.event.MouseEvent;
 import tellui.constants.Orientation;
 import tellui.event.PointerManager;
-import telluii.util.Environment;
+import tellui.util.Environment;
 
 /**
  * Abstract base class for linear range control components (sliders,

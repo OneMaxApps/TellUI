@@ -7,7 +7,7 @@ import tellui.core.base.SpatialView;
 import tellui.core.style.AbstractColor;
 import tellui.core.style.Color;
 import tellui.core.style.Stroke;
-import telluii.util.MathUtils;
+import tellui.util.MathUtils;
 
 /**
  * A slider component for selecting values within a linear range. The Slider

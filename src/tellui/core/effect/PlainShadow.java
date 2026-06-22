@@ -1,6 +1,6 @@
 package tellui.core.effect;
 
-import static telluii.util.MathUtils.convert;
+import static tellui.util.MathUtils.convert;
 
 import processing.core.PApplet;
 import tellui.core.base.ContentView;

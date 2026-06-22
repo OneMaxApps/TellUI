@@ -3,14 +3,14 @@ package tellui.core.controller;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 import tellui.core.interfaces.InputFilter;
 import tellui.core.interfaces.Listener;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Comprehensive controller for managing single-line text input with advanced

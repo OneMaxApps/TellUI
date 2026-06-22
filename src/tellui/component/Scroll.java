@@ -1,12 +1,12 @@
 package tellui.component;
 
 import static tellui.core.style.theme.ThemeManager.getTheme;
-import static telluii.util.MathUtils.constrain;
+import static tellui.util.MathUtils.constrain;
 
 import tellui.constants.Orientation;
 import tellui.core.LinearRangeControl;
 import tellui.core.style.AbstractColor;
-import telluii.util.MathUtils;
+import tellui.util.MathUtils;
 
 /**
  * A scroll-bar component with a draggable thumb for selecting values within a

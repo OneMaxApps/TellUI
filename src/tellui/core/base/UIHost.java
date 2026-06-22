@@ -4,7 +4,7 @@ import static processing.core.PConstants.DOWN;
 import static processing.core.PConstants.LEFT;
 import static processing.core.PConstants.RIGHT;
 import static processing.core.PConstants.UP;
-import static telluii.util.MathUtils.convert;
+import static tellui.util.MathUtils.convert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import tellui.event.PointerManager;
 import tellui.feedback.TooltipManager;
 import tellui.feedback.ValueOverlayManager;
 import tellui.layout.LayoutManager;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Manages the core UI lifecycle, including overlay information, container manager,

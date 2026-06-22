@@ -1,16 +1,16 @@
 package tellui.core.effect;
 
 import static java.util.Objects.requireNonNull;
-import static telluii.util.MathUtils.convert;
-import static telluii.util.Timer.END;
-import static telluii.util.Timer.START;
+import static tellui.util.MathUtils.convert;
+import static tellui.util.Timer.END;
+import static tellui.util.Timer.START;
 
 import java.util.function.BooleanSupplier;
 
 import tellui.core.base.ContentView;
 import tellui.core.base.SpatialView;
-import telluii.util.SpatialState;
-import telluii.util.Timer;
+import tellui.util.SpatialState;
+import tellui.util.Timer;
 
 /**
  * Animator for smooth interpolation of spatial properties (position and

@@ -3,7 +3,7 @@ package tellui.core.base;
 import static java.util.Objects.requireNonNull;
 
 import tellui.core.effect.AbstractShadow;
-import telluii.util.Debugger;
+import tellui.util.Debugger;
 
 /**
  * Abstract base class for all GUI components that can be displayed and

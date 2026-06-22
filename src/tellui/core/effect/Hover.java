@@ -6,8 +6,8 @@ import static tellui.core.style.theme.ThemeManager.getTheme;
 import tellui.core.base.Component;
 import tellui.core.base.View;
 import tellui.core.style.AbstractColor;
-import telluii.util.Environment;
-import telluii.util.MathUtils;
+import tellui.util.Environment;
+import tellui.util.MathUtils;
 
 /**
  * Visual hover effect for Component elements with smooth fade-in/fade-out

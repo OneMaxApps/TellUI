@@ -1,8 +1,8 @@
 package tellui.core.effect;
 
-import static telluii.util.MathUtils.constrain;
-import static telluii.util.MathUtils.convert;
-import static telluii.util.MathUtils.dist;
+import static tellui.util.MathUtils.constrain;
+import static tellui.util.MathUtils.convert;
+import static tellui.util.MathUtils.dist;
 
 import processing.core.PApplet;
 import tellui.core.base.ContentView;
