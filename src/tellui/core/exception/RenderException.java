@@ -10,7 +10,7 @@ package tellui.core.exception;
  * </p>
  */
 @SuppressWarnings("serial")
-public class RenderException extends MicroUIException {
+public class RenderException extends TellUIException {
 
 	/**
 	 * Constructs a RenderException with the specified detail message.

@@ -9,10 +9,10 @@ package tellui.core.exception;
  * is required. Commonly used in container and collection management.
  * </p>
  * 
- * @see MicroUIException
+ * @see TellUIException
  */
 @SuppressWarnings("serial")
-public class DuplicateItemException extends MicroUIException {
+public class DuplicateItemException extends TellUIException {
 
 	/**
 	 * Constructs a DuplicateItemException with the specified detail message.

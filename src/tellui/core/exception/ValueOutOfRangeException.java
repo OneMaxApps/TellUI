@@ -8,10 +8,10 @@ package tellui.core.exception;
  * of the value, the offending value itself, and the expected bounds.
  * </p>
  *
- * @see MicroUIException
+ * @see TellUIException
  */
 @SuppressWarnings("serial")
-public class ValueOutOfRangeException extends MicroUIException {
+public class ValueOutOfRangeException extends TellUIException {
 
     /**
      * Constructs a {@code ValueOutOfRangeException} with a detailed message

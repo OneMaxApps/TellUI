@@ -9,14 +9,14 @@ package tellui.core.exception;
  * </p>
  */
 @SuppressWarnings("serial")
-public class MicroUIException extends RuntimeException {
+public class TellUIException extends RuntimeException {
 
 	/**
 	 * Constructs a MicroUIException with the specified detail message.
 	 * 
 	 * @param message the detail message explaining the exception
 	 */
-	public MicroUIException(String message) {
+	public TellUIException(String message) {
 		super(message);
 	}
 
