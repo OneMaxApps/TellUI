@@ -1,10 +1,10 @@
-## MicroUI: A Graphical User Interface (GUI) Library for Processing 4
+## TellUI: A Graphical User Interface (GUI) Library for Processing 4
 
-The MicroUI library (version 1.0.0) was developed by Islam Akhmedkhanov for creating rich user interfaces in the Processing 4 environment.
+The TellUI library (version 1.0.0) was developed by Islam Akhmedkhanov for creating rich user interfaces in the Processing 4 environment.
 
 ### I. Architectural Overview
 
-The fundamental principle of the MicroUI library is to organize all elements into Containers. These containers are managed internally by the UIHost. To get started, you simply initialize MicroUI with the Processing sketch context using `MicroUI.init(this)`.
+The fundamental principle of the TellUI library is to organize all elements into Containers. These containers are managed internally by the UIHost. To get started, you simply initialize TellUI with the Processing sketch context using `TellUI.init(this)`.
 
 ### II. Layout Systems
 
@@ -17,7 +17,7 @@ The library provides four built-in layout systems that allow flexible placement 
 
 ### III. Control Components (10 Elements)
 
-MicroUI includes ten main components, each with specific capabilities:
+TellUI includes ten main components, each with specific capabilities:
 
 1. **Button** - A basic control that inherits from `AbstractButton`. It contains a `TextView` and supports ripple and hover effects.
 
@@ -41,12 +41,12 @@ MicroUI includes ten main components, each with specific capabilities:
 
 ### IV. Initialization Example
 
-Below is the standard code for initializing MicroUI and adding a button to a container using a grid layout (`GridLayout`):
+Below is the standard code for initializing TellUI and adding a button to a container using a grid layout (`GridLayout`):
 
 ```java
 void setup() {
   fullScreen();
-  MicroUI ui = MicroUI.init(this);
+  TellUI ui = TellUI.init(this);
 
   // Adding a new container with the ID "main" using GridLayout
   ui.addContainer(new GridLayout(3, 3), "main");
